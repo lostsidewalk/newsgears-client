@@ -6,7 +6,7 @@
       <span class="post-imported-at">IMPORTED AT: {{ timestamp }}</span>
       <span v-if="this.post.isPublished" class="post-published">STATUS: PUBLISHED</span>
       <span v-if="!this.post.isPublished && !this.post.pubPending" class="post-review">STATUS: REVIEW</span>    
-      <span class="post-tag-name" v-if="this.showTag">TAG: {{ post.tagName }}</span>
+      <span class="post-feed-ident" v-if="this.showFeed">FEED: {{ post.feedIdent }}</span>
       <span class="post-importer">IMPORTER: {{ post.importerDesc }}</span>
     </div>
     <div class="post-item">
@@ -62,7 +62,7 @@
 <script>
 export default {
   name: "PostItem",
-  props: ["post", "timestamp", "baseUrl", "showTag"],
+  props: ["post", "timestamp", "baseUrl", "showFeed"],
   emits: ["deletePost", "publishPost", "unpublishPost", "deletePostError", "publishPostError", "unpublishPostError"],
   data() {
     return {
@@ -196,7 +196,7 @@ export default {
   font-weight: bold;
 }
 
-.post-tag-name {
+.post-feed-ident {
   color: burlywood;
   float: left;
   font-size: x-small;

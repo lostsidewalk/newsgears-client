@@ -8,10 +8,10 @@
         </button>
       </span>
       <span class="vl"></span>
-      <!-- tags selector -->
+      <!-- feed selector -->
       <span>
-        <select id="tag" class="tag-selector" v-model="selectedTag">
-          <option v-for="tag in this.tags" :value="tag.value" :key="tag.label">{{ tag.label }}</option>
+        <select id="feed" class="feed-selector" v-model="selectedFeed">
+          <option v-for="feed in this.feeds" :value="feed.value" :key="feed.label">{{ feed.label }}</option>
         </select>
       </span>
       <!-- view published on/off -->
@@ -45,7 +45,7 @@
         :post="post"
         :timestamp="post.importTimestamp"
         :baseUrl="baseUrl"
-        :showTag="!this.selectedTag"
+        :showFeed="!this.selectedFeed"
         @deletePost="onDeletePost"
         @deletePostError="onPostError"
         @publishPost="onPublishPost"
@@ -67,8 +67,8 @@ export default {
   data() {
     return {
       posts: [],
-      tags: [],
-      selectedTag: null,
+      feeds: [],
+      selectedFeed: null,
       lastServerMessage: null,
       viewPublished: false,
       viewStaging: true,
@@ -82,11 +82,11 @@ export default {
       this.lastServerMessage = null;
     },
     shouldDisplay(post) {
-      let tagCondition = (!this.selectedTag || this.selectedTag == post.tagName);
+      let feedCondition = (!this.selectedFeed || this.selectedFeed == post.feedIdent);
       let viewPublishedCondition = (this.viewPublished ? post.isPublished : false);
       let viewStagingCondition =  (this.viewStaging ? (!post.isPublished && !post.pubPending) : false);
       let viewStagedCondition = (this.viewStaged ? post.pubPending : false);
-      return (this.viewPublished || this.viewStaging || this.viewStaged) && tagCondition && (viewPublishedCondition || viewStagingCondition || viewStagedCondition);
+      return (this.viewPublished || this.viewStaging || this.viewStaged) && feedCondition && (viewPublishedCondition || viewStagingCondition || viewStagedCondition);
     },
     toggleViewPublished() {
       this.viewPublished = !this.viewPublished;
@@ -134,28 +134,28 @@ export default {
             });
             // empty posts 
             this.posts.splice(0, this.posts.length);
-            // populate posts and build uniqueTags 
-            let uniqueTags = new Set();
+            // populate posts and build uniqueFeeds 
+            let uniqueFeeds = new Set();
             for (let i = 0; i < rawPosts.length; i++) {
-              uniqueTags.add(rawPosts[i].tagName);
+              uniqueFeeds.add(rawPosts[i].feedIdent);
               this.posts.push(rawPosts[i]);
             }
-            console.log("unique tags len = " + uniqueTags.size);
-            // empty tags
-            this.tags.splice(0, this.tags.length);
-            // populate tags
+            console.log("unique feeds len = " + uniqueFeeds.size);
+            // empty feeds
+            this.feeds.splice(0, this.feeds.length);
+            // populate feeds
             // (start with empty option)
-            this.tags.push({ "label": "(select a tag)", "value": null });
-            // (add unique tags) 
-            let t = Array.from(uniqueTags);
+            this.feeds.push({ "label": "(select a feed)", "value": null });
+            // (add unique feeds) 
+            let t = Array.from(uniqueFeeds);
             for (let i = 0; i < t.length; i++) {
-              this.tags.push({
+              this.feeds.push({
                 "label": t[i],
                 "value": t[i]
                 });
             }
             if (!hideStatus) {
-              this.lastServerMessage = "Feed refresh complete.  Staging ct=" + this.stagingCt + ", published ct=" + this.publishedCt + ", total=" + this.posts.length + ", tag ct=" + this.tags.length;
+              this.lastServerMessage = "Feed refresh complete.  Staging ct=" + this.stagingCt + ", published ct=" + this.publishedCt + ", total=" + this.posts.length + ", feed ct=" + (this.feeds.length - 1);
             }
           });
         })
@@ -200,8 +200,8 @@ export default {
         headers: { "Content-Type": "application/json" },
       };
       let url = this.baseUrl + "/staging/deploy";
-      if (this.selectedTag) {
-        url += "?tag=" + this.selectedTag;
+      if (this.selectedFeed) {
+        url += "?feed=" + this.selectedFeed;
       }
       fetch(url, requestOptions)
       .then((response) => {
@@ -259,7 +259,7 @@ export default {
   box-shadow: 1px 1px 1px rgb(0 0 0 / 75%);
 }
 
-.tag-selector {
+.feed-selector {
   margin: 9px;
   float: left;
   padding: 7px 20px;
@@ -273,11 +273,11 @@ export default {
   border-radius: 3px;
 }
 
-.tag-selector:hover {
+.feed-selector:hover {
   background: cornflowerblue;
 }
 
-.tag-selector-label {
+.feed-selector-label {
   margin-top: 15px;
   margin-right: 10px;
   color: lightgrey;
