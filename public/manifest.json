@@ -1,0 +1,26 @@
+{
+    "name": "NewsGears",
+    "short_name": "NewsGears",
+    "description": "NewsGears",
+    "theme_color": "#2196f3",
+    "background_color": "#2196f3",
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+        {
+          "src": "bender.png",
+          "sizes": "144x144"
+        },
+        {
+          "src": "bender_maskable.png",
+          "sizes": "192x192",
+          "purpose": "maskable"
+        },
+        {
+          "src": "bender_splash.png",
+          "sizes": "512x512"
+        }
+      ]
+  }

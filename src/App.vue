@@ -1,32 +1,46 @@
 <template>
-  <FeedBanner />
-  <PostFeed :baseUrl="this.baseUrl"/>
+  <div id="apphome">
+    <AppBanner :theme="theme"/>
+      <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+      </router-view>
+  </div>
 </template>
 
 <script>
-import FeedBanner from "./components/FeedBanner.vue";
-import PostFeed from "./components/PostFeed.vue";
+
+import AppBanner from './components/layout/AppBanner.vue';
 
 export default {
-  name: "App",
-  components: {
-    PostFeed,
-    FeedBanner
+  components: { AppBanner },
+  methods: {
+    isLoading() {
+      return false;
+    },
   },
-  props: ["baseUrl", "admin"],
+  data() {
+    return {
+      theme: this.$theme.currentTheme,
+    }
+  }
 };
 </script>
 
-<style>
-#app {
+<style scoped>
+#apphome {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  background: rgb(64,64,64);
-  margin-top: 60px;
-  font-family: "Roboto Mono", sans-serif;
-  font-weight: normal;
-  font-size: smaller;
+  font-family: system-ui, sans-serif;
+  min-width: 550px;
+}
+
+@font-face {
+  font-family: 'Russo One';
+  font-style: normal;
+  font-display: swap;
+  src: url(./fonts/Z9XUDmZRWg6M1LvRYsH-yA.ttf) format('truetype');
 }
 </style>
