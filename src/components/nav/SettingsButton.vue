@@ -1,7 +1,7 @@
 <template>
   <span>
-    <button class="settings-button" @click="this.$router.push('/settings');" :disabled="disableSettings || inTransit" aria-label="Go to settings">
-      <span class="fa fa-wrench" />
+    <button class="settings-button" @click="this.$router.push('/settings');" accesskey="t" :disabled="disabled" aria-label="Go to settings">
+      <i class="fa fa-wrench" />&nbsp; Se<i class="underline">t</i>tings
     </button>
   </span>
 </template>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "SettingsButton", 
-  props: [ "inTransit", "theme", "disableSettings" ],
+  props: [ "disabled", "theme" ],
 }
 </script>
 
@@ -19,12 +19,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   border-radius: 3px;
-  margin: 9px;
-  margin-right: 2%;
+  margin: .56rem;
   text-align: center;
 }
 
@@ -38,5 +37,9 @@ export default {
 
 .settings-button:hover:disabled {
   background-color: unset;
+}
+
+.underline {
+  text-decoration: underline;
 }
 </style>

@@ -1,55 +1,57 @@
 <template>
-  <div>
+  <div class="password-update-container">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- password reset panel -->
-    <div v-show="!this.inTransit">
+    <div class="password-update-container-inner">
       <!-- new password -->
       <AuthTextField :placeholder="'New password'" 
-        :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.newPassword" 
         @update:modelValue="this.username = $event"
-        :type="'password'" />
+        :type="'password'" 
+        :disabled="disabled || inTransit" />
       <!-- new password (confirm) -->
       <AuthTextField :placeholder="'Confirm new password'" 
-        :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.newPasswordConfirmed" 
         @update:modelValue="this.username = $event"
-        :type="'password'" />
+        :type="'password'" 
+        :disabled="disabled || inTransit" />
       <!-- submit button -->
       <AuthButton
         label="Submit"
         :theme="theme"
         @clicked="submitPwUpdate()"
-        :disabled="inTransit"
-      />
+        :disabled="disabled || inTransit" />
+      <!-- server response -->
+      <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
     </div>
-    <!-- server response -->
-    <AuthServerResponse :serverMessage="serverMessage" :lastAction="lastAction" :theme="theme" />
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from '../layout/NavbarFixedHeader.vue';
 import AuthTextField from './AuthTextField.vue';
 import AuthButton from './AuthButton.vue'
 import AuthServerResponse from './AuthServerResponse.vue';
 
 export default {
   components: {
+    NavbarFixedHeader,
     AuthTextField,
     AuthButton,
     AuthServerResponse
 },
-  props: [ "inTransit", "theme" ],
-  emits: [ "updateInTransit" ],
+  props: [ "disabled", "theme" ],
   data() {
     return {
       // new password/new password confirmed 
       newPassword: null,
       newPasswordConfirmed: null,
       // server response/initiating action 
-      lastAction: "PW_UPDATE",
       serverMessage: "Enter and confirm your new password.",
+      // 
+      inTransit : false,
     }
   },
   methods: {
@@ -63,12 +65,11 @@ export default {
         return;
       }
 
-      this.$emit('updateInTransit', true);
+      this.inTransit = true;
       this.$auth
           .pwUpdateWithSupplied(this.newPassword, this.newPasswordConfirmed)
           .then(() => {
             this.clearData();
-            this.lastAction = "PW_UPDATE";
             this.serverMessage = "Password updated.";
           })
           .catch((error) => {
@@ -76,7 +77,7 @@ export default {
             this.serverMessage = error;
           })
           .finally(() => {
-            this.$emit('updateInTransit', false);
+            this.inTransit = false;
           });
     },
     //
@@ -95,3 +96,22 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.password-update-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  font-size: larger; 
+}
+
+.password-update-container-inner {
+  margin: 25%;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  background: v-bind('theme.sectionhighlight');
+  border-radius: 5px;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+</style>

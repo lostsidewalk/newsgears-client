@@ -5,23 +5,24 @@
       <!-- top-level metadata -->
       <PostMediaMetadata v-if="isUseableMetadata(this.media.postMediaMetadata)" 
         :metadata="this.media.postMediaMetadata" 
-        :inTransit="inTransit" 
         :theme="theme" />
       <!-- top-level contents array -->
       <div v-if="this.media.postMediaContents && this.showContents" style="display: flex;flex-direction: row">
-        <PostMediaContent v-for="mc of this.media.postMediaContents" :key="mc" 
+        <PostMediaContent v-for="(mc,idx) of this.media.postMediaContents" :key="mc" 
+          :ref="'postMediaContent_' + idx"
           :mediaContent="mc" 
-          :inTransit="inTransit" 
-          :theme="theme" />
+          :theme="theme" 
+          @playing="onMediaContentPlaying(idx)" />
       </div>
       <!-- top-level media-groups array -->
       <div v-if="this.media.postMediaGroups && this.showContents">
-        <PostMediaGroup v-for="mg of this.media.postMediaGroups" :key="mg" 
+        <PostMediaGroup v-for="(mg,idx) of this.media.postMediaGroups" :key="mg" 
+          :ref="'postMediaGroup_' + idx"
           :mediaGroup="mg" 
           :inTransit="inTransit" 
-          :theme="theme" />
+          :theme="theme" 
+          @playing="onMediaGroupPlaying(idx)" />
       </div>
-      <!-- <pre style="margin: 0px;">{{ JSON.stringify(this.media, null, 2) }}</pre> -->
     </div>
   </div>
 </template>
@@ -33,7 +34,8 @@ import PostMediaGroup from './PostMediaGroup.vue';
 
 export default {
   name: "PostMedia",
-  props: ["media", "inTransit", "theme"],
+  props: [ "media", "inTransit", "theme" ],
+  emits: [ "playing" ],
   components: {
     PostMediaMetadata,
     PostMediaContent, 
@@ -43,6 +45,52 @@ export default {
     // console.log("post-media mounted: media=" + JSON.stringify(this.media));
   },
   methods: {
+    onMediaContentPlaying(idx) {
+      // pause all media groups and media content where idx != idx 
+      for (let i = 0; i < this.media.postMediaGroups.length; i++) {
+        let r = this.$refs['postMediaGroup_' + i];
+        if (r && r.length > 0) {
+          r[0].pause();
+        }
+      }
+      for (let i = 0; i < this.media.postMediaContents.length; i++) {
+        if (i === idx) {
+          continue;
+        }
+        let r = this.$refs['postMediaContent_' + i];
+        if (r && r.length > 0) {
+          r[0].pause();
+        }
+      }
+      this.$emit('playing');
+    },
+    onMediaGroupPlaying(idx) {
+      // pause all media content and all media groups where idx != idx 
+      for (let i = 0; i < this.media.postMediaGroups.length; i++) {
+        if (i === idx) {
+          continue;
+        }
+        let r = this.$refs['postMediaGroup_' + i];
+        if (r && r.length > 0) {
+          r.pause();
+        }
+      }
+      this.$emit('playing');
+    },
+    pause() {
+      for (let i = 0; i < this.media.postMediaContents.length; i++) {
+        let r = this.$refs['postMediaContent_' + i];
+        if (r && r.length > 0) {
+          r[0].pause();
+        }
+      }
+      for (let i = 0; i < this.media.postMediaGroups.length; i++) {
+        let r = this.$refs['postMediaGroup_' + i];
+        if (r && r.length > 0) {
+          r[0].pause();
+        }
+      }
+    },
     isUseableMetadata(metadata) {
       return metadata.thumbnails && metadata.thumbnails.length > 0;
     }

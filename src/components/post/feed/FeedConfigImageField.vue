@@ -1,5 +1,6 @@
 <template>
   <div class="feed-config-field">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <label v-if="label">
       <span v-if="required" class="required">*</span>
       {{ label }}
@@ -10,16 +11,16 @@
       accept="image/*"
       ref="selectFeedImage"
       @change="selectFeedImage"
-    />
+      :disabled="disabled || inTransit" />
     <label for="feed-image-select" class="feed-image-select-label">
       <img v-if="modelValue" class="feed-image" :src="'data:image/png;base64,' + modelValue" title="Click here to change the feed image."/>
       <div v-else class="feed-image" title="Click here to add a feed image."></div>
     </label>
     <span>
-    <button :disabled="inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">
+    <button :disabled="disabled || inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">
       <i class="fa fa-trash-o"></i>
     </button>
-    <button :disabled="inTransit" class="feed-image-randomize" @click="randomizeFeedImage">
+    <button :disabled="disabled || inTransit" class="feed-image-randomize" @click="randomizeFeedImage">
       <i class="fa fa-paw"></i>
     </button>
     </span>
@@ -32,15 +33,20 @@
 </template>
 
 <script>
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
+
 export default {
   name: "FeedConfigImageField",
-  props: [ "baseUrl", "label", "required", "inTransit", "theme", "modelValue" ],
-  emits: [ "updateInTransit", "authError", "update:modelValue" ],
+  props: [ "baseUrl", "label", "required", "disabled", "theme", "modelValue" ],
+  components: {
+    NavbarFixedHeader,
+  },
+  emits: [ "authError", "update:modelValue" ],
   methods: {
     //
     handleAuthError(error) {
       this.$emit('authError', error);
-      this.$emit('updateInTransit', false);
+      this.inTransit = false;
     },
     handleFeedImageUploadError(error) {
       console.log(error);
@@ -56,7 +62,7 @@ export default {
       let file = this.$refs.selectFeedImage.files[0];
       let formData = new FormData();
       formData.append("file", file);
-      this.$emit('updateInTransit', true);
+      this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
               method: 'POST',
@@ -83,7 +89,7 @@ export default {
           this.$emit('update:modelValue', prevFeedImgSrc);
         })
         .finally(() => {
-          this.$emit('updateInTransit', false);
+          this.inTransit = false;
         })
       }).catch((error) => {
         this.handleAuthError(error);
@@ -96,7 +102,7 @@ export default {
     randomizeFeedImage() {
       let prevFeedImgSrc = this.modelValue;
       this.feedImageUploadErrors.splice(0, this.feedImageUploadErrors.length);
-      this.$emit('updateInTransit', true);
+      this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
               method: 'GET',
@@ -118,7 +124,7 @@ export default {
           this.handleFeedImageUploadError(error);
           this.$emit('update:modelValue', prevFeedImgSrc);
         }).finally(() => {
-          this.$emit('updateInTransit', false);
+          this.inTransit = false;
         })
       }).catch((error) => {
         this.handleAuthError(error);
@@ -128,6 +134,8 @@ export default {
   data() {
     return {
       feedImageUploadErrors: [],
+      // 
+      inTransit: false,
     }
   }
 }
@@ -137,18 +145,18 @@ export default {
 .feed-config-field {
   border: 1px solid v-bind('theme.sectionbordercolor');
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
 }
 
 .feed-config-field label {
-  font-size: small;
-  /* padding-bottom: 3px; */
+  font-size: smaller;
+  /* padding-bottom: .125rem; */
 }
 
 .feed-image {
@@ -195,8 +203,8 @@ export default {
 
 .feed-image-upload-errors {
   background-color: v-bind('theme.sectionnegativehighlight');
-  padding: 10px;
-  margin-top: 10px;
+  padding: .75rem;
+  margin-top: .75rem;
   border-radius: 3px;
 }
 

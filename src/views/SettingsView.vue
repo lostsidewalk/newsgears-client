@@ -1,14 +1,14 @@
 <template>
   <div id="home">
-    <!-- fixed header -->
-    <NavbarFixedHeader :theme="theme">
+    <VueAnnouncer /> 
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit">
       <template v-slot:buttons>
-        <NavbarButtons :disableSettings="true" :inTransit="inTransit" :theme="theme" />
+        <NavbarButtons :disableSettings="true" :disableSubscriptions="false" :disabled="inTransit" :theme="theme" />
       </template>
     </NavbarFixedHeader>
     <!-- fixed subheader -->
     <transition appear enter-active-class="animated fadeIn">
-      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme" :inTransit="inTransit">
+      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme">
         <template v-slot:message>
           <LastServerMessage :serverMessages="this.serverMessages" @clearLastServerMessage="this.clearLastServerMessage" :theme="theme"/>
         </template>
@@ -24,10 +24,11 @@
         @exportOpml="exportOpml"
         @deactivateAccount="deactivateAccount"
         @initPasswordReset="initPasswordReset"
+        @submitOrder="submitOrder"
         :theme="theme"
-        :inTransit="inTransit" />
+        :disabled="inTransit" />
       <!-- "go back" link -->
-      <GoBack :theme="theme" />
+      <GoBack :disabled="inTransit" :theme="theme" />
     </div>
     <YouHaveBeenLoggedOut v-if="!this.forceLogout && !this.$auth.$isAuthenticated" :theme="theme" />
   </div>
@@ -67,6 +68,7 @@ export default {
         id: serverMessageId,
         text: message 
       });
+      this.$announcer.polite(message);
       setTimeout(() => {
         let idxToSplice = -1;
         for(let i = 0; i < this.serverMessages.length; i++) {
@@ -78,7 +80,7 @@ export default {
         if (idxToSplice >= 0) {
           this.serverMessages.splice(idxToSplice, 1);
         }
-      }, 6000);
+      }, 4000);
     },
     clearLastServerMessage() {
       this.serverMessages.pop();
@@ -120,8 +122,11 @@ export default {
           this.isLoaded = false;
         }).finally(() => {
           this.inTransit = false;
-        })
-      });
+        });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
+      })
     },
     updateSettings(newSettings) {
       try {
@@ -171,7 +176,10 @@ export default {
           }
         }).finally(() => {
           this.inTransit = false;
-        })
+        });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
       });
     },
     exportOpml() {
@@ -209,7 +217,10 @@ export default {
           }
         }).finally(() => {
           this.inTransit = false;
-        })
+        });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
       });
     },
     deactivateAccount() {
@@ -242,6 +253,9 @@ export default {
           this.$auth.tearDownLoggedInSession();
           this.$router.push("/app");
         });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
       });
     },
     initPasswordReset() {
@@ -257,6 +271,44 @@ export default {
         .finally(() => {
           this.inTransit = false;
         });
+    },
+    submitOrder() {
+      this.inTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const requestOptions = {
+              method: 'POST',
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              credentials: 'include' 
+            };
+        fetch(this.baseUrl + "/order", requestOptions)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            return response.json().then(j => {throw new Error(j.message)})
+          }
+        }).then((data) => {
+          let sessionId = data.sessionId;
+          let sessionUrl = data.sessionUrl;
+          console.log("Redirecting to checkout url=" + sessionUrl + " for sessionId=" + sessionId);
+          window.location.href = sessionUrl;
+        }).catch((error) => {
+          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage('Something went wrong.  Please try again later.');
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
+      });
     },
   },
   data() {
@@ -277,7 +329,5 @@ export default {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
 }
 </style>

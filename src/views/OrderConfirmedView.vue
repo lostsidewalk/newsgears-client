@@ -1,14 +1,14 @@
 <template>
   <div id="home">
     <!-- fixed header -->
-    <NavbarFixedHeader :theme="theme">
+    <NavbarFixedHeader :theme="theme" :inTransit="false">
       <template v-slot:buttons>
-        <NavbarButtons :inTransit="inTransit" :theme="theme"/>
+        <NavbarButtons :disableSettings="false" :disableSubscriptions="false" :disabled="false" :theme="theme"/>
       </template>
     </NavbarFixedHeader>
     <!-- fixed subheader -->
     <transition appear enter-active-class="animated fadeIn">
-      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme" :inTransit="inTransit">
+      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme">
         <template v-slot:message>
           <LastServerMessage :serverMessages="this.serverMessages" @clearLastServerMessage="this.clearLastServerMessage" :theme="theme"/>
         </template>
@@ -27,7 +27,7 @@
       </div> 
     </div> 
     <!-- "go back" link -->
-    <GoBack :theme="theme" />
+    <GoBack :disabled="false" :theme="theme" />
   </div>
 </template>
   
@@ -51,7 +51,6 @@ export default {
   data() {
     return {
       theme: this.$theme.currentTheme,
-      inTransit: false,
       serverMessages: [],
     };
   },
@@ -62,8 +61,6 @@ export default {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
 }
 
 /** start */
@@ -74,15 +71,15 @@ export default {
   border-top: 1px solid v-bind('theme.sectionbordercolor');
   border-right: 1px solid v-bind('theme.sectionbordercolor');
   color: v-bind('theme.subduedmessage');
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .view-header {
-  margin-bottom: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-  padding: 10px;
-  padding-top: 20px;
+  margin-bottom: .75rem;
+  margin-left: .75rem;
+  margin-right: .75rem;
+  padding: .75rem;
+  padding-top: 1.25rem;
   text-align: left;
   border-radius: 4px 4px 4px 4px;
   overflow: hidden;
@@ -91,10 +88,10 @@ export default {
 .view-header-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
-  font-size: large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0px;
+  margin: 0rem;
   overflow: hidden;
 }
 </style>

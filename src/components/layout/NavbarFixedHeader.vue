@@ -1,8 +1,11 @@
 <template>
   <div class="navbar fixed-header">
     <slot name="buttons"></slot>
-    <div class="loader" v-if="inTransit">
+    <div class="loader" v-if="this.inTransit">
         <div class="loading_1"></div>
+    </div>
+    <div v-else>
+        <div class="not-loading"></div>
     </div>
   </div>
 </template>
@@ -25,24 +28,30 @@ export default {
 }
 
 .loader {
-    width: 100%;
-    position: relative;
+  width: 100%;
+  position: relative;
 }
 
 .loader .loading_1 {
-    position: relative;
-    height: 1px;
-    animation: turn 4s linear 1.75s infinite;
+  position: relative;
+  height: 1px;
+  animation: turn 4s linear 1.75s infinite;
+}
+
+.not-loading {
+  position: relative;
+  height: 1px;
+  color: transparent;
 }
 
 .loader .loading_1:before {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 0;
-    height: 100%;
-    background-color: v-bind('theme.navbarshadow');
-    animation: load 2s linear infinite;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  background-color: v-bind('theme.navbarshadow');
+  animation: load 2s linear infinite;
 }
 
 @keyframes load {
@@ -75,7 +84,7 @@ export default {
 
     0%,
     100% {
-        top: 10px;
+        top: .75rem;
     }
 
     12.5% {

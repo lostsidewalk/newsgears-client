@@ -4,7 +4,7 @@
       :type="type ? type : 'text'"
       :value="modelValue"
       :placeholder="placeholder"
-      :disabled="inTransit"
+      :disabled="disabled"
       @input="$emit('update:modelValue', $event.target.value)"
     />
     <div class="auth-error-message" v-for="(error, index) of errorValue" :key="index">
@@ -18,21 +18,25 @@
 export default {
   name: "AuthTextField",
   components: { },
-  props: [ "placeholder", "type", "inTransit", "theme", "modelValue", "errorValue" ],
+  props: [ "placeholder", "type", "disabled", "theme", "modelValue", "errorValue" ],
 };
 </script>
 
 <style scoped>
+.auth-field {
+  margin-left: 2vw;
+  margin-right: 2vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+
 .auth-field > input {
-  margin: 4%;
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  width: 20%;
-  max-width: 256px;
 }
 
 .auth-field > input:hover {

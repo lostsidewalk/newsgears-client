@@ -5,7 +5,8 @@
       v-for="tab of tabModel" :key="tab" 
       class="tab-label" 
       :class="this.selectedTab === tab.name ? 'selected-tab-label' :''" 
-      @click="selectTab(tab.name)">
+      @click="selectTab(tab.name)"
+      :disabled="disabled">
       <i v-if="tab.icon" :class="'fa fa-' + tab.icon + ' fa-1x'"/>
       {{ tab.description }}
     </button>
@@ -15,7 +16,7 @@
 <script>
 export default {
   name: "TabHeader",
-  props: [ "inTransit", "theme", "selectedTab", "tabModel" ],
+  props: [ "disabled", "theme", "selectedTab", "tabModel" ],
   emits: [ "selectTab" ],
   methods: {
     selectTab(tabName) {
@@ -29,20 +30,18 @@ export default {
 .tab-header {
   display: flex;
   width: 100%;
+  overflow-x: auto;
 }
 
 .tab-label {
-  width: 20%;
   text-align: center;
-  padding: 15px;
+  padding: 1rem;
   border-radius: 5px 5px 0px 0px;
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
   user-select: none;
   background-color: v-bind('theme.sectionbrighthighlight');
-  font-family: "Russo One", system-ui, sans-serif;
   color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
 }
 
 .tab-label:hover {

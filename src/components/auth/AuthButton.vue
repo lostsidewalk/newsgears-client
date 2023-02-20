@@ -1,6 +1,7 @@
 <template>
   <div class="auth-field">
     <button
+      :disabled="disabled"
       type="button"
       @click="onClick()"
       class="auth-button">
@@ -13,7 +14,7 @@
 <script>
 export default {
   name: "AuthButton",
-  props: [ "label", "subLabel", "theme" ],
+  props: [ "label", "subLabel", "disabled", "theme" ],
   methods: {
     onClick() {
       this.$emit("clicked");
@@ -29,12 +30,10 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
-  cursor: pointer;
-  /* float: unset */ 
-  border-radius: 3px;
+  padding: .44rem 1.25rem;
   margin: 4%;
-  max-width: 256px;
+  cursor: pointer;
+  border-radius: 3px;
   text-align: center;
   user-select: none;
 }

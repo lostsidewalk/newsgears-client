@@ -1,21 +1,21 @@
 <template>
     <span>
-      <button id="logout" class="logout-button" @click="this.$auth.logout()" accesskey="o" :disabled="disabled">
-        Log<i class="underline">o</i>ut
+      <button id="login" class="login-button" @click="this.$router.push('/app')" :disabled="disabled">
+        Login
       </button>
     </span>
 </template>
 
 <script>
 export default {
-  name: "LogoutButton",
+  name: "LoginButton",
   props: [ "disabled", "theme" ],
 }
 </script>
 
 <style scoped>
-.logout-button {
-  border: 1px solid v-bind('theme.buttonborder');
+.login-button {
+  border: 1px solid transparent;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
@@ -27,19 +27,15 @@ export default {
   text-align: center;
 }
 
-.logout-button:disabled {
+.login-button:disabled {
   cursor: auto;
 }
 
-.logout-button:hover {
+.login-button:hover {
   background-color: v-bind('theme.buttonhighlight');
 }
 
-.logout-button:hover:disabled {
+.login-button:hover:disabled {
   background-color: unset;
-}
-
-.underline {
-  text-decoration: underline;
 }
 </style>

@@ -26,7 +26,7 @@ export default {
   font-size: xxx-large;
   color: v-bind('theme.logocolor');
   text-shadow: 2px 2px 2px v-bind('theme.logoshadowcolor');
-  padding-top: 50px;
+  margin-top: 3.125rem;
   user-select: none;
 }
 
@@ -40,7 +40,7 @@ export default {
 
 .app-sub-banner {
   color: v-bind('theme.logosubtextcolor');
-  margin-bottom: 50px;
+  margin-bottom: 3.125rem;
   user-select: none;
 }
 </style>

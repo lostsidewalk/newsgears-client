@@ -1,10 +1,12 @@
 <template>
-  <span>
+  <div class="last-server-message-container">
     <!-- server response -->
     <span class="timestamp">{{ this.serverMessages[this.serverMessages.length - 1].timestamp }}</span>
-    <span class="last-server-message">{{ this.serverMessages[this.serverMessages.length - 1].text }}</span>
-    <span class="clear-last-server-message" @click="clearLastServerMessage">(clear message)</span>
-  </span>
+    <button class="last-server-message" @click="clearLastServerMessage" accesskey="x">
+      <i class="fa fa-check fa-1x clear-last-server-message" /> &nbsp;
+      {{ this.serverMessages[this.serverMessages.length - 1].text }}
+    </button>
+  </div>
 </template>
 
 <script>
@@ -21,6 +23,13 @@ export default {
 </script>
 
 <style scoped>
+.last-server-message-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
 .timestamp {
   color: v-bind('theme.subduedmessage');
   float: left;
@@ -34,7 +43,6 @@ export default {
 .clear-last-server-message {
   float: left;
   color: v-bind('theme.subduedmessage');
-  padding-left: 10px;
   cursor: pointer;
 }
 

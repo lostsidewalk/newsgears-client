@@ -1,7 +1,7 @@
 <template>
   <div class="auth-field">
     <div class="agree-to-terms">
-      <input type="checkbox" id="agree-to-terms" v-model="agreeWithTerms" @change="updateAgreement" />
+      <input type="checkbox" id="agree-to-terms" v-model="agreeWithTerms" @change="updateAgreement" :disabled="disabled" />
       <label for="agree-to-terms">&nbsp;I agree to the <router-link class="terms-router-link" to="/terms">terms and conditions.</router-link></label>
     </div>
   </div>
@@ -11,7 +11,7 @@
 
 export default {
   name: "AuthAgreeToTerms",
-  props: [ "inTransit", "theme" ],
+  props: [ "theme", "disabled" ],
   emits: [ "updateAgreement" ],
   methods: {
     updateAgreement() {
@@ -31,7 +31,7 @@ export default {
 <style scoped>
 .auth-field > input {
   margin: 4%;
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -56,10 +56,10 @@ export default {
 }
 
 .agree-to-terms {
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: .75rem;
+  padding-right: .75rem;
   color: v-bind('theme.normalmessage');
-  padding: 10px;
+  padding: .75rem;
   margin: 4%;
 }
 

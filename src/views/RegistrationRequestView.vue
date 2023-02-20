@@ -1,33 +1,35 @@
 <template>
   <div id="home">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <RegistrationRequestPanel ref="registration" 
-      :inTransit="this.inTransit" 
-      :theme="theme" 
-      @updateInTransit="this.inTransit = $event" />
+      :disabled="this.inTransit" 
+      :theme="theme" />
     <!-- "go back" link -->
-    <GoBack :theme="theme" />
+    <GoBack :disabled="inTransit" :theme="theme" />
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import RegistrationRequestPanel from "@/components/auth/RegistrationRequestPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 
 export default {
   name: "RegistrationRequestView",
   components: {
-      RegistrationRequestPanel,
-      GoBack,
+    NavbarFixedHeader,
+    RegistrationRequestPanel,
+    GoBack,
   },
-  props: ["baseUrl"],
+  props: [ "baseUrl" ],
   mounted() {
       this.inTransit = false;
   },
   data() {
-      return {
-          theme: this.$theme.currentTheme,
-          inTransit: true
-      };
+    return {
+      theme: this.$theme.currentTheme,
+      inTransit: true
+    };
   },
 };
 </script>
@@ -36,7 +38,5 @@ export default {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
 }
 </style>

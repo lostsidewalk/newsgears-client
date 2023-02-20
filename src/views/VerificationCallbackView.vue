@@ -2,7 +2,7 @@
   <div>
     <div class="thanks-for-verifying">Thanks for verifying!  Your account status has been updated.</div>
     <!-- "go back" link -->
-    <GoBack :theme="theme" />
+    <GoBack :disabled="false" :theme="theme" />
   </div>
 </template>
 
@@ -26,6 +26,6 @@ export default {
 <style scoped>
 .thanks-for-verifying {
   color: v-bind('theme.highlightedmessage');
-  margin: 50px;
+  margin: 4rem;
 }
 </style>

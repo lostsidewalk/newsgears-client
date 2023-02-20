@@ -1,57 +1,55 @@
 <template>
   <div class="feed-config-field">
-    <!-- available sources -->
-    <div class="help-balloon">Available sources</div>
     <!-- filter label -->
     <label>NEWS SOURCES {{ '(SHOWING ' + filteredNewsApiV2Sources.length + ' SOURCES)'}}</label>
     <!-- filter input -->
-    <input class="newsapiv2-sources-filter" type="text" v-model="newsApiV2SourcesFilter" :disabled="inTransit" placeholder="Filter"/>
+    <input class="newsapiv2-sources-filter" type="text" v-model="newsApiV2SourcesFilter" :disabled="disabled" placeholder="Filter"/>
     <div class="newsapiv2-sources-filter-pills">
       <!-- source language -->
       <div class="pill-container">
-        <span class="br-pill" :class="{ selectedLanguage: this.newsApiV2Language.toLowerCase() === language.toLowerCase() }" 
+        <button class="br-pill" :class="{ selectedLanguage: this.newsApiV2Language.toLowerCase() === language.toLowerCase() }" 
           @click="toggleNewsApiV2LanguageFilter(language)"
           v-for="language of filteredNewsApiV2Languages" :key="language">
           {{ language }}
-        </span>
+        </button>
       </div>
       <!-- source country -->
       <div class="pill-container">
-        <span class="br-pill" :class="{ selectedCountry: this.newsApiV2Country.toLowerCase() === country.toLowerCase() }" 
+        <button class="br-pill" :class="{ selectedCountry: this.newsApiV2Country.toLowerCase() === country.toLowerCase() }" 
           @click="toggleNewsApiV2CountryFilter(country)"
           v-for="country of filteredNewsApiV2Countries" :key="country">
             {{ country }} 
             <span :class="'newsapiv2-country-icon fi fi-' + country.toLowerCase()"></span>
-        </span>
+        </button>
       </div>
       <!-- source category -->
       <div class="pill-container">
-        <span class="br-pill" :class="{ selectedCategory: this.newsApiV2Category.toLowerCase() === category.toLowerCase() }"
+        <button class="br-pill" :class="{ selectedCategory: this.newsApiV2Category.toLowerCase() === category.toLowerCase() }"
           @click="toggleNewsApiV2CategoryFilter(category)"
           v-for="category of filteredNewsApiV2Categories" :key="category">
           {{ category }}
-        </span>
+        </button>
       </div>
     </div>
     <div class="newsapiv2-sources">
       <div class="newsapiv2-source" v-for="source of this.filteredNewsApiV2Sources" :key="source">
         <label class="newsapiv2-source-label">
-          <input type="checkbox" :checked="newsApiV2Sources[source.key]" @click="toggleNewsApiV2SourceFilter(source)" :disabled="inTransit"/>
+          <input type="checkbox" :checked="newsApiV2Sources[source.key]" @click="toggleNewsApiV2SourceFilter(source)" :disabled="disabled"/>
           {{ source.name }}
         </label>
-        <div style="padding-top: 5px;">{{ source.description }}</div>
+        <div style="padding-top: .31rem;">{{ source.description }}</div>
         <!-- <div>URL: {{ source.url }}</div> -->
-        <div style="padding-top: 5px;" class="pill-container">
-          <span class="br-pill" @click="toggleNewsApiV2CategoryFilter(source.category)">
+        <div style="padding-top: .31rem;" class="pill-container">
+          <button class="br-pill" @click="toggleNewsApiV2CategoryFilter(source.category)">
             {{ source.category.toUpperCase() }}
-          </span>
-          <span class="br-pill" @click="toggleNewsApiV2CountryFilter(source.country)">
+          </button>
+          <button class="br-pill" @click="toggleNewsApiV2CountryFilter(source.country)">
             {{ source.country.toUpperCase() }}
             <span :class="'newsapiv2-country-icon fi fi-' + source.country.toLowerCase()"></span>
-          </span>
-          <span class="br-pill" @click="toggleNewsApiV2LanguageFilter(source.language)">
+          </button>
+          <button class="br-pill" @click="toggleNewsApiV2LanguageFilter(source.language)">
             {{ source.language.toUpperCase() }}
-          </span>
+          </button>
           <span v-if="source.url" class="br-pill">
             Link: <a class="link" :href="source.url" :target="'window_' + (Math.random() + 1).toString(36).substring(7)"><i class="fa fa-link fa-1x"/></a>
           </span>
@@ -83,7 +81,7 @@ export default {
     "newsApiV2Country",
     "newsApiV2Category",
     "newsApiV2Sources", 
-    "inTransit", 
+    "disabled", 
     "theme" 
   ],
   emits: [
@@ -200,27 +198,27 @@ export default {
 .feed-config-field {
   border: 1px solid v-bind('theme.sectionbordercolor');
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
 }
 
 .feed-config-field label {
-  font-size: small;
+  font-size: smaller;
 }
 
 .feed-config-field > input, .feed-config-field > textarea, .newsapiv2-sources-toolbar > input {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: 2px;
+  margin-top: .125rem;
   resize: none;
 }
 
@@ -243,7 +241,7 @@ export default {
 }
 
 .newsapiv2-language-label, .newsapiv2-country-label, .newsapiv2-category-label {
-  padding: 5px 5px 5px 5px; 
+  padding: .31rem;
   border-radius: 3px;
   user-select: none;
   align-self: baseline;
@@ -270,7 +268,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-flow: wrap;
-  gap: 5px;
+  gap: .31rem;
   overflow-x: auto;
 }
 
@@ -280,7 +278,7 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: 5px;
+  padding: .31rem;
   user-select: none;
 }
 
@@ -299,7 +297,7 @@ export default {
 
 .newsapiv2-sources-toolbar {
   display: inline-flex;
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .newsapiv2-sources-toolbar > input {
@@ -310,12 +308,12 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
   resize: none;
-  gap: 10px;
+  gap: .75rem;
 }
 
 .newsapiv2-sources-filter {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: .75rem;
+  margin-bottom: .75rem;
 }
 
 .newsapiv2-sources-filter-pills {
@@ -323,13 +321,13 @@ export default {
 }
 
 .newsapiv2-sources-filter-pills > div {
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .newsapiv2-source {
   background-color: v-bind('theme.sectionbrighterhighlight');;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: .75rem;
+  margin-bottom: .75rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.sectionbordercolor');
 }

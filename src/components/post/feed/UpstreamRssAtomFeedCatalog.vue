@@ -1,13 +1,11 @@
 <template>
   <div class="feed-config-field">
-    <!-- help balloon -->
-    <div class="help-balloon">Feed browser</div>
     <!-- feed catalog filter label -->
-    <label>FEED CATALOG {{ '(' + this.filteredFeedCatalog.length + ' FEEDS MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + this.totalPages + ')' }}</label>
+    <label>FEED CATALOG {{ '(' + this.filteredFeedCatalog.length + ' FEEDS MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + (this.totalPages > 0 ? this.totalPages : 1 ) + ')' }}</label>
     <!-- feed catalog filter input w/pagination buttons -->
     <div class="feed-catalog-filter">
       <!-- feed catalog filter input -->
-      <input type="text" v-model="feedCatalogFilter" :disabled="inTransit" placeholder="Filter">
+      <input type="text" v-model="feedCatalogFilter" :disabled="disabled" placeholder="Filter">
       <!-- first page button-->
       <button v-if="needsPagination()" title="first" class="feed-catalog-filter-button" @click="firstPage">
         <i class="fa fa-angle-double-left"/>
@@ -27,33 +25,33 @@
     </div>
     <!-- feed catalog filter pills -->
     <div v-if="hasFeedCatalogFilters()" class="feed-catalog-filter-pills pill-container">
-      <span v-for="authorFilter in this.feedCatalogFilterAuthors" :key="authorFilter" @click="removeFilter('author', authorFilter)" class="br-pill" title="Remove this filter">
+      <button v-for="authorFilter in this.feedCatalogFilterAuthors" :key="authorFilter" @click="removeFilter('author', authorFilter)" class="br-pill" title="Remove this filter">
         Author: {{ this.trimToLength(authorFilter, 64) }}
-      </span>
-      <span v-for="categoryFilter in this.feedCatalogFilterCategories" :key="categoryFilter" @click="removeFilter('category', categoryFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="categoryFilter in this.feedCatalogFilterCategories" :key="categoryFilter" @click="removeFilter('category', categoryFilter)" class="br-pill" title="Remove this filter">
         Category: {{ this.trimToLength(categoryFilter, 64) }}
-      </span>
-      <span v-for="languageFilter in this.feedCatalogFilterLanguages" :key="languageFilter" @click="removeFilter('language', languageFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="languageFilter in this.feedCatalogFilterLanguages" :key="languageFilter" @click="removeFilter('language', languageFilter)" class="br-pill" title="Remove this filter">
         Language: {{ this.trimToLength(languageFilter, 64) }}
-      </span>
-      <span v-for="docsFilter in this.feedCatalogFilterDocs" :key="docsFilter" @click="removeFilter('docs', docsFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="docsFilter in this.feedCatalogFilterDocs" :key="docsFilter" @click="removeFilter('docs', docsFilter)" class="br-pill" title="Remove this filter">
         Docs: {{ this.trimToLength(docsFilter, 64) }}
-      </span>
-      <span v-for="encodingFilter in this.feedCatalogFilterEncodings" :key="encodingFilter" @click="removeFilter('encoding', encodingFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="encodingFilter in this.feedCatalogFilterEncodings" :key="encodingFilter" @click="removeFilter('encoding', encodingFilter)" class="br-pill" title="Remove this filter">
         Encoding: {{ this.trimToLength(encodingFilter, 64) }}
-      </span>
-      <span v-for="feedTypeFilter in this.feedCatalogFilterFeedTypes" :key="feedTypeFilter" @click="removeFilter('feedType', feedTypeFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="feedTypeFilter in this.feedCatalogFilterFeedTypes" :key="feedTypeFilter" @click="removeFilter('feedType', feedTypeFilter)" class="br-pill" title="Remove this filter">
         Feed type: {{ this.trimToLength(feedTypeFilter, 64) }}
-      </span>
-      <span v-for="generatorFilter in this.feedCatalogFilterGenerators" :key="generatorFilter" @click="removeFilter('generator', generatorFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="generatorFilter in this.feedCatalogFilterGenerators" :key="generatorFilter" @click="removeFilter('generator', generatorFilter)" class="br-pill" title="Remove this filter">
         Generator: {{ this.trimToLength(generatorFilter, 64) }}
-      </span>
-      <span v-for="managingEditorFilter in this.feedCatalogFilterManagingEditors" :key="managingEditorFilter" @click="removeFilter('managingEditor', managingEditorFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="managingEditorFilter in this.feedCatalogFilterManagingEditors" :key="managingEditorFilter" @click="removeFilter('managingEditor', managingEditorFilter)" class="br-pill" title="Remove this filter">
         Managing Editor: {{ this.trimToLength(managingEditorFilter, 64) }}
-      </span>
-      <span v-for="webMasterFilter in this.feedCatalogFilterWebMasters" :key="webMasterFilter" @click="removeFilter('webMaster', webMasterFilter)" class="br-pill" title="Remove this filter">
+      </button>
+      <button v-for="webMasterFilter in this.feedCatalogFilterWebMasters" :key="webMasterFilter" @click="removeFilter('webMaster', webMasterFilter)" class="br-pill" title="Remove this filter">
         Webmaster: {{ this.trimToLength(webMasterFilter, 64) }}
-      </span>
+      </button>
     </div>
     <!-- feed catalog -->
     <div class="feed-catalog">
@@ -62,7 +60,7 @@
         <div class="rss-atom-url-row">
           <button v-if="this.disabledRssAtomFeedUrls.indexOf(source.feedUrl) < 0"
             class="add-catalog-feed-button" 
-            :disabled="inTransit"
+            :disabled="disabled"
             @click="this.$emit('addCatalogFeed', source)">
             Subscribe to this feed
           </button>
@@ -75,10 +73,10 @@
         <RssAtomFeedInfo 
           v-if="source.discoveryUrl || source.error"
           :info="source" 
-          :inTransit="inTransit" 
+          :disabled="disabled" 
           :theme="theme" 
           :filterSupport="true"
-          style="margin-top: 10px;"
+          style="margin-top: .75rem;"
           @updateFilter="updateFeedCatalogFilter" />
       </div>
     </div>
@@ -131,7 +129,7 @@ const lcSetContainsSet = function(set, strSet) {
 
 export default {
   name: "UpstreamRssAtomFeedCatalog",
-  props: [ "feedCatalog", "rssAtomFeedUrls", "inTransit", "theme" ],
+  props: [ "feedCatalog", "rssAtomFeedUrls", "disabled", "theme" ],
   emits: [ "addCatalogFeed" ],
   components: {
     RssAtomFeedInfo,
@@ -391,28 +389,27 @@ export default {
 .feed-config-field {
   border: 1px solid v-bind('theme.sectionbordercolor');
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
 }
 
 .feed-config-field > label {
-  font-size: small;
-  /* padding-bottom: 3px; */
+  font-size: smaller;
 }
 
 .feed-config-field > input {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: 2px;
+  margin-top: .125rem;
 }
 
 .feed-config-field input:hover {
@@ -435,8 +432,8 @@ export default {
 
 .rss-atom-url-wrapper {
   background-color: v-bind('theme.sectionbrighterhighlight');;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: .75rem;
+  margin-bottom: .75rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.sectionbordercolor');
 }
@@ -444,20 +441,20 @@ export default {
 .rss-atom-url-row {
   display: inline-flex;
   flex-direction: row;
-  margin-top: 2px;
+  margin-top: .125rem;
   width: 100%;
 }
 
 .feed-catalog-filter-pills {
   font-size: smaller;
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .pill-container {
   border: 1px solid transparent;
   display: flex;
   flex-flow: wrap;
-  gap: 5px;
+  gap: .31rem;
   overflow-x: auto;
 }
 
@@ -467,7 +464,7 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: 5px;
+  padding: .31rem;
   user-select: none;
 }
 
@@ -479,14 +476,13 @@ export default {
 .add-catalog-feed-button {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');;
+  color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
   text-align: center;
-  font-size: unset;
 }
 
 .add-catalog-feed-button:disabled {
@@ -504,18 +500,19 @@ export default {
 .feed-catalog-filter {
   text-align: left;
   display: inline-flex;
-  margin-top: 2px;
+  margin-top: .125rem;
   float: right;
 }
 
 .feed-catalog-filter input {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   width: 100%;
+  font-size: x-large;
 }
 
 .feed-catalog-filter input:hover {
@@ -541,7 +538,7 @@ export default {
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   text-align: center;

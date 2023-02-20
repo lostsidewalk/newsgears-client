@@ -1,5 +1,5 @@
 <template>
-  <button type="button" class="login-with-google-btn" @click="googleOauth2()">
+  <button type="button" class="login-with-google-btn" @click="googleOauth2()" :disabled="disabled">
     Sign in with Google
   </button>
 </template>
@@ -7,7 +7,7 @@
 <script>
 export default {
   name: "GoogleAuthButton",
-  props: [ "theme" ],
+  props: [ "theme", "disabled" ],
   methods: {
     googleOauth2() {
       window.location='http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:3000/app'
@@ -20,7 +20,7 @@ export default {
 .login-with-google-btn {
   margin: 4%;
   max-width: 256px;
-  padding: 12px 16px 12px 42px;
+  padding: .75rem 1rem .75rem 2.625rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.buttonborder');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
@@ -40,10 +40,6 @@ export default {
   
 .login-with-google-btn:active {
   background-color: v-bind('theme.buttonbg');
-}
-
-.login-with-google-btn:focus {
-  outline: none;
 }
   
 .login-with-google-btn:disabled {

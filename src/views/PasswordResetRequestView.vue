@@ -1,11 +1,10 @@
 <template>
-  <div id="home">
+  <div id="home" style="height: 100%;">
     <PasswordResetRequestPanel ref="passwordReset" 
-      :inTransit="this.inTransit" 
-      :theme="theme" 
-      @updateInTransit="this.inTransit = $event"/>
+      :disabled="inTransit" 
+      :theme="theme" />
     <!-- "go back" link -->
-    <GoBack :theme="theme" />
+    <GoBack :disabled="inTransit" :theme="theme" />
   </div>
 </template>
 
@@ -16,18 +15,18 @@ import GoBack from "@/components/layout/GoBack.vue";
 export default {
   name: "PasswordResetRequestView",
   components: {
-      PasswordResetRequestPanel,
-      GoBack,
+    PasswordResetRequestPanel,
+    GoBack,
   },
   props: ["baseUrl"],
   mounted() {
     this.inTransit = false;
   },
   data() {
-      return {
-          theme: this.$theme.currentTheme,
-          inTransit: true
-      };
+    return {
+        theme: this.$theme.currentTheme,
+        inTransit: true
+    };
   },
 };
 </script>
@@ -36,7 +35,5 @@ export default {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
 }
 </style>

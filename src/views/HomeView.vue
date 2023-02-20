@@ -1,35 +1,26 @@
 <template>
   <div id="home" style="height: 100%;">
-    <!-- fixed header -->
-    <NavbarFixedHeader v-if="this.$auth.$isAuthenticated" :inTransit="inTransit" :theme="theme">
-      <template v-slot:buttons>
-        <NavbarButtons :inTransit="inTransit" :theme="theme"/>
-      </template>
-    </NavbarFixedHeader>
+    <VueAnnouncer />
     <!-- fixed subheader -->
     <transition appear enter-active-class="animated fadeIn" v-if="this.$auth.$isAuthenticated">
-      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme" :inTransit="inTransit">
+      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme">
         <template v-slot:message>
           <LastServerMessage :serverMessages="this.serverMessages" @clearLastServerMessage="this.clearLastServerMessage" :theme="theme"/>
         </template>
       </NavbarFixedSubheader>
     </transition>
     <AuthPanel ref="authentication" 
-      :inTransit="inTransit" 
-      :theme="theme" 
-      @updateInTransit="this.inTransit = $event" />
+      :disabled="inTransit" 
+      :theme="theme" />
     <PostFeed ref="postFeed" 
       :baseUrl="this.baseUrl" 
       :theme="theme" 
-      :inTransit="inTransit" 
-      @updateServerMessage="this.setLastServerMessage" 
-      @updateInTransit="this.inTransit = $event" />
+      :disabled="inTransit" 
+      @updateServerMessage="this.setLastServerMessage" />
   </div>
 </template>
   
 <script>
-import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import NavbarButtons from "@/components/layout/NavbarButtons.vue";
 import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";
 import AuthPanel from "@/components/auth/AuthPanel.vue";
@@ -39,8 +30,6 @@ import PostFeed from "@/components/post/PostFeed.vue";
 export default {
   name: "HomeView",
   components: {
-    NavbarFixedHeader, 
-    NavbarButtons, 
     NavbarFixedSubheader,
     LastServerMessage,
     AuthPanel,
@@ -75,6 +64,7 @@ export default {
         id: serverMessageId,
         text: messageObj.message
       });
+      this.$announcer.polite(messageObj.message);
       setTimeout(() => {
         let idxToSplice = -1;
         for(let i = 0; i < this.serverMessages.length; i++) {
@@ -86,7 +76,7 @@ export default {
         if (idxToSplice >= 0) {
           this.serverMessages.splice(idxToSplice, 1);
         }
-      }, 6000);
+      }, 4000);
     },
     clearLastServerMessage() {
       this.serverMessages.pop();
@@ -101,7 +91,7 @@ export default {
 }
 
 body {
-  margin: 0px !important;
+  margin: 0rem !important;
   transition: background-color 0s;
 }
 
@@ -112,18 +102,6 @@ hr {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
-}
-
-.help-balloon {
-  border: 1px solid rgba(255,255,255,0.3); /* TODO: extract color to theme */
-  padding: 10px;
-  background-color: rgba(0,255,0,0.03); /* TODO: extract color to theme */
-  color: antiquewhite;
-  border-radius: 5px;
-  max-width: max-content;
-  margin-bottom: 10px;
 }
 
 .server-message {
@@ -155,6 +133,10 @@ hr {
 
 .required {
   color: v-bind('theme.requiredind');
-  padding-right: 3px;
+  padding-right: .125rem;
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>

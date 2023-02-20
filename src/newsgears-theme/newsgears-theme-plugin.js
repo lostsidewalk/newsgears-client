@@ -8,8 +8,8 @@ const LIGHT_THEME = {
   logoaccentcolor: 'unset',
   logoshadowcolor: 'unset',
   logosubtextcolor: 'paleturquoise',
+  modalcontainerbg: 'rgba(0,0,0,0.8)',
   navbarshadow: 'cornflowerblue',
-  navbarsubbg: '#ffffff',
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
   subduedmessage: 'rgb(128,128,128)',
   normalmessage: 'unset',
@@ -55,8 +55,8 @@ const DARK_THEME = {
   logoaccentcolor: 'rgb(32 32 32)',
   logoshadowcolor: 'rgb(255 0 0 / 50%)',
   logosubtextcolor: 'paleturquoise',
+  modalcontainerbg: 'rgba(0,0,0,0.8)',
   navbarshadow: 'cornflowerblue',
-  navbarsubbg: '#171717',
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
   subduedmessage: 'rgb(116,116,116)',
   normalmessage: 'rgb(136,136,136)',
@@ -108,8 +108,8 @@ export default {
       app.config.globalProperties.$theme.currentTheme.logoaccentcolor = theme.logoaccentcolor;
       app.config.globalProperties.$theme.currentTheme.logoshadowcolor = theme.logoshadowcolor;
       app.config.globalProperties.$theme.currentTheme.logosubtextcolor = theme.logosubtextcolor;
+      app.config.globalProperties.$theme.currentTheme.modalcontainerbg = theme.modalcontainerbg;
       app.config.globalProperties.$theme.currentTheme.navbarshadow = theme.navbarshadow;
-      app.config.globalProperties.$theme.currentTheme.navbarsubbg = theme.navbarsubbg;
       app.config.globalProperties.$theme.currentTheme.navbarsubshadow = theme.navbarsubshadow;
       app.config.globalProperties.$theme.currentTheme.subduedmessage = theme.subduedmessage;
       app.config.globalProperties.$theme.currentTheme.normalmessage = theme.normalmessage;

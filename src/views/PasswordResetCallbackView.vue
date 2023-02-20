@@ -1,21 +1,23 @@
 <template>
   <div id="home">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <PasswordUpdatePanel ref="passwordUpdate" 
-      :inTransit="this.inTransit" 
-      :theme="theme" 
-      @updateInTransit="this.inTransit = $event" />
+      :disabled="inTransit" 
+      :theme="theme" />
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import PasswordUpdatePanel from "@/components/auth/PasswordUpdatePanel.vue";
 
 export default {
   name: "PasswordResetCallbackView",
   components: {
-      PasswordUpdatePanel
+    NavbarFixedHeader,
+    PasswordUpdatePanel
   },
-  props: ["baseUrl"],
+  props: [ "baseUrl" ],
   mounted() {
       this.inTransit = false;
   },
@@ -32,7 +34,5 @@ export default {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
 }
 </style>

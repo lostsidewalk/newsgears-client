@@ -3,21 +3,23 @@
     <div class="modal-body">
       <div class="modal-header">
         <h3 class="view-header-no-count">
-          <i class="fa fa-feed fa-1x"/>
+          <i class="fa fa-feed fa-1x" />
           OPML UPLOAD
-          <div class="loader" v-if="inTransit">
-              <div class="loading_1"></div>
-          </div>
+          <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
         </h3>
       </div>
       <div class="modal-actions">
         <div class="opml-upload-field">
-          <input type="file" ref="fileInput" multiple @change="onInputChange" style="display: none;" />
+          <input type="file" ref="fileInput" multiple @change="eventHandler" style="display: none;" />
           <label>OPML FILES:</label>
-          <div class="opml-file-wrapper" v-for="file of files" :key="file.id">
+          <div class="opml-file-wrapper" v-for="file of this.files" :key="file.id">
             <div class="opml-file-row">
               FILENAME: <a :href="file.url" :target="file.id" title="Preview this file in a new window.">{{ file.file.name }}</a>
-              <button v-if="!atStep2" class="opml-file-action-button" @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" style="margin-left: 2px;" :disabled="inTransit">
+              <button v-if="!atStep2" 
+                class="opml-file-action-button" 
+                @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" 
+                style="margin-left: .125rem;" 
+                :disabled="disabled || inTransit">
                 <i class="fa fa-trash"/>
               </button>
             </div>
@@ -31,20 +33,18 @@
           <div class="opml-upload-summary" v-if="this.feedConfigRequests.length > 0">
             <div class="opml-upload-summary-header">We will create the following feeds from your OPML file(s):</div>
             <div class="opml-upload-summary-wrapper" v-for="f in this.feedConfigRequests" :key="f.ident">
-              <div class="opml-upload-summary-message">TITLE: {{ f.title }}</div>
-              <div class="opml-upload-summary-message">DESCRIPTION: {{ f.description }}</div>
-              <div class="opml-upload-summary-message" v-if="f.rssAtomFeedUrls">UPSTREAM RSS/ATOM FEEDS: </div>
+              <div class="opml-upload-summary-message">{{ f.title + (f.description ? (' (' + f.description + ')'): '') }}</div>
               <div class="opml-upload-summary-message-url" v-for="r in f.rssAtomFeedUrls" :key="r">
                 {{ r.feedUrl }}
               </div>
             </div>
           </div>
           <div>
-            <button class="opml-upload-button" 
-              v-if="!atStep2"
-              @click="this.errors = []; this.$refs.fileInput.click()" 
-              :disabled="inTransit" title="Select an OPML file containing data about this feed."
-            >
+            <button ref="addOpmlFileButton" v-if="!atStep2"
+              @click="this.errors = []; this.$refs.fileInput.click()"   
+              class="opml-upload-button" 
+              :disabled="disabled || inTransit" 
+              title="Select an OPML file containing data about this feed.">
               Add OPML file
             </button>
           </div>
@@ -52,16 +52,22 @@
       </div>
       <!-- save | cancel | back buttons -->
       <div>
-        <button class="opml-upload-button" 
+        <button ref="continueOrFinalizeButton"
           @click="this.feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()" 
-          :disabled="inTransit || (!files.length)" 
-          :title="this.feedConfigRequests.length > 0 ? 'Finalize upload' : (files.length ? 'Continue' : 'Add at least one OPML file to continue.')">
+          class="opml-upload-button" 
+          :disabled="disabled || inTransit || (!this.files.length)" 
+          :title="this.feedConfigRequests.length > 0 ? 'Finalize upload' : (this.files.length ? 'Continue' : 'Add at least one OPML file to continue.')">
           {{ this.feedConfigRequests.length > 0 ? 'Finalize upload' : 'Continue to step (2)' }}
         </button>
-        <button v-if="atStep2" class="opml-upload-button" @click="returnToStep1" :disabled="inTransit">
+        <button v-if="atStep2" 
+          @click="returnToStep1"   
+          class="opml-upload-button" 
+          :disabled="disabled || inTransit">
           Go back
         </button>
-        <button class="opml-upload-button" @click="cancelOpmlUpload" :disabled="inTransit">
+        <button @click="cancelOpmlUpload" 
+          class="opml-upload-button" 
+          :disabled="disabled || inTransit">
           Cancel
         </button>
       </div>
@@ -69,37 +75,74 @@
   </div>
 </template>
 
-<script setup>
-function onInputChange(e) {
-  addFiles(e.target.files)
-  e.target.value = null
-}
-</script>
-
 <script>
-import useFileList from '../../../compositions/file-list.js';
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 
-const { files, addFiles, removeFile, clearFiles } = useFileList();
 
 export default {
   name: "OpmlUploadPanel",
-  components: {},
-  props: ["showModal", "inTransit", "baseUrl", "theme"],
-  emits: ["finalizeUpload", "cancel", "authError"],
+  components: {
+    NavbarFixedHeader,
+  },
+  props: [ "disabled", "baseUrl", "theme" ],
+  emits: [ "finalizeUpload", "cancel", "authError" ],
   mounted() {
     console.log("opml-upload-panel: mounted, baseUrl=" + this.baseUrl);
   },
   data() {
     return {
       //
+      showModal: false,
       overflowClass: 'hidden',
       // 
+      files: [],
       atStep2: false,
       errors: [],
       feedConfigRequests: [],
+      // 
+      inTransit: false,
     }
   },
   methods: {
+    eventHandler(event) {
+      this.addFiles(event.target.files)
+      event.target.value = null
+    },
+    show() {
+      this.showModal = true;
+      this.$nextTick(() => {
+        if (!this.atStep2) {
+          this.$refs.addOpmlFileButton.focus();
+        } else {
+          this.$refs.continueOrFinalizeButton.focus();
+        }
+      });
+    },
+    hide() {
+      this.clearModel();
+      this.showModal = false;
+    },
+    addFiles(newFiles) {
+        let newUploadableFiles = [...newFiles]
+            .map((file) => {
+              return {
+                file: file,
+                id: `${file.name}-${file.size}-${file.lastModified}-${file.type}`,
+                url: URL.createObjectURL(file), 
+                status: null
+              }
+            })
+            .filter((file) => !this.fileExists(file.id))
+        this.files = this.files.concat(newUploadableFiles)
+    },
+    fileExists(otherId) {
+        return this.files.some(({ id }) => id === otherId)
+    },
+    removeFile(file) {
+        const index = this.files.indexOf(file)
+
+        if (index > -1) this.files.splice(index, 1)
+    },
     // 
     returnToStep1() {
       this.atStep2 = false;
@@ -111,12 +154,13 @@ export default {
       this.$emit('finalizeUpload', this.feedConfigRequests);
     },
     continueOpmlUpload() {
-      console.log("opml-upload-panel: continue upload of OPML files=" + JSON.stringify(files));
+      console.log("opml-upload-panel: continue upload of OPML files=" + JSON.stringify(this.files));
+      this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         // form data 
         let formData = new FormData();
-        for (let i = 0; i < files.length; i++) {
-          let f = files[i];
+        for (let i = 0; i < this.files.length; i++) {
+          let f = this.files[i];
           formData.append('files', f.file, f.file.name);
         }
         // request options 
@@ -148,17 +192,28 @@ export default {
           } else {
             this.errors.push(error.message);
           }
+        }).finally(() => {
+          this.inTransit = false;
         });
       }).catch((error) => {
-        this.$emit("authError", error);
+        this.handleAuthError(error);
+      }).finally(() => {
+        this.inTransit = false;
       });
     },
     cancelOpmlUpload() {
-      clearFiles();
+      this.clearModel();
       this.$emit('cancel');
     },
     deleteOpmlFile(file) {
-      removeFile(file);
+      this.removeFile(file);
+    },
+    clearModel() {
+      // TODO: possibly warn of un-saved data / get confirmation if files or feedConfigRequests are non-empty 
+      this.files.splice(0);
+      this.atStep2 = false;
+      this.errors.splice(0);
+      this.feedConfigRequests.splice(0);
     }
   },
 }
@@ -176,7 +231,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 200;
-  background: rgba(0,0,0,0.8);
+  background: v-bind('theme.modalcontainerbg');
 }
 
 .modal-header {
@@ -189,42 +244,39 @@ export default {
   color: v-bind('theme.normalmessage');
   text-align: left;
   width: 75%;
-  padding: 32px;
+  padding: 2rem;
   border: 1px solid v-bind('theme.buttonborder');
   border-radius: 5px;
 }
 
 .modal-actions {
-  padding-top: 10px;
-  /* display: flex;
-  flex-direction: row;
-  gap: 40px;
-  justify-content: center; */
+  padding-top: .75rem;
 }
 
 .view-header-no-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
-  font-size: large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0px;
+  margin: 0rem;
   overflow: hidden;
 }
 
 .opml-upload-field {
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
+  border: 1px solid v-bind('theme.sectionbordercolor');
 }
 
 .opml-upload-field label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .opml-upload-button {
@@ -232,13 +284,12 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
-  margin-right: 10px;
+  margin-right: .75rem;
   text-align: center;
-  font-size: unset;
 }
 
 .opml-upload-button:disabled {
@@ -258,14 +309,11 @@ export default {
   cursor: pointer;
   text-align: center;
   border-radius: 3px;
-  /* margin-left: 5px; */
-  /* margin-right: 5px; */
-  /* margin-bottom: 5px; */
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding-top: 3px;
+  padding-top: .125rem;
   float: right;
-  margin-top: 2px;
+  margin-top: .125rem;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   float: right;
 }
@@ -279,17 +327,12 @@ export default {
 }
 
 .opml-file-action-button i {
-  padding: 3px;
-}
-
-.opml-file-wrapper:nth-of-type(1) {
-  margin-top: 2px;
+  padding: .125rem;
 }
 
 .opml-file-wrapper {
   background-color: v-bind('theme.sectionbrighterhighlight');
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: .75rem;
   border-radius: 3px;
 }
 
@@ -312,19 +355,14 @@ export default {
 }
 
 .opml-upload-summary {
-  background-color: v-bind('theme.sectionpositivehighlight');
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-bottom: 0px;
-  padding-right: 10px;
-  margin-bottom: 10px;
-  border-radius: 3px;
+  padding: .75rem;
+  border-top: 1px solid black;
 }
 
 .opml-upload-errors {
   background-color: v-bind('theme.sectionnegativehighlight');
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: .75rem;
+  margin-bottom: .75rem;
   border-radius: 3px;
 }
 
@@ -334,63 +372,35 @@ export default {
 }
 
 .opml-upload-error {
-  margin-top: 10px;
+  margin-top: .75rem;
   width: 100%;
 }
 
 .opml-upload-summary-wrapper {
-  margin-top: 10px;
-  margin-left: 0px;
-  margin-bottom: 10px;
-  margin-right: 0px;
-  padding: 5px;
+  padding: .75rem;
+  margin-bottom: .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 75vh;
+  overflow-y: auto;
+  border: 1px solid;
   border-radius: 3px;
 }
 
-.opml-upload-summary-wrapper:hover {
-  background-color: v-bind('theme.sectionpositiveaccent');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow') !important;
-  cursor: auto;
-}
-
-.opml-upload-summary-message {
-  margin-bottom: 2px;
-}
-
-.opml-upload-summary-message-url {
-  margin-left: 5px;
+.opml-upload-summary-wrapper:last-of-type {
+  margin-bottom: 0rem;
 }
 
 .opml-upload-summary-header {
-  margin-bottom: 10px;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid black;
 }
 
 .error > input, .error > textarea {
   border: 1px solid v-bind('theme.errorborder') !important;
   box-shadow: 1px 1px 1px v-bind('theme.errorshadow') !important;
   background-color: v-bind('theme.errorbg') !important;
-}
-
-
-.loader {
-    width: 100%;
-    position: relative;
-}
-
-.loader .loading_1 {
-    position: relative;
-    height: 1px;
-    animation: turn 4s linear 1.75s infinite;
-}
-
-.loader .loading_1:before {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 0;
-    height: 100%;
-    background-color: v-bind('theme.navbarshadow');
-    animation: load 2s linear infinite;
 }
 
 @keyframes load {
@@ -423,7 +433,7 @@ export default {
 
     0%,
     100% {
-        top: 10px;
+        top: .75rem;
     }
 
     12.5% {

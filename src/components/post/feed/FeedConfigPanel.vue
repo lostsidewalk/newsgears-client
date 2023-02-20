@@ -3,17 +3,15 @@
     <div class="modal-body">
       <div class="modal-header">
         <h3 class="view-header-no-count">
-          <i class="fa fa-feed fa-1x"/>
+          <i class="fa fa-feed fa-1x" />
           {{ this.getModeVerbiage() }}
-          <div class="loader" v-if="inTransit">
-              <div class="loading_1"></div>
-          </div>
+          <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
         </h3>
       </div>
       <div class="modal-actions">
         <TabHeader :tabModel="tabModel" 
           :selectedTab="selectedTab" 
-          :inTransit="inTransit" 
+          :disabled="disabled || inTransit" 
           :theme="theme" 
           @selectTab="this.selectedTab = $event" />
         <!-- tab panel -->
@@ -22,10 +20,11 @@
           <div class="tab" v-show="this.selectedTab === 'BASIC_PROPERTIES'">
             <!-- feed ident -->
             <FeedConfigTextField 
+              ref="feedIdent"
               :label="'FEED IDENTIFIER'"
               :required="true"
               :placeholder="'Feed identifier'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedIdent.$model" 
               :errorValue="v$.feedIdent.$errors"
@@ -35,7 +34,7 @@
               :label="'FEED TITLE'"
               :required="true"
               :placeholder="'Feed title'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedTitle.$model" 
               :errorValue="v$.feedTitle.$errors"
@@ -45,18 +44,17 @@
               :label="'FEED IMAGE'"
               :required="false"
               :baseUrl="baseUrl"
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="this.feedImgSrc"
               @authError="handleAuthError"
-              @update:modelValue="this.feedImgSrc = $event" 
-              @updateInTransit="this.$emit('updateInTransit', $event)" />
+              @update:modelValue="this.feedImgSrc = $event" />
             <!-- feed description -->
             <FeedConfigTextField 
               :label="'FEED DESCRIPTION'"
               :required="false"
               :placeholder="'Feed description'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedDescription.$model" 
               :errorValue="v$.feedDescription.$errors"
@@ -66,7 +64,7 @@
               :label="'FEED GENERATOR'"
               :required="false"
               :placeholder="'Feed generator'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedGenerator.$model" 
               :errorValue="v$.feedGenerator.$errors"
@@ -76,7 +74,7 @@
               :label="'FEED COPYRIGHT'"
               :required="false"
               :placeholder="'Feed copyright'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedCopyright.$model" 
               :errorValue="v$.feedCopyright.$errors"
@@ -86,7 +84,7 @@
               :label="'FEED LANGUAGE'"
               :required="false"
               :placeholder="'Feed language'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedLanguage.$model" 
               :errorValue="v$.feedLanguage.$errors"
@@ -99,14 +97,14 @@
               :label="'NEWSAPIV2 EXPRESSION'"
               :required="false"
               :placeholder="'NEWSAPIV2 Expression'" 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.newsApiV2QueryText.$model" 
               :errorValue="v$.newsApiV2QueryText.$errors"
               @update:modelValue="v$.newsApiV2QueryText.$model = $event" />
             <!-- NewsApiV2 sources config -->
             <NewsApiV2SourcesConfig 
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :allNewsApiV2Languages="this.allNewsApiV2Languages" 
               :allNewsApiV2Countries="this.allNewsApiV2Countries" 
@@ -121,19 +119,18 @@
               @update:newsApiV2Category="this.newsApiV2Category = $event" 
               @update:newsApiV2Source="this.newsApiV2Sources[$event.source.key] = $event.enabled" />
           </div>
-          
           <!-- tab 3: RSS/ATOM Feed Discovery -->
           <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
             <!-- Upstream RSS/ATOM URLs -->
             <UpstreamRssAtomFeedsConfig v-if="!this.showFeedCatalog" 
-              :inTransit="inTransit" 
+              ref="upstreamRssAtomFeedsConfig"
+              :disabled="disabled || inTransit" 
               :theme="theme" 
               :baseUrl="baseUrl"
               :rssAtomFeedUrls="this.rssAtomFeedUrls" 
               @addRssAtomUrl="this.addRssAtomUrl" 
               @showRssAtomUrlBrowser="this.showRssAtomUrlBrowser"
               @deleteRssAtomUrl="this.deleteRssAtomUrl"
-              @updateInTransit="this.$emit('updateInTransit', $event)" 
               @update:rssAtomFeedUrl="updateRssAtomFeedUrl" />
             <div class="feed-catalog-errors" v-if="this.showFeedCatalog && this.feedCatalogErrors.length > 0">
               <div class="error feed-catalog-error" v-for="error in this.feedCatalogErrors" :key="error">
@@ -141,7 +138,7 @@
               </div>
             </div>
             <UpstreamRssAtomFeedCatalog v-if="this.showFeedCatalog"
-              :inTransit="inTransit" 
+              :disabled="disabled || inTransit"
               :theme="theme"
               :feedCatalog="this.feedCatalog" 
               :rssAtomFeedUrls="this.rssAtomFeedUrls"
@@ -154,19 +151,19 @@
         <!-- save/update button -->
         <button class="feed-config-button" 
           @click="saveFeedConfig" 
-          :disabled="inTransit || v$.$invalid"
+          :disabled="disabled || inTransit || v$.$invalid"
           :title="v$.$invalid ? 'Fill out all required fields' : (this.feed.id ? 'Update this feed' : 'Save this feed')"> 
           {{ this.feed.id ? 'Update' : 'Save' }}
         </button>
         <!-- cancel button -->
         <button v-if="!this.showFeedCatalog" class="feed-config-button" 
           @click="cancelFeedConfig" 
-          :disabled="inTransit">
+          :disabled="disabled || inTransit">
           Cancel
         </button>
         <button v-if="this.showFeedCatalog" class="feed-config-button" 
           @click="cancelRssAtomUrlBrowser" 
-          :disabled="inTransit">
+          :disabled="disabled || inTransit">
           Return to feed config 
         </button>
       </div>
@@ -175,7 +172,8 @@
 </template>
 
 <script>
-import TabHeader from './TabHeader.vue';
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
+import TabHeader from '../../layout/TabHeader.vue';
 import FeedConfigTextField from './FeedConfigTextField.vue';
 import FeedConfigImageField from './FeedConfigImageField.vue';
 import NewsApiV2SourcesConfig from './NewsApiV2SourcesConfig.vue';
@@ -193,6 +191,7 @@ export default {
     }
   },
   components: {
+    NavbarFixedHeader,
     TabHeader,
     FeedConfigTextField,
     FeedConfigImageField,
@@ -202,7 +201,7 @@ export default {
 },
   props: [
     "baseUrl", 
-    "inTransit", 
+    "disabled", 
     "theme", 
     "allNewsApiV2Sources", 
     "allNewsApiV2Countries", 
@@ -210,7 +209,7 @@ export default {
     "allNewsApiV2Languages",
     "rssAtomFeedCatalog"
   ],
-  emits: [ "saveOrUpdate", "cancel", "updateInTransit", "authError" ],
+  emits: [ "saveOrUpdate", "cancel", "authError" ],
   validations() {
     return {
       feedIdent: { 
@@ -260,6 +259,9 @@ export default {
           "icon": "feed",
         }
       ],
+      // 
+      inTransit: false, 
+
       // basic properties 
       feed: null,
       feedId: null,
@@ -316,19 +318,41 @@ export default {
       r.webMaster = data.webMaster;
       r.sampleEntries = data.sampleEntries;
       r.discoveryUrl = data.feedUrl;
+      r.httpStatusCode = data.httpStatusCode;
+      r.httpStatusMessage = data.httpStatusMessage;
+      r.redirectFeedUrl = data.redirectFeedUrl;
+      r.redirectHttpStatusCode = data.redirectHttpStatusCode;
+      r.redirectHttpStatusMessage = data.redirectHttpStatusMessage;
     },
     // modal control methods 
-    show(feed) {
+    setup(feed) {
       this.feed = feed;
       this.feedId = feed.id;
       this.feedIdent = feed.ident;
       this.setupFeed();
-      this.showModal = true;
       this.overflowClass = 'hidden';
+      this.showModal = true;
+      this.$nextTick(() => {
+        this.$refs.feedIdent.focus();
+      });
     },
-    hide() {
-      this.showModal = false;
+    setupQuickAdd(feed) {
+      this.feed = feed;
+      this.feedId = feed.id;
+      this.feedIdent = feed.ident;
+      this.setupFeed();
+      this.overflowClass = 'hidden';
+      this.selectedTab = 'RSS_ATOM_DISCOVERY';
+      this.addRssAtomUrl();
+      this.showModal = true;
+      this.$nextTick(() => {
+        this.$refs.upstreamRssAtomFeedsConfig.focus();
+      })
+    },
+    tearDown() {
+      this.clearModel();
       this.overflowClass = 'scroll';
+      this.showModal = false;
     },
     error(error) {
       console.log("MODAL SHOWING ERROR: " + error.toString());
@@ -336,13 +360,12 @@ export default {
     // 
     handleAuthError(error) {
       this.$emit('authError', error);
-      this.$emit('updateInTransit', false);
     },
     getModeVerbiage() {
       if (this.feedId) {
-        return 'CONFIGURE ' + this.feedIdent;
+        return 'CONFIGURE QUEUE: ' + this.feedIdent;
       } else {
-        return 'CREATE A NEW FEED';
+        return 'CREATE A NEW QUEUE';
       }
     },
     setupFeed() {
@@ -411,7 +434,7 @@ export default {
       this.showFeedCatalog = true;
       if (!this.feedCatalog) {
         console.log("loading feed catalog...");
-        this.$emit('updateInTransit', true);
+        this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
           const requestOptions = {
               method: 'GET',
@@ -441,10 +464,11 @@ export default {
                 this.feedCatalogErrors.push(error.message);
               }
             }).finally(() => {
-              this.$emit('updateInTransit', false);
+              this.inTransit = false;
             });
         }).catch((error) => {
           this.handleAuthError(error);
+          this.inTransit = false;
         })
         this.feedCatalog = [];
       }
@@ -475,6 +499,10 @@ export default {
         }
       }
     },
+    // 
+    clearModel() {
+      this.selectedTab = 'BASIC_PROPERTIES';  
+    }
   }
 }
 </script>
@@ -491,7 +519,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 1000;
-  background: rgba(0,0,0,0.8);
+  background: v-bind('theme.modalcontainerbg');
 }
 
 .modal-header {
@@ -504,23 +532,19 @@ export default {
   color: v-bind('theme.normalmessage');
   text-align: left;
   width: 75%;
-  padding: 32px;
+  padding: 2rem;
   border: 1px solid v-bind('theme.buttonborder');
   border-radius: 5px;
 }
 
 .modal-actions {
-  padding-top: 10px;
-  /* display: flex;
-  flex-direction: row;
-  gap: 40px;
-  justify-content: center; */
+  padding-top: .75rem;
 }
 
 .feed-config-button-wrapper {
   display: inline-grid;
   grid-auto-flow: column;
-  grid-column-gap: 10px;
+  grid-column-gap: .75rem;
 }
 
 .feed-config-button {
@@ -528,12 +552,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
   text-align: center;
-  font-size: unset;
 }
 
 .feed-config-button:disabled {
@@ -555,17 +578,17 @@ export default {
 }
 
 .feed-config-errors {
-  margin-top: 5px;
+  margin-top: .31rem;
 }
 
 .tabbed-panel {
-  padding: 10px;
+  padding: .75rem;
   border-top: 0px;
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
   border-left: 1px solid v-bind('theme.sectionbordercolor');
   border-right: 1px solid v-bind('theme.sectionbordercolor');
   border-radius: 0px 0px 3px 3px;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   min-height: 50vh;
   max-height: 50vh;
@@ -584,32 +607,11 @@ export default {
 .view-header-no-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
-  font-size: large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0px;
+  margin: 0rem;
   overflow: hidden;
-}
-
-.loader {
-    width: 100%;
-    position: relative;
-}
-
-.loader .loading_1 {
-    position: relative;
-    height: 1px;
-    animation: turn 4s linear 1.75s infinite;
-}
-
-.loader .loading_1:before {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 0;
-    height: 100%;
-    background-color: v-bind('theme.navbarshadow');
-    animation: load 2s linear infinite;
 }
 
 @keyframes load {
@@ -642,7 +644,7 @@ export default {
 
     0%,
     100% {
-        top: 10px;
+        top: .75rem;
     }
 
     12.5% {
@@ -652,10 +654,8 @@ export default {
 
 .feed-catalog-errors {
   background-color: v-bind('theme.sectionnegativehighlight');
-  padding: 10px;
+  padding: .75rem;
   border-radius: 3px;
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
-
-
 </style>

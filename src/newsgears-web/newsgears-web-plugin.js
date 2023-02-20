@@ -87,9 +87,7 @@ export default {
             email: email
           }, {
             withCredentials: true,
-          }
-          )
-          .then((response) => {
+          }).then((response) => {
             if (response.status === 200) {
               resolve();
             } else {

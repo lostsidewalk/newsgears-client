@@ -1,38 +1,40 @@
 <template>
-  <div>
-    <div v-show="!this.inTransit && !this.$auth.$isAuthenticated">
+  <div class="auth-container" v-show="!this.$auth.$isAuthenticated">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
+    <div class="auth-container-inner">
       <!-- username -->
       <AuthTextField :placeholder="'Username'" 
-        :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.username" 
-        @update:modelValue="this.username = $event"/>
+        @update:modelValue="this.username = $event" 
+        :disabled="disabled || inTransit" />
       <!-- password -->
       <AuthTextField :placeholder="'Password'" 
-        :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.password" 
         @update:modelValue="this.password = $event" 
-        :type="'password'" />
+        :type="'password'" 
+        :disabled="disabled || inTransit" />
       <!-- sign-in button -->
       <AuthButton
         label="Submit"
         :theme="theme"
         @clicked="login()"
-        :disabled="inTransit" />
+        :disabled="disabled || inTransit" />
       <!-- Google OAuth2 sign-in button -->
-      <GoogleAuthButton :theme="theme" />
+      <GoogleAuthButton :theme="theme" :disabled="disabled || inTransit" />
       <!-- account recovery link -->
-      <AuthPanelLink :to="'/pw_reset'" :message="'I need help signing in.'" :theme="theme" />
+      <AuthPanelLink :to="'/pw_reset'" :message="'Account recovery.'" :theme="theme" />
       <!-- registration link -->
-      <AuthPanelLink :to="'/register'" :message="'No account?  Get one here.'" :theme="theme" />
+      <AuthPanelLink :to="'/register'" :message="'FeedGears is free.  Create an account here.'" :theme="theme" />
+      <!-- server response -->
+      <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
     </div>
-    <!-- server response -->
-    <AuthServerResponse :serverMessage="serverMessage" :lastAction="lastAction" :theme="theme" />
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from '../layout/NavbarFixedHeader.vue';
 import AuthTextField from './AuthTextField.vue';
 import AuthButton from './AuthButton.vue'
 import GoogleAuthButton from './GoogleAuthButton.vue';
@@ -42,17 +44,16 @@ import AuthServerResponse from './AuthServerResponse.vue';
 export default {
   name: "AuthPanel",
   components: {
+    NavbarFixedHeader,
     AuthTextField,
     AuthButton,
     GoogleAuthButton,
     AuthPanelLink,
     AuthServerResponse,
   },
-  props: [ "inTransit", "theme" ],
-  emits: [ "updateInTransit" ],
+  props: [ "disabled", "theme" ],
   mounted() {
     if (this.$route.query.error) {
-      this.lastAction = null;
       this.serverMessage = "We're unable to complete your request.  Please try to login using another method.";
     }
   },
@@ -61,8 +62,9 @@ export default {
       username: null,
       password: null,
       // server response/initiating action 
-      lastAction: null,
       serverMessage: null,
+      // 
+      inTransit: false,
     }
   },
   methods: {
@@ -70,36 +72,30 @@ export default {
         this.clearServerResponse();
 
         if (!this.username && !this.password) {
-          this.lastAction = "LOGIN";
           this.serverMessage = "Username and password are required.";
           return;
         }
         if (this.username && !this.password) {
-          this.lastAction = "LOGIN";
           this.serverMessage = "Password is required.";
           return;
         }
         if (!this.username && this.password) {
-          this.lastAction = "LOGIN";
           this.serverMessage = "Username is required.";
           return;
         }
 
-        this.$emit('updateInTransit', true);
+        this.inTransit = true;
         this.$auth
             .loginWithSupplied(this.username, this.password, false)
             .then(() => {
               this.clearData();
-            })
-            .catch((error) => {
-              this.lastAction = "LOGIN";
+            }).catch((error) => {
               this.serverMessage = error;
               if (!this.serverMessage) {
                 this.serverMessage = "Something horrible happened, not sure what.  Please try again in a few moments.";
               }
-            })
-            .finally(() => {
-              this.$emit('updateInTransit', false);
+            }).finally(() => {
+              this.inTransit = false;
             });
       },
       //
@@ -112,9 +108,27 @@ export default {
         this.clearServerResponse();
       },
       clearServerResponse() {
-        this.lastAction = null;
         this.serverMessage = null;
       }
   }
 }
 </script>
+
+<style scoped>
+.auth-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  font-size: larger; 
+}
+
+.auth-container-inner {
+  margin: 25%;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  background: v-bind('theme.sectionhighlight');
+  border-radius: 5px;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+</style>

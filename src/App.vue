@@ -1,20 +1,21 @@
 <template>
   <div id="apphome">
-    <AppBanner :theme="theme"/>
-      <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
-            <component :is="Component" />
-          </transition>
-      </router-view>
+    <AppBanner :theme="theme" />
+    <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+    </router-view>
   </div>
 </template>
 
 <script>
-
 import AppBanner from './components/layout/AppBanner.vue';
 
 export default {
-  components: { AppBanner },
+  components: { 
+    AppBanner,
+  },
   methods: {
     isLoading() {
       return false;
@@ -34,7 +35,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   font-family: system-ui, sans-serif;
-  min-width: 550px;
 }
 
 @font-face {

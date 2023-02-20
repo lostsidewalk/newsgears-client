@@ -1,16 +1,16 @@
 <template>
-  <div class="go-back" @click="this.goBack()">
+  <button class="go-back" @click="this.goBack()" accesskey="b" :disabled="disabled">
     <span class="go-back-text">
       <span class="fa fa-arrow-left"/>
-      &nbsp; Go back.
+      &nbsp; <i class="underline">G</i>o back.
     </span>
-  </div>
+  </button>
 </template>
 
 <script>
 export default {
   name: "GoBack",
-  props: [ "theme" ],
+  props: [ "disabled", "theme" ],
   methods: {
     goBack() {
       this.$router.back();
@@ -23,11 +23,13 @@ export default {
 .go-back {
   color: v-bind('theme.subduedmessage');
   text-align: left;
-  margin-top: 50px;
-  margin-left: 25px;
+  margin-top: 3.125rem;
+  margin-left: 1.56rem;
   display: inline;
   float: left;
   user-select: none;
+  position: relative;
+  z-index: 99999;
 }
 
 .go-back-text {
@@ -36,5 +38,9 @@ export default {
 
 .go-back-text:hover {
   cursor: pointer;
+}
+
+.underline {
+  text-decoration: underline;
 }
 </style>

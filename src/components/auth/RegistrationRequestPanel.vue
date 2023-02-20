@@ -1,45 +1,48 @@
 <template>
-  <div>
+  <div class="registration-request-container">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- registration panel -->
-    <div v-show="!this.inTransit">
+    <div class="registration-request-container-inner">
       <!-- email address -->
       <AuthTextField :placeholder="'Email address'" 
-        :inTransit="inTransit" 
+        :disabled="disabled || inTransit" 
         :theme="theme" 
         :modelValue="v$.email.$model" 
         :errorValue="v$.email.$errors"
         @update:modelValue="v$.email.$model = $event" />
       <!-- username -->
       <AuthTextField :placeholder="'Username'" 
-        :inTransit="inTransit" 
+        :disabled="disabled || inTransit" 
         :theme="theme" 
         :modelValue="v$.username.$model" 
         :errorValue="v$.username.$errors"
         @update:modelValue="v$.username.$model = $event" />
       <!-- password -->
       <AuthTextField :placeholder="'Password'" 
-        :inTransit="inTransit" 
+        :disabled="disabled || inTransit" 
         :theme="theme" 
         :modelValue="v$.password.$model" 
         :errorValue="v$.password.$errors"
         @update:modelValue="v$.password.$model = $event" 
         :type="'password'" />
       <!-- agree to terms -->
-      <AuthAgreeToTerms :inTransit="inTransit" :theme="theme" @updateAgreement="updateAgreement" />
+      <AuthAgreeToTerms :disabled="disabled || inTransit" :theme="theme" @updateAgreement="updateAgreement" />
       <!-- submit button -->
       <AuthButton
         label="Submit"
         :theme="theme"
         @clicked="submitRegistration()"
-        :disabled="inTransit || v$.$invalid"
+        :button="'s'"
+        :disabled="disabled || inTransit || v$.$invalid"
       />
+      <!-- server response -->
+      <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
     </div>
-    <!-- server response -->
-    <AuthServerResponse :serverMessage="serverMessage" :lastAction="lastAction" :theme="theme" />
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from '../layout/NavbarFixedHeader.vue';
 import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email } from '@vuelidate/validators';
 import AuthButton from './AuthButton.vue'
@@ -54,13 +57,13 @@ export default {
     }
   },
   components: {
+    NavbarFixedHeader,
     AuthButton,
     AuthTextField,
     AuthAgreeToTerms,
     AuthServerResponse,
 },
-  props: [ "inTransit", "theme" ],
-  emits: [ "updateInTransit" ],
+  props: [ "disabled", "theme" ],
   validations() {
     return {
       username: { 
@@ -86,8 +89,9 @@ export default {
       password: null,
       userType: null,
       agreeWithTerms: null,
-      lastAction: null,
       serverMessage: null,
+      // 
+      inTransit: false,
     }
   },
   methods: {
@@ -98,18 +102,16 @@ export default {
       this.clearServerResponse();
 
       if (!this.username || !this.email || !this.password) {
-        this.lastAction = "REGISTER";
         this.serverMessage = "Username, email address, and password are required in order to register.";
         return;
       }
 
       if (!this.agreeWithTerms) {
-        this.lastAction = "REGISTER";
         this.serverMessage = "In order to register, you must first agree to the NewsGears Terms and Conditions.";
         return;
       }
 
-      this.$emit('updateInTransit', true);
+      this.inTransit = true;
       this.$auth
         .registerWithSupplied(this.username, this.email, this.password, this.userType)
         .then((response) => {
@@ -120,19 +122,17 @@ export default {
             this.$router.push("/app");
           })
           .catch((error) => {
-            this.lastAction = "LOGIN";
             this.serverMessage = error;
           })
           .finally(() => {
-            this.$emit('updateInTransit', false);
+            this.inTransit = false;
           });
         })
         .catch((error) => {
-          this.lastAction = "ERROR";
           this.serverMessage = error;
         })
         .finally(() => {
-          this.$emit('updateInTransit', false);
+          this.inTransit = false;
         });
     },
     //
@@ -146,9 +146,27 @@ export default {
       this.clearServerResponse();
     },
     clearServerResponse() {
-      this.lastAction = null;
       this.serverMessage = null;
     }
   }
 }
 </script>
+
+<style scoped>
+.registration-request-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  font-size: larger; 
+}
+
+.registration-request-container-inner {
+  margin: 25%;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  background: v-bind('theme.sectionhighlight');
+  border-radius: 5px;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+</style>

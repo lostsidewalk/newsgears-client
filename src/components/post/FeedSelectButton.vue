@@ -2,7 +2,7 @@
   <button  
     class="feed-select" 
     :value="feed.value" 
-    :key="feed.label" 
+    :key="feed.value" 
     :disabled="disabled">
     <div class="feed-select-underlay">
       <!-- feed name -->
@@ -14,26 +14,39 @@
         <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc">
         <div class="feed-info-wrapper">
           <!-- inbound / published count -->
-          <label class="feed-info-label-small">TOTAL | STARRED</label>
-          <label class="feed-info-label">{{ this.inboundCount + ' | ' + this.publishedCount}}</label>
+          <label class="feed-info-label"><i class="fa fa-eye"></i> {{ this.inboundCount }}</label>
+          <label class="feed-info-label"><i class="fa fa-star"></i> {{ this.publishedCount }}</label>
           <!-- <label class="feed-info-label">{{ feed.title }}</label>
           <label class="feed-info-label">{{ feed.description }}</label> -->
         </div>
       </div>
       <!-- show more/less information (also selects the feed) -->
-      <label class="feed-info-label-small link" @click="toggleMoreInformation()">
+      <a class="feed-info-label-small link" @click.stop="toggleMoreInformation()" @keypress.enter.prevent="toggleMoreInformation()" tabindex="0">
         Show {{ this.showMoreInformation ? 'less' : 'more' }}
-      </label>
+      </a>
       <!-- more information -->
       <div v-if="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
         <label class="feed-info-label-small">SUBSCRIPTIONS</label>
+        <!-- NewsApiV2 -->
         <label class="feed-info-label" v-if="feed.newsApiV2QueryText">
           <img src="newsapiv2_logo.png" /> {{ feed.newsApiV2QueryText }}
         </label>
+        <!-- RSS/ATOM feeds -->
+        <a class="feed-info-label feed-info-label-small link" v-if="feed.rssAtomFeedUrls.length === 0" href="#" @click="this.$emit('rssAtomUrlQuickAdd', feed.id)" tabindex="0">
+          + Add RSS/ATOM subscription
+        </a>
         <label class="feed-info-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
-          <img src="rss_logo.svg" /> <a class="link" :href="rssAtomFeedUrl.feedUrl" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
-            {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}</a>
+          <!-- RSS logo -->
+          <img src="rss_logo.svg" /> 
+          <!-- last http status -->
+          <span v-if="hasFeedMetrics(rssAtomFeedUrl)" :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
+            {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
+          </span>
+          <!-- feed title w/direct link -->
+            <a class="link" :href="rssAtomFeedUrl.feedUrl" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
+            {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
+          </a>
         </label>
       </div>
     </div>
@@ -44,7 +57,39 @@
 export default {
   name: "FeedSelectButton",
   props: ["feed", "inboundCount", "publishedCount", "disabled", "theme"],
+  mounted() {
+    // console.log("feed-select-button, feed=" + JSON.stringify(this.feed));
+  },
   methods: {
+    hasFeedMetrics(rssAtomFeedUrl) {
+      return rssAtomFeedUrl.feedMetrics && rssAtomFeedUrl.feedMetrics.length > 0;
+    },
+    // shown on hover 
+    buildMetricStatusMessage(feedMetrics) {
+      let m = this.getMostRecentMetric(feedMetrics);
+      if (m.persistCt > 0) {
+        return m.persistCt + ' new articles imported at ' + m.importTimestamp;
+      } else {
+        // HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
+        let message = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
+        if (m.queryExceptionTypeMessage) {
+          message = message + '\n' + m.queryExceptionTypeMessage;
+        }
+        return message;
+      }
+    },
+    // shown next to the RSS/ATOM icon 
+    buildImportCtMessage(feedMetrics) {
+      let m = this.getMostRecentMetric(feedMetrics);
+      return m.persistCt > 0 ? '+' + m.persistCt : ('HTTP ' + m.httpStatusCode);
+    },
+    getMostRecentMetric(feedMetrics) {
+      if (feedMetrics) {
+        return feedMetrics.sort((a, b) => {
+          return a.importTimestamp - b.importTimestamp;
+        })[0];
+      }
+    },
     toggleMoreInformation() {
       this.showMoreInformation = !this.showMoreInformation;
     }
@@ -63,7 +108,7 @@ export default {
   display: block !important;
   text-align: left !important;
   color: v-bind('theme.normalmessage');
-  padding: 7px;
+  padding: .44rem;
   cursor: pointer;
   border-radius: 3px;
   text-align: center;
@@ -97,16 +142,17 @@ export default {
 .feed-image-wrapper {
   display: flex;
   flex-direction: row;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding-top: .125rem;
+  padding-bottom: .125rem;
   cursor: pointer;
 }
 
 .feed-info-wrapper {
-  flex-direction: column;
+  flex-direction: row;
   display: flex;
-  padding-left: 5px;
+  padding-left: .31rem;
   cursor: pointer;
+  align-items: flex-start;
 }
 
 .feed-info-label {
@@ -114,17 +160,20 @@ export default {
   align-items: center;
   cursor: pointer;
   overflow-wrap: anywhere;
-  padding: 5px;
+  padding: .31rem;
+  gap: .31rem;
+  overflow-wrap: break-word;
 }
 
 .feed-info-label > img {
   max-height: 24px;
   max-width: 24px;
-  padding-right: 5px;
+  padding-right: .31rem;
 }
 
 .feed-info-label > span {
-  padding-right: 5px;
+  padding-right: .31rem;
+  word-wrap: break-word;
 }
 
 .feed-info-label-small {
@@ -138,9 +187,9 @@ export default {
   display: flex;
   cursor: pointer;
   overflow-wrap: anywhere;
-  padding: 5px;
+  padding: .31rem;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
 }
 
 .feed-image {
@@ -170,6 +219,7 @@ export default {
 }
 
 .feed-info-details {
-  padding-top: 5px;
+  padding-top: .31rem;
+  overflow: auto;
 }
 </style>

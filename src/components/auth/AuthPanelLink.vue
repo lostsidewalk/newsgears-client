@@ -14,9 +14,15 @@ export default {
 </script>
 
 <style scoped>
+.auth-field {
+  margin-left: 2vw;
+  margin-right: 2vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+
 .auth-panel-message {
   color: v-bind('theme.normalmessage');
-  padding: 4%;
 }
 
 .auth-panel-message > a:hover {

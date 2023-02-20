@@ -1,6 +1,6 @@
 <template>
   <span>
-    <button class="dashboard-button" @click="this.$router.push('/app')" :disabled="inTransit" aria-label="Go to dashboard">
+    <button class="dashboard-button" @click="this.$router.push('/app')" accesskey="q" :disabled="disabled" aria-label="Go to dashboard">
       <span class="fa fa-dashboard" />
     </button>
   </span>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "DashboardButton",
-  props: [ "inTransit", "theme" ],
+  props: [ "disabled", "theme" ],
 }
 </script>
 
@@ -19,12 +19,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
-  margin: 9px;
-  margin-left: 2%;
+  margin: .56rem;
   text-align: center;
 }
 

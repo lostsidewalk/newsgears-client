@@ -1,17 +1,15 @@
 <template>
   <div>
     <!-- dashboard button -->
-    <DashboardButton :inTransit="inTransit" :theme="theme" />
+    <DashboardButton :disabled="disabled" :theme="theme" />
     <!-- logout button -->
-    <LogoutButton :inTransit="inTransit" :theme="theme" />
+    <LogoutButton :disabled="disabled" :theme="theme" />
     <!-- manage subscription button -->
-    <ManageSubscriptionButton v-if="this.$auth.$user.hasSubscription" :inTransit="inTransit" :disableSubscription="disableSubscription" :theme="theme" />
-    <!-- upgrade button -->
-    <UpgradeSubscriptionButton v-else :inTransit="inTransit" :disableSubscription="disableSubscription" :theme="theme" />
+    <ManageSubscriptionButton v-if="!disableSubscriptions && this.$auth.$user.hasSubscription" :disabled="disabled" :theme="theme" />
     <!-- settings button -->
-    <SettingsButton :inTransit="inTransit" :disableSettings="disableSettings" :theme="theme" />
+    <SettingsButton v-if="!disableSettings" :disabled="disabled" :theme="theme" />
     <!-- display mode switch -->
-    <DisplayModeButton :inTransit="inTransit" :theme="theme" />
+    <DisplayModeButton :disabled="disabled" :theme="theme" />
   </div>
 </template>>
 
@@ -19,7 +17,6 @@
 import DashboardButton from '@/components/nav/DashboardButton.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';
 import ManageSubscriptionButton from '@/components/nav/ManageSubscriptionButton.vue';
-import UpgradeSubscriptionButton from '@/components/nav/UpgradeSubscriptionButton.vue';
 import SettingsButton from '@/components/nav/SettingsButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
 
@@ -29,11 +26,10 @@ export default {
       DashboardButton,
       LogoutButton,
       ManageSubscriptionButton,
-      UpgradeSubscriptionButton,
       SettingsButton, 
       DisplayModeButton, 
     },
-    props: ["inTransit", "disableSettings", "disableSubscription", "theme"],
+    props: [ "disabled", "theme", "disableSettings", "disableSubscriptions" ],
 }
 </script>
 

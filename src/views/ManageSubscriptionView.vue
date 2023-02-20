@@ -1,14 +1,15 @@
 <template>
   <div id="home">
+    <VueAnnouncer />
     <!-- fixed header -->
-    <NavbarFixedHeader :theme="theme">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit">
       <template v-slot:buttons>
-          <NavbarButtons :disableSubscription="true" :inTransit="inTransit" :theme="theme" />
+          <NavbarButtons :disableSettings="false" :disableSubscriptions="true" :disabled="inTransit" :theme="theme" />
       </template>
     </NavbarFixedHeader>
     <!-- fixed subheader -->
     <transition appear enter-active-class="animated fadeIn">
-      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme" :inTransit="inTransit">
+      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme">
         <template v-slot:message>
           <LastServerMessage :serverMessages="this.serverMessages" @clearLastServerMessage="this.clearLastServerMessage" :theme="theme"/>
         </template>
@@ -19,13 +20,13 @@
       <InvoicePanel ref="invoicePanel"
         :subscription="this.subscription"
         v-if="this.subscription && !this.failedToLoad"
+        :disabled="inTransit"
         :theme="theme"
-        :inTransit="inTransit"
         @cancelSubscription="cancelSubscription"
         @resumeSubscription="resumeSubscription"
       />
       <!-- "go back" link -->
-      <GoBack :theme="theme" />
+      <GoBack :disabled="inTransit" :theme="theme" />
     </div>
     <YouHaveBeenLoggedOut v-else :theme="theme" />
   </div>
@@ -65,6 +66,7 @@ export default {
         id: serverMessageId,
         text: message
       });
+      this.$announcer.polite(message);
       setTimeout(() => {
         let idxToSplice = -1;
         for(let i = 0; i < this.serverMessages.length; i++) {
@@ -76,12 +78,13 @@ export default {
         if (idxToSplice >= 0) {
           this.serverMessages.splice(idxToSplice, 1);
         }
-      }, 6000);
+      }, 4000);
     },
     clearLastServerMessage() {
       this.serverMessages.pop();
     },
     refreshSubscription() {
+      this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
             headers: { 
@@ -110,6 +113,9 @@ export default {
         }).finally(() => {
           this.inTransit = false;
         });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
       });
     },
     cancelSubscription(subscription) {
@@ -146,6 +152,9 @@ export default {
         }).finally(() => {
           this.inTransit = false;
         });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
       });
     },
     resumeSubscription(subscription) {
@@ -181,6 +190,9 @@ export default {
         }).finally(() => {
           this.inTransit = false;
         });
+      }).catch((error) => {
+        this.handleAuthError(error);
+        this.inTransit = false;
       });
     },
   },
@@ -188,9 +200,10 @@ export default {
     return {
       subscription: null,
       theme: this.$theme.currentTheme,
-      inTransit: true,
       serverMessages: [],
       failedToLoad: false,
+      // 
+      inTransit: true,
     };
   },
 };
@@ -200,7 +213,5 @@ export default {
 #home {
   background-color: v-bind('theme.appbg');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  margin-left: 3%;
-  margin-right: 3%;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="hide-button">
-      <button @click="this.$emit('toggle')" :title="(this.show ? 'Collapse' : 'Restore') + ' this panel'">
+      <button @click="this.$emit('toggle')" :title="(this.show ? 'Collapse' : 'Restore') + ' this panel'" :disabled="disabled">
         <i class="fa" :class="this.show ? 'fa-window-minimize' : 'fa-window-restore'"></i>
       </button>
     </div>
@@ -9,8 +9,8 @@
 <script>
 export default {
   name: "MinMaxButton",
-  props: ["theme", "show"],
-  emits: ["toggle"],
+  props: [ "disabled", "theme", "show" ],
+  emits: [ "toggle" ],
 }
 </script>
 
@@ -18,15 +18,12 @@ export default {
 .hide-button {
   display: flex;
   flex-direction: row-reverse;
-  padding-right: 2px;
-}
-
-.hide-button > button:hover {
+  padding-right: .125rem;
 }
 
 .hide-button > button {
   font-weight: bold;
-  font-size: large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   background-color: unset;

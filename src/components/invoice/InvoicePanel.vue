@@ -10,15 +10,15 @@
         <p v-if="isCanceled()">Your subscription was canceled, and will not renew.</p>
         <div class="subscription-field" v-if="isActive()">
           <label for="subscription-current-period">CURRENT PERIOD</label>
-          <input name="subscription-current-period" type="text" :placeholder="getSubscriptionCurrentPeriod()" disabled="disabled" />
+          <input name="subscription-current-period" type="text" :placeholder="getSubscriptionCurrentPeriod()" :disabled="disabled" />
         </div>
         <div class="subscription-field" v-if="hasEnded()">
           <label for="subscription-ended-at">ENDED AT</label>
-          <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionEndedAt()" disabled="disabled" />
+          <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionEndedAt()" :disabled="disabled" />
         </div>
         <div class="subscription-field" v-if="isCanceled()">
           <label for="subscription-ended-at">WILL END AT</label>
-          <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionCurrentPeriodEnd()" disabled="disabled" />
+          <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionCurrentPeriodEnd()" :disabled="disabled" />
         </div>
         <div class="subscription-field" v-if="hasLastInvoice()">
           <label>MOST RECENT INVOICE ({{ getLastInvoiceCreated() }})</label>
@@ -29,17 +29,17 @@
           <div class="subscription-detail-field"><label>CUSTOMER EMAIL ADDRESS:</label> {{ getCustomerEmailAddress() }}</div>
           <div class="subscription-detail-field"><label>CUSTOMER NAME:</label> {{ getCustomerName() }}</div>
           <div class="subscription-detail-field"><label>URL:</label>
-            <a :href="getHostedInvoiceUrl()" :style="inTransit ? 'pointer-events: none' : ''">Click here.</a>
+            <a :href="getHostedInvoiceUrl()" :style="disabled ? 'pointer-events: none' : ''">Click here.</a>
           </div>
           <div class="subscription-detail-field"><label>PRODUCT:</label> {{ getProductDescription() }}</div>
         </div>
       </div>
       <div class="view-header-toolbar">
         <div>
-          <button id="cancelSubscription" class="header-button" @click="cancelSubscription()" :disabled="inTransit" v-if="!isCanceled()">
+          <button id="cancelSubscription" class="header-button" @click="cancelSubscription()" :disabled="disabled" v-if="!isCanceled()">
             Cancel Subscription
           </button>
-          <button id="resumeSubscription" class="header-button" @click="resumeSubscription()" :disabled="inTransit" v-else>
+          <button id="resumeSubscription" class="header-button" @click="resumeSubscription()" :disabled="disabled" v-else>
             Resume Subscription
           </button>
         </div>
@@ -56,8 +56,8 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 export default {
   name: "InvoicePanel",
-  props: ["inTransit", "subscription"],
-  emits: ["cancelSubscription", "resumeSubscription"],
+  props: [ "disabled", "subscription" ],
+  emits: [ "cancelSubscription", "resumeSubscription" ],
   components: {
   },
   data() {
@@ -144,7 +144,7 @@ export default {
 
 <style scoped>
 #manage-subscription {
-  margin-top: 100px;
+  margin-top: .625rem;
 }
 
 .invoice-panel {
@@ -154,7 +154,7 @@ export default {
   border-top: 1px solid v-bind('theme.sectionbordercolor');
   border-right: 1px solid v-bind('theme.sectionbordercolor');
   color: v-bind('theme.normalmessage');
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .header-button {
@@ -162,12 +162,12 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
-  margin-left: 10px;
-  margin-right: 0px;
+  margin-left: .75rem;
+  margin-right: .75rem;
   text-align: center;
   user-select: none;
 }
@@ -185,10 +185,10 @@ export default {
 }
 
 .view-header {
-  margin-left: 10px;
-  margin-right: 10px;
-  padding: 10px;
-  padding-top: 20px;
+  margin-left: .75rem;
+  margin-right: .75rem;
+  padding: .75rem;
+  padding-top: 1.25rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
   overflow: hidden;
@@ -197,19 +197,19 @@ export default {
 .view-header-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
-  font-size: large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0px;
+  margin: 0rem;
   overflow: hidden;
 }
 
 .view-header-toolbar {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: .75rem;
+  margin-right: .75rem;
   border-radius: 0px 0px 4px 4px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: .75rem;
+  padding-bottom: .75rem;
   border-top: 0px;
 }
 
@@ -219,23 +219,23 @@ export default {
   width: 100%;
   border-top: 1px solid v-bind('theme.sectionbordercolor');
   border-right: 1px solid v-bind('theme.sectionbordercolor');
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .subscription-field {
   text-align: left;
-  margin-bottom: 15px;
-  margin-right: 15px;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
 }
 
 .subscription-detail-field {
-  padding-top: 5px;
-  padding-left: 5px;
+  padding-top: .31rem;
+  padding-left: .31rem;
   color: v-bind('theme.subduedmessage');
 }
 
@@ -248,19 +248,18 @@ export default {
 }
 
 .subscription-field label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .subscription-field input {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  /* margin-left: 10px; */
-  margin-top: 2px;
+  margin-top: .125rem;
 }
 
 .subscription-field input:hover {

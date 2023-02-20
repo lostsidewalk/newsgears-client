@@ -1246,7 +1246,7 @@
     /* config.plugin('html') */
     new HtmlWebpackPlugin(
       {
-        title: 'FeedGears',
+        title: 'FeedGears RSS',
         scriptLoading: 'defer',
         templateParameters: function () { /* omitted long function */ },
         template: '/world/src/coldchillinsw/newsgears-client/public/index.html'
@@ -1255,7 +1255,7 @@
     /* config.plugin('pwa') */
     new HtmlPwaPlugin(
       {
-        name: 'FeedGears',
+        name: 'FeedGears RSS',
         manifestOptions: {
           name: 'NewsGears',
           short_name: 'NewsGears',

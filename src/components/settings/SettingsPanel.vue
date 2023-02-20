@@ -10,8 +10,6 @@
             {{ this.getModeVerbiage() }}
           </h3>
         </span>
-        <!-- account config body text -->
-        <p>{{ this.getExtendedModeVerbiage() }}</p>
       </div>
       <!-- account config form -->
       <div class="view-header update-settings-body">
@@ -20,13 +18,13 @@
           <div style="display: flex;">
             <!-- profile image -->
             <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img"/>
-            <div style="display: inline-flex; flex-direction: column; padding-left: 8px;">
+            <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
               <!-- auth provider username (auth provider user Id) -->
-              <span style="padding: 3px;">USERNAME: {{ authProviderUsername }}</span>
+              <span style="padding: .125rem;">{{ authProviderUsername }}</span>
               <!-- email address -->
-              <span style="padding: 3px;">EMAIL ADDRESS: {{ emailAddress }}</span>
+              <span style="padding: .125rem;">{{ emailAddress }}</span>
               <!-- auth provider -->
-              <span style="padding: 3px;">AUTH PROVIDER: {{ authProvider }}</span>
+              <!-- <span style="padding: .125rem;">AUTH PROVIDER: {{ authProvider }}</span> -->
             </div>
           </div>
         </div>
@@ -91,7 +89,6 @@
       </div>
     </div>
     <!-- notifications -->
-    <!--  - import summary w/interval -->
     <div class="settings-view notifications-view">
       <!-- notifications config header -->
       <div class="view-header">
@@ -114,11 +111,11 @@
               <input type="checkbox" id="enableAccountAlerts" name="enableAccountAlerts" v-model="enableAccountAlerts" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>ACCOUNT ALERTS AND MAINTENANCE NOTIFICATIONS
             </label>
           </span>
-          <span class="notification-option">
+          <!-- <span class="notification-option">
             <label class="notification-checkbox" for="enableDailyFeedReport">
               <input type="checkbox" id="enableDailyFeedReport" name="enableDailyFeedReport" v-model="enableDailyFeedReport" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>DAILY FEED REPORT
             </label>
-          </span>
+          </span> -->
           <span class="notification-option">
             <label class="notification-checkbox" for="enableProductNotifications">
               <input type="checkbox" id="enableProductNotifications" name="enableProductNotifications" v-model="enableProductNotifications" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>PRODUCT NOTIFICATIONS, NEW FEATURES, ETC.
@@ -126,7 +123,7 @@
           </span>
         </div>
       </div>
-      <!-- account config toolbar -->
+      <!-- notification config toolbar -->
       <div class="view-header-toolbar">
         <!-- update notification preferences button -->
         <div>
@@ -138,6 +135,69 @@
         <div>
           <button id="toggleNotifications" class="header-button" @click="toggleNotifications()" :disabled="inTransit">
             {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? 'Enable Selected Notifications' : 'Disable All Notifications' }} 
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- checkout view -->
+    <div class="settings-view checkout-view">
+      <!-- checkout header-->
+      <div class="view-header">
+        <span style="display: inline-flex;flex-direction: row;">
+          <h3 class="view-header-count">
+            <i class="fa fa-gears fa-1x"/>
+            JOIN THE FEEDGEARS COMMUNITY
+          </h3>
+        </span>
+      </div> 
+      <!-- plans -->
+      <div class="plans-view">
+        <div class="free-view">
+          <div class="view-header">
+            <span style="display: inline-flex;flex-direction: row;">
+              <h3 class="view-header-count">FREE TIER</h3>
+            </span>
+            <p class="price-description">
+              Free, forever.
+            </p>
+            <p class="plan-description">
+              Basic features:
+            </p>
+            <ul class="plan-features">
+              <li>Single queue with a maximum of 15 upstream subscriptions</li>
+              <li>Hourly data import</li>
+              <li>Configure FeedGears to query the world's news sources via NewsApi.org integration</li>
+              <li>Publish a feed of your starred items in RSS/ATOM/JSON format</li>
+              <li>We will never show you ads, or disclose your data to anyone</li>
+              <li>We are committed to security, privacy, and accessibility</li>
+              <li>Randomize kitten</li>
+            </ul>
+          </div>
+        </div>
+        <div class="premium-view">
+          <div class="view-header">
+            <span style="display: inline-flex;flex-direction: row;">
+              <h3 class="view-header-count">PREMIUM TIER</h3>
+            </span>
+            <p class="price-description">
+              Pioneer pricing: $4.00 per month billed monthly
+            </p>
+            <p class="plan-description">
+              Everything in the free tier, as well as: 
+            </p>
+            <ul class="plan-features">
+              <li>No upper limit on number queues or upstream subscriptions</li>
+              <li>No obligation, cancel any time</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- checkout button -->
+      <div class="view-header-toolbar">
+        <!-- deactivate account button -->
+        <div v-if="this.showCheckout">
+          <button id="checkout" class="header-button" @click="this.$emit('submitOrder')" :disabled="inTransit">
+            Checkout
           </button>
         </div>
       </div>
@@ -157,12 +217,11 @@ export default {
   name: "SettingsPanel",
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
     }
   },
-  components: {},
   props: ["inTransit", "account", "frameworkConfig", "theme"],
-  emits: ["settingsUpdated", "exportOpml", "deactivateAccount", "initPasswordReset"],
+  emits: ["settingsUpdated", "exportOpml", "deactivateAccount", "initPasswordReset", "submitOrder"],
   validations() {
     return {
       username: { 
@@ -201,18 +260,10 @@ export default {
       enableProductNotifications: null,
       showDeactivateUser: false,
       showResetPassword: false,
+      showCheckout: true,
     }
   },
   methods: {
-    getExtendedModeVerbiage() {
-      if (this.showDeactivateUser) {
-        return '(Account deactivation text)';
-      } else if (this.showResetPassword) {
-        return '(Password reset text)'
-      }
-      return '(Account settings text)';
-
-    },
     getModeVerbiage() {
       if (this.showDeactivateUser) {
         return 'DEACTIVATE YOUR ACCOUNT';
@@ -280,11 +331,10 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   border-radius: 3px;
   text-align: center;
-  font-size: inherit;
   user-select: none;
   max-width: fit-content;
 }
@@ -306,11 +356,10 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   border-radius: 3px;
   text-align: center;
-  font-size: inherit;
   user-select: none;
   max-width: fit-content;
 }
@@ -329,14 +378,13 @@ export default {
 
 .deactivate-button {
   border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.dangerbuttonsubdued');
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   border-radius: 3px;
   text-align: center;
-  font-size: inherit;
   user-select: none;
   max-width: fit-content;
 }
@@ -358,12 +406,12 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
-  margin-left: 10px;
-  margin-right: 0px;
+  margin-left: .75rem;
+  margin-right: 0rem;
   text-align: center;
   user-select: none;
 }
@@ -385,10 +433,10 @@ export default {
 }
 
 .view-header {
-  margin-left: 10px;
-  margin-right: 10px;
-  padding: 10px;
-  padding-top: 20px;
+  margin-left: .75rem;
+  margin-right: .75rem;
+  padding: .75rem;
+  padding-top: 1.25rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
   overflow: hidden;
@@ -397,27 +445,27 @@ export default {
 .view-header-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
-  font-size: large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0px;
+  margin: 0rem;
   overflow: hidden;
 }
 
 .view-header-toolbar {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: .75rem;
+  margin-right: .75rem;
   border-radius: 0px 0px 4px 4px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: .75rem;
+  padding-bottom: .75rem;
   border-top: 0px;
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
 }
 
 .update-settings-body {
-  margin-top: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
+  margin-top: 0rem;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }
@@ -431,28 +479,28 @@ export default {
 
 .settings-field {
   text-align: left;
-  margin-bottom: 15px;
-  margin-right: 15px;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
 }
 
 .settings-field label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .settings-field input {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: 2px;
+  margin-top: .125rem;
 }
 
 .settings-field input:hover {
@@ -474,14 +522,14 @@ export default {
 }
 
 .notification-option {
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: .31rem;
+  padding-bottom: .31rem;
 }
 
 .notification-checkbox {
-  padding: 5px 5px 5px 0px; 
+  padding: .31rem .31rem .31rem 0rem;
   border-radius: 3px;
-  font-size: small;
+  font-size: smaller;
   user-select: none;
 }
 
@@ -504,5 +552,13 @@ export default {
   width: 96px;
   border-radius: 5px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+}
+
+.checkout-view { 
+  border-top: 1px solid v-bind('theme.sectionbordercolor');
+}
+
+.plans-view {
+  display: flex;
 }
 </style>

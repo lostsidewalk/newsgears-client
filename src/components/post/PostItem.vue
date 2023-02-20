@@ -1,28 +1,24 @@
 <template>
   <div class="post-wrapper" :class="this.isSelected ? 'post-wrapper-selected' : ''">
-    <ConfirmationDialog ref="deleteConfirmation" 
-      :inTransit="inTransit"
-      :theme="theme"
-      @confirm="performDelete" 
-      prompt="Please confirm that you want to delete this post. This action is irreversible." />
     <div class="post-item-wrapper">
       <!-- post header -->
-      <div class="post-item-header" @click.self="togglePostDetailsWithActive(post.id)">
+      <div class="post-item-header">
         <!-- post header buttons -->
         <span class="post-admin-buttons">
           <!-- show details button -->
           <button 
-              class="post-admin-button"
-              @click.stop="togglePostDetails"
-              :disabled="inTransit"
-              title="Show post details">
-              <span :class="this.showPostDetails ? 'fa fa-minus' : 'fa fa-plus'"></span>
+            ref="postHandle"
+            class="post-admin-button"
+            @click.stop="togglePostDetails"
+            :disabled="disabled"
+            title="Show post details">
+            <span :class="this.showPostDetails ? 'fa fa-minus' : 'fa fa-plus'"></span>
           </button>
           <!-- toggle read status button -->
           <button
             class="post-admin-button"
             @click.stop="togglePostReadStatus"
-            :disabled="inTransit"
+            :disabled="disabled"
             :title="post.isRead ? 'Mark as unread' : 'Mark as read'">
             <span class="fa fa-eye-slash"></span>
           </button>
@@ -30,155 +26,105 @@
           <button
             class="post-admin-button"
             @click.stop="togglePostReadLaterStatus"
-            :disabled="inTransit"
+            :disabled="disabled"
             :title="post.isReadLater ? 'Unmark as read-later' : 'Mark as read-later'">
-            <span class="fa fa-bullseye"></span>
+            <span :class="'fa ' + (post.isReadLater ? 'fa-bullseye' : 'fa-circle-o')"></span>
           </button>
           <!-- star button -->
           <button v-if="!post.isPublished"
-              class="post-admin-button"
-              @click.stop="stagePost"
-              :disabled="inTransit"
-              title="Star this post">
-              <span class="fa fa-star-o"></span>
+            class="post-admin-button"
+            @click.stop="stagePost"
+            :disabled="disabled"
+            title="Star this post">
+            <span class="fa fa-star-o"></span>
           </button>
           <!-- un-star button -->
           <button v-if="post.isPublished"
             class="post-admin-button star-colored"
             @click.stop="unstagePost"
-            :disabled="inTransit"
+            :disabled="disabled"
             title="Un-star this post">
             <span class="fa fa-star"></span>
           </button>
-          <!-- delete button -->
+          <!-- link button -->
           <button
             class="post-admin-button"
-            @click.stop="deletePost"
-            :disabled="inTransit || post.isPublished"
-            title="Delete this post">
-            <span class="fa fa-trash"></span>
+            @click.stop="this.$emit('openPostUrl')"
+            :disabled="disabled"
+            title="Open original article">
+            <span class="fa fa-link"></span>
           </button>
         </span>
         <!-- post header pills -->
-        <span class="post-item-header-pills pill-container" @click.self="togglePostDetails">
+        <span class="post-item-header-pills pill-container">
           <!-- importer desc (query) -->
-          <span 
+          <button
             class="br-pill"
             @click.stop="updateFeedFilter('subscription', post.importerDesc)"
             :title="'Add this subscription (' + post.importerDesc + ') to the filter'">
             {{ post.importerDesc }}
-          </span> 
+          </button> 
           <!-- post categories -->
-          <span v-for="postCategory in post.postCategories" :key="postCategory"
+          <button v-for="postCategory in post.postCategories" :key="postCategory"
             class="br-pill"
             @click.stop="updateFeedFilter('category', postCategory)"
             :title="'Add this category (' + postCategory + ') to the filter'">
             {{  postCategory }}
-          </span>
-          <!-- published timestamp -->
-          <span v-if="post.publishTimestamp"
-            class="br-pill"
-            @click.stop="false">
-            {{ post.publishTimestamp }}
-          </span>
+          </button>
         </span>
       </div>
       <!-- post item (everything after the dark grey box): title, description, image, url, comment -->
       <div class="post-item-body" :class="(post.isRead ? ' post-read' : '')">
         <!-- post title -->
         <div class="post-item-row">
-          <img v-if="post.postImgSrc" 
-            :src="'data:image/png;base64,' + post.postImgSrc" 
-            @click.stop="togglePostDetails"
-            class="post-thumbnail" 
-            :disabled="inTransit"
-          /> 
-          <div v-if="isHtmlContent(this.postTitle)" 
-            class="post-field-wrapper"
-            :disabled="inTransit"
-            v-html="this.postTitle.value" frameborder="0" />
+          <a @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()" tabindex="0">
+            <img v-if="post.postImgSrc" 
+              :src="'data:image/png;base64,' + post.postImgSrc" 
+              class="post-thumbnail" 
+              :disabled="disabled" /> 
+          </a>
+          <div v-if="isHtmlContent(post.postTitle)" 
+            class="post-field-wrapper post-html-frame"
+            v-html="post.postTitle.value" frameborder="0" />
           <div v-else 
-            class="post-field-wrapper"
-            :disabled="inTransit">
-            {{ this.postTitle.value }}
+            class="post-field-wrapper post-text-frame">
+            {{ post.postTitle.value }}
           </div>
         </div>
         <!-- post description (hidden w/no detials) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postDesc)">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postDesc)">
           <span class="post-field-wrapper">
-            <label class="post-info-label-small">DESCRIPTION ({{ this.postDesc.type }})</label>
-            <div v-if="isHtmlContent(this.postDesc)"
-              :disabled="inTransit"
+            <label class="post-info-label-small">DESCRIPTION ({{ post.postDesc.type }})</label>
+            <div v-if="isHtmlContent(post.postDesc)"
               class='post-field-wrapper post-html-frame' 
-              v-html="this.postDesc.value" frameborder="0" />
+              v-html="post.postDesc.value" frameborder="0" />
             <div v-else
-              :disabled="inTransit"
-              class='post-field-wrapper post-html-frame'>
-              {{ this.postDesc.value }}
+              class='post-field-wrapper post-text-frame'>
+              {{ post.postDesc.value }}
             </div>
           </span>
         </div>
         <!-- post contents -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postContents && this.postContents.length > 0)">
-          <div v-for="c of this.postContents" :key="c">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postContents && post.postContents.length > 0)">
+          <div v-for="c of post.postContents" :key="c">
             <div v-if="isHtmlContent(c)"
-              :disabled="inTransit"
               class='post-field-wrapper post-html-frame' 
               v-html="c.value" />
             <div v-else
-              :disabled="inTransit"
-              class='post-field-wrapper post-html-frame'>
+              class='post-field-wrapper'>
               {{  c.value }}
             </div>
           </div>
         </div>
-        <!-- last updated timestamp (hidden w/no details )-->
-        <div class="post-item-row" v-if="this.showPostDetails && post.lastUpdatedTimestamp">
-          <span class="post-field-wrapper"
-            :disabled="inTransit">
-            <label class="post-info-label-small">LAST UPDATED</label>
-            <div>{{ post.lastUpdatedTimestamp }}</div>
-          </span>
-        </div>
-        <!-- post image url (hidden w/no details) -->
-        <!-- <div class="post-item-row" v-if="this.showPostDetails && this.postImgUrl">
-          <span class="post-field-wrapper" 
-            :disabled="inTransit">
-            <label class="post-info-label-small">THUMBNAIL URL</label>
-            <div>
-              <a :class="post.isRead ? 'subdued-link' : 'link'" 
-                :href="this.postImgUrl" 
-                :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
-                <i class="fa fa-link fa-1x"></i>
-              </a>
-              {{ this.postImgUrl }}
-            </div>
-          </span>
-        </div> -->
-        <!-- post url (hidden w/no details) -->
-        <div class="post-item-row" v-if="this.showPostDetails">
-          <span class="post-field-wrapper"
-            :disabled="inTransit">
-            <label class="post-info-label-small">POST URL</label>
-            <div>
-              <a :class="post.isRead ? 'subdued-link' : 'link'" 
-                :href="this.postUrl" 
-                :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
-                <i class="fa fa-link fa-1x"></i>
-              </a>
-              {{ this.postUrl }}
-            </div>
-          </span>
-        </div>
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postUrls && this.postUrls.length > 0)">
-          <span class="post-field-wrapper"
-            :disabled="inTransit">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postUrls && post.postUrls.length > 0)">
+          <span class="post-field-wrapper">
             <label class="post-info-label-small">LINKS</label>
-            <div v-for="postUrl of this.postUrls" :key="postUrl" class="post-other-link">
+            <div v-for="postUrl of post.postUrls" :key="postUrl" class="post-other-link">
               <a :class="post.isRead ? 'subdued-link' : 'link'" 
                 :href="postUrl.href" 
-                :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
+                :target="'window_' + (Math.random() + 1).toString(36).substring(7)"
+                :disabled="disabled">
                 <i class="fa fa-link fa-1x"></i>
               </a>
               {{ 
@@ -190,33 +136,37 @@
           </span>
         </div>
         <!-- post comment (hidden w/no details) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postComment)">
-          <span v-if="this.postComment" 
-            class="post-field-wrapper"
-            :disabled="inTransit">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postComment)">
+          <span class="post-field-wrapper">
             <label class="post-info-label-small">POST COMMENT</label>
-            <div>{{ this.trimToLength(this.postComment, 128) }}</div>
+            <div>{{ this.trimToLength(post.postComment, 128) }}</div>
           </span>
         </div>
         <!-- post authors -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postAuthors)">
-          <span class="post-field-wrapper"
-            :disabled="inTransit">
-            <label class="post-info-label-small">{{ this.postAuthors.length > 1 ? 'AUTHORS' : 'AUTHOR' }}</label>
-            <div v-for="author of this.postAuthors" :key="author">
+        <div class="post-item-row" v-if="(this.showPostDetails && (post.postAuthors || post.publishTimestamp || post.lastUpdatedTimestamp))">
+          <span class="post-field-wrapper">
+            <label class="post-info-label-small" v-if="post.postAuthors">
+              {{ post.postAuthors.length > 1 ? 'AUTHORS' : 'AUTHOR' }}
+            </label>
+            <div v-for="author of post.postAuthors" :key="author">
               {{ 
                 (author.name ? author.name : author.email) + 
                 (author.email ? (" (" + author.email + ")") : '')
               }}
             </div>
+            <label class="post-info-label-small">
+              {{ post.lastUpdatedTimestamp ? 'UPDATED' : 'PUBLISHED' }}
+            </label>
+            <div v-if="post.lastUpdatedTimestamp || post.publishTimestamp">
+              {{ post.lastUpdatedTimestamp ? post.lastUpdatedTimestamp : post.publishTimestamp }}
+            </div>
           </span>
         </div>
         <!-- post contributors -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postContributors)">
-          <span class="post-field-wrapper"
-            :disabled="inTransit">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postContributors)">
+          <span class="post-field-wrapper">
             <label class="post-info-label-small">CONTRIBUTORS</label>
-            <div v-for="contributor of this.postContributors" :key="contributor">
+            <div v-for="contributor of post.postContributors" :key="contributor">
               {{ 
                 (contributor.name ? contributor.name : contributor.email) + 
                 (contributor.name ? (" (" + contributor.email + ")") : '')
@@ -224,37 +174,36 @@
             </div>
           </span>
         </div>
-        <!-- post rights (hidden w/no details) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postRights)">
-          <span v-if="this.postRights" 
-            class="post-field-wrapper"
-            :disabled="inTransit">
-            <label class="post-info-label-small">POST RIGHTS</label>
-            <div>{{ this.trimToLength(this.postRights, 128) }}</div>
-          </span>
-        </div>
         <!-- post media -->
-        <div class="post-item-media" v-if="(this.showPostDetails && this.postMedia)">
+        <div class="post-item-media" v-if="(this.showPostDetails && post.postMedia)">
           <PostMedia 
-            :inTransit="inTransit"
+            ref="postMedia"
             :theme="theme" 
             class="post-field-wrapper"
-            :media="post.postMedia" />
+            :media="post.postMedia" 
+            @playing="onMediaPlaying" />
         </div>
         <!-- post itunes -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postITunes)">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postITunes)">
           <PostITunes 
-            :inTransit="inTransit"
             :theme="theme" 
-            class="post-field-wrapper"
+            class="post-field-wrapper" 
             :iTunes="post.postITunes" />
         </div>
         <!-- post enclosures -->
-        <div class="post-item-row" v-if="(this.showPostDetails && this.postEnclosures)">
-          <PostEnclosure v-for="enclosure in this.postEnclosures" :key="enclosure"
-            :inTransit="inTransit"
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postEnclosures)">
+          <PostEnclosure v-for="(enclosure,idx) in post.postEnclosures" :key="enclosure"
+            :ref="'postEnclosure_' + idx"
             :theme="theme"
-            :enclosure="enclosure" />
+            :enclosure="enclosure" 
+            @playing="onEnclosurePlaying(idx)" />
+        </div>
+        <!-- post rights (hidden w/no details) -->
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postRights)">
+          <span v-if="post.postRights" 
+            class="post-field-wrapper">
+            <div>{{ this.trimToLength(post.postRights, 128) }}</div>
+          </span>
         </div>
       </div>
     </div>
@@ -262,7 +211,6 @@
 </template>
 
 <script>
-import ConfirmationDialog from '../layout/ConfirmationDialog.vue';
 import PostEnclosure from './item/PostEnclosure.vue';
 import PostMedia from './item/PostMedia.vue';
 import PostITunes from './item/PostITunes.vue';
@@ -270,56 +218,69 @@ import PostITunes from './item/PostITunes.vue';
 export default {
   name: "PostItem",
   components: { 
-    ConfirmationDialog, 
     PostEnclosure,
     PostMedia, 
     PostITunes
   },
-  props: ["post", "idx", "baseUrl", "isSelected", "inTransit", "theme"],
+  props: [ "post", "idx", "baseUrl", "isSelected", "disabled", "theme" ],
   emits: [
-    "deletePost", 
     "updatePostReadStatus",
     "updatePostPubStatus",
     "updateFilter",
-    "setActive"
+    "setActive",
+    "openPostUrl",
+    "playing"
   ],
   data() {
     return {
       showPostDetails: true,
-      postComment: null,
-      postRights: null,
-      postTitle: null,
-      postDesc: null,
-      postContents: null,
-      postUrl: null,
-      postUrls: null,
-      postImgUrl: null,
-      postContributors: null,
-      postAuthors: null,
-      postEnclosures: null,
-      postMedia: null,
-      postITunes: null,
     };
   },
-  created() {
-    this.postComment = this.post.postComment;
-    this.postRights = this.post.postRights;
-    this.postTitle = this.post.postTitle;
-    this.postDesc = this.post.postDesc;
-    this.postContents = this.post.postContents;
-    this.postUrl = this.post.postUrl;
-    this.postUrls = this.post.postUrls;
-    this.postImgUrl = this.post.postImgUrl;
-    this.postContributors = this.post.contributors;
-    this.postAuthors = this.post.authors;
-    this.postEnclosures = this.post.enclosures;
-    this.postMedia = this.post.postMedia;
-    this.postITunes = this.post.postITunes;
-  },
-  mounted() {
-    // console.log("post-item mounted: post=" + JSON.stringify(this.post));
-  },
   methods: {
+    focusHandle() {
+      console.log("post item focusing handle");
+      this.$refs.postHandle.focus();
+    },
+    onMediaPlaying() {
+      // pause all enclosures 
+      if (this.post.postEnclosures) {
+        for (let i = 0; i < this.postEnclosures.length; i++) {
+          let r = this.$refs['postEnclosure_' + i];
+          if (r && r.length > 0) {
+            r[0].pause();
+          }
+        }
+      }
+      this.$emit('playing', this.post.id);
+    },
+    onEnclosurePlaying(idx) {
+      // pause media 
+      this.$refs.postMedia.pause();
+      // pause all enclosures where idx != idx 
+      if (this.post.postEnclosures) {
+        for (let i = 0; i < this.post.postEnclosures.length; i++) {
+          if (i === idx) {
+            continue;
+          }
+          let r = this.$refs['postEnclosure_' + i];
+          if (r && r.length > 0) {
+            r[0].pause();
+          }
+        }
+      }
+      this.$emit('playing', this.post.id);
+    },
+    pauseMedia() {
+      this.$refs.postMedia.pause();
+      if (this.post.postEnclosures) {
+        for (let i = 0; i < this.post.postEnclosures.length; i++) {
+          let r = this.$refs['postEnclosure_' + i];
+          if (r && r.length > 0) {
+            r[0].pause();
+          }
+        }
+      }
+    },
     isHtmlContent(contentObj) {
       return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;
     },
@@ -329,12 +290,7 @@ export default {
     showFullPost() {
       this.showPostDetails = true;
     },
-    togglePostDetailsWithActive(postId) {
-      this.togglePostDetails();
-      this.$emit('setActive', postId)
-    },
     togglePostDetails() {
-      console.log()
       this.showPostDetails = !this.showPostDetails;
       // if (this.showPostDetails) {
       //   if (!this.post.postStatus) {
@@ -349,6 +305,13 @@ export default {
     unstagePost() {
       console.log("post-item: unstaging post id=" + this.post.id);
       this.updatePostPubStatus(this.post.feedIdent, 'DEPUB_PENDING', "unstagePost");
+    },
+    toggleStagePost() {
+      if (this.post.isPublished) {
+        this.unstagePost();
+      } else {
+        this.stagePost();
+      }
     },
     togglePostReadStatus() {
       let newStatus;
@@ -387,15 +350,6 @@ export default {
             originator: successSignal
           });
     },
-    deletePost() {
-      this.$refs.deleteConfirmation.show();
-    }, 
-    performDelete() {
-      this.$refs.deleteConfirmation.hide();
-      this.$emit('deletePost', { 
-            id: this.post.id, 
-          });
-    },
     // 
     // utility methods 
     // 
@@ -414,15 +368,8 @@ export default {
 
 <style scoped>
 .post-item-body {
-  margin-top: 0px;
-  /* margin-left: 5px; */
-  /* margin-right: 20px; */
+  margin-top: 0rem;
   text-align: initial;
-  /* border-top: 1px solid v-bind('theme.sectionbordercolor');
-  border-bottom: 1px solid v-bind('theme.sectionbordercolor');
-  border-left: 1px solid v-bind('theme.sectionbordercolor');
-  border-right: 1px solid v-bind('theme.sectionbordercolor'); */
-  /* box-shadow: 1px 1px 1px v-bind('theme.darkshadow'); */
 }
 
 .post-item-row {
@@ -449,9 +396,9 @@ export default {
 .post-item-header {
   border: 1px solid transparent;
   justify-content: space-between;
-  padding: 5px;
+  padding: .31rem;
   text-align: right;
-  padding-right: 5px;
+  padding-right: .31rem;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   background-color: v-bind('theme.sectionbg');
@@ -462,8 +409,8 @@ export default {
   flex-direction: row;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  align-items: center;
-  column-gap: 5px;
+  align-items: flex-start;
+  column-gap: .31rem;
 }
 
 .post-item-header:hover {
@@ -472,7 +419,7 @@ export default {
 
 .post-admin-buttons {
   display: flex;
-  column-gap: 5px;
+  column-gap: .31rem;
 }
 
 .post-admin-button {
@@ -482,7 +429,7 @@ export default {
   border-radius: 3px;
   background-color: transparent;
   color: v-bind('theme.sectionsubdued');
-  padding-top: 3px;
+  padding-top: .125rem;
 }
 
 .post-admin-button:disabled {
@@ -499,69 +446,78 @@ export default {
 
 .post-rights-area {
   text-align: left;
-  margin-left: 7px;
-  margin-top: 7px;
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin-left: .44rem;
+  margin-top: .44rem;
+  margin-bottom: .31rem;
+  margin-right: .75rem;
 }
 
 .post-rights-area > label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 /** post comment */
 
 .post-comment-area {
   text-align: left;
-  margin-left: 7px;
-  margin-top: 7px;
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin-left: .44rem;
+  margin-top: .44rem;
+  margin-bottom: .31rem;
+  margin-right: .75rem;
 }
 
 .post-comment-area > label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .post-field-wrapper {
   cursor: auto;
   overflow-wrap: anywhere;
-  padding: 12px;
+  padding: .75rem;
 }
 
 .post-title-area {
   text-align: left;
-  margin-left: 7px;
-  margin-top: 7px;
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin-left: .44rem;
+  margin-top: .44rem;
+  margin-bottom: .31rem;
+  margin-right: .75rem;
 }
 
 .post-title-area > label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 /** post desc */
 
 .post-desc-area {
   text-align: left;
-  margin-left: 7px;
-  margin-top: 7px;
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin-left: .44rem;
+  margin-top: .44rem;
+  margin-bottom: .31rem;
+  margin-right: .75rem;
 }
 
 .post-desc-area > label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .post-html-frame {
   display: block;
   overflow: auto;
+  font-family: serif;
+  font-size: larger;
+}
+
+.post-text-frame {
+  display: block;
+  overflow: auto;
+  font-family: serif;
+  font-size: larger;
 }
 
 /** post url */
@@ -572,28 +528,28 @@ export default {
 
 .post-url-area {
   text-align: left;
-  margin-left: 7px;
-  margin-top: 7px;
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin-left: .44rem;
+  margin-top: .44rem;
+  margin-bottom: .31rem;
+  margin-right: .75rem;
 }
 
 .post-url-area > label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .post-img-url-area {
   text-align: left;
-  margin-left: 7px;
-  margin-top: 7px;
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin-left: .44rem;
+  margin-top: .44rem;
+  margin-bottom: .31rem;
+  margin-right: .75rem;
 }
 
 .post-img-url-area > label {
-  font-size: small;
-  padding-bottom: 3px;
+  font-size: smaller;
+  padding-bottom: .125rem;
 }
 
 .post-thumbnail {
@@ -609,19 +565,24 @@ export default {
 
 .post-wrapper {
   border: 1px solid transparent;
-  margin-bottom: 10px;
+  margin-bottom: .75rem;
   display: block;
-  padding: 7px;
-  margin-left: 10px;
-  margin-right: 10px;
+  padding: .44rem;
+  margin-left: .75rem;
+  margin-right: .75rem;
   border-radius: 5px;
   background-color: v-bind('theme.sectionbrighterhighlight');
 }
 
 /** has references */
-.post-wrapper:hover, .post-wrapper-selected {
+.post-wrapper:hover {
   color: v-bind('theme.normalmessage');
   border: 1px solid v-bind('theme.fieldborderhighlight') !important;
+}
+
+.post-wrapper-selected, .post-wrapper-selected:hover {
+  color: v-bind('theme.normalmessage');
+  border: 1px solid lightblue !important;
 }
 
 .post-wrapper:focus {
@@ -661,7 +622,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-flow: wrap;
-  gap: 5px;
+  gap: .31rem;
   overflow-x: auto;
 }
 
@@ -669,8 +630,9 @@ export default {
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
   border-radius: 3px;
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: 5px;
+  padding: .31rem;
   user-select: none;
 }
 
@@ -681,7 +643,7 @@ export default {
 
 .post-item-header-pills {
   display: flex;
-  font-size: small;
+  font-size: smaller;
   flex-direction: row-reverse;
 }
 

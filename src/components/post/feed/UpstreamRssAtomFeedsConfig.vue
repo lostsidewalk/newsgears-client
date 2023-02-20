@@ -1,39 +1,40 @@
 <template>
   <div class="feed-config-field">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- label -->
     <label>UPSTREAM RSS/ATOM SOURCES:</label>
     <div class="feed-config-button-wrapper">
       <!-- add RSS/ATOM feed URL button -->
-      <button  
+      <button 
         class="feed-config-button" 
         @click="this.$emit('addRssAtomUrl')" 
-        :disabled="inTransit">
-        Add RSS/ATOM feed (you already have a URL)
+        :disabled="disabled || inTransit">
+        Add feed from a URL 
       </button>
       <!-- browse feed catalog button -->
       <button  
         class="feed-config-button" 
         @click="this.$emit('showRssAtomUrlBrowser')" 
-        :disabled="inTransit">
-        Browse our catalog of RSS/ATOM feeds  
+        :disabled="disabled || inTransit">
+        Browse our catalog of feeds  
       </button>
     </div>
     <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.rssAtomFeedUrls" :key="idx">
       <!-- url input field w/refresh and delete buttons -->
       <div class="rss-atom-url-row">
-        <input type="text" v-model="rssAtomUrl.feedUrl" 
-          :disabled="inTransit" 
-          placeholder="RSS/ATOM URL" />
+        <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
+          :disabled="disabled || inTransit"
+          placeholder="Feed URL" />
         <button 
           class="rss-atom-url-row-button"
           @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
-          :disabled="inTransit">
+          :disabled="disabled || inTransit">
           <i class="fa fa-refresh"/>
         </button>
         <button 
           class="rss-atom-url-row-button" 
           @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
-          :disabled="inTransit">
+          :disabled="disabled || inTransit">
           <i class="fa fa-trash"/>
         </button>
       </div>
@@ -41,32 +42,36 @@
         v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
         :ref="'rss-atom-url-info-' + rssAtomUrl.id" 
         :info="rssAtomUrl" 
-        :inTransit="inTransit" 
+        :disabled="disabled || inTransit"
         :theme="theme" 
         :filterSupport="false" 
-        style="margin-top: 10px;" />
+        style="margin-top: .75rem;" />
     </div>
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
 
 
 export default {
   name: "UpstreamRssAtomFeedsConfig",
   components: {
+    NavbarFixedHeader,
     RssAtomFeedInfo,
   },
-  props: [ "rssAtomFeedUrls", "inTransit", "theme", "baseUrl" ],
+  props: [ "rssAtomFeedUrls", "disabled", "theme", "baseUrl" ],
   emits: [
     "addRssAtomUrl",
     "showRssAtomUrlBrowser",
     "deleteRssAtomUrl", 
-    "updateInTransit",
     "update:rssAtomFeedUrl",
   ],
   methods: {
+    focus() {
+      this.$refs.rssAtomUrlRow_0[0].focus();
+    },
     refreshRssAtomUrlInfo(id) {
       let r = null;
       for (let i = 0; i < this.rssAtomFeedUrls.length; i++) {
@@ -88,7 +93,8 @@ export default {
         }
         let u = encodeURIComponent(r.feedUrl);
         console.log("feed-config: starting discovery for rssAtomFeedUrl id=" + r.id + ", feedUrl=" + r.feedUrl);
-        this.$emit('updateInTransit', true);
+        this.inTransit = true;
+        // TODO: remove the delay (used for testing) 
         setTimeout(() => {
           this.$auth.getTokenSilently().then((token) => {
             const requestOptions = {
@@ -102,26 +108,34 @@ export default {
               if (response.status === 200) {
                 return response.json();
               } else {
-                return response.json().then(j => {throw new Error(j.message)})
+                return response.json().then(j => {
+                  throw new Error(null, { cause: j });
+                })
               }
             }).then((data) => {
               data.id = r.id;
               data.discoveryUrl = r.feedUrl;
               this.$emit('update:rssAtomFeedUrl', data);
             }).catch((error) => {
-              console.log(error);
+              console.log(error.cause);
               if (error.name === 'TypeError') {
                 r.error = 'Something went wrong.  Please try again later.';
               } else {
+                let cause = error.cause;
                 let data = {};
                 data.id = r.id;
                 data.discoveryUrl = null;
-                data.error = error.message;
+                data.error = cause.details;
+                data.httpStatusCode = cause.httpStatusCode;
+                data.httpStatusMessage = cause.httpStatusMessage;
+                data.redirectFeedUrl = cause.redirectFeedUrl;
+                data.redirectHttpStatusCode = cause.redirectHttpStatusCode;
+                data.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
                 this.$emit('update:rssAtomFeedUrl', data);
               }
             })
             .finally(() => {
-              this.$emit('updateInTransit', false);
+              this.inTransit = false;
             });
           }).catch((error) => {
             this.handleAuthError(error);
@@ -135,7 +149,8 @@ export default {
   },
   data() {
     return {
-      
+      // 
+      inTransit: false,
     }
   }
 }
@@ -145,27 +160,27 @@ export default {
 .feed-config-field {
   border: 1px solid v-bind('theme.sectionbordercolor');
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
 }
 
 .feed-config-field label {
-  font-size: small;
+  font-size: smaller;
 }
 
 .feed-config-field > input, .feed-config-field > textarea {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: 2px;
+  margin-top: .125rem;
   resize: none;
 }
 
@@ -188,13 +203,13 @@ export default {
 }
 
 .rss-atom-url-wrapper:last-of-type {
-  margin-bottom: 0px;
+  margin-bottom: 0rem;
 }
 
 .rss-atom-url-wrapper {
   background-color: v-bind('theme.sectionbrighterhighlight');;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: .75rem;
+  margin-bottom: .75rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.sectionbordercolor');
 }
@@ -226,17 +241,18 @@ export default {
 .rss-atom-url-row {
   display: inline-flex;
   flex-direction: row;
-  margin-top: 2px;
+  margin-top: .125rem;
   width: 100%;
 }
 
 .rss-atom-url-row input {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  font-size: x-large;
 }
 
 .rss-atom-url-row input:hover {
@@ -262,7 +278,7 @@ export default {
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   text-align: center;
@@ -297,9 +313,9 @@ export default {
 .feed-config-button-wrapper {
   display: inline-grid;
   grid-auto-flow: column;
-  grid-column-gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  grid-column-gap: .75rem;
+  margin-top: .75rem;
+  margin-bottom: .75rem;
 }
 
 .feed-config-button {
@@ -307,12 +323,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
   border-radius: 3px;
   text-align: center;
-  font-size: unset;
 }
 
 .feed-config-button:disabled {

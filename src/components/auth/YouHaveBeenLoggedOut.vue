@@ -9,26 +9,17 @@
 export default {
   name: "YouHaveBeenLoggedOut",
   props: [ "theme" ],
-  emits: [],
-  data() {
-    return {
-
-    }
-  },
-  methods: {
-
-  }
 }
 </script>
 
 <style scoped>
 .not-authenticated {
   color: v-bind('theme.normalmessage');
-  font-size: large;
+  font-size: larger;
   text-shadow: 2px 2px 2px v-bind('theme.darkshadow');
 }
 .not-authenticated > p {
-  padding: 25px;
+  padding: 2rem;
   text-decoration: none;
 }
 

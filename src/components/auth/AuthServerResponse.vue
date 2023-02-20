@@ -1,7 +1,7 @@
 <template>
-    <div v-if="this.serverMessage && !this.$auth.$isAuthenticated" v-auto-animate class="server-message">
+    <div v-if="this.serverMessage && !this.$auth.$isAuthenticated" class="server-message">
       <span>
-        {{ this.lastAction ? this.lastAction + ':' : null }} {{ this.serverMessage }}
+        {{ this.serverMessage }}
       </span>
     </div>
 </template>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "AuthServerResponse",
-  props: [ "serverMessage", "lastAction", "theme" ]
+  props: [ "serverMessage", "theme" ]
 }
 </script>
 

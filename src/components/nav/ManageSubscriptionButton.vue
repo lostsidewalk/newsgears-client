@@ -1,7 +1,7 @@
 <template>
   <span>
-    <button id="manageSubscription" class="manage-subscription-button" @click="this.$router.push('/manage-subscription');" :disabled="disableSubscription || inTransit">
-      Manage Subscription
+    <button id="manageSubscription" class="manage-subscription-button" @click="this.$router.push('/manage-subscription');" accesskey="s" :disabled="disabled">
+      Manage <i class="underline">s</i>ubscription
     </button>
   </span>
 </template>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "ManageSubscriptionButton",
-  props: [ "inTransit", "theme","disableSubscription" ],
+  props: [ "disabled", "theme" ],
 }
 </script>
 
@@ -19,12 +19,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   border-radius: 3px;
-  margin: 9px;
-  margin-right: 2%;
+  margin: .56rem;
   text-align: center;
 }
 
@@ -38,5 +37,9 @@ export default {
 
 .manage-subscription-button:hover:disabled {
   background-color: unset;
+}
+
+.underline { 
+  text-decoration: underline;
 }
 </style>

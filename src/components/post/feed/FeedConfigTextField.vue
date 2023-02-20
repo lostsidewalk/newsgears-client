@@ -4,11 +4,12 @@
       <span v-if="required" class="required">*</span>
       {{ label }}
     </label>
-    <input
+    <input 
+      ref="feedConfigTextFieldInput" 
       :type="type ? type : 'text'"
       :value="modelValue"
       :placeholder="placeholder"
-      :disabled="inTransit"
+      :disabled="disabled"
       @input="this.$emit('update:modelValue', $event.target.value)"
     />
     <div class="feed-config-error-message" v-for="(error, index) of errorValue" :key="index">
@@ -22,8 +23,13 @@
 export default {
   name: "FeedConfigTextField",
   components: { },
-  props: [ "label", "required", "placeholder", "type", "inTransit", "theme", "modelValue", "errorValue" ],
+  props: [ "label", "required", "placeholder", "type", "disabled", "theme", "modelValue", "errorValue" ],
   emits: [ "update:modelValue" ],
+  methods: {
+    focus() {
+      this.$refs.feedConfigTextFieldInput.focus();
+    }
+  }
 };
 </script>
 
@@ -31,28 +37,28 @@ export default {
 .feed-config-field {
   border: 1px solid v-bind('theme.sectionbordercolor');
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: .75rem;
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
 }
 
 .feed-config-field label {
-  font-size: small;
-  /* padding-bottom: 3px; */
+  font-size: smaller;
+  /* padding-bottom: .125rem; */
 }
 
 .feed-config-field > input, .feed-config-field > textarea {
-  padding: 5px;
+  padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: 2px;
+  margin-top: .125rem;
   resize: none;
 }
 

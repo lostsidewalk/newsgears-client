@@ -1,6 +1,6 @@
 <template>
   <span>
-    <button class="mode-switch-button" @click="this.$theme.switchMode();" :disabled="inTransit" aria-label="Switch to light or dark mode">
+    <button class="mode-switch-button" @click="this.$theme.switchMode();" accesskey="l" :disabled="disabled" aria-label="Switch to light or dark mode">
       <span class="fa fa-lightbulb-o" /> <!-- use fa-moon-o for dark mode -->
     </button>
   </span>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "DisplayModeButton",
-  props: [ "inTransit", "theme" ],
+  props: [ "disabled", "theme" ],
 }
 </script>
 
@@ -19,12 +19,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   border-radius: 3px;
-  margin: 9px;
-  margin-right: 2%;
+  margin: .56rem;
   text-align: center;
 }
 

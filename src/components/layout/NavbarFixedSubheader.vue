@@ -16,14 +16,15 @@ export default {
 
 <style scoped>
 .navbar.fixed-sub-header {
+  display: flex;
   position: fixed;
   left: 16px;
   top: 16px;
   z-index: 1000;
-  border: 1px solid v-bind('theme.navbarshadow');
-  background-color: v-bind('theme.navbarsubbg');
-  box-shadow: 1px 1px 1px v-bind('theme.navbarsubshadow');
-  padding: 10px;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  background-color: v-bind('theme.appbg');
+  box-shadow: 7px 7px 7px v-bind('theme.navbarsubshadow');
+  padding: .75rem;
   border-radius: 3px;
 }
 </style>

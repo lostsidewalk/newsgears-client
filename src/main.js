@@ -1,11 +1,13 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 import NewsGearsWebPlugin from '@/newsgears-web/newsgears-web-plugin';
 import NewsGearsThemePlugin from '@/newsgears-theme/newsgears-theme-plugin';
-import router from './router'
+import router from './router';
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
-import VuePlyr from 'vue-plyr'
+import VuePlyr from 'vue-plyr';
+import VueAnnouncer from '@vue-a11y/announcer'
 
+import '@vue-a11y/announcer/dist/style.css'
 import 'vue-plyr/dist/vue-plyr.css'
 import 'font-awesome/scss/font-awesome.scss'
 import 'flag-icons/css/flag-icons.min.css';
@@ -34,4 +36,5 @@ createApp(App, {})
     .use(VuePlyr, {
       plyr: {}
     })
+    .use(VueAnnouncer)
     .mount('#app');

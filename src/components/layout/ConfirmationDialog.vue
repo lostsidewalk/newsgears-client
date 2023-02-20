@@ -3,32 +3,36 @@
     <div class="modal-body">
       <h3>{{ prompt }}</h3>
       <div class="modal-actions">
-        <button class="modal-button" @click="confirm">Confirm</button>
-        <button class="modal-button" @click="hide">Cancel</button>
+        <button class="modal-button" ref="confirmButton" @click="confirm" accesskey="c" :disabled="disabled"><i class="underline">C</i>onfirm</button>
+        <button class="modal-button" @click.stop="this.$emit('cancel')" :disabled="disabled">Cancel</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
   name: "ConfirmationDialog",
-  props: ["prompt", "inTransit", "theme"],
-  emits: ["confirm"],
+  props: ["prompt", "disabled", "theme"],
+  emits: ["confirm", "cancel"],
   methods: {
+    confirm() {
+      this.$emit('confirm');
+    },
     show() {
       this.showModal = true;
+      this.$nextTick(() => {
+        this.$refs.confirmButton.focus();
+      });
     },
     hide() {
       this.showModal = false;
-    },
-    confirm() {
-      this.$emit('confirm');
     }
   },
   data() {
     return {
-      showModal: false,
+      showModal: false
     }
   }
 }
@@ -46,7 +50,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 1000;
-  background: rgba(0,0,0,0.8);
+  background: v-bind('theme.modalcontainerbg');
 }
 
 .modal-body {
@@ -55,7 +59,7 @@ export default {
   color: v-bind('theme.normalmessage');
   text-align: center;
   width: 50%;
-  padding: 32px;
+  padding: 2rem;
   border: 1px solid v-bind('theme.buttonborder');
   border-radius: 3px;
 }
@@ -63,9 +67,9 @@ export default {
 .modal-actions {
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 2.5rem;
   justify-content: center;
-  padding-top: 10px;
+  padding-top: .75rem;
 }
 
 .modal-button {
@@ -73,12 +77,11 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   border-radius: 3px;
-  margin: 9px;
-  margin-right: 2%;
+  margin: .56rem;
   text-align: center;
 }
 
@@ -92,5 +95,9 @@ export default {
   align-self: end;
   right: -12px;
   top: -17px;
+}
+
+.underline {
+  text-decoration: underline;
 }
 </style>

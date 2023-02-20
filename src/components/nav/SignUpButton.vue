@@ -1,42 +1,41 @@
 <template>
-  <span>
-    <button id="upgrade" class="upgrade-button" @click="this.$router.push('/stripe');" :disabled="disableSubscription || inTransit">
-      Upgrade
-    </button>
-  </span>
+    <span>
+      <button id="signup" class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
+        Sign-up
+      </button>
+    </span>
 </template>
 
 <script>
 export default {
-  name: "UpgradeSubscriptionButton",
-  props: [ "inTransit", "disableSubscription", "theme" ],
+  name: "SignUpButton",
+  props: [ "disabled", "theme" ],
 }
 </script>
 
 <style scoped>
-.upgrade-button {
+.signup-button {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: 7px 20px;
+  padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
   border-radius: 3px;
-  margin: 9px;
-  margin-right: 2%;
+  margin: .56rem;
   text-align: center;
 }
 
-.upgrade-button:disabled {
+.signup-button:disabled {
   cursor: auto;
 }
 
-.upgrade-button:hover {
+.signup-button:hover {
   background-color: v-bind('theme.buttonhighlight');
 }
 
-.upgrade-button:hover:disabled {
+.signup-button:hover:disabled {
   background-color: unset;
 }
 </style>

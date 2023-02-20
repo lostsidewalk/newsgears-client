@@ -20,7 +20,7 @@
 <script>
 export default {
   name: "PostMediaCommunity",
-  props: ["community", "inTransit", "theme"],
+  props: [ "community", "theme" ],
   components: {
 
   },

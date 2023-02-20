@@ -1,57 +1,59 @@
 <template>
-  <div>
+  <div class="password-reset-container">
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- password reset panel -->
-    <div v-show="!this.inTransit">
+    <div class="password-reset-container-inner">
       <!-- username -->
       <AuthTextField :placeholder="'Username'" 
         :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.username" 
-        @update:modelValue="this.username = $event"/>
+        @update:modelValue="this.username = $event" 
+        :disabled="disabled || inTransit" />
       <!-- email address -->
       <AuthTextField :placeholder="'Email address'" 
         :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.email" 
-        @update:modelValue="this.email = $event"/>
+        @update:modelValue="this.email = $event" 
+        :disabled="disabled || inTransit" />
       <!-- submit button -->
       <AuthButton
         label="Submit"
         :theme="theme"
         @clicked="submitPwReset()"
-        :disabled="inTransit"
-      />
+        :disabled="disabled || inTransit" />
+      <!-- server response -->
+      <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
     </div>
-    <!-- server response -->
-    <AuthServerResponse :serverMessage="serverMessage" :lastAction="lastAction" :theme="theme" />
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from '../layout/NavbarFixedHeader.vue';
 import AuthButton from './AuthButton.vue'
 import AuthTextField from './AuthTextField.vue';
 import AuthServerResponse from './AuthServerResponse.vue';
-
-const DEFAULT_LAST_ACTION = "PW_RESET";
 
 const DEFAULT_SERVER_MESSAGE = "Enter your username and email address.  We'll send a password reset link to your verified email address.";
 
 export default {
   components: {
+    NavbarFixedHeader,
     AuthButton,
     AuthTextField,
     AuthServerResponse, 
 },
-  props: [ "inTransit", "theme" ],
-  emits: [ "updateInTransit" ],
+  props: [ "disabled", "theme" ],
   data() {
     return {
       // username/email address 
       username: null,
       email: null,
       // server response/initiating action 
-      lastAction: DEFAULT_LAST_ACTION,
       serverMessage: DEFAULT_SERVER_MESSAGE,
+      // 
+      inTransit: false,
     }
   },
   methods: {
@@ -60,27 +62,23 @@ export default {
       //
       submitPwReset() {
         this.clearServerResponse();
-
         if (!this.username || !this.email) {
-          this.lastAction = DEFAULT_LAST_ACTION;
           this.serverMessage = DEFAULT_SERVER_MESSAGE;
           return;
         }
 
-        this.$emit('updateInTransit', true);
+        this.inTransit = true;
         this.$auth
             .pwResetWithSupplied(this.username, this.email)
             .then(() => {
               this.clearData();
-              this.lastAction = DEFAULT_LAST_ACTION;
               this.serverMessage = "Check your email to further instructions.";
             })
             .catch((error) => {
-              this.lastAction = DEFAULT_LAST_ACTION;
               this.serverMessage = error;
             })
             .finally(() => {
-              this.$emit('updateInTransit', false);
+              this.inTransit = false;
             });
       },
       //
@@ -93,7 +91,6 @@ export default {
         this.clearServerResponse();
       },
       clearServerResponse() {
-        this.lastAction = null;
         this.serverMessage = null;
       }
   }
@@ -101,4 +98,22 @@ export default {
 </script>
 
 <style scoped>
+.password-reset-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  font-size: larger; 
+}
+
+.password-reset-container-inner {
+  margin: 25%;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  background: v-bind('theme.sectionhighlight');
+  border-radius: 5px;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+
 </style>

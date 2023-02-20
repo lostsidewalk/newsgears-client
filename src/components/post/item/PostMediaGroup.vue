@@ -1,15 +1,15 @@
 <template>
   <div>
     <PostMediaMetadata v-if="isUseableMetadata(this.mediaGroup.postMediaMetadata)" 
-      :inTransit="inTransit" 
       :theme="theme" 
       :metadata="this.mediaGroup.postMediaMetadata" />
     <div v-if="this.mediaGroup.postMediaContents && this.showContents" 
       class="post-media-group-contents">
-      <PostMediaContent v-for="mc of this.mediaGroup.postMediaContents" :key="mc" 
-        :inTransit="inTransit" 
+      <PostMediaContent v-for="(mc,idx) of this.mediaGroup.postMediaContents" :key="mc" 
+        :ref="'postMediaContent_' + idx"
         :theme="theme" 
-        :mediaContent="mc" />
+        :mediaContent="mc" 
+        @playing="this.$emit('playing')" />
     </div>
   </div>
 </template>
@@ -20,7 +20,8 @@ import PostMediaContent from './PostMediaContent.vue';
 
 export default {
   name: "PostMediaGroup",
-  props: ["inTransit", "theme", "mediaGroup"],
+  props: [ "mediaGroup", "inTransit", "theme" ],
+  emits: [ "playing" ],
   components: {
     PostMediaMetadata,
     PostMediaContent,
@@ -29,6 +30,14 @@ export default {
     // console.log("post-media-group: mediaGroup=" + JSON.stringify(this.mediaGroup));
   },
   methods: {
+    pause() {
+      for (let i = 0; i < this.mediaGroup.postMediaContents.length; i++) {
+        let r = this.$refs['postMediaContent_' + i];
+        if (r && r.length > 0) {
+          r[0].pause();
+        }
+      }
+    },
     isUseableMetadata(metadata) {
       return metadata.thumbnails && metadata.thumbnails.length > 0;
     },
@@ -45,6 +54,6 @@ export default {
 .post-media-group-contents {
   display: grid;
   grid-auto-flow: column;
-  gap: 40px;
+  gap: 3rem;
 }
 </style>

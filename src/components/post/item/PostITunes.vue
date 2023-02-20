@@ -3,11 +3,11 @@
     <img v-if="this.iTunes.imageUri" :src="this.iTunes.imageUri"
       class="post-itunes-content-image" />
     <div class="pill-container">
-      <div class="br-pill" v-if="this.iTunes.author">AUTHOR: {{ this.iTunes.author }}</div>
-      <div class="br-pill" v-if="this.iTunes.explicit">EXPLICIT</div>
-      <div class="br-pill" v-for="keyword of this.iTunes.keywords" :key="keyword">{{ keyword }}</div>
-      <div class="br-pill" v-if="this.iTunes.subTitle">SUBTITLE: {{ this.iTunes.subTitle }}</div>
-      <div class="br-pill" v-if="this.iTunes.summary">SUMMARY: {{ this.iTunes.summary }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.author">AUTHOR: {{ this.iTunes.author }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.explicit">EXPLICIT</div>
+      <div class="br-pill-subdued" v-for="keyword of this.iTunes.keywords" :key="keyword">{{ keyword }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.subTitle">SUBTITLE: {{ this.iTunes.subTitle }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.summary">SUMMARY: {{ this.iTunes.summary }}</div>
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@
 <script>
 export default {
   name: "PostITunes",
-  props: ["iTunes", "inTransit", "theme"],
+  props: ["iTunes", "theme"],
   components: { },
   mounted() {
     console.log("post-itunes mounted: iTunes=" + JSON.stringify(this.iTunes));
@@ -34,11 +34,11 @@ export default {
 .post-itunes-content {
   /* user-select: none; */
   width: 100%;
-  font-size: small;
+  font-size: smaller;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 5px;
+  gap: .31rem;
 }
 
 .post-itunes-content > span:hover {
@@ -54,23 +54,19 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-flow: wrap;
-  gap: 5px;
+  gap: .31rem;
   overflow-x: auto;
 }
 
-.br-pill {
+.br-pill-subdued {
   border: 1px solid v-bind('theme.sectionbordercolor');
-  /* cursor: pointer; */
+  cursor: unset;
   border-radius: 3px;
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: 5px;
+  padding: .31rem;
   user-select: none;
 }
-
-/* .br-pill:hover {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonhighlight') !important;
-} */
 
 .collapsed {
   display: none;
