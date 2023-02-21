@@ -38,6 +38,8 @@ export default {
 .last-server-message {
   float: center;
   color: v-bind('theme.subduedmessage');
+  background-color: unset;
+  border: unset;
 }
 
 .clear-last-server-message {

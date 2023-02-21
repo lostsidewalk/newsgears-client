@@ -44,7 +44,6 @@
           <ul>
             <li>The application employs cookies for authentication purposes only.  We will never engage in any sort of tracking activity.</li>
             <li>User data can be downloaded and fully purged upon request (an automated process built in the 'settings' page).</li>
-            <li>Cookie Policy</li>
             <li>Privacy Policy</li>
           </ul>
         </div>
@@ -94,15 +93,15 @@
       <div class="feature">
         <div class="feature-title">THEMEABLE</div>
         <div class="feature-body">
-          The FeedGears user interface is built from 44 colors and 2 fonts.  You can customize them all, or use the built-in light/dark themes.
+          FeedGears has built-in support for light/dark themes.
         </div>
       </div>
-      <div class="feature">
+      <!-- <div class="feature">
         <div class="feature-title">THIRD-PARTY INTEGRATION</div>
         <div class="feature-body">
           FeedGears supports the following third-party integrations: 
         </div>
-      </div>
+      </div> -->
       <div class="feature">
         <div class="feature-title">RSS/ATOM/JSON PUBLISHING</div>
         <div class="feature-body">
@@ -132,7 +131,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">DEV BLOG AND LIVESTREAM</div>
+        <div class="feature-title">DEV BLOG</div>
         <div class="feature-body">
           Follow along with the development of FeedGears via our dev blog, or the Lost Sidewalk coding live stream.
         </div>

@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- dashboard button -->
-    <DashboardButton :disabled="disabled" :theme="theme" />
+    <DashboardButton :disabled="disabled || !this.$auth.$isAuthenticated" :theme="theme" />
     <!-- logout button -->
-    <LogoutButton :disabled="disabled" :theme="theme" />
+    <LogoutButton :disabled="disabled || !this.$auth.$isAuthenticated" :theme="theme" />
     <!-- manage subscription button -->
-    <ManageSubscriptionButton v-if="!disableSubscriptions && this.$auth.$user.hasSubscription" :disabled="disabled" :theme="theme" />
+    <ManageSubscriptionButton v-if="!disableSubscriptions && this.$auth.$user.hasSubscription" :disabled="disabled || !this.$auth.$isAuthenticated" :theme="theme" />
     <!-- settings button -->
-    <SettingsButton v-if="!disableSettings" :disabled="disabled" :theme="theme" />
+    <SettingsButton v-if="!disableSettings" :disabled="disabled || !this.$auth.$isAuthenticated" :theme="theme" />
     <!-- display mode switch -->
     <DisplayModeButton :disabled="disabled" :theme="theme" />
   </div>

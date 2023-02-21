@@ -67,8 +67,14 @@ export default {
     "showRssAtomUrlBrowser",
     "deleteRssAtomUrl", 
     "update:rssAtomFeedUrl",
+    "authError",
   ],
   methods: {
+    //
+    handleAuthError(error) {
+      this.$emit('authError', error);
+      this.inTransit = false;
+    },
     focus() {
       this.$refs.rssAtomUrlRow_0[0].focus();
     },

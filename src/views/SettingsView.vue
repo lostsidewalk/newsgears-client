@@ -60,13 +60,27 @@ export default {
     this.refreshSettings();
   },
   methods: {
+    // 
+    // server error 
+    // 
+    handleServerError(error) {
+      console.log(error);
+      if (error.name === 'TypeError') {
+        this.setLastServerMessage('Something went wrong.  Please try again later.');
+      } else if (error.message) {
+        this.setLastServerMessage(error.message); 
+      } else {
+        this.setLastServerMessage(error); // $auth plugin errors 
+      }
+      this.inTransit = false;
+    },
     setLastServerMessage(message) {
       this.clearLastServerMessage();
       let serverMessageId = Math.random();
       this.serverMessages.push({
         timestamp: new Date(),
         id: serverMessageId,
-        text: message 
+        text: message
       });
       this.$announcer.polite(message);
       setTimeout(() => {
@@ -85,6 +99,7 @@ export default {
     clearLastServerMessage() {
       this.serverMessages.pop();
     },
+    // 
     refreshSettings() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
@@ -113,20 +128,15 @@ export default {
           this.frameworkConfig = data.frameworkConfig;
           this.isLoaded = true;
         }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
-          } else {
-            this.setLastServerMessage(error.message);
-          }
+          this.handleServerError(error);
           this.isLoaded = false;
         }).finally(() => {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
-      })
+        this.handleServerError(error);
+        this.isLoaded = false;
+      });
     },
     updateSettings(newSettings) {
       try {
@@ -178,8 +188,7 @@ export default {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
       });
     },
     exportOpml() {
@@ -219,8 +228,7 @@ export default {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
       });
     },
     deactivateAccount() {
@@ -254,8 +262,7 @@ export default {
           this.$router.push("/app");
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
       });
     },
     initPasswordReset() {
@@ -306,8 +313,7 @@ export default {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
       });
     },
   },

@@ -1,9 +1,6 @@
 <template>
   <button class="go-back" @click="this.goBack()" accesskey="b" :disabled="disabled">
-    <span class="go-back-text">
-      <span class="fa fa-arrow-left"/>
-      &nbsp; <i class="underline">G</i>o back.
-    </span>
+    <i class="fa fa-arrow-left"/>&nbsp; <i class="underline">G</i>o back.
   </button>
 </template>
 
@@ -30,13 +27,8 @@ export default {
   user-select: none;
   position: relative;
   z-index: 99999;
-}
-
-.go-back-text {
-  cursor: auto;
-}
-
-.go-back-text:hover {
+  background-color: unset;
+  border: unset;
   cursor: pointer;
 }
 

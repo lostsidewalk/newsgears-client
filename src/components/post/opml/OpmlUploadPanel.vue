@@ -104,6 +104,11 @@ export default {
     }
   },
   methods: {
+    //
+    handleAuthError(error) {
+      this.$emit('authError', error);
+      this.inTransit = false;
+    },
     eventHandler(event) {
       this.addFiles(event.target.files)
       event.target.value = null
@@ -197,8 +202,6 @@ export default {
         });
       }).catch((error) => {
         this.handleAuthError(error);
-      }).finally(() => {
-        this.inTransit = false;
       });
     },
     cancelOpmlUpload() {

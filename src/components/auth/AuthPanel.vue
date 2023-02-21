@@ -29,6 +29,14 @@
       <AuthPanelLink :to="'/register'" :message="'FeedGears is free.  Create an account here.'" :theme="theme" />
       <!-- server response -->
       <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
+      <!-- privacy policy -->
+      <div class="footer-view">
+        <span>
+          <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
+            <i class="fa fa-file-text" /> Privacy Policy
+          </a>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -130,5 +138,26 @@ export default {
   background: v-bind('theme.sectionhighlight');
   border-radius: 5px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+
+.footer-view {
+  border-top: 1px solid v-bind('theme.navbarsubshadow');
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  resize: none;
+  gap: .75rem;
+  padding: 1.25rem;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: v-bind('theme.subduedmessage');
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+  color: v-bind('theme.highlightedmessage');
 }
 </style>

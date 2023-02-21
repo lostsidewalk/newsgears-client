@@ -131,7 +131,8 @@
               @addRssAtomUrl="this.addRssAtomUrl" 
               @showRssAtomUrlBrowser="this.showRssAtomUrlBrowser"
               @deleteRssAtomUrl="this.deleteRssAtomUrl"
-              @update:rssAtomFeedUrl="updateRssAtomFeedUrl" />
+              @update:rssAtomFeedUrl="updateRssAtomFeedUrl" 
+              @authError="handleAuthError" />
             <div class="feed-catalog-errors" v-if="this.showFeedCatalog && this.feedCatalogErrors.length > 0">
               <div class="error feed-catalog-error" v-for="error in this.feedCatalogErrors" :key="error">
                 {{ error }}

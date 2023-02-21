@@ -7,9 +7,9 @@
       :disabled="disabled"
       @input="$emit('update:modelValue', $event.target.value)"
     />
-    <div class="auth-error-message" v-for="(error, index) of errorValue" :key="index">
+    <!-- <div class="auth-error-message" v-for="(error, index) of errorValue" :key="index">
       {{ error.$message }}
-    </div>
+    </div> -->
   </div>
 </template>
 

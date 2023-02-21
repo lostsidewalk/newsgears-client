@@ -8,6 +8,9 @@ import VerificationCallbackView from '@/views/VerificationCallbackView.vue';
 import SettingsView from '@/views/SettingsView.vue';
 import OrderConfirmedView from '@/views/OrderConfirmedView.vue';
 import ManageSubscriptionView from '@/views/ManageSubscriptionView.vue';
+import DocsView from '@/views/DocsView.vue';
+import ApiView from '@/views/ApiView.vue';
+import PrivacyPolicyView from '@/views/PrivacyPolicyView.vue';
 
 const routes = [
   {
@@ -82,7 +85,31 @@ const routes = [
     props: {
       baseUrl: 'http://localhost:8080'
     }
-  }
+  },
+  {
+    path: '/docs',
+    name: 'DocsView',
+    component: DocsView,
+    props: {
+      baseUrl: 'http://localhost:8080',
+    }
+  },
+  {
+    path: '/api',
+    name: 'ApiView',
+    component: ApiView,
+    props: {
+      baseUrl: 'http://localhost:8080',
+    }
+  },
+  {
+    path: '/privacy',
+    name: 'PrivacyPolicyView',
+    component: PrivacyPolicyView,
+    props: {
+      baseUrl: 'http://localhost:8080',
+    }
+  },
 ];
 
 const router = createRouter({

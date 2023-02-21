@@ -25,8 +25,6 @@
         :errorValue="v$.password.$errors"
         @update:modelValue="v$.password.$model = $event" 
         :type="'password'" />
-      <!-- agree to terms -->
-      <AuthAgreeToTerms :disabled="disabled || inTransit" :theme="theme" @updateAgreement="updateAgreement" />
       <!-- submit button -->
       <AuthButton
         label="Submit"
@@ -37,6 +35,14 @@
       />
       <!-- server response -->
       <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
+      <!-- privacy policy -->
+      <div class="footer-view">
+        <span>
+          <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
+            <i class="fa fa-file-text" /> Privacy Policy
+          </a>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -47,7 +53,6 @@ import useVuelidate from '@vuelidate/core'
 import { required, minLength, maxLength, email } from '@vuelidate/validators';
 import AuthButton from './AuthButton.vue'
 import AuthTextField from './AuthTextField.vue';
-import AuthAgreeToTerms from './AuthAgreeToTerms.vue';
 import AuthServerResponse from './AuthServerResponse.vue';
 
 export default {
@@ -60,7 +65,6 @@ export default {
     NavbarFixedHeader,
     AuthButton,
     AuthTextField,
-    AuthAgreeToTerms,
     AuthServerResponse,
 },
   props: [ "disabled", "theme" ],
@@ -88,26 +92,17 @@ export default {
       email: null,
       password: null,
       userType: null,
-      agreeWithTerms: null,
       serverMessage: null,
       // 
       inTransit: false,
     }
   },
   methods: {
-    updateAgreement(agreement) {
-      this.agreeWithTerms = agreement.agreeWithTerms;
-    },
     submitRegistration() {
       this.clearServerResponse();
 
       if (!this.username || !this.email || !this.password) {
         this.serverMessage = "Username, email address, and password are required in order to register.";
-        return;
-      }
-
-      if (!this.agreeWithTerms) {
-        this.serverMessage = "In order to register, you must first agree to the NewsGears Terms and Conditions.";
         return;
       }
 
@@ -168,5 +163,25 @@ export default {
   background: v-bind('theme.sectionhighlight');
   border-radius: 5px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+.footer-view {
+  border-top: 1px solid v-bind('theme.navbarsubshadow');
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  resize: none;
+  gap: .75rem;
+  padding: 1.25rem;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: v-bind('theme.subduedmessage');
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+  color: v-bind('theme.highlightedmessage');
 }
 </style>

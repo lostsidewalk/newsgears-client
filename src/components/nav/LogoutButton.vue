@@ -1,6 +1,6 @@
 <template>
     <span>
-      <button id="logout" class="logout-button" @click="this.$auth.logout()" accesskey="o" :disabled="disabled">
+      <button id="logout" class="logout-button" @click="logout" accesskey="o" :disabled="disabled">
         Log<i class="underline">o</i>ut
       </button>
     </span>
@@ -10,6 +10,16 @@
 export default {
   name: "LogoutButton",
   props: [ "disabled", "theme" ],
+  methods: {
+    logout() {
+      this.$auth.logout()
+      .catch((error) => {
+        console.log("unable to logout due to: " + error);
+      }).finally(() => {
+        console.log("logout complete");
+      });
+    }
+  }
 }
 </script>
 

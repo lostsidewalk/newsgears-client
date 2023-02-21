@@ -48,7 +48,7 @@
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
         <div class="feed-select-view" :class="this.isModalShowing ? 'invisible' : ''">
-          <div class="view-header" style="position: sticky;top: 0px;z-index: 200;height: 95vh;overflow-y: auto;">
+          <div class="view-header" style="position: sticky;top: 0px;z-index: 200;overflow-y: auto;">
             <h3 class="view-header-no-count">
               <i class="fa fa-feed fa-1x"/>
               QUEUE DASHBOARD
@@ -1095,10 +1095,12 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
+          this.showNavBar = true;
         });
       }).catch((error) => {
         this.handleServerError(error);
         this.inTransit = false;
+        this.showNavBar = true;
       });
     },
     cancelOpmlUpload() {

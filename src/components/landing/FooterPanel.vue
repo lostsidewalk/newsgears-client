@@ -5,22 +5,17 @@
         <a class="footer-link" href="https://www.lostsidewalk.com/feedgears/devblog" target="_blank"><i class="fa fa-code-fork" /> Dev Blog</a>
       </span>
       <span>
-        <a class="footer-link" href="#" target="_blank" @click="this.$router.push('/docs');">
+        <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/docs');">
           <i class="fa fa-question-circle" /> Docs
         </a>
       </span>
       <span>
-        <a class="footer-link" href="#" target="_blank" @click="this.$router.push('/privacy');">
+        <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
           <i class="fa fa-file-text" /> Privacy Policy
         </a>
       </span>
       <span>
-        <a class="footer-link" href="#" target="_blank" @click="this.$router.push('/cookies');">
-          <i class="fa fa-file-text" /> Cookie Policy
-        </a>
-      </span>
-      <span>
-        <a class="footer-link" href="#" target="_blank" @click="this.$router.push('/api');">
+        <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/api');">
           <i class="fa fa-plug" /> API
         </a>
       </span>
@@ -32,9 +27,6 @@
       </span>
       <span>
         <a class="footer-link" href="https://github.com/lostsidewalk" target="_blank"><i class="fa fa-github" /> Github</a>
-      </span>
-      <span>
-        <a class="footer-link" href="https://www.reddit.com/r/feedgears" target="_blank"><i class="fa fa-reddit" /> Reddit</a>
       </span>
       <span>
         <a class="footer-link" href="https://twitch.tv/elderscrollsjesus" target="_blank"><i class="fa fa-twitch" /> Twitch</a>

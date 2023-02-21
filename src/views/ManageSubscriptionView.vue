@@ -58,6 +58,20 @@ export default {
     this.refreshSubscription();
   },
   methods: {
+    // 
+    // server error 
+    // 
+    handleServerError(error) {
+      console.log(error);
+      if (error.name === 'TypeError') {
+        this.setLastServerMessage('Something went wrong.  Please try again later.');
+      } else if (error.message) {
+        this.setLastServerMessage(error.message); 
+      } else {
+        this.setLastServerMessage(error); // $auth plugin errors 
+      }
+      this.inTransit = false;
+    },
     setLastServerMessage(message) {
       this.clearLastServerMessage();
       let serverMessageId = Math.random();
@@ -83,6 +97,7 @@ export default {
     clearLastServerMessage() {
       this.serverMessages.pop();
     },
+    // 
     refreshSubscription() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
@@ -103,19 +118,14 @@ export default {
         }).then((data) => {
           this.subscription = data.length > 0 ? data[0] : null;
         }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
-          } else {
-            this.setLastServerMessage(error.message);
-          }
+          this.handleServerError(error);
           this.failedToLoad = true;
         }).finally(() => {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
+        this.failedToLoad = true;
       });
     },
     cancelSubscription(subscription) {
@@ -153,8 +163,7 @@ export default {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
       });
     },
     resumeSubscription(subscription) {
@@ -191,8 +200,7 @@ export default {
           this.inTransit = false;
         });
       }).catch((error) => {
-        this.handleAuthError(error);
-        this.inTransit = false;
+        this.handleServerError(error);
       });
     },
   },
