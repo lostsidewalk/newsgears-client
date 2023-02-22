@@ -216,12 +216,12 @@ export default {
     });
 
     // URLs
-    app.config.globalProperties.$currentUserUrl = options.currentUserUrl || "http://localhost:8080/currentuser";
-    app.config.globalProperties.$authUrl = options.authUrl || "http://localhost:8080/authenticate";
-    app.config.globalProperties.$pwResetUrl = options.pwResetUrl || "http://localhost:8080/pw_reset";
-    app.config.globalProperties.$pwUpdateUrl = options.pwUpdateUrl || "http://localhost:8080/pw_update";
-    app.config.globalProperties.$registrationUrl = options.registrationUrl || "http://localhost:8080/register";
-    app.config.globalProperties.$logoutUrl = options.logoutUrl || "http://localhost:8080/deauthenticate";
+    app.config.globalProperties.$currentUserUrl = options.currentUserUrl || (process.env.VUE_APP_FEEDGEARS_API_URL + "/currentuser");
+    app.config.globalProperties.$authUrl = options.authUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/authenticate";
+    app.config.globalProperties.$pwResetUrl = options.pwResetUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_reset";
+    app.config.globalProperties.$pwUpdateUrl = options.pwUpdateUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_update";
+    app.config.globalProperties.$registrationUrl = options.registrationUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/register";
+    app.config.globalProperties.$logoutUrl = options.logoutUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/deauthenticate";
 
     app.config.globalProperties.$auth = authObj;
   }

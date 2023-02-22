@@ -10,7 +10,7 @@ export default {
   props: [ "theme", "disabled" ],
   methods: {
     googleOauth2() {
-      window.location='http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:3000/app'
+      window.location=process.env.VUE_APP_FEEDGEARS_API_URL + '/oauth2/authorize/google?redirect_uri=' + process.env.VUE_APP_FEEDGEARS_ORIGIN_URL + '/app';
     },
   }
 }

@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --port 3000",
-    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --mode production --port 3000",
+    "build": "vue-cli-service build --mode production",
+    "devserve": "vue-cli-service serve --mode development --port 3000",
+    "devbuild": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

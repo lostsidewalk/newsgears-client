@@ -18,7 +18,7 @@ const routes = [
     name: 'LandingView',
     component: LandingView,
     props: {
-      baseUrl: 'http://localhost:8080'
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
 	{
@@ -27,7 +27,7 @@ const routes = [
     title: 'FeedGears RSS',
 		component: HomeView,
 		props: {
-			baseUrl: 'http://localhost:8080'
+			baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
 		}
 	},
 	{
@@ -35,7 +35,7 @@ const routes = [
 		name: 'PasswordResetRequestView',
 		component: PasswordResetRequestView,
 		props: {
-			baseUrl: 'http://localhost:8080'
+			baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
 		}
 	},
   {
@@ -43,7 +43,7 @@ const routes = [
     name: 'PasswordResetCallbackView',
     component: PasswordResetCallbackView, 
     props: {
-      baseUrl: 'http://localhost:8080'
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
 	{
@@ -51,7 +51,7 @@ const routes = [
 		name: 'RegistrationRequestView',
 		component: RegistrationRequestView,
 		props: {
-			baseUrl: 'http://localhost:8080'
+			baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
 		}
 	},
   {
@@ -59,7 +59,7 @@ const routes = [
     name: 'VerificationCallbackView',
     component: VerificationCallbackView, 
     props: {
-      baseUrl: 'http://localhost:8080'
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
   {
@@ -67,7 +67,7 @@ const routes = [
     name: 'SettingsView',
     component: SettingsView,
     props: {
-      baseUrl: 'http://localhost:8080'
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
   {
@@ -75,7 +75,7 @@ const routes = [
     name: 'OrderConfirmedView',
     component: OrderConfirmedView,
     props: {
-      baseUrl: 'http://localhost:8080'
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
   {
@@ -83,7 +83,7 @@ const routes = [
     name: 'ManageSubscriptionView',
     component: ManageSubscriptionView,
     props: {
-      baseUrl: 'http://localhost:8080'
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
   {
@@ -91,7 +91,7 @@ const routes = [
     name: 'DocsView',
     component: DocsView,
     props: {
-      baseUrl: 'http://localhost:8080',
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
   {
@@ -99,7 +99,7 @@ const routes = [
     name: 'ApiView',
     component: ApiView,
     props: {
-      baseUrl: 'http://localhost:8080',
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
   {
@@ -107,7 +107,7 @@ const routes = [
     name: 'PrivacyPolicyView',
     component: PrivacyPolicyView,
     props: {
-      baseUrl: 'http://localhost:8080',
+      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
   },
 ];
