@@ -26,7 +26,6 @@ export default {
   float: left;
   user-select: none;
   position: relative;
-  z-index: 99999;
   background-color: unset;
   border: unset;
   cursor: pointer;

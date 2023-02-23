@@ -4,22 +4,18 @@
     <RegistrationRequestPanel ref="registration" 
       :disabled="this.inTransit" 
       :theme="theme" />
-    <!-- "go back" link -->
-    <GoBack :disabled="inTransit" :theme="theme" />
   </div>
 </template>
 
 <script>
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import RegistrationRequestPanel from "@/components/auth/RegistrationRequestPanel.vue";
-import GoBack from "@/components/layout/GoBack.vue";
 
 export default {
   name: "RegistrationRequestView",
   components: {
     NavbarFixedHeader,
     RegistrationRequestPanel,
-    GoBack,
   },
   props: [ "baseUrl" ],
   mounted() {

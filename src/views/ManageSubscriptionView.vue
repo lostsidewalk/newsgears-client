@@ -25,8 +25,6 @@
         @cancelSubscription="cancelSubscription"
         @resumeSubscription="resumeSubscription"
       />
-      <!-- "go back" link -->
-      <GoBack :disabled="inTransit" :theme="theme" />
     </div>
     <YouHaveBeenLoggedOut v-else :theme="theme" />
   </div>
@@ -39,7 +37,6 @@ import NavbarFixedSubheader from '@/components/layout/NavbarFixedSubheader.vue';
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";
 import InvoicePanel from '@/components/invoice/InvoicePanel.vue';
 import YouHaveBeenLoggedOut from '@/components/auth/YouHaveBeenLoggedOut.vue';
-import GoBack from '@/components/layout/GoBack.vue';
 
 export default {
   name: "ManageSubscriptionView",
@@ -50,7 +47,6 @@ export default {
     LastServerMessage,
     InvoicePanel,
     YouHaveBeenLoggedOut,
-    GoBack,
 },
   props: ["baseUrl"],
   created() {

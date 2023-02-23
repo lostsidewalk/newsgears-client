@@ -3,20 +3,16 @@
     <PasswordResetRequestPanel ref="passwordReset" 
       :disabled="inTransit" 
       :theme="theme" />
-    <!-- "go back" link -->
-    <GoBack :disabled="inTransit" :theme="theme" />
   </div>
 </template>
 
 <script>
 import PasswordResetRequestPanel from "@/components/auth/PasswordResetRequestPanel.vue";
-import GoBack from "@/components/layout/GoBack.vue";
 
 export default {
   name: "PasswordResetRequestView",
   components: {
     PasswordResetRequestPanel,
-    GoBack,
   },
   props: ["baseUrl"],
   mounted() {

@@ -1908,7 +1908,7 @@ footer {
   left: 0;
   height: 100%;
   width: 100%;
-  font-size: xxx-large;
+  font-size: larger;
   z-index: -99999;
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;

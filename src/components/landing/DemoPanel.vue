@@ -80,7 +80,7 @@ export default {
 .tab-panel > img {
   border-radius: 3px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  min-width: 30vw;
-  max-width:60vw;
+  min-width: 30%;
+  max-width:60%;
 }
 </style>

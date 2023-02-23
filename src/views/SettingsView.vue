@@ -27,8 +27,6 @@
         @submitOrder="submitOrder"
         :theme="theme"
         :disabled="inTransit" />
-      <!-- "go back" link -->
-      <GoBack :disabled="inTransit" :theme="theme" />
     </div>
     <YouHaveBeenLoggedOut v-if="!this.forceLogout && !this.$auth.$isAuthenticated" :theme="theme" />
   </div>
@@ -41,7 +39,6 @@ import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";
 import SettingsPanel from "@/components/settings/SettingsPanel.vue";
 import YouHaveBeenLoggedOut from "@/components/auth/YouHaveBeenLoggedOut.vue";
-import GoBack from "@/components/layout/GoBack.vue";
 
 export default {
   name: "SettingsView",
@@ -52,7 +49,6 @@ export default {
     LastServerMessage,
     SettingsPanel,
     YouHaveBeenLoggedOut,
-    GoBack,
 },
   props: ["baseUrl"],
   mounted() {

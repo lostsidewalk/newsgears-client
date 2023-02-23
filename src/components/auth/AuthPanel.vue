@@ -130,10 +130,11 @@ export default {
   height: 100%;
   width: 100%;
   font-size: larger; 
+  min-width: 200px;
 }
 
 .auth-container-inner {
-  margin: 25%;
+  margin: 2%;
   border: 1px solid v-bind('theme.sectionbordercolor');
   background: v-bind('theme.sectionhighlight');
   border-radius: 5px;

@@ -151,7 +151,7 @@ export default {
 .features-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  /* grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); */
   resize: none;
   gap: 1rem;
   margin-left: 4%;

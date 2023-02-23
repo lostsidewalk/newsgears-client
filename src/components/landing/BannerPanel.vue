@@ -24,7 +24,7 @@ export default {
   width: 100%;
   align-items: center;
   font-family: 'Russo One';
-  font-size: xxx-large;
+  font-size: larger;
   margin-bottom: 2%;
 }
 

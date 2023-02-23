@@ -23,7 +23,7 @@ export default {
 .app-banner {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
-  font-size: xxx-large;
+  font-size: larger;
   color: v-bind('theme.logocolor');
   text-shadow: 2px 2px 2px v-bind('theme.logoshadowcolor');
   margin-top: 3.125rem;
