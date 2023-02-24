@@ -154,24 +154,29 @@ export default {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 2%;
+  left: 2%;
   right: 0;
-  width: 100%;
-  height: 100%;
+  width: 96%;
+  height: auto;
   z-index: 1000;
-  background: v-bind('theme.modalcontainerbg');
+}
+
+.modal-header {
+  text-align: left;
 }
 
 .modal-body {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.modalbodybg');
   color: v-bind('theme.normalmessage');
   text-align: center;
-  width: 50%;
+  width: 100%;
+  height: 100%;
   padding: 2rem;
-  border: 1px solid v-bind('theme.buttonborder');
-  border-radius: 3px;
+  padding-bottom: 1rem;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  border: 0px;
+  border-radius: 5px;
 }
 
 .modal-actions {
@@ -222,6 +227,7 @@ export default {
   margin-right: .75rem;
   padding: .75rem;
   border: 1px solid v-bind('theme.sectionbordercolor');
+  flex-wrap: wrap;
 }
 
 .keyboard-key {

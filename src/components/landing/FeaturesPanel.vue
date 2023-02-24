@@ -175,7 +175,6 @@ export default {
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   margin: 0rem;
-  overflow: hidden;
   padding-bottom: .75rem;
   text-align: left;
 }

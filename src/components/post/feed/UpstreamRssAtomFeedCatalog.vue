@@ -336,7 +336,6 @@ export default {
       }
     },
     removeFilter(name, f) {
-      console.log("removing feed catalog filter: name=" + name + ", value=" + f);
       if (name === "author" && this.feedCatalogFilterAuthors.indexOf(f) >= 0) {
         this.removeFilterFromSet(this.feedCatalogFilterAuthors, f);
       } else if (name === "category" && this.feedCatalogFilterCategories.indexOf(f) >= 0) {
@@ -453,9 +452,8 @@ export default {
 .pill-container {
   border: 1px solid transparent;
   display: flex;
-  flex-flow: wrap;
+  flex-wrap: wrap;
   gap: .31rem;
-  width: min-content;
 }
 
 .br-pill {
@@ -501,6 +499,7 @@ export default {
   text-align: left;
   display: inline-flex;
   margin-top: .125rem;
+  margin-bottom: .75rem;
   float: right;
 }
 

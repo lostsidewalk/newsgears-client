@@ -39,7 +39,7 @@
       ref="helpPanel"
       :theme="theme"
       @dismiss="dismissHelpPanel" />
-    <NavbarFixedHeader :theme="theme" :inTransit="false" :class="this.showNavBar ? '' : 'invisible'">
+    <NavbarFixedHeader :theme="theme" :inTransit="this.selectedFeedId ? false : this.inTransit" :class="this.showNavBar ? '' : 'invisible'">
       <template v-slot:buttons>
         <NavbarButtons :disableSettings="false" :disableSubscriptions="false" :disabled="disabled || inTransit" :theme="theme"/>
       </template>
@@ -275,12 +275,15 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener("keydown", this.eventHandler);
     if (this.$auth.$isAuthenticated) {
-      this.refreshFeeds(true, null, true); // need staging posts for all feeds and feed definitions 
+        this.refreshFeeds(true, null, true); // need staging posts for all feeds and feed definitions 
     }
   },
+  beforeUnmount() {
+    window.removeEventListener("keydown", this.eventHandler);
+  },
   created() {
-    window.addEventListener("keydown", this.eventHandler);
   },
   computed: {
     totalPages: function() {
@@ -420,10 +423,6 @@ export default {
       showNavBar: true,
       // 
       inTransit: false,
-
-      // 
-      // TODO: relocate the following state data to store 
-      // 
 
       // feed material 
       feeds: [], // all feeds 
@@ -1341,6 +1340,8 @@ export default {
     setSelectedFeedId(feedId) {
       this.selectedFeedId = feedId;
       this.inboundQueue = feedId ? this.inboundQueuesByFeed[feedId] : null;
+      this.selectedFeedFilterCategories = [];
+      this.selectedFeedFilterSubscriptions = [];
     },
     getSelectedFeed() {
       if (this.selectedFeedId) {
@@ -1647,7 +1648,6 @@ export default {
   padding: .75rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
-  overflow: hidden;
 }
 
 .view-header-field {
@@ -1679,7 +1679,6 @@ export default {
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   margin: 0rem;
-  overflow: hidden;
 }
 
 .view-header-count {
@@ -1689,7 +1688,6 @@ export default {
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   margin: 0rem;
-  overflow: hidden;
 }
 
 .view-header-toolbar {
@@ -1864,9 +1862,8 @@ footer {
 .pill-container {
   border: 1px solid transparent;
   display: flex;
-  flex-flow: wrap;
+  flex-wrap: wrap;
   gap: .31rem;
-  width: max-content;
 }
 
 .br-pill {
@@ -1909,7 +1906,6 @@ footer {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   margin: 0rem;
-  overflow: hidden;
   text-shadow: 0 0 1px rgba(255,255,255,0.3);
 }
 
@@ -1927,9 +1923,5 @@ footer {
   .post-feed-container-inner-selected {
     display: unset;
   }
-}
-
-@media (max-width: 320) {
-
 }
 </style>

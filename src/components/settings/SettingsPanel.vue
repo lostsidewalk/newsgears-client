@@ -439,7 +439,6 @@ export default {
   padding-top: 1.25rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
-  overflow: hidden;
 }
 
 .view-header-count {
@@ -449,7 +448,6 @@ export default {
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   margin: 0rem;
-  overflow: hidden;
 }
 
 .view-header-toolbar {

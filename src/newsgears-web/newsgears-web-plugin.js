@@ -1,10 +1,6 @@
 import axios from "axios";
 import { reactive } from 'vue';
 
-let instance;
-
-export const isError = (error) => instance.isError(error);
-
 export default {
   install: (app, options) => {
     console.log("newsgears-web: install");

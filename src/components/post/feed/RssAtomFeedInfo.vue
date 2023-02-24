@@ -38,7 +38,7 @@
         <!-- published date -->
         <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field">Last published: {{ this.info.publishedDate }}</div>
         <!-- description -->
-        <div class="rss-atom-feed-info-field">{{ this.info.description.value }}</div>
+        <div class="rss-atom-feed-info-field">{{ this.info.description ? this.info.description.value : '' }}</div>
         <!-- sample entries -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.info.sampleEntries" :key="sampleEntry.title">
           <a class="link"
@@ -241,9 +241,10 @@ export default {
   text-decoration: none;
   color: v-bind('theme.subduedmessage');
   cursor: pointer;
+  border: 1px solid transparent;
 }
 
-.link:hover {
+.link:focus, .link:hover {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -251,9 +252,8 @@ export default {
 .pill-container {
   border: 1px solid transparent;
   display: flex;
-  flex-flow: wrap;
+  flex-wrap: wrap;
   gap: .31rem;
-  width: min-content;
 }
 
 .br-pill {

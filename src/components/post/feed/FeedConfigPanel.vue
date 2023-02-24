@@ -514,13 +514,12 @@ export default {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 2%;
+  left: 2%;
   right: 0;
-  width: 100%;
-  height: 100%;
+  width: 96%;
+  height: auto;
   z-index: 1000;
-  background: v-bind('theme.modalcontainerbg');
 }
 
 .modal-header {
@@ -528,13 +527,15 @@ export default {
 }
 
 .modal-body {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.modalbodybg');
   color: v-bind('theme.normalmessage');
   text-align: left;
-  width: 75%;
+  width: 100%;
+  height: 100%;
   padding: 2rem;
-  border: 1px solid v-bind('theme.buttonborder');
+  padding-bottom: 1rem;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  border: 0px;
   border-radius: 5px;
 }
 
@@ -612,7 +613,6 @@ export default {
   color: v-bind('theme.logocolor');
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   margin: 0rem;
-  overflow: hidden;
 }
 
 @keyframes load {

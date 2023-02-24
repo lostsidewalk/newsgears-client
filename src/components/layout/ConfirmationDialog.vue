@@ -50,18 +50,19 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 1000;
-  background: v-bind('theme.modalcontainerbg');
 }
 
 .modal-body {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.modalbodybg');
   color: v-bind('theme.normalmessage');
   text-align: center;
-  width: 50%;
+  width: 100%;
+  height: 100%;
   padding: 2rem;
-  border: 1px solid v-bind('theme.buttonborder');
-  border-radius: 3px;
+  padding-bottom: 1rem;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  border: 0px;
+  border-radius: 5px;
 }
 
 .modal-actions {

@@ -56,6 +56,7 @@ export default {
   flex-flow: wrap;
   gap: .31rem;
   width: max-content;
+  align-items: flex-start;
 }
 
 .br-pill-subdued {

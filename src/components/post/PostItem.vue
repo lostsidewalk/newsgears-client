@@ -611,9 +611,10 @@ export default {
   text-decoration: none;
   color: v-bind('theme.subduedmessage');
   cursor: pointer;
+  border: 1px solid transparent;
 }
 
-.link:hover {
+.link:focus, .link:hover {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -621,9 +622,8 @@ export default {
 .pill-container {
   border: 1px solid transparent;
   display: flex;
-  flex-flow: wrap;
+  flex-wrap: wrap;
   gap: .31rem;
-  width: min-content;
 }
 
 .br-pill {

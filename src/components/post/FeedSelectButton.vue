@@ -211,9 +211,10 @@ export default {
   text-decoration: none;
   color: unset;
   cursor: pointer;
+  border: 1px solid transparent;
 }
 
-.link:hover {
+.link:focus, .link:hover {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
