@@ -1,7 +1,7 @@
 <template>
     <span>
       <button id="signup" class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
-        Sign-up
+        Create an account
       </button>
     </span>
 </template>

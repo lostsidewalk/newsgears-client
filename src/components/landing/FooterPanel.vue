@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="footer-view">
+    <div class="links-view">
       <span>
         <a class="footer-link" href="https://www.lostsidewalk.com/feedgears/devblog" target="_blank"><i class="fa fa-code-fork" /> Dev Blog</a>
       </span>
@@ -32,6 +32,11 @@
         <a class="footer-link" href="https://twitch.tv/elderscrollsjesus" target="_blank"><i class="fa fa-twitch" /> Twitch</a>
       </span>
     </div>
+    <div class="footer-divider"/>
+    <div class="copyright-view">
+      <div>COPYRIGHT <i class="fa fa-copyright" /> 2023 <a class="footer-link" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
+      <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
+    </div>
   </div>
 </template>
 
@@ -43,7 +48,7 @@ export default {
 </script>
 
 <style scoped>
-.footer-view {
+.links-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
@@ -61,6 +66,32 @@ export default {
 .footer-link:hover {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
+}
+
+.footer-divider {
+  border-top: 1px solid v-bind('theme.navbarsubshadow');
+  width: 75%;
+  margin: auto;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+
+.copyright-view {
+  padding-left: 4%;
+  padding-right: 4%;
+  padding-bottom: 1%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-content: flex-end;
+  align-items: flex-end;
+  white-space: nowrap;
+  font-size: smaller;
+}
+
+.copyright-view > div { 
+  margin: .125rem;
 }
 
 </style>

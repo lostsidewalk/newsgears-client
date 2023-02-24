@@ -75,12 +75,12 @@ export default {
 .tab-panel {
   border: 1px solid transparent;
   overflow: auto;
+  width: 100%;
 }
 
 .tab-panel > img {
   border-radius: 3px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  min-width: 30%;
-  max-width:60%;
+  width: 90%;
 }
 </style>

@@ -3,12 +3,12 @@
     <PostMediaMetadata v-if="isUseableMetadata(this.mediaGroup.postMediaMetadata)" 
       :theme="theme" 
       :metadata="this.mediaGroup.postMediaMetadata" />
-    <div v-if="this.mediaGroup.postMediaContents && this.showContents" 
-      class="post-media-group-contents">
+    <div v-if="this.mediaGroup.postMediaContents && this.showContents" class="post-media-group-contents">
       <PostMediaContent v-for="(mc,idx) of this.mediaGroup.postMediaContents" :key="mc" 
         :ref="'postMediaContent_' + idx"
-        :theme="theme" 
         :mediaContent="mc" 
+        :showContentOnLoad="idx === 0"
+        :theme="theme" 
         @playing="this.$emit('playing')" />
     </div>
   </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="post-enclosure">
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-    <a v-if="isImage()" @click="fetchAndSaveImage()">
+    <a v-if="isImage()" @click.stop="fetchAndSaveImage()">
       <img 
         :src="this.enclosure.uri"
         class="post-enclosure-image" 

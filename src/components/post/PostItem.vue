@@ -623,7 +623,7 @@ export default {
   display: flex;
   flex-flow: wrap;
   gap: .31rem;
-  overflow-x: auto;
+  width: min-content;
 }
 
 .br-pill {

@@ -11,6 +11,7 @@
         <PostMediaContent v-for="(mc,idx) of this.media.postMediaContents" :key="mc" 
           :ref="'postMediaContent_' + idx"
           :mediaContent="mc" 
+          :showContentOnLoad="idx === 0"
           :theme="theme" 
           @playing="onMediaContentPlaying(idx)" />
       </div>

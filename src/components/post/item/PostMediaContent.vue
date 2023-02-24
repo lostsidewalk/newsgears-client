@@ -5,14 +5,31 @@
       :theme="theme" 
       :metadata="this.mediaContent.metadata" />
     <!-- reference -->
-    <div v-if="this.showContents">
-      <a @click="fetchAndSaveImage()" v-if="isImage()">
+    <div>
+      <div class="pill-container">
+        <button class="post-media-content-handle" :class="'fa ' + (this.showContents ? 'fa-minus' : 'fa-plus')" @click.stop="this.showContents = !this.showContents">
+        </button>
+        <div class="inner-pill-container">
+          <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">AUDIO CHANNELS: {{ this.mediaContent.audioChannels }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">BIT RATE: {{ this.mediaContent.bitRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.duration">DURATION: {{ this.mediaContent.duration }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.expression">EXPRESSION: {{ this.mediaContent.expression }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.fileSize">FILE SIZE: {{ this.mediaContent.fileSize }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.frameRate">FRAME RATE: {{ this.mediaContent.frameRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.height">HEIGHT: {{ this.mediaContent.height }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.width">WIDTH: {{ this.mediaContent.width }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.language">LANGUAGE: {{ this.mediaContent.language }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">SAMPLING RATE: {{ this.mediaContent.samplingRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.medium">MEDIUM: {{ this.mediaContent.medium }}</div>
+        </div>
+      </div>
+      <a @click.stop="fetchAndSaveImage()" v-if="isImage() && this.showContents">
         <img 
           :src="this.mediaContent.reference.uri"
           class="post-media-content-image" 
           tabindex="0" />
       </a>
-      <div v-else-if="isVideo()" class="post-media-content-video">
+      <div v-else-if="isVideo() && this.showContents" class="post-media-content-video">
         <vue-plyr ref="player">
           <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
             <iframe style="border: 0px; width:100%;"
@@ -23,7 +40,7 @@
           </div>
         </vue-plyr>
       </div>
-      <div v-else-if="isAudio()" class="post-media-content-audio">
+      <div v-else-if="isAudio() && this.showContents" class="post-media-content-audio">
         <vue-plyr ref="player">
           <audio controls crossorigin playsinline>
             <source
@@ -31,19 +48,6 @@
               :type="this.enclosure.type" />
           </audio>
         </vue-plyr>
-      </div>
-      <div class="pill-container">
-        <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">AUDIO CHANNELS: {{ this.mediaContent.audioChannels }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">BIT RATE: {{ this.mediaContent.bitRate }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.duration">DURATION: {{ this.mediaContent.duration }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.expression">EXPRESSION: {{ this.mediaContent.expression }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.fileSize">FILE SIZE: {{ this.mediaContent.fileSize }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.frameRate">FRAME RATE: {{ this.mediaContent.frameRate }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.height">HEIGHT: {{ this.mediaContent.height }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.width">WIDTH: {{ this.mediaContent.width }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.language">LANGUAGE: {{ this.mediaContent.language }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">SAMPLING RATE: {{ this.mediaContent.samplingRate }}</div>
-        <div class="br-pill-subdued" v-if="this.mediaContent.medium">MEDIUM: {{ this.mediaContent.medium }}</div>
       </div>
     </div>
   </div>
@@ -54,7 +58,7 @@ import PostMediaMetadata from './PostMediaMetadata.vue';
 
 export default {
   name: "PostMediaContent",
-  props: [ "mediaContent", "theme" ],
+  props: [ "mediaContent", "showContentOnLoad", "theme" ],
   emits: [ "playing" ],
   components: {
     PostMediaMetadata,
@@ -95,7 +99,7 @@ export default {
   },
   data() {
     return {
-      showContents: true, 
+      showContents: this.showContentOnLoad, 
     }
   }
 }
@@ -122,7 +126,8 @@ export default {
   display: flex;
   flex-flow: wrap;
   gap: .31rem;
-  overflow-x: auto;
+  width: max-content;
+  align-items: flex-start;
 }
 
 .br-pill-subdued {
@@ -133,6 +138,7 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  margin-bottom: .31rem;
 }
 
 .post-media-content-image:hover {
@@ -143,5 +149,26 @@ export default {
 }
 
 .post-media-content-audio {
+}
+
+.post-media-content-handle {
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  cursor: pointer;
+  text-align: center;
+  border-radius: 3px;
+  background-color: transparent;
+  color: v-bind('theme.sectionsubdued');
+  padding-top: .125rem;
+}
+
+.post-media-content-handle:hover {
+  border: 1px solid v-bind('theme.buttonborder');
+  color: v-bind('theme.buttonfg');
+  background-color: v-bind('theme.buttonhighlight');
+}
+
+.inner-pill-container {
+  display: flex;
+  flex-direction: column;
 }
 </style>

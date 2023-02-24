@@ -3,15 +3,19 @@
     <div class="banner-view">
       <h1>FeedGears RSS</h1>
       <i class="fa fa-rss fa-5x"></i>
-      <button class="tab-label" @click="this.$router.push('/app')" accesskey="s">Get <i class="underline">S</i>tarted</button>
+      <GoogleAuthButton :theme="theme" :disabled="false" />
+      <!-- <button class="tab-label" @click="this.$router.push('/app')" accesskey="s">Get <i class="underline">S</i>tarted</button> -->
     </div>
   </div>
 </template>
 
 <script>
+import GoogleAuthButton from '../auth/GoogleAuthButton.vue';
+
 export default {
-  name: "BannerPanel",
-  props: [ "theme" ],
+    name: "BannerPanel",
+    props: ["theme"],
+    components: { GoogleAuthButton }
 }
 </script>
 

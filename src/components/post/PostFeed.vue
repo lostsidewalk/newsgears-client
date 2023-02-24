@@ -185,7 +185,7 @@
               </button>
             </div>
             <!-- post subscription filter pills -->
-            <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 0">
+            <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 1">
               SUBSCRIPTIONS:
               <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
                 class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
@@ -195,7 +195,7 @@
               </button>
             </div>
             <!-- post category filter pills -->
-            <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 0">
+            <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 1">
               CATEGORIES: 
               <button v-for="category of this.allPostCategories" :key="category"
                 class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
@@ -738,14 +738,10 @@ export default {
             if (stagingPosts) {
               for (let i = 0; i < stagingPosts.length; i++) {
                 let p = stagingPosts[i].post;
-                if (p.id === 1) {
-                  console.log("post Id 1=" + JSON.stringify(p));
-                }
                 p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
                 p.isRead = p.postReadStatus === 'READ';
                 p.isReadLater = p.postReadStatus === 'READ_LATER';
                 p.postImgSrc = stagingPosts[i].postImgSrc;
-                // add this post 
                 rawPosts.push(p);
                 ct++;
               }
@@ -1870,7 +1866,7 @@ footer {
   display: flex;
   flex-flow: wrap;
   gap: .31rem;
-  overflow-x: auto;
+  width: max-content;
 }
 
 .br-pill {
