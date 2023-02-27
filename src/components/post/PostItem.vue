@@ -133,8 +133,8 @@
             :iTunes="post.postITunes" />
         </div>
         <!-- post enclosures -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postEnclosures)">
-          <PostEnclosure v-for="(enclosure,idx) in post.postEnclosures" :key="enclosure"
+        <div class="post-item-row" v-if="(this.showPostDetails && post.enclosures)">
+          <PostEnclosure v-for="(enclosure,idx) in post.enclosures" :key="enclosure"
             :ref="'postEnclosure_' + idx"
             :theme="theme"
             :enclosure="enclosure" 
@@ -243,8 +243,8 @@ export default {
     },
     onMediaPlaying() {
       // pause all enclosures 
-      if (this.post.postEnclosures) {
-        for (let i = 0; i < this.postEnclosures.length; i++) {
+      if (this.post.enclosures) {
+        for (let i = 0; i < this.post.enclosures.length; i++) {
           let r = this.$refs['postEnclosure_' + i];
           if (r && r.length > 0) {
             r[0].pause();
@@ -255,10 +255,12 @@ export default {
     },
     onEnclosurePlaying(idx) {
       // pause media 
-      this.$refs.postMedia.pause();
+      if (this.$refs.postMedia) {
+        this.$refs.postMedia.pause();
+      }
       // pause all enclosures where idx != idx 
-      if (this.post.postEnclosures) {
-        for (let i = 0; i < this.post.postEnclosures.length; i++) {
+      if (this.post.enclosures) {
+        for (let i = 0; i < this.post.enclosures.length; i++) {
           if (i === idx) {
             continue;
           }
@@ -271,9 +273,11 @@ export default {
       this.$emit('playing', this.post.id);
     },
     pauseMedia() {
-      this.$refs.postMedia.pause();
-      if (this.post.postEnclosures) {
-        for (let i = 0; i < this.post.postEnclosures.length; i++) {
+      if (this.$refs.postMedia) {
+        this.$refs.postMedia.pause();
+      }
+      if (this.post.enclosures) {
+        for (let i = 0; i < this.post.enclosures.length; i++) {
           let r = this.$refs['postEnclosure_' + i];
           if (r && r.length > 0) {
             r[0].pause();

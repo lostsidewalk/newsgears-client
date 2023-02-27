@@ -215,9 +215,9 @@
                 :baseUrl="baseUrl"
                 :isSelected="this.selectedPostId === post.id"
                 tabindex="0"
-                @keypress.self="setSelectedPost(post.id)"
-                @click.prevent="setSelectedPost(post.id)"
-                @setActive="setSelectedPost(post.id, false)" 
+                @keypress.self="setSelectedPost($event, post.id)"
+                @click.prevent="setSelectedPost($event, post.id)"
+                @setActive="setSelectedPost($event, post.id, false)" 
                 @openPostUrl="openPostUrl(post.id)"
                 @updatePostReadStatus="updatePostReadStatus"
                 @updatePostPubStatus="updatePostPubStatus" 
@@ -515,7 +515,7 @@ export default {
       this.currentPage = 0; 
       let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
       this.$nextTick(() => {
-        this.setSelectedPost(newFirstItem.id);
+        this.setSelectedPost(null, newFirstItem.id);
       });
     },
     nextPage() {
@@ -526,7 +526,7 @@ export default {
       this.currentPage = n;
       let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
       this.$nextTick(() => {
-        this.setSelectedPost(newFirstItem.id);
+        this.setSelectedPost(null, newFirstItem.id);
       });
     },
     previousPage() {
@@ -537,14 +537,14 @@ export default {
       this.currentPage = p;
       let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
       this.$nextTick(() => {
-        this.setSelectedPost(newFirstItem.id);
+        this.setSelectedPost(null, newFirstItem.id);
       });
     },
     lastPage() {
       this.currentPage = this.totalPages - 1;
       let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
       this.$nextTick(() => {
-        this.setSelectedPost(newFirstItem.id);
+        this.setSelectedPost(null, newFirstItem.id);
       });
     },
     // 
@@ -626,7 +626,7 @@ export default {
           let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
           if (newFirstItem) {
             this.$nextTick(() => {
-              this.setSelectedPost(newFirstItem.id);
+              this.setSelectedPost(null, newFirstItem.id);
             });
           }
         }
@@ -1368,7 +1368,10 @@ export default {
         }
       }
     },
-    setSelectedPost(postId, doFocus) {
+    setSelectedPost($event, postId, doFocus) {
+      if ($event && $event.target.classList.contains('plyr__control')) {
+        return;
+      }
       doFocus = doFocus === undefined ? true : doFocus;
       let r = this.$refs['post_' + postId];
       if (!r || r.length === 0) {
@@ -1474,7 +1477,7 @@ export default {
           let currentPostIdx = this.getCurrentPostIdx();
           if (currentPostIdx < this.filteredInboundQueue.length - 1) {
             let nextPostId = this.filteredInboundQueue[currentPostIdx + 1].id;
-            this.setSelectedPost(nextPostId);
+            this.setSelectedPost(null, nextPostId);
             event.stopPropagation();
             event.preventDefault();
           }
@@ -1482,18 +1485,18 @@ export default {
           let currentPostIdx = this.getCurrentPostIdx();
           if (currentPostIdx > 0) {
             let nextPostId = this.filteredInboundQueue[currentPostIdx - 1].id;
-            this.setSelectedPost(nextPostId);
+            this.setSelectedPost(null, nextPostId);
             event.stopPropagation();
             event.preventDefault();
           }
         } else if (event.key === 'Home') {
-          this.setSelectedPost(this.getCurrentPage(this.filteredInboundQueue)[0].id, false);
+          this.setSelectedPost(null, this.getCurrentPage(this.filteredInboundQueue)[0].id, false);
           event.stopPropagation();
           event.preventDefault();
           return false;
         } else if (event.key === 'End') {
           let c = this.getCurrentPage(this.filteredInboundQueue);
-          this.setSelectedPost(c[c.length - 1].id);
+          this.setSelectedPost(null, c[c.length - 1].id);
           event.stopPropagation();
           event.preventDefault();
         } else if (event.key === 'PageUp') {

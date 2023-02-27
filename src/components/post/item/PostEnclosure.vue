@@ -20,7 +20,7 @@
     </div>
     <div v-else-if="isAudio()" class="post-enclosure-image">
       <vue-plyr ref="player">
-        <audio controls crossorigin playsinline>
+        <audio controls crossorigin="anonymous" playsinline>
           <source
             :src="this.enclosure.url"
             :type="this.enclosure.type"
@@ -44,7 +44,7 @@ export default {
   emits: [ "playing" ],
   mounted() {
     console.log("post-enclosure mounted: enclosure=" + JSON.stringify(this.enclosure));
-    if (this.isAudio() || this.isVideo()) {
+    if (this.isVideo()) {
       this.$refs.player.player.on('playing', () => this.$emit('playing'));
     }
   },

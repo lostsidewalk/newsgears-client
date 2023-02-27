@@ -42,7 +42,7 @@
       </div>
       <div v-else-if="isAudio() && this.showContents" class="post-media-content-audio">
         <vue-plyr ref="player">
-          <audio controls crossorigin playsinline>
+          <audio controls crossorigin="anonymous" playsinline>
             <source
               :src="this.enclosure.url"
               :type="this.enclosure.type" />
@@ -149,12 +149,6 @@ export default {
 
 .post-media-content-image:hover {
   cursor: pointer;
-}
-
-.post-media-content-video {
-}
-
-.post-media-content-audio {
 }
 
 .post-media-content-handle {
