@@ -1183,12 +1183,14 @@ export default {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
+          this.showNavBar = true;
         });
       }).catch((error) => {
         // push the error to the modal since this method is only called by an emission from the modal, and we don't close the modal in this path 
         // this.$refs.feedConfigPanel.error(error);
         this.handleServerError(error); 
         this.inTransit = false;
+        this.showNavBar = true;
       });
     },
     cancelCreateOrUpdateFeed() {
