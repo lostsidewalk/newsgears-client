@@ -1,8 +1,6 @@
 <template>
     <div v-if="this.serverMessage && !this.$auth.$isAuthenticated" class="server-message">
-      <span>
-        {{ this.serverMessage }}
-      </span>
+      {{ this.serverMessage }}
     </div>
 </template>
 

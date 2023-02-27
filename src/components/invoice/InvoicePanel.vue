@@ -2,10 +2,12 @@
   <div class="invoice-panel" v-show="this.$auth.$isAuthenticated">
     <!-- view subscription -->
     <div class="subscription-view">
+      <ViewHeader :disabled="disabled" :inTransit="false" :theme="theme">
+        <template v-slot:count>
+          YOUR SUBSCRIPTION
+        </template>
+      </ViewHeader>
       <div class="view-header">
-        <span style="display: inline-flex;flex-direction: row;">
-          <h3 class="view-header-count">YOUR SUBSCRIPTION</h3>
-        </span>
         <p>Your subscription is currently {{ getSubscriptionStatus() }}.  It began at {{ getSubscriptionStarted() }}.</p>
         <p v-if="isCanceled()">Your subscription was canceled, and will not renew.</p>
         <div class="subscription-field" v-if="isActive()">
@@ -49,6 +51,8 @@
 </template>
 
 <script>
+import ViewHeader from '../layout/ViewHeader.vue';
+
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -59,6 +63,7 @@ export default {
   props: [ "disabled", "subscription" ],
   emits: [ "cancelSubscription", "resumeSubscription" ],
   components: {
+    ViewHeader,
   },
   data() {
     return {
@@ -188,20 +193,10 @@ export default {
   margin-left: .75rem;
   margin-right: .75rem;
   padding: .75rem;
-  padding-top: 1.25rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
 }
  
-.view-header-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
-}
-
 .view-header-toolbar {
   margin-left: .75rem;
   margin-right: .75rem;

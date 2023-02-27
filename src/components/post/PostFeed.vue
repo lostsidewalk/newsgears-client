@@ -47,12 +47,14 @@
     <div class="post-feed-container">
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
-        <div class="feed-select-view" :class="this.isModalShowing ? 'invisible' : ''">
-          <div class="view-header" style="position: sticky;top: 0px;z-index: 200;overflow-y: auto;">
-            <h3 class="view-header-no-count">
-              <i class="fa fa-feed fa-1x"/>
-              QUEUE DASHBOARD
-            </h3>
+        <div class="feed-select-view" :class="{ invisible: this.isModalShowing, 'feed-select-view-selected': this.selectedFeedId }">
+          <ViewHeader :sticky="true" :collapsible="true" @toggle="this.showQueueDashboard = !this.showQueueDashboard" :show="this.showQueueDashboard" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
+              <template v-slot:count>
+                <i class="fa fa-feed fa-1x"/>
+                QUEUE DASHBOARD
+              </template>
+          </ViewHeader>
+          <div v-if="this.showQueueDashboard" style="padding: 1.25rem;">
             <div v-if="this.filteredFeedIdentOptions.length > 0" class="grid">
               <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
                 <FeedSelectButton 
@@ -103,19 +105,12 @@
         <div :class="this.selectedFeedId ? 'staging-header-view-selected' : ''">
           <!-- inbound queue header -- hide when modal is showing -->
           <div id="staging-header-view" class="staging-header-view" :class="this.isModalShowing ? 'invisible' : ''" v-if="this.selectedFeedId">
-            <div class="view-header">
-              <span class="collapsible">
-                <h3 class="view-header-count">
-                  <i class="fa fa-gears fa-1x"/>
-                  SHOWING QUEUE: {{ this.getFeedById(this.selectedFeedId).ident }}
-                </h3>
-                <MinMaxButton @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" 
-                  :show="this.showFullInboundQueueHeader" 
-                  :theme="theme" 
-                  :disabled="disabled || inTransit" /> 
-              </span>
-              <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-            </div>
+            <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
+              <template v-slot:count>
+                <i class="fa fa-gears fa-1x"/>
+                {{ this.getFeedById(this.selectedFeedId).ident }}
+              </template>
+            </ViewHeader>
             <!-- filter feed field -->
             <div class="view-header-field" v-if="this.showFullInboundQueueHeader">
               <!-- feed filter label -->
@@ -248,9 +243,9 @@ import HelpPanel from "./help/HelpPanel.vue";
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import NavbarButtons from "@/components/layout/NavbarButtons.vue";
 // post item panel 
+import ViewHeader from "@/components/layout/ViewHeader.vue";
 import PostItem from "./PostItem.vue";
 import FeedSelectButton from './FeedSelectButton.vue';
-import MinMaxButton from '../layout/MinMaxButton.vue';
 
 export default {
   components: { 
@@ -260,9 +255,9 @@ export default {
     HelpPanel,
     NavbarFixedHeader,
     NavbarButtons, 
+    ViewHeader,
     PostItem, 
     FeedSelectButton,
-    MinMaxButton,
   },
   name: "PostFeed",
   props: [ "baseUrl", "disabled", "theme" ],
@@ -415,11 +410,19 @@ export default {
       // operating mode 
       feedIdToDelete: null, 
       feedIdToMarkAsRead: null,
-      showFeedConfigPanel: false,
+      // show the feed config modal (t/f) 
+      showFeedConfigPanel: false, 
+      // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
+      // show the help modal (t/f) 
       showHelpPanel: false,
-      showFullFeedDetails: true,
-      showFullInboundQueueHeader: true,
+      // queue dashboard is expanded (t/f) 
+      showQueueDashboard: true, 
+      // inbound queue header is expanded, i.e., showing filter (t/f) 
+      showFullInboundQueueHeader: false,
+      // show the feed filter pills in the inbound queue header (t/f)
+      showFeedFilterPills: false, // show filter pills t/f 
+      // show the nav bar (t/f) 
       showNavBar: true,
       // 
       inTransit: false,
@@ -437,7 +440,6 @@ export default {
       itemCount: 0,
       // queue filter material 
       inboundQueueFilter: null, // user-supplied filter text 
-      showFeedFilterPills: false, // show filter pills t/f 
       feedFilterModes: ['UNREAD', 'READ', 'PUBLISHED'], // currently selected filter modes 
       selectedFeedFilterSubscriptions: [],
       selectedFeedFilterCategories: [],
@@ -1632,6 +1634,7 @@ export default {
   position: sticky;
   top: -1px;
   z-index: 200;
+  overflow: auto;
 }
 
 .staging-view {
@@ -1640,14 +1643,6 @@ export default {
   flex-direction: column;
   width: 100%;
   padding-top: .75rem;
-}
-
-.view-header {
-  margin-left: .75rem;
-  margin-right: .75rem;
-  padding: .75rem;
-  text-align: left;
-  border-radius: 4px 4px 0px 0px;
 }
 
 .view-header-field {
@@ -1672,7 +1667,7 @@ export default {
   resize: none;
 }
 
-.view-header-no-count {
+.view-header-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;
@@ -1681,13 +1676,12 @@ export default {
   margin: 0rem;
 }
 
-.view-header-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
+.view-header {
+  margin-left: .75rem;
+  margin-right: .75rem;
+  padding: .75rem;
+  text-align: left;
+  border-radius: 4px 4px 0px 0px;
 }
 
 .view-header-toolbar {
@@ -1702,6 +1696,7 @@ export default {
   max-width: 100%; 
   gap: .75rem;
   padding-top: .75rem;
+  overflow: auto;
 }
 
 footer {
@@ -1921,6 +1916,16 @@ footer {
   }
 
   .post-feed-container-inner-selected {
+    display: unset;
+  }
+}
+
+@media (min-width: 1023px) {
+  .feed-select-view-selected {
+    width: 30vw;
+  }
+
+  .invisible {
     display: unset;
   }
 }

@@ -17,14 +17,16 @@
     <!-- order confirmed view -->
     <div class="order-confirmed-view">
       <!-- order confirmed header-->
-      <div class="view-header">
-        <span style="display: inline-flex;flex-direction: row;">
-          <h3 class="view-header-count">THANK YOU FOR YOUR ORDER</h3>
-        </span>
+      <ViewHeader :disabled="false" :inTransit="false" :theme="theme">
+        <template v-slot:count>
+          THANK YOU FOR YOUR ORDER
+        </template>
+      </ViewHeader>
+      <div>
         <p>
           Your order is confirmed.  Click <router-link style="text-decoration: none; color: inherit;" to="/app">here</router-link> to return to the app.
         </p>
-      </div> 
+      </div>
     </div> 
     <!-- "go back" link -->
     <GoBack :disabled="false" :theme="theme" />
@@ -35,6 +37,7 @@
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import NavbarButtons from "@/components/layout/NavbarButtons.vue";
 import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
+import ViewHeader from "@/components/layout/ViewHeader.vue";
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 
@@ -44,6 +47,7 @@ export default {
     NavbarFixedHeader,
     NavbarButtons,
     NavbarFixedSubheader,
+    ViewHeader,
     LastServerMessage,
     GoBack,
 },
@@ -72,24 +76,5 @@ export default {
   border-right: 1px solid v-bind('theme.sectionbordercolor');
   color: v-bind('theme.subduedmessage');
   margin-bottom: .75rem;
-}
-
-.view-header {
-  margin-bottom: .75rem;
-  margin-left: .75rem;
-  margin-right: .75rem;
-  padding: .75rem;
-  padding-top: 1.25rem;
-  text-align: left;
-  border-radius: 4px 4px 4px 4px;
-}
-
-.view-header-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
 }
 </style>

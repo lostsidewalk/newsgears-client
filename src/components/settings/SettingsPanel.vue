@@ -3,14 +3,12 @@
     <!-- account settings -->
     <div class="settings-view">
       <!-- account config header -->
-      <div class="view-header">
-        <span style="display: inline-flex;flex-direction: row;">
-          <h3 class="view-header-count">
-            <i class="fa fa-user fa-1x"/>
-            {{ this.getModeVerbiage() }}
-          </h3>
-        </span>
-      </div>
+      <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+        <template v-slot:count>
+          <i class="fa fa-user fa-1x"/>
+          {{ this.getModeVerbiage() }}
+        </template>
+      </ViewHeader>
       <!-- account config form -->
       <div class="view-header update-settings-body">
         <!-- oauth2 profile (remote) -->
@@ -91,13 +89,13 @@
     <!-- notifications -->
     <div class="settings-view notifications-view">
       <!-- notifications config header -->
+      <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+        <template v-slot:count>
+          <i class="fa fa-envelope fa-1x"/>
+          NOTIFICATION SETTINGS
+        </template>
+      </ViewHeader>
       <div class="view-header">
-        <span style="display: inline-flex;flex-direction: row;">
-          <h3 class="view-header-count">
-            <i class="fa fa-envelope fa-1x"/>
-            NOTIFICATION SETTINGS
-          </h3>
-        </span>
         <!-- notifications config body text -->
         <p>
           Email notifications are currently {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 'disabled' : 'enabled' }}.  Please note that we will neve sell or disclose your personal information to anyone.
@@ -142,21 +140,21 @@
     <!-- checkout view -->
     <div class="settings-view checkout-view">
       <!-- checkout header-->
-      <div class="view-header">
-        <span style="display: inline-flex;flex-direction: row;">
-          <h3 class="view-header-count">
-            <i class="fa fa-gears fa-1x"/>
-            JOIN THE FEEDGEARS COMMUNITY
-          </h3>
-        </span>
-      </div> 
+      <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+        <template v-slot:count>
+          <i class="fa fa-gears fa-1x"/>
+          JOIN THE FEEDGEARS COMMUNITY
+        </template>
+      </ViewHeader>
       <!-- plans -->
       <div class="plans-view">
         <div class="free-view">
-          <div class="view-header">
-            <span style="display: inline-flex;flex-direction: row;">
-              <h3 class="view-header-count">FREE TIER</h3>
-            </span>
+          <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+            <template v-slot:count>
+              FREE TIER
+            </template>
+          </ViewHeader>
+          <div>
             <p class="price-description">
               Free, forever.
             </p>
@@ -175,10 +173,12 @@
           </div>
         </div>
         <div class="premium-view">
-          <div class="view-header">
-            <span style="display: inline-flex;flex-direction: row;">
-              <h3 class="view-header-count">PREMIUM TIER</h3>
-            </span>
+          <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+            <template v-slot:count>
+              PREMIUM TIER
+            </template>
+          </ViewHeader>
+          <div>
             <p class="price-description">
               Pioneer pricing: $4.00 per month billed monthly
             </p>
@@ -208,6 +208,7 @@
 <script>
 import { maxLength, email } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
+import ViewHeader from '../layout/ViewHeader.vue';
 
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
@@ -221,6 +222,9 @@ export default {
     }
   },
   props: ["inTransit", "account", "frameworkConfig", "theme"],
+  components: {
+    ViewHeader,
+  },
   emits: ["settingsUpdated", "exportOpml", "deactivateAccount", "initPasswordReset", "submitOrder"],
   validations() {
     return {
@@ -439,15 +443,6 @@ export default {
   padding-top: 1.25rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
-}
-
-.view-header-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
 }
 
 .view-header-toolbar {

@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-field">
+  <div>
     <button
       :disabled="disabled"
       type="button"

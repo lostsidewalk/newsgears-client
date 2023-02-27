@@ -1,5 +1,5 @@
 <template>
-  <div class="post-media-content">
+  <div class="post-media-content" v-if="this.showContentOnLoad">
     <!-- metadata -->
     <PostMediaMetadata v-if="hasUseableMetadata()"
       :theme="theme" 
@@ -171,4 +171,20 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
+/* @media (max-width: 639px) {
+  .post-media-content-image {
+    width: 320px;
+    height: 320px;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 319px) {
+  .post-media-content-image {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+  }
+} */
 </style>
