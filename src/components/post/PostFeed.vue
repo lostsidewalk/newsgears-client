@@ -1667,23 +1667,6 @@ export default {
   resize: none;
 }
 
-.view-header-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
-}
-
-.view-header {
-  margin-left: .75rem;
-  margin-right: .75rem;
-  padding: .75rem;
-  text-align: left;
-  border-radius: 4px 4px 0px 0px;
-}
-
 .view-header-toolbar {
   padding-top: .75rem;
 }
