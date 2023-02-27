@@ -97,6 +97,12 @@ export default {
 
 }
 
+.post-enclosure-image {
+  max-width: 75%;
+  max-height: 75%;
+  object-fit: scale-down;
+}
+
 .post-enclosure-image:hover {
   cursor: pointer;
 }

@@ -116,6 +116,30 @@
             </div>
           </div>
         </div>
+        <!-- post media -->
+        <div class="post-item-media" v-if="(this.showPostDetails && post.postMedia)">
+          <PostMedia 
+            ref="postMedia"
+            :theme="theme" 
+            class="post-field-wrapper"
+            :media="post.postMedia" 
+            @playing="onMediaPlaying" />
+        </div>
+        <!-- post itunes -->
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postITunes)">
+          <PostITunes 
+            :theme="theme" 
+            class="post-field-wrapper" 
+            :iTunes="post.postITunes" />
+        </div>
+        <!-- post enclosures -->
+        <div class="post-item-row" v-if="(this.showPostDetails && post.postEnclosures)">
+          <PostEnclosure v-for="(enclosure,idx) in post.postEnclosures" :key="enclosure"
+            :ref="'postEnclosure_' + idx"
+            :theme="theme"
+            :enclosure="enclosure" 
+            @playing="onEnclosurePlaying(idx)" />
+        </div>
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
         <div class="post-item-row" v-if="(this.showPostDetails && post.postUrls && post.postUrls.length > 0)">
           <span class="post-field-wrapper">
@@ -173,30 +197,6 @@
               }}
             </div>
           </span>
-        </div>
-        <!-- post media -->
-        <div class="post-item-media" v-if="(this.showPostDetails && post.postMedia)">
-          <PostMedia 
-            ref="postMedia"
-            :theme="theme" 
-            class="post-field-wrapper"
-            :media="post.postMedia" 
-            @playing="onMediaPlaying" />
-        </div>
-        <!-- post itunes -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postITunes)">
-          <PostITunes 
-            :theme="theme" 
-            class="post-field-wrapper" 
-            :iTunes="post.postITunes" />
-        </div>
-        <!-- post enclosures -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postEnclosures)">
-          <PostEnclosure v-for="(enclosure,idx) in post.postEnclosures" :key="enclosure"
-            :ref="'postEnclosure_' + idx"
-            :theme="theme"
-            :enclosure="enclosure" 
-            @playing="onEnclosurePlaying(idx)" />
         </div>
         <!-- post rights (hidden w/no details) -->
         <div class="post-item-row" v-if="(this.showPostDetails && post.postRights)">

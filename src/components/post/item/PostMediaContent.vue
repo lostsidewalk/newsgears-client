@@ -141,6 +141,12 @@ export default {
   margin-bottom: .31rem;
 }
 
+.post-media-content-image {
+  max-width: 75%;
+  max-height: 75%;
+  object-fit: scale-down;
+}
+
 .post-media-content-image:hover {
   cursor: pointer;
 }
@@ -171,20 +177,4 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
-/* @media (max-width: 639px) {
-  .post-media-content-image {
-    width: 320px;
-    height: 320px;
-    object-fit: cover;
-  }
-}
-
-@media (max-width: 319px) {
-  .post-media-content-image {
-    width: 160px;
-    height: 160px;
-    object-fit: cover;
-  }
-} */
 </style>

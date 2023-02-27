@@ -145,9 +145,6 @@ export default {
         for (let i = 0; i < this.feedCatalog.length; i++) {
           // item to filter 
           let s = this.feedCatalog[i];
-          // if (s.categories.length === 0) {
-          //   continue;
-          // }
           // evaluate each set membership check  
           let authorInSet = this.feedCatalogFilterAuthors.length === 0 || lcSetContainsStr(s.author, this.feedCatalogFilterAuthors);
           let categoryInSet = this.feedCatalogFilterCategories.length === 0 || lcSetContainsSet(s.categories, this.feedCatalogFilterCategories);
@@ -163,21 +160,19 @@ export default {
             // apply further limits if there is a non-empty text filter.. 
             if (this.feedCatalogFilter) {
               // check each filterable attribute 
-              if (
-                lcStrContains(s.title, this.feedCatalogFilter) || 
-                lcStrContains(s.description, this.feedCatalogFilter) || 
-                lcStrContains(s.author, this.feedCatalogFilter) || 
-                lcSetIncludesStr(this.feedCatalogFilter, s.categories) || 
-                lcStrContains(s.generator, this.feedCatalogFilter) || 
-                lcStrContains(s.managingEditor, this.feedCatalogFilter) || 
-                lcStrContains(s.webMaster, this.feedCatalogFilter) || 
-                lcStrContains(s.copyright, this.feedCatalogFilter) || 
-                lcStrContains(s.language, this.feedCatalogFilter) || 
-                lcStrContains(s.docs, this.feedCatalogFilter) || 
-                lcStrContains(s.encoding, this.feedCatalogFilter) || 
-                lcStrContains(s.feedType, this.feedCatalogFilter) || 
-                lcStrContains(s.discoveryUrl, this.feedCatalogFilter) 
-              ) {
+              let title = s.title && lcStrContains(s.title.value, this.feedCatalogFilter);
+              let description = lcStrContains(s.author, this.feedCatalogFilter);
+              let categories = lcSetIncludesStr(this.feedCatalogFilter, s.categories);
+              let generator = lcStrContains(s.generator, this.feedCatalogFilter);
+              let managingEditor = lcStrContains(s.managingEditor, this.feedCatalogFilter);
+              let webMaster = lcStrContains(s.webMaster, this.feedCatalogFilter);
+              let copyright = lcStrContains(s.copyright, this.feedCatalogFilter);
+              let language = lcStrContains(s.language, this.feedCatalogFilter);
+              let docs = lcStrContains(s.docs, this.feedCatalogFilter);
+              let encoding = lcStrContains(s.encoding, this.feedCatalogFilter);
+              let feedType = lcStrContains(s.feedType, this.feedCatalogFilter);
+              let discoveryUrl = lcStrContains(s.discoveryUrl, this.feedCatalogFilter);
+              if (title || description || categories || generator || managingEditor || webMaster || copyright || language || docs || encoding || feedType || discoveryUrl) {
                 filtered.push(s);
               } else {
                 if (s.sampleEntries) {
@@ -194,9 +189,6 @@ export default {
               filtered.push(s);
             }
           }
-          // if (filtered.length > 500) {
-          //   break;
-          // }
         }
       }
       return filtered;
