@@ -1,9 +1,7 @@
 <template>
-    <span>
-      <button id="logout" class="logout-button" @click="logout" accesskey="o" :disabled="disabled">
-        Log<i class="underline">o</i>ut
-      </button>
-    </span>
+  <button id="logout" class="logout-button" @click="logout" accesskey="o" :disabled="disabled">
+    Log<i class="underline">o</i>ut
+  </button>
 </template>
 
 <script>

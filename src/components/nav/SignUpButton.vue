@@ -1,9 +1,7 @@
 <template>
-    <span>
-      <button id="signup" class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
-        Create an account
-      </button>
-    </span>
+  <button id="signup" class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
+    Create an account
+  </button>
 </template>
 
 <script>

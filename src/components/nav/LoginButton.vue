@@ -1,9 +1,7 @@
 <template>
-    <span>
-      <button id="login" class="login-button" @click="this.$router.push('/app')" :disabled="disabled">
-        Login
-      </button>
-    </span>
+  <button id="login" class="login-button" @click="this.$router.push('/app')" :disabled="disabled">
+    Login
+  </button>
 </template>
 
 <script>

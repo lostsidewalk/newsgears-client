@@ -1,9 +1,7 @@
 <template>
-  <span>
-    <button class="settings-button" @click="this.$router.push('/settings');" accesskey="t" :disabled="disabled" aria-label="Go to settings">
-      <i class="fa fa-wrench" />&nbsp; Se<i class="underline">t</i>tings
-    </button>
-  </span>
+  <button class="settings-button" @click="this.$router.push('/settings');" accesskey="t" :disabled="disabled" aria-label="Go to settings">
+    <i class="fa fa-wrench" />&nbsp; Se<i class="underline">t</i>tings
+  </button>
 </template>
 
 <script>

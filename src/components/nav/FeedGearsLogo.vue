@@ -1,6 +1,6 @@
 <template>
   <div class="feedgears-logo">
-    <span>FeedGears RSS</span>
+    FeedGears RSS
   </div>
 </template>
 
@@ -22,9 +22,6 @@ export default {
   float: left;
   border-radius: 3px;
   margin: .56rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
 }
 
 .feedgears-logo:hover, .feedgears-focus {

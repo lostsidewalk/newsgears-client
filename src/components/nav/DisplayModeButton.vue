@@ -1,9 +1,7 @@
 <template>
-  <span>
-    <button class="mode-switch-button" @click="this.$theme.switchMode();" accesskey="l" :disabled="disabled" aria-label="Switch to light or dark mode">
-      <span class="fa fa-lightbulb-o" /> <!-- use fa-moon-o for dark mode -->
-    </button>
-  </span>
+  <button class="mode-switch-button" @click="this.$theme.switchMode();" accesskey="l" :disabled="disabled" aria-label="Switch to light or dark mode">
+    <span class="fa fa-lightbulb-o" /> <!-- use fa-moon-o for dark mode -->
+  </button>
 </template>
 
 <script>

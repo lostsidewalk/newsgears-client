@@ -81,6 +81,8 @@ export default {
 .tab-panel > img {
   border-radius: 3px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  width: 90%;
+  width: 75%;
+  height: auto;
+  object-fit: cover;
 }
 </style>

@@ -54,7 +54,7 @@
                 QUEUE DASHBOARD
               </template>
               <template v-slot:body>
-                <div v-if="this.showQueueDashboard" style="padding: 1.25rem;">
+                <div v-if="this.showQueueDashboard" class="grid-container">
                   <div v-if="this.filteredFeedIdentOptions.length > 0" class="grid">
                     <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
                       <FeedSelectButton 
@@ -1677,6 +1677,11 @@ export default {
   padding-top: .75rem;
 }
 
+.grid-container {
+  padding: 1.25rem;
+  overflow: auto;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1685,7 +1690,6 @@ export default {
   max-width: 100%; 
   gap: .75rem;
   padding-top: .75rem;
-  overflow: auto;
 }
 
 footer {

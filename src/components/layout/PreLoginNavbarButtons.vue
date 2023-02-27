@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="display: flex;flex-wrap: wrap;justify-content: space-between;">
     <!-- 
     <div id="newsgears-logo" class="fixed-header-item left-header">
       <img src="newsgears-logo.png" alt="NewsGears Logo"/>
@@ -25,12 +25,14 @@
 
     <!-- dashboard button -->
     <FeedGearsLogo :theme="theme" />
-    <!-- login button -->
-    <LoginButton :disabled="false" :theme="theme" />
-    <!-- sign-up button -->
-    <SignUpButton :disabled="false" :theme="theme" />
-    <!-- display mode switch -->
-    <DisplayModeButton :disabled="false" :theme="theme" />
+    <div style="display: flex;flex-direction: row-reverse;">
+      <!-- login button -->
+      <LoginButton :disabled="false" :theme="theme" />
+      <!-- sign-up button -->
+      <SignUpButton :disabled="false" :theme="theme" />
+      <!-- display mode switch -->
+      <DisplayModeButton :disabled="false" :theme="theme" />
+      </div>
   </div>
 </template>>
 

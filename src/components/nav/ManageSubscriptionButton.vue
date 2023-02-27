@@ -1,9 +1,7 @@
 <template>
-  <span>
-    <button id="manageSubscription" class="manage-subscription-button" @click="this.$router.push('/manage-subscription');" accesskey="s" :disabled="disabled">
-      Manage <i class="underline">s</i>ubscription
-    </button>
-  </span>
+  <button id="manageSubscription" class="manage-subscription-button" @click="this.$router.push('/manage-subscription');" accesskey="s" :disabled="disabled">
+    Manage <i class="underline">s</i>ubscription
+  </button>
 </template>
 
 <script>
