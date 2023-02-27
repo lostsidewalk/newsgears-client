@@ -7,6 +7,7 @@
       <MinMaxButton v-if="collapsible" class="min-max-button" @toggle="this.$emit('toggle')" :show="show" :theme="theme" :disabled="disabled || inTransit" />
     </span>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
+    <slot name="body" />
   </div>
 </template>
 

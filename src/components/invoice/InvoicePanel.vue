@@ -6,36 +6,36 @@
         <template v-slot:count>
           YOUR SUBSCRIPTION
         </template>
-      </ViewHeader>
-      <div class="view-header">
-        <p>Your subscription is currently {{ getSubscriptionStatus() }}.  It began at {{ getSubscriptionStarted() }}.</p>
-        <p v-if="isCanceled()">Your subscription was canceled, and will not renew.</p>
-        <div class="subscription-field" v-if="isActive()">
-          <label for="subscription-current-period">CURRENT PERIOD</label>
-          <input name="subscription-current-period" type="text" :placeholder="getSubscriptionCurrentPeriod()" :disabled="disabled" />
-        </div>
-        <div class="subscription-field" v-if="hasEnded()">
-          <label for="subscription-ended-at">ENDED AT</label>
-          <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionEndedAt()" :disabled="disabled" />
-        </div>
-        <div class="subscription-field" v-if="isCanceled()">
-          <label for="subscription-ended-at">WILL END AT</label>
-          <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionCurrentPeriodEnd()" :disabled="disabled" />
-        </div>
-        <div class="subscription-field" v-if="hasLastInvoice()">
-          <label>MOST RECENT INVOICE ({{ getLastInvoiceCreated() }})</label>
-          <div class="subscription-detail-field"><label>STATUS:</label> {{ getLastInvoiceStatus() }}</div>
-          <div class="subscription-detail-field"><label>AMOUNT DUE:</label> {{ getAmountDue() }}</div>
-          <div class="subscription-detail-field"><label>AMOUNT PAID:</label> {{ getAmountPaid() }}</div>
-          <div class="subscription-detail-field"><label>AMOUNT REMAINING:</label> {{ getAmountRemaining() }}</div>
-          <div class="subscription-detail-field"><label>CUSTOMER EMAIL ADDRESS:</label> {{ getCustomerEmailAddress() }}</div>
-          <div class="subscription-detail-field"><label>CUSTOMER NAME:</label> {{ getCustomerName() }}</div>
-          <div class="subscription-detail-field"><label>URL:</label>
-            <a :href="getHostedInvoiceUrl()" :style="disabled ? 'pointer-events: none' : ''">Click here.</a>
+        <template v-slot:body>
+          <p>Your subscription is currently {{ getSubscriptionStatus() }}.  It began at {{ getSubscriptionStarted() }}.</p>
+          <p v-if="isCanceled()">Your subscription was canceled, and will not renew.</p>
+          <div class="subscription-field" v-if="isActive()">
+            <label for="subscription-current-period">CURRENT PERIOD</label>
+            <input name="subscription-current-period" type="text" :placeholder="getSubscriptionCurrentPeriod()" :disabled="disabled" />
           </div>
-          <div class="subscription-detail-field"><label>PRODUCT:</label> {{ getProductDescription() }}</div>
-        </div>
-      </div>
+          <div class="subscription-field" v-if="hasEnded()">
+            <label for="subscription-ended-at">ENDED AT</label>
+            <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionEndedAt()" :disabled="disabled" />
+          </div>
+          <div class="subscription-field" v-if="isCanceled()">
+            <label for="subscription-ended-at">WILL END AT</label>
+            <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionCurrentPeriodEnd()" :disabled="disabled" />
+          </div>
+          <div class="subscription-field" v-if="hasLastInvoice()">
+            <label>MOST RECENT INVOICE ({{ getLastInvoiceCreated() }})</label>
+            <div class="subscription-detail-field"><label>STATUS:</label> {{ getLastInvoiceStatus() }}</div>
+            <div class="subscription-detail-field"><label>AMOUNT DUE:</label> {{ getAmountDue() }}</div>
+            <div class="subscription-detail-field"><label>AMOUNT PAID:</label> {{ getAmountPaid() }}</div>
+            <div class="subscription-detail-field"><label>AMOUNT REMAINING:</label> {{ getAmountRemaining() }}</div>
+            <div class="subscription-detail-field"><label>CUSTOMER EMAIL ADDRESS:</label> {{ getCustomerEmailAddress() }}</div>
+            <div class="subscription-detail-field"><label>CUSTOMER NAME:</label> {{ getCustomerName() }}</div>
+            <div class="subscription-detail-field"><label>URL:</label>
+              <a :href="getHostedInvoiceUrl()" :style="disabled ? 'pointer-events: none' : ''">Click here.</a>
+            </div>
+            <div class="subscription-detail-field"><label>PRODUCT:</label> {{ getProductDescription() }}</div>
+          </div>
+        </template>
+      </ViewHeader>
       <div class="view-header-toolbar">
         <div>
           <button id="cancelSubscription" class="header-button" @click="cancelSubscription()" :disabled="disabled" v-if="!isCanceled()">

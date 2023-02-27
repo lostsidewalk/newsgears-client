@@ -21,12 +21,12 @@
         <template v-slot:count>
           THANK YOU FOR YOUR ORDER
         </template>
+        <template v-slot:body>
+          <p>
+            Your order is confirmed.  Click <router-link style="text-decoration: none; color: inherit;" to="/app">here</router-link> to return to the app.
+          </p>
+        </template>
       </ViewHeader>
-      <div>
-        <p>
-          Your order is confirmed.  Click <router-link style="text-decoration: none; color: inherit;" to="/app">here</router-link> to return to the app.
-        </p>
-      </div>
     </div> 
     <!-- "go back" link -->
     <GoBack :disabled="false" :theme="theme" />

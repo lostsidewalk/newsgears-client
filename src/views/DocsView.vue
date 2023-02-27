@@ -21,12 +21,12 @@
         <template v-slot:count>
           FEEDGEARS DOCUMENTATION
         </template>
+        <template v-slot:body>
+          <p>
+            Sorry, this section of FeedGears isn't quite ready yet.  Check back in a few days!  
+          </p>
+        </template>
       </ViewHeader>
-      <div>
-        <p>
-          Sorry, this section of FeedGears isn't quite ready yet.  Check back in a few days!  
-        </p>
-      </div>
     </div> 
     <!-- "go back" link -->
     <GoBack :disabled="false" :theme="theme" />

@@ -8,50 +8,52 @@
           <i class="fa fa-user fa-1x"/>
           {{ this.getModeVerbiage() }}
         </template>
-      </ViewHeader>
-      <!-- account config form -->
-      <div class="view-header update-settings-body">
-        <!-- oauth2 profile (remote) -->
-        <div class="settings-field" v-if="authProvider !== 'LOCAL' && !this.showDeactivateUser">
-          <div style="display: flex;">
-            <!-- profile image -->
-            <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img"/>
-            <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
-              <!-- auth provider username (auth provider user Id) -->
-              <span style="padding: .125rem;">{{ authProviderUsername }}</span>
-              <!-- email address -->
-              <span style="padding: .125rem;">{{ emailAddress }}</span>
-              <!-- auth provider -->
-              <!-- <span style="padding: .125rem;">AUTH PROVIDER: {{ authProvider }}</span> -->
+        <template v-slot:body>
+          <!-- account config form -->
+          <div class="view-header update-settings-body">
+            <!-- oauth2 profile (remote) -->
+            <div class="settings-field" v-if="authProvider !== 'LOCAL' && !this.showDeactivateUser">
+              <div style="display: flex;">
+                <!-- profile image -->
+                <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img"/>
+                <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
+                  <!-- auth provider username (auth provider user Id) -->
+                  <span style="padding: .125rem;">{{ authProviderUsername }}</span>
+                  <!-- email address -->
+                  <span style="padding: .125rem;">{{ emailAddress }}</span>
+                  <!-- auth provider -->
+                  <!-- <span style="padding: .125rem;">AUTH PROVIDER: {{ authProvider }}</span> -->
+                </div>
+              </div>
+            </div>
+            <!-- username (local) -->
+            <div class="settings-field" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
+              <label for="username">USERNAME:</label>
+              <input name="username" type="text" v-model="username" :disabled="true"/>
+            </div>
+            <!-- email address (local) -->
+            <div class="settings-field" :class="{ error: v$.emailAddress.$errors.length }" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
+              <label for="email">EMAIL ADDRESS:</label>
+              <input name="email" type="text" v-model="v$.emailAddress.$model" :disabled="inTransit"/>
+              <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
+                <div class="settings-error-message">{{ error.$message }}</div>
+              </div>
+            </div>
+            <div class="settings-field" v-if="this.showDeactivateUser">
+              <label for="email">DOWNLOAD YOUR DATA:</label>
+              <button class="download-button" @click="exportOpml()">Click here</button>
+            </div>
+            <div class="settings-field" v-if="this.showDeactivateUser">
+              <label for="email">PERMANENTLY DELETE YOUR ACCOUNT:</label>
+              <button class="deactivate-button" @click="finalizeDeactivation()">Click here</button>
+            </div>
+            <div class="settings-field" v-if="this.showResetPassword">
+              <label for="email">SEND PASSWORD RESET EMAIL</label>
+              <button class="pw-reset-button" @click="initPasswordReset()">Send</button>
             </div>
           </div>
-        </div>
-        <!-- username (local) -->
-        <div class="settings-field" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
-          <label for="username">USERNAME:</label>
-          <input name="username" type="text" v-model="username" :disabled="true"/>
-        </div>
-        <!-- email address (local) -->
-        <div class="settings-field" :class="{ error: v$.emailAddress.$errors.length }" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
-          <label for="email">EMAIL ADDRESS:</label>
-          <input name="email" type="text" v-model="v$.emailAddress.$model" :disabled="inTransit"/>
-          <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
-            <div class="settings-error-message">{{ error.$message }}</div>
-          </div>
-        </div>
-        <div class="settings-field" v-if="this.showDeactivateUser">
-          <label for="email">DOWNLOAD YOUR DATA:</label>
-          <button class="download-button" @click="exportOpml()">Click here</button>
-        </div>
-        <div class="settings-field" v-if="this.showDeactivateUser">
-          <label for="email">PERMANENTLY DELETE YOUR ACCOUNT:</label>
-          <button class="deactivate-button" @click="finalizeDeactivation()">Click here</button>
-        </div>
-        <div class="settings-field" v-if="this.showResetPassword">
-          <label for="email">SEND PASSWORD RESET EMAIL</label>
-          <button class="pw-reset-button" @click="initPasswordReset()">Send</button>
-        </div>
-      </div>
+        </template>
+      </ViewHeader>
       <!-- account config toolbar -->
       <div class="view-header-toolbar">
         <!-- apply changes button (local) -->
@@ -94,13 +96,13 @@
           <i class="fa fa-envelope fa-1x"/>
           NOTIFICATION SETTINGS
         </template>
+        <template v-slot:body>
+          <!-- notifications config body text -->
+          <p>
+            Email notifications are currently {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 'disabled' : 'enabled' }}.  Please note that we will neve sell or disclose your personal information to anyone.
+          </p>
+        </template>
       </ViewHeader>
-      <div class="view-header">
-        <!-- notifications config body text -->
-        <p>
-          Email notifications are currently {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 'disabled' : 'enabled' }}.  Please note that we will neve sell or disclose your personal information to anyone.
-        </p>
-      </div>
       <!-- notification config form -->
       <div class="view-header update-settings-body">
         <div class="settings-field">
@@ -153,43 +155,43 @@
             <template v-slot:count>
               FREE TIER
             </template>
+            <template v-slot:body>
+              <p class="price-description">
+                Free, forever.
+              </p>
+              <p class="plan-description">
+                Basic features:
+              </p>
+              <ul class="plan-features">
+                <li>Single queue with a maximum of 15 upstream subscriptions</li>
+                <li>Hourly data import</li>
+                <li>Configure FeedGears to query the world's news sources via NewsApi.org integration</li>
+                <li>Publish a feed of your starred items in RSS/ATOM/JSON format</li>
+                <li>We will never show you ads, or disclose your data to anyone</li>
+                <li>We are committed to security, privacy, and accessibility</li>
+                <li>Randomize kitten</li>
+              </ul>
+            </template>
           </ViewHeader>
-          <div>
-            <p class="price-description">
-              Free, forever.
-            </p>
-            <p class="plan-description">
-              Basic features:
-            </p>
-            <ul class="plan-features">
-              <li>Single queue with a maximum of 15 upstream subscriptions</li>
-              <li>Hourly data import</li>
-              <li>Configure FeedGears to query the world's news sources via NewsApi.org integration</li>
-              <li>Publish a feed of your starred items in RSS/ATOM/JSON format</li>
-              <li>We will never show you ads, or disclose your data to anyone</li>
-              <li>We are committed to security, privacy, and accessibility</li>
-              <li>Randomize kitten</li>
-            </ul>
-          </div>
         </div>
         <div class="premium-view">
           <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
             <template v-slot:count>
               PREMIUM TIER
             </template>
+            <template v-slot:body>
+              <p class="price-description">
+                Pioneer pricing: $4.00 per month billed monthly
+              </p>
+              <p class="plan-description">
+                Everything in the free tier, as well as: 
+              </p>
+              <ul class="plan-features">
+                <li>No upper limit on number queues or upstream subscriptions</li>
+                <li>No obligation, cancel any time</li>
+              </ul>
+            </template>
           </ViewHeader>
-          <div>
-            <p class="price-description">
-              Pioneer pricing: $4.00 per month billed monthly
-            </p>
-            <p class="plan-description">
-              Everything in the free tier, as well as: 
-            </p>
-            <ul class="plan-features">
-              <li>No upper limit on number queues or upstream subscriptions</li>
-              <li>No obligation, cancel any time</li>
-            </ul>
-          </div>
         </div>
       </div>
       <!-- checkout button -->
