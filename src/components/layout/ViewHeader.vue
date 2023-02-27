@@ -26,11 +26,13 @@ export default {
 </script>
 
 <style scoped>
-.sticky-header {
-  position: sticky;
-  top: 0px;
-  z-index: 200;
-  overflow-y: auto;
+@media (min-width: 1023px) {
+  .sticky-header {
+    position: sticky;
+    top: 0px;
+    z-index: 200;
+    overflow-y: auto;
+  }
 }
 
 .collapsible-header {
