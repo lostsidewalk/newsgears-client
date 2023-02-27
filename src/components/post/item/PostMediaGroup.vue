@@ -31,10 +31,12 @@ export default {
   },
   methods: {
     pause() {
-      for (let i = 0; i < this.mediaGroup.postMediaContents.length; i++) {
-        let r = this.$refs['postMediaContent_' + i];
-        if (r && r.length > 0) {
-          r[0].pause();
+      if (this.mediaGroup.postMediaContents) {
+        for (let i = 0; i < this.mediaGroup.postMediaContents.length; i++) {
+          let r = this.$refs['postMediaContent_' + i];
+          if (r && r.length > 0) {
+            r[0].pause();
+          }
         }
       }
     },

@@ -79,16 +79,20 @@ export default {
       this.$emit('playing');
     },
     pause() {
-      for (let i = 0; i < this.media.postMediaContents.length; i++) {
-        let r = this.$refs['postMediaContent_' + i];
-        if (r && r.length > 0) {
-          r[0].pause();
+      if (this.media.postMediaContents) {
+        for (let i = 0; i < this.media.postMediaContents.length; i++) {
+          let r = this.$refs['postMediaContent_' + i];
+          if (r && r.length > 0) {
+            r[0].pause();
+          }
         }
       }
-      for (let i = 0; i < this.media.postMediaGroups.length; i++) {
-        let r = this.$refs['postMediaGroup_' + i];
-        if (r && r.length > 0) {
-          r[0].pause();
+      if (this.media.postMediaGroups) {
+        for (let i = 0; i < this.media.postMediaGroups.length; i++) {
+          let r = this.$refs['postMediaGroup_' + i];
+          if (r && r.length > 0) {
+            r[0].pause();
+          }
         }
       }
     },
