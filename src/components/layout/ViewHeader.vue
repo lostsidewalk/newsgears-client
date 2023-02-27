@@ -63,5 +63,6 @@ export default {
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
   margin: 0rem;
   white-space: nowrap;
+  overflow: auto;
 }
 </style>
