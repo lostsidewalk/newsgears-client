@@ -25,7 +25,7 @@ export default {
 
 <style scoped>
 .thanks-for-verifying {
-  color: v-bind('theme.highlightedmessage');
+  color: v-bind('theme.normalmessage');
   margin: 4rem;
 }
 </style>

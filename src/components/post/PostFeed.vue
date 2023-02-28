@@ -48,7 +48,11 @@
     <div class="post-feed-container">
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
-        <div class="feed-select-view" :class="{ invisible: this.isModalShowing, 'feed-select-view-selected': this.selectedFeedId }">
+        <div class="feed-select-view" :class="{ 
+          invisible: this.isModalShowing, 
+          'feed-select-view-selected': this.selectedFeedId, 
+          'feed-select-view-collapsed': !this.showFeedSelectView
+        }">
           <ViewHeader :sticky="true" :collapsible="true" @toggle="this.showQueueDashboard = !this.showQueueDashboard" :show="this.showQueueDashboard" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
               <template v-slot:count>
                 <i class="fa fa-feed fa-1x"/>
@@ -105,7 +109,7 @@
           </ViewHeader>
         </div>
         <!-- right side -->
-        <div :class="this.selectedFeedId ? 'staging-header-view-selected' : ''">
+        <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
           <div id="staging-header-view" class="staging-header-view" :class="this.isModalShowing ? 'invisible' : ''" v-if="this.selectedFeedId">
             <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
@@ -430,6 +434,8 @@ export default {
       showOpmlUploadPanel: false,
       // show the help modal (t/f) 
       showHelpPanel: false,
+      // feed select view is expanded (t/f) 
+      showFeedSelectView: true, 
       // queue dashboard is expanded (t/f) 
       showQueueDashboard: true, 
       // inbound queue header is expanded, i.e., showing filter (t/f) 
@@ -1656,6 +1662,10 @@ export default {
   max-width: 70vw;
 }
 
+.staging-header-view-collapsed {
+  max-width: unset !important;
+}
+
 .staging-header-view {
   color: v-bind('theme.normalmessage');
   /* border-top: 1px solid v-bind('theme.sectionbordercolor'); */
@@ -1893,7 +1903,7 @@ footer {
 }
 
 .selectedMode {
-  color: v-bind('theme.normalmessage');
+  color: v-bind('theme.buttonfg');
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
@@ -1918,7 +1928,7 @@ footer {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   margin: 0rem;
-  text-shadow: 0 0 1px rgba(255,255,255,0.3);
+  text-shadow: 2px 2px 2px v-bind('theme.logoshadowcolor');
 }
 
 .logo > div {
@@ -1926,7 +1936,7 @@ footer {
 }
 
 @media (max-width: 1023px) {
-  .staging-header-view-selected {
+  .staging-header-view-selected, .staging-header-view-collapsed {
     border-top: unset;
     min-width: unset;
     max-width: unset;
@@ -1940,6 +1950,10 @@ footer {
 @media (min-width: 1023px) {
   .feed-select-view-selected {
     width: 30vw;
+  }
+
+  .feed-select-view-collapsed {
+    display: none;
   }
 
   .invisible {

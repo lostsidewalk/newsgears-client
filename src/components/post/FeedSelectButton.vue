@@ -107,7 +107,7 @@ export default {
 .feed-select {
   display: block !important;
   text-align: left !important;
-  color: v-bind('theme.normalmessage');
+  color: v-bind('theme.buttonfg');
   padding: .44rem;
   cursor: pointer;
   border-radius: 3px;

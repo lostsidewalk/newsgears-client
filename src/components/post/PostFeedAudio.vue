@@ -277,7 +277,6 @@ export default {
 .audio-player-container {
   display: flex;
   align-items: center;
-  transition: all 1s;
   flex-wrap: wrap;
   justify-content: start;
   row-gap: .5rem;

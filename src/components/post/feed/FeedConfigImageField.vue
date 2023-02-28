@@ -185,16 +185,12 @@ export default {
 }
 
 .feed-image-clear, .feed-image-randomize {
-  color: v-bind('theme.normalmessage');
-  background-color: transparent;
-  border: 1px solid transparent;
+  color: v-bind('theme.buttonfg');
+  background-color: v-bind('theme.buttonbg');
+  border: 1px solid v-bind('theme.buttonborder');
   z-index: 3;
   border-radius: 3px;
   width: fit-content;
-}
-
-.feed-image-clear:hover, .feed-image-randomize:hover {
-  border: 1px solid v-bind('theme.normalmessage');
 }
 
 .feed-image-clear > i, .feed-image-randomize > i {

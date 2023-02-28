@@ -92,7 +92,6 @@ export default {
 
 body {
   margin: 0rem !important;
-  transition: background-color 0s;
 }
 
 hr {
@@ -117,7 +116,9 @@ hr {
 }
 
 .animated {
-  -webkit-animation-duration: 0.5s;
+  animation-duration: .5s;
+  -webkit-animation-duration: .5s;
+  animation-delay: 0s;
   -webkit-animation-delay: 0s;
 }
 

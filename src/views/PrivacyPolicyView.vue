@@ -145,7 +145,7 @@ export default {
   width: 100%;
   border-top: 1px solid v-bind('theme.sectionbordercolor');
   border-right: 1px solid v-bind('theme.sectionbordercolor');
-  color: v-bind('theme.subduedmessage');
+  color: v-bind('theme.normalmessage');
   margin-bottom: .75rem;
 }
 

@@ -469,7 +469,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  color: v-bind('theme.subduedmessage');
+  color: v-bind('theme.normalmessage');
 }
 
 .settings-field {

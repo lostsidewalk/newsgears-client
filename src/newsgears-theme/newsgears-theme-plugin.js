@@ -1,35 +1,35 @@
 import { reactive } from 'vue';
 
 const LIGHT_THEME = { 
-  bodybg: '#d1d1d1',
-  appbg: '#f0f0f0',
-  logocolor: 'unset',
-  logobrightcolor: 'unset',
-  logoaccentcolor: 'unset',
-  logoshadowcolor: 'unset',
-  logosubtextcolor: 'paleturquoise',
-  modalbodybg: 'rgba(0,0,0,0.8)',
+  basecolor: 'white',
+  bodybg: '#aaaaaa',
+  appbg: '#dddddd',
+  logocolor: 'dimgrey',
+  logobrightcolor: 'darkblue',
+  logoaccentcolor: 'lightgrey',
+  logoshadowcolor: 'rgb(255 0 0 / 50%)',
+  logosubtextcolor: 'aliceblue',
+  modalbodybg: '#cccccc',
   navbarshadow: 'cornflowerblue',
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
-  subduedmessage: 'rgb(128,128,128)',
-  normalmessage: 'unset',
-  highlightedmessage: 'rgba(144,238,144,0.7)',
+  subduedmessage: 'dimgrey',
+  normalmessage: 'black',
+  highlightedmessage: 'antiquewhite',
   buttonbg: 'transparent',
-  buttonfg: 'rgb(136,136,136)',
-  buttonborder: 'rgb(128,128,128)',
+  buttonfg: 'rgb(92,92,92)',
+  buttonborder: 'rgb(32,32,32)',
   buttonhighlight: '#ffffff', 
   dangerbuttonhighlight: 'lightpink',
-  dangerbuttonsubdued: 'darkred',
-  lightshadow: 'rgb(32,32,32)',
-  darkshadow: 'rgb(0 0 0 / 50%)',
-  accentshadow: 'transparent',
+  lightshadow: 'rgb(16,16,16)',
+  darkshadow: 'rgb(32 32 32)',
+  accentshadow: 'rgb(0 255 255 / 15%)',
   sectionbg: 'transparent',
   sectionsubdued: 'rgb(72,72,72)',
-  sectionhighlight: '#dedede',
+  sectionhighlight: '#eeeeee',
   sectionbrighthighlight: 'transparent', 
   sectionbrighterhighlight: 'transparent',
   sectionbrightesthighlight: 'transparent',
-  sectionbordercolor: 'rgb(48,48,48)',
+  sectionbordercolor: 'rgb(16,16,16)',
   sectionpositivehighlight: 'rgba(128,255,128,0.1)',
   sectionpositiveaccent: 'rgba(128,255,128,0.3)',
   sectionnegativehighlight: 'rgba(255,128,128,0.1)',
@@ -48,31 +48,31 @@ const LIGHT_THEME = {
 };
 
 const DARK_THEME = { 
-  bodybg: '#171717',
-  appbg: '#212121',
-  logocolor: 'lightgrey',
-  logobrightcolor: 'lightskyblue',
-  logoaccentcolor: 'rgb(32 32 32)',
-  logoshadowcolor: 'rgb(255 0 0 / 50%)',
-  logosubtextcolor: 'paleturquoise',
+  basecolor: 'black',
+  bodybg: '#080808',
+  appbg: '#171717',
+  logocolor: 'lightgrey', // tab labels, view headers, etc. 
+  logobrightcolor: 'lightskyblue', // selected tab label 
+  logoaccentcolor: 'rgb(32 32 32)', // banner 
+  logoshadowcolor: 'rgb(255 0 0 / 50%)', // banner 
+  logosubtextcolor: 'paleturquoise', // banner 
   modalbodybg: '#141414',
-  navbarshadow: 'cornflowerblue',
+  navbarshadow: 'cornflowerblue', 
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
-  subduedmessage: 'rgb(116,116,116)',
-  normalmessage: 'rgb(136,136,136)',
-  highlightedmessage: 'rgba(144,238,144,0.7)',
+  subduedmessage: 'rgb(116,116,116)', // links, detail messages, etc. 
+  normalmessage: 'rgb(136,136,136)', // foreground text 
+  highlightedmessage: 'rgba(144,238,144,0.7)', // hover effect for messages 
   buttonbg: 'transparent',
   buttonfg: 'rgb(136,136,136)',
-  buttonborder: 'rgb(128,128,128)',
-  buttonhighlight: 'rgba(100,149,237,0.1)', 
-  dangerbuttonhighlight: 'rgba(100,149,237,0.1)',
-  dangerbuttonsubdued: 'darkred',
-  lightshadow: 'rgb(32,32,32)',
+  buttonborder: 'rgb(116,116,116)',
+  buttonhighlight: 'rgba(100,149,237,0.1)', // hover effect for buttons, bg for selected 'mode' buttons 
+  dangerbuttonhighlight: 'lightpink', // settings 
+  lightshadow: 'rgb(32,32,32)', // box shadow applied to form fields 
   darkshadow: 'rgb(0 0 0 / 50%)',
   accentshadow: 'rgb(255 0 0 / 50%)',
   sectionbg: 'transparent',
   sectionsubdued: 'rgb(72,72,72)',
-  sectionhighlight: '#272727',
+  sectionhighlight: '#212121',
   sectionbrighthighlight: 'transparent', 
   sectionbrighterhighlight: 'transparent',
   sectionbrightesthighlight: 'transparent',
@@ -101,6 +101,7 @@ export default {
     function installTheme(theme) {
       document.body.style.background=theme.bodybg;
 
+      app.config.globalProperties.$theme.currentTheme.basecolor = theme.basecolor;
       app.config.globalProperties.$theme.currentTheme.bodybg = theme.bodybg;
       app.config.globalProperties.$theme.currentTheme.appbg = theme.appbg;
       app.config.globalProperties.$theme.currentTheme.logocolor = theme.logocolor;
@@ -119,7 +120,6 @@ export default {
       app.config.globalProperties.$theme.currentTheme.buttonborder = theme.buttonborder;
       app.config.globalProperties.$theme.currentTheme.buttonhighlight = theme.buttonhighlight;
       app.config.globalProperties.$theme.currentTheme.dangerbuttonhighlight = theme.dangerbuttonhighlight;
-      app.config.globalProperties.$theme.currentTheme.dangerbuttonsubdued = theme.dangerbuttonsubdued;
       app.config.globalProperties.$theme.currentTheme.lightshadow = theme.lightshadow;
       app.config.globalProperties.$theme.currentTheme.darkshadow = theme.darkshadow;
       app.config.globalProperties.$theme.currentTheme.accentshadow = theme.accentshadow;
@@ -180,7 +180,10 @@ export default {
       currentTheme: reactive({}),
     });
 
-    app.config.globalProperties.$theme = themeObj;
-    setupDarkMode();
+    console.log("here");
+    if (!app.config.globalProperties.$theme) {
+      app.config.globalProperties.$theme = themeObj;
+      setupDarkMode();
+    }
   }
 };

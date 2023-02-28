@@ -86,7 +86,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(180deg, black, v-bind('theme.appbg'));
+  background-image: linear-gradient(180deg, v-bind('theme.basecolor'), v-bind('theme.appbg'));
   z-index: -9999;
 }
 </style>

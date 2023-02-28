@@ -249,7 +249,8 @@ export default {
 }
 
 .selectedLanguage, .selectedCountry, .selectedCategory {
-  color: v-bind('theme.normalmessage');
+  color: v-bind('theme.buttonfg');
+  border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
 
