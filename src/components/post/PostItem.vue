@@ -123,22 +123,25 @@
             :theme="theme" 
             class="post-field-wrapper"
             :media="post.postMedia" 
-            @playing="onMediaPlaying" />
+            @playing="onMediaPlaying" 
+            @audioPlay="onAudioPlay" />
         </div>
         <!-- post itunes -->
         <div class="post-item-row" v-if="(this.showPostDetails && post.postITunes)">
           <PostITunes 
             :theme="theme" 
             class="post-field-wrapper" 
-            :iTunes="post.postITunes" />
+            :iTunes="post.postITunes" 
+            @playFirstEnclosure="onPlayFirstEnclosure" />
         </div>
         <!-- post enclosures -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.enclosures)">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.enclosures && !post.postITunes)">
           <PostEnclosure v-for="(enclosure,idx) in post.enclosures" :key="enclosure"
             :ref="'postEnclosure_' + idx"
             :theme="theme"
             :enclosure="enclosure" 
-            @playing="onEnclosurePlaying(idx)" />
+            @playing="onEnclosurePlaying(idx)" 
+            @audioPlay="onAudioPlay" />
         </div>
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
         <div class="post-item-row" v-if="(this.showPostDetails && post.postUrls && post.postUrls.length > 0)">
@@ -229,7 +232,8 @@ export default {
     "updateFilter",
     "setActive",
     "openPostUrl",
-    "playing"
+    "playing",
+    "audioPlay",
   ],
   data() {
     return {
@@ -240,6 +244,14 @@ export default {
     focusHandle() {
       console.log("post item focusing handle");
       this.$refs.postHandle.focus();
+    },
+    onPlayFirstEnclosure(details) {
+      if (this.post.enclosures) {
+        this.$emit('audioPlay', { url: this.post.enclosures[0].url, details: details });
+      }
+    },
+    onAudioPlay(url) {
+      this.$emit('audioPlay', { url: url });
     },
     onMediaPlaying() {
       // pause all enclosures 

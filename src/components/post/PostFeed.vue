@@ -1,5 +1,6 @@
 <template>
   <div v-show="this.$auth.$isAuthenticated">
+    <audio id="post-feed-audio" />
     <!-- feed delete confirmation modal (hidden) -->
     <ConfirmationDialog ref="feedDeleteConfirmationModal"
       :disabled="disabled || inTransit"
@@ -113,7 +114,7 @@
                 {{ this.getFeedById(this.selectedFeedId).ident }}
               </template>
               <template v-slot:body>
-                <!-- filter feed field -->
+                <!-- feed filter field -->
                 <div class="view-header-field" v-if="this.showFullInboundQueueHeader">
                   <!-- feed filter label -->
                   <label>ARTICLE QUEUE {{ '(' + this.filteredInboundQueue.length + ' ARTICLES MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + this.totalPages + ')' }}</label>
@@ -158,6 +159,7 @@
                     </div>
                   </div>
                 </div>
+                <!-- feed filter pills -->
                 <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader">
                   <!-- post status filter pills -->
                   <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('UNREAD', this.feedFilterModes) }" 
@@ -201,6 +203,8 @@
                       {{ category }}
                   </button>
                 </div>
+                <!-- post feed audio controller -->
+                <PostFeedAudio ref="postFeedAudio" />
               </template>
             </ViewHeader>
           </div>
@@ -222,7 +226,8 @@
                 @updatePostReadStatus="updatePostReadStatus"
                 @updatePostPubStatus="updatePostPubStatus" 
                 @updateFilter="updatePostFeedFilter" 
-                @playing="onMediaPlaying" />
+                @playing="onMediaPlaying" 
+                @audioPlay="onAudioPlay" />
             </div>
           </div>
           <div class="logo">
@@ -248,7 +253,11 @@ import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import NavbarButtons from "@/components/layout/NavbarButtons.vue";
 // post item panel 
 import ViewHeader from "@/components/layout/ViewHeader.vue";
+// pospt feed media player 
+import PostFeedAudio from '@/components/post/PostFeedAudio.vue';
+// post item 
 import PostItem from "./PostItem.vue";
+// feed selector 
 import FeedSelectButton from './FeedSelectButton.vue';
 
 export default {
@@ -259,6 +268,7 @@ export default {
     HelpPanel,
     NavbarFixedHeader,
     NavbarButtons, 
+    PostFeedAudio,
     ViewHeader,
     PostItem, 
     FeedSelectButton,
@@ -459,6 +469,16 @@ export default {
     };
   },
   methods: {
+    onAudioPlay(bundle) {
+      for (let j = 0; j < this.inboundQueue.length; j++) {
+        let id = this.inboundQueue[j].id;
+        let r = this.$refs['post_' + id];
+        if (r && r.length > 0) {
+          r[0].pauseMedia();
+        }
+      }
+      this.$refs.postFeedAudio.play(bundle);
+    },
     onMediaPlaying(postId) {
       for (let j = 0; j < this.inboundQueue.length; j++) {
         let id = this.inboundQueue[j].id;
@@ -469,6 +489,7 @@ export default {
           }
         }
       }
+      this.$refs.postFeedAudio.pausePlaying();
     },
     showHelp() {
       document.activeElement.blur();
@@ -1369,7 +1390,7 @@ export default {
       }
     },
     setSelectedPost($event, postId, doFocus) {
-      if ($event && $event.target.classList.contains('plyr__control')) {
+      if ($event && ($event.target.classList.contains('plyr__control') || $event.target.classList.contains('audio-player-control')))  {
         return;
       }
       doFocus = doFocus === undefined ? true : doFocus;

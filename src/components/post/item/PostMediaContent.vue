@@ -40,15 +40,10 @@
           </div>
         </vue-plyr>
       </div>
-      <div v-else-if="isAudio() && this.showContents" class="post-media-content-audio">
-        <vue-plyr ref="player">
-          <audio controls crossorigin="anonymous" playsinline>
-            <source
-              :src="this.enclosure.url"
-              :type="this.enclosure.type" />
-          </audio>
-        </vue-plyr>
-      </div>
+        <!-- PLAY BUTTON PLACEHOLDER -->
+      <!-- <div v-else-if="isAudio() && this.showContents" class="post-media-content-audio">
+        <button class="fa fa-play audio-player-control" @click="this.$emit('audioPlay', { url: this.mediaContent.reference.uri })" />
+      </div> -->
     </div>
   </div>
 </template>
@@ -59,7 +54,7 @@ import PostMediaMetadata from './PostMediaMetadata.vue';
 export default {
   name: "PostMediaContent",
   props: [ "mediaContent", "showContentOnLoad", "theme" ],
-  emits: [ "playing" ],
+  emits: [ "playing", "audioPlay" ],
   components: {
     PostMediaMetadata,
   },

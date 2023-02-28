@@ -13,7 +13,8 @@
           :mediaContent="mc" 
           :showContentOnLoad="idx === 0"
           :theme="theme" 
-          @playing="onMediaContentPlaying(idx)" />
+          @playing="onMediaContentPlaying(idx)" 
+          @audioPlay="this.$emit('audioPlay', $event)" />
       </div>
       <!-- top-level media-groups array -->
       <div v-if="this.media.postMediaGroups && this.showContents">
@@ -22,7 +23,8 @@
           :mediaGroup="mg" 
           :inTransit="inTransit" 
           :theme="theme" 
-          @playing="onMediaGroupPlaying(idx)" />
+          @playing="onMediaGroupPlaying(idx)" 
+          @audioPlay="this.$emit('audioPlay', $event)" />
       </div>
     </div>
   </div>

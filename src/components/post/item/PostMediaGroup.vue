@@ -9,7 +9,8 @@
         :mediaContent="mc" 
         :showContentOnLoad="idx === 0"
         :theme="theme" 
-        @playing="this.$emit('playing')" />
+        @playing="this.$emit('playing')" 
+        @audioPlay="this.$emit('audioPlay', $event)" />
     </div>
   </div>
 </template>

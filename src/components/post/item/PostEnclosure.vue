@@ -18,16 +18,10 @@
         </div>
       </vue-plyr>        
     </div>
-    <div v-else-if="isAudio()" class="post-enclosure-image">
-      <vue-plyr ref="player">
-        <audio controls crossorigin="anonymous" playsinline>
-          <source
-            :src="this.enclosure.url"
-            :type="this.enclosure.type"
-          />
-        </audio>
-      </vue-plyr>
-    </div>
+    <!-- PLAY BUTTON PLACEHOLDER -->
+    <!-- <div v-else-if="isAudio()" class="post-enclosure-image">
+      <button class="fa fa-play audio-player-control" @click="playAudio" />
+    </div> -->
   </div>
 </template>
 
@@ -41,7 +35,7 @@ export default {
   components: {
     NavbarFixedHeader,
   },
-  emits: [ "playing" ],
+  emits: [ "playing", "audioPlay" ],
   mounted() {
     console.log("post-enclosure mounted: enclosure=" + JSON.stringify(this.enclosure));
     if (this.isVideo()) {
@@ -49,6 +43,9 @@ export default {
     }
   },
   methods: {
+    playAudio() {
+      this.$emit('audioPlay', { url: this.enclosure.url });
+    },
     pause() {
       this.$refs.player.player.pause();
     },

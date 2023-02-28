@@ -1,13 +1,17 @@
 <template>
   <div class="post-itunes-content">
-    <img v-if="this.iTunes.imageUri" :src="this.iTunes.imageUri"
-      class="post-itunes-content-image" />
+    <img v-if="this.iTunes.imageUri" :src="this.iTunes.imageUri" class="post-itunes-content-image" tabindex="0" @click="this.$emit('playFirstEnclosure', this.iTunes)" />
     <div class="pill-container">
-      <div class="br-pill-subdued" v-if="this.iTunes.author">AUTHOR: {{ this.iTunes.author }}</div>
+      <button class="br-pill-subdued fa fa-headphones audio-player-control" @click="this.$emit('playFirstEnclosure', this.iTunes)" />
+      <div class="br-pill-subdued" v-if="this.iTunes.title">{{ this.iTunes.title }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.subTitle">{{ this.iTunes.subTitle }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.author">{{ this.iTunes.author }}</div>
       <div class="br-pill-subdued" v-if="this.iTunes.explicit">EXPLICIT</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.epiosodeType"> {{ this.iTunes.epiosodeType + ' episode' }}</div>
+      <!-- <div class="br-pill-subdued" v-if="this.iTunes.duration"> {{ this.iTunes.duration.milliseconds + ' ms' }}</div> -->
       <div class="br-pill-subdued" v-for="keyword of this.iTunes.keywords" :key="keyword">{{ keyword }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.subTitle">SUBTITLE: {{ this.iTunes.subTitle }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.summary">SUMMARY: {{ this.iTunes.summary }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.closeCaptioned === true">Close Captioned</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.summary">{{ this.iTunes.summary }}</div>
     </div>
   </div>
 </template>
@@ -16,17 +20,7 @@
 export default {
   name: "PostITunes",
   props: ["iTunes", "theme"],
-  components: { },
-  mounted() {
-    console.log("post-itunes mounted: iTunes=" + JSON.stringify(this.iTunes));
-  },
-  methods: {
-  },
-  data() {
-    return {
-
-    }
-  }
+  emits: ["playFirstEnclosure"],
 }
 </script>
 
@@ -67,10 +61,6 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
-}
-
-.collapsed {
-  display: none;
 }
 
 .post-itunes-content-image {
