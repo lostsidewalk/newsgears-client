@@ -44,9 +44,6 @@ export default {
     PostMediaContent, 
     PostMediaGroup
   },
-  mounted() {
-    // console.log("post-media mounted: media=" + JSON.stringify(this.media));
-  },
   methods: {
     onMediaContentPlaying(idx) {
       // pause all media groups and media content where idx != idx 

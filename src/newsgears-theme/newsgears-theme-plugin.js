@@ -14,7 +14,7 @@ const LIGHT_THEME = {
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
   subduedmessage: 'dimgrey',
   normalmessage: 'black',
-  highlightedmessage: 'antiquewhite',
+  highlightedmessage: 'cornflowerblue',
   buttonbg: 'transparent',
   buttonfg: 'rgb(92,92,92)',
   buttonborder: 'rgb(32,32,32)',
@@ -180,7 +180,6 @@ export default {
       currentTheme: reactive({}),
     });
 
-    console.log("here");
     if (!app.config.globalProperties.$theme) {
       app.config.globalProperties.$theme = themeObj;
       setupDarkMode();

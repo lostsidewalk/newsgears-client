@@ -57,9 +57,6 @@
 export default {
   name: "FeedSelectButton",
   props: ["feed", "inboundCount", "publishedCount", "disabled", "theme"],
-  mounted() {
-    // console.log("feed-select-button, feed=" + JSON.stringify(this.feed));
-  },
   methods: {
     hasFeedMetrics(rssAtomFeedUrl) {
       return rssAtomFeedUrl.feedMetrics && rssAtomFeedUrl.feedMetrics.length > 0;

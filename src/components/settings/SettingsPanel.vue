@@ -240,7 +240,6 @@ export default {
     }
   },
   mounted() {
-    console.log("settings_panel: mounted, account=" + JSON.stringify(this.account) + ", frameworkConfig=" + JSON.stringify(this.frameworkConfig));
     this.username = this.account.username;
     this.emailAddress = this.account.emailAddress;
     this.authProvider = this.account.authProvider;
@@ -297,7 +296,6 @@ export default {
           }
         }
       };
-      console.log("update notification preferences, newSettings=" + JSON.stringify(settingsObj));
       this.$emit("settingsUpdated", settingsObj);
     },
     toggleNotifications() {

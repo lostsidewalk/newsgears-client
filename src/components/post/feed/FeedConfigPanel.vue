@@ -356,7 +356,7 @@ export default {
       this.showModal = false;
     },
     error(error) {
-      console.log("MODAL SHOWING ERROR: " + error.toString());
+      console.error(error); // TODO: fix this 
     },
     // 
     handleAuthError(error) {
@@ -434,7 +434,7 @@ export default {
     showRssAtomUrlBrowser() {
       this.showFeedCatalog = true;
       if (!this.feedCatalog) {
-        console.log("loading feed catalog...");
+        console.log("feed-config-panel: loading feed catalog...");
         this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
           const requestOptions = {
@@ -458,7 +458,7 @@ export default {
                 c.discoveryUrl = c.feedUrl;
               }
             }).catch((error) => {
-              console.log(error);
+              console.error(error);
               if (error.name === 'TypeError') {
                 this.feedCatalogErrors.push('Something went wrong.  Please try again later.');
               } else {

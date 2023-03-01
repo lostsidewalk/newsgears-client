@@ -49,7 +49,7 @@ export default {
       this.inTransit = false;
     },
     handleFeedImageUploadError(error) {
-      console.log(error);
+      console.error(error);
       if (error.name === 'TypeError') {
         this.feedImageUploadErrors.push('Something went wrong.  Please try again later.');
       } else {

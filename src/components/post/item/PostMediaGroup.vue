@@ -27,9 +27,6 @@ export default {
     PostMediaMetadata,
     PostMediaContent,
   },
-  mounted() {
-    // console.log("post-media-group: mediaGroup=" + JSON.stringify(this.mediaGroup));
-  },
   methods: {
     pause() {
       if (this.mediaGroup.postMediaContents) {

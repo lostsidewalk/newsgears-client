@@ -138,10 +138,10 @@ export default {
       return this.subscription == null ? false : (this.subscription.lastInvoice !== null);
     },
     cancelSubscription() {
-      this.$emit('cancelSubscription', this.subscription);
+      this.$emit('cancelSubscription');
     },
     resumeSubscription() {
-      this.$emit('resumeSubscription', this.subscription);
+      this.$emit('resumeSubscription');
     },
   }
 }

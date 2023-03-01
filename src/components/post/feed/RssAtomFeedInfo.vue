@@ -163,9 +163,6 @@ export default {
   name: "RssAtomFeedInfo",
   props: [ "filterSupport", "info", "theme", "disabled" ],
   emits: [ "updateFilter" ],
-  mounted() {
-    // console.log("rss-atom-feed-info mounted: info=" + JSON.stringify(this.info));
-  },
   methods: {
     updateFeedFilter(filterName, filterValue) {
       this.$emit("updateFilter", { name: filterName, value: filterValue });

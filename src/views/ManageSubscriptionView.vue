@@ -50,7 +50,6 @@ export default {
 },
   props: ["baseUrl"],
   created() {
-    console.log("manage_subscription: created... baseUrl=" + this.baseUrl);
     this.refreshSubscription();
   },
   methods: {
@@ -124,8 +123,7 @@ export default {
         this.failedToLoad = true;
       });
     },
-    cancelSubscription(subscription) {
-      console.log("cancel subscription, subscription=" + JSON.stringify(subscription));
+    cancelSubscription() {
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
             headers: { 
@@ -162,8 +160,7 @@ export default {
         this.handleServerError(error);
       });
     },
-    resumeSubscription(subscription) {
-      console.log("resume subscription, subscription=" + JSON.stringify(subscription));
+    resumeSubscription() {
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
             headers: { 

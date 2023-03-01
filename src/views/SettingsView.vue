@@ -52,7 +52,6 @@ export default {
 },
   props: ["baseUrl"],
   mounted() {
-    console.log("settings_page: mounted... baseUrl=" + this.baseUrl);
     this.refreshSettings();
   },
   methods: {
@@ -143,7 +142,6 @@ export default {
         console.log(error);
         return;
       }
-      console.log("updateSettings, newSettings=" + JSON.stringify(newSettings));
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -296,7 +294,7 @@ export default {
         }).then((data) => {
           let sessionId = data.sessionId;
           let sessionUrl = data.sessionUrl;
-          console.log("Redirecting to checkout url=" + sessionUrl + " for sessionId=" + sessionId);
+          console.log("settings: redirecting to checkout url=" + sessionUrl + " for sessionId=" + sessionId);
           window.location.href = sessionUrl;
         }).catch((error) => {
           console.log(error);

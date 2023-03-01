@@ -37,7 +37,6 @@ export default {
   },
   emits: [ "playing", "audioPlay" ],
   mounted() {
-    console.log("post-enclosure mounted: enclosure=" + JSON.stringify(this.enclosure));
     if (this.isVideo()) {
       this.$refs.player.player.on('playing', () => this.$emit('playing'));
     }

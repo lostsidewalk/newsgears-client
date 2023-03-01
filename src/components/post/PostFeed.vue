@@ -578,7 +578,7 @@ export default {
     // server error 
     // 
     handleServerError(error) {
-      console.log(error);
+      console.error(error);
       if (error.name === 'TypeError') {
         this.setLastServerMessage('Something went wrong.  Please try again later.');
       } else if (error.message) {
@@ -707,7 +707,6 @@ export default {
           this.removeFilterFromSet(this.selectedFeedFilterCategories, f.value);
         }
       }
-      console.log("feed filter updated, subscriptions=" + JSON.stringify(this.selectedFeedFilterSubscriptions), ", categories=" + JSON.stringify(this.selectedFeedFilterCategories));
     },
     removeFilterFromSet(filterSet, filterValue) {
       let idxToSplice = -1;
@@ -1081,7 +1080,7 @@ export default {
         try {
           this.validateFeed(feed);
         } catch (error) {
-          console.log(error);
+          console.error(error);
           return;
         }
       }
@@ -1146,7 +1145,7 @@ export default {
       try {
         this.validateFeed(feed);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         return;
       }
       let isUpdate = feed.id ? true : false;
@@ -1237,12 +1236,6 @@ export default {
       this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(feedId));
       this.showFeedConfigPanel = true;
       this.showNavBar = false;
-    },
-    performRssAtomUrlQuickAdd(rssAtomUrl) {
-      console.log("RSS/ATOM URL quick add: " + rssAtomUrl);
-      this.showFeedConfigPanel = false;
-      this.$refs.feedConfigPanel.tearDown();
-      this.showNavBar = true;
     },
     // 
     // delete queue 

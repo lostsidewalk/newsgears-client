@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="banner-view">
-      <!-- TODO: replace w/scalable image logo -->
-      <h1>FeedGears RSS</h1>
-      <i class="fa fa-rss fa-5x"></i>
+      <div>
+        <h1>FeedGears RSS</h1>
+        <i class="fa fa-rss fa-5x"></i>
+      </div>
       <GoogleAuthButton :theme="theme" :disabled="false" />
-      <!-- TODO: replace w/link to feed discovery -->
-      <!-- <button class="tab-label" @click="this.$router.push('/app')" accesskey="s">Get <i class="underline">S</i>tarted</button> -->
+      <!-- TODO: add feed discovery button -->
     </div>
   </div>
 </template>

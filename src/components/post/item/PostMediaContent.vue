@@ -59,7 +59,6 @@ export default {
     PostMediaMetadata,
   },
   mounted() {
-    // console.log("post-media-content: mediaContent=" + JSON.stringify(this.mediaContent) + ", showContents: " + this.showContent);
     if (this.isAudio() || this.isVideo()) {
       this.$refs.player.player.on('playing', () => this.$emit('playing'));
     }

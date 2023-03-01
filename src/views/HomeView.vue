@@ -41,9 +41,9 @@ export default {
       .catch(() => {})
       .finally(() => {
         if (this.$auth.$isAuthenticated) {
-          console.log("app: authenticated on mount");
+          console.log("home: authenticated on mount");
         } else {
-          console.log("app: not authenticated on mount");
+          console.log("home: not authenticated on mount");
         }
         this.inTransit = false;
     });

@@ -41,29 +41,9 @@ export default {
     // SystemStatusPanel, 
   },
   props: ["baseUrl"],
-  watch: {
-    '$auth.$isAuthenticated' (isAuthenticated) {
-      if (isAuthenticated) {
-        console.log("authenticated in the landing page");
-      }
-    }
-  },
-  mounted() {
-    this.$auth.getTokenSilently()
-      .catch(() => {})
-      .finally(() => {
-        if (this.$auth.$isAuthenticated) {
-          console.log("landing_page: authenticated on mount");
-        } else {
-          console.log("landing_page: not authenticated on mount");
-        }
-        this.isLoading = false;
-      });
-  },
   data() {
     return {
       theme: this.$theme.currentTheme,
-      isLoading: true
     };
   },
 };

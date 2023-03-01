@@ -242,7 +242,6 @@ export default {
   },
   methods: {
     focusHandle() {
-      console.log("post item focusing handle");
       this.$refs.postHandle.focus();
     },
     onPlayFirstEnclosure(details) {

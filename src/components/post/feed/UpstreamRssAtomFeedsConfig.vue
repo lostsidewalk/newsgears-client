@@ -98,55 +98,51 @@ export default {
           console.log("RSS/ATOM feed URL is too long (max 2048 characters).");
         }
         let u = encodeURIComponent(r.feedUrl);
-        console.log("feed-config: starting discovery for rssAtomFeedUrl id=" + r.id + ", feedUrl=" + r.feedUrl);
         this.inTransit = true;
-        // TODO: remove the delay (used for testing) 
-        setTimeout(() => {
-          this.$auth.getTokenSilently().then((token) => {
-            const requestOptions = {
-                headers: { 
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
-                },
-                credentials: 'include' 
-              };
-            fetch(this.baseUrl + "/discovery/?url=" + u, requestOptions).then((response) => {
-              if (response.status === 200) {
-                return response.json();
-              } else {
-                return response.json().then(j => {
-                  throw new Error(null, { cause: j });
-                })
-              }
-            }).then((data) => {
-              data.id = r.id;
-              data.discoveryUrl = r.feedUrl;
-              this.$emit('update:rssAtomFeedUrl', data);
-            }).catch((error) => {
-              console.log(error.cause);
-              if (error.name === 'TypeError') {
-                r.error = 'Something went wrong.  Please try again later.';
-              } else {
-                let cause = error.cause;
-                let data = {};
-                data.id = r.id;
-                data.discoveryUrl = null;
-                data.error = cause.details;
-                data.httpStatusCode = cause.httpStatusCode;
-                data.httpStatusMessage = cause.httpStatusMessage;
-                data.redirectFeedUrl = cause.redirectFeedUrl;
-                data.redirectHttpStatusCode = cause.redirectHttpStatusCode;
-                data.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
-                this.$emit('update:rssAtomFeedUrl', data);
-              }
-            })
-            .finally(() => {
-              this.inTransit = false;
-            });
+        this.$auth.getTokenSilently().then((token) => {
+          const requestOptions = {
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              credentials: 'include' 
+            };
+          fetch(this.baseUrl + "/discovery/?url=" + u, requestOptions).then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              return response.json().then(j => {
+                throw new Error(null, { cause: j });
+              })
+            }
+          }).then((data) => {
+            data.id = r.id;
+            data.discoveryUrl = r.feedUrl;
+            this.$emit('update:rssAtomFeedUrl', data);
           }).catch((error) => {
-            this.handleAuthError(error);
+            console.error(error);
+            if (error.name === 'TypeError') {
+              r.error = 'Something went wrong.  Please try again later.';
+            } else {
+              let cause = error.cause;
+              let data = {};
+              data.id = r.id;
+              data.discoveryUrl = null;
+              data.error = cause.details;
+              data.httpStatusCode = cause.httpStatusCode;
+              data.httpStatusMessage = cause.httpStatusMessage;
+              data.redirectFeedUrl = cause.redirectFeedUrl;
+              data.redirectHttpStatusCode = cause.redirectHttpStatusCode;
+              data.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
+              this.$emit('update:rssAtomFeedUrl', data);
+            }
+          })
+          .finally(() => {
+            this.inTransit = false;
           });
-        }, 2000);
+        }).catch((error) => {
+          this.handleAuthError(error);
+        });
       }
     },
     len(str) {

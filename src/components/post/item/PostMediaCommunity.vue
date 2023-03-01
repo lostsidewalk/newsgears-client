@@ -29,9 +29,6 @@ export default {
       return Math.min(this.community.postMediaStarRating.max, 10);
     }
   },
-  mounted() {
-    // console.log("post-media-community: community=" + JSON.stringify(this.community));
-  }
 }
 </script>
 

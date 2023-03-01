@@ -86,9 +86,6 @@ export default {
   },
   props: [ "disabled", "baseUrl", "theme" ],
   emits: [ "finalizeUpload", "cancel", "authError" ],
-  mounted() {
-    console.log("opml-upload-panel: mounted, baseUrl=" + this.baseUrl);
-  },
   data() {
     return {
       //
@@ -191,7 +188,7 @@ export default {
             this.atStep2 = true;
           }
         }).catch((error) => {
-          console.log(error);
+          console.error(error);
           if (error.name === 'TypeError') {
             this.errors.push('Something went wrong.  Please try again later.');
           } else {

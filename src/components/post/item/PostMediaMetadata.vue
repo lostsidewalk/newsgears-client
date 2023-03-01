@@ -20,9 +20,6 @@ export default {
   components: {
     PostMediaCommunity,
   },
-  mounted() {
-    // console.log("post-media-metadata: metadata=" + JSON.stringify(this.metadata));
-  },
   methods: {
   }
 }
