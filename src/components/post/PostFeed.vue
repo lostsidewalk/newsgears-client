@@ -108,6 +108,7 @@
               </template>
           </ViewHeader>
         </div>
+        <button v-if="this.selectedFeedId" class="toggle-feed-select-view" @click="this.showFeedSelectView = !this.showFeedSelectView" />
         <!-- right side -->
         <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
@@ -1642,6 +1643,20 @@ export default {
   background-color: unset;
 }
 
+.toggle-feed-select-view {
+  background: transparent;
+  width: min-content;
+  border-left: 1px dashed black;
+  border-top: 0px;
+  border-bottom: 0px;
+  border-right: 1px solid black;
+  cursor: pointer;
+}
+
+.toggle-feed-select-view:hover {
+  background-color: v-bind('theme.buttonhighlight');
+}
+
 .feed-select-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
   display: flex;
@@ -1657,6 +1672,7 @@ export default {
 
 .staging-header-view-collapsed {
   max-width: unset !important;
+  width: inherit;
 }
 
 .staging-header-view {
