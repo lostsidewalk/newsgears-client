@@ -57,7 +57,6 @@ export default {
 }
 
 .banner {
-  width: fit-content;
   background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.basecolor'));
 }
 
