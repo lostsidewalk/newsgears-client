@@ -18,7 +18,6 @@ export default {
 
 <style scoped>
 .login-with-google-btn {
-  margin: 4%;
   max-width: 256px;
   padding: .75rem 1rem .75rem 2.625rem;
   border-radius: 3px;

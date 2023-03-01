@@ -8,7 +8,8 @@ const LIGHT_THEME = {
   logobrightcolor: 'darkblue',
   logoaccentcolor: 'lightgrey',
   logoshadowcolor: 'rgb(255 0 0 / 50%)',
-  logosubtextcolor: 'aliceblue',
+  logosubtextcolor: 'rgb(32,32,32)',
+  logosubshadow: 'dimgrey',
   modalbodybg: '#cccccc',
   navbarshadow: 'cornflowerblue',
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
@@ -55,7 +56,8 @@ const DARK_THEME = {
   logobrightcolor: 'lightskyblue', // selected tab label 
   logoaccentcolor: 'rgb(32 32 32)', // banner 
   logoshadowcolor: 'rgb(255 0 0 / 50%)', // banner 
-  logosubtextcolor: 'paleturquoise', // banner 
+  logosubtextcolor: 'aliceblue', // banner 
+  logosubshadow: 'slateblue', // banner 
   modalbodybg: '#141414',
   navbarshadow: 'cornflowerblue', 
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
@@ -109,6 +111,7 @@ export default {
       app.config.globalProperties.$theme.currentTheme.logoaccentcolor = theme.logoaccentcolor;
       app.config.globalProperties.$theme.currentTheme.logoshadowcolor = theme.logoshadowcolor;
       app.config.globalProperties.$theme.currentTheme.logosubtextcolor = theme.logosubtextcolor;
+      app.config.globalProperties.$theme.currentTheme.logosubshadow = theme.logosubshadow;
       app.config.globalProperties.$theme.currentTheme.modalbodybg = theme.modalbodybg;
       app.config.globalProperties.$theme.currentTheme.navbarshadow = theme.navbarshadow;
       app.config.globalProperties.$theme.currentTheme.navbarsubshadow = theme.navbarsubshadow;

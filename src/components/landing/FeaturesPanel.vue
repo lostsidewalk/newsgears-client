@@ -2,23 +2,9 @@
   <div>
     <div class="features-view">
       <div class="feature">
-        <div class="feature-title">RSS/ATOM</div>
-        <div class="feature-body">
-          FeedGears was built on the open-source project ROME, and supports all versions of RSS/ATOM, with high-level support for modules such as: 
-          <ul>
-            <li>iTunes Podcasting</li>
-            <li>iPhoto Photocasting</li>
-            <li>MediaRSS (Youtube)</li>
-            <li>GeoRSS</li>
-            <li>Creative Commons</li>
-          </ul>
-          We strive to give you access to all content in the RSS/ATOM envelope, organized in a sensible, accessible, and presentable way.
-      </div>
-      </div>
-      <div class="feature">
         <div class="feature-title">IT'S FREE</div>
         <div class="feature-body">
-          You can always have a free account that will never go away.  There will never be third-party ads while using FeedGears.  
+          You can always have a free account that will never go away.  There will never be ads while using FeedGears.  
           <ul>
             <li>Free accounts are limited to a single queue with a maximum of 25 upstream RSS/ATOM subscriptions.</li>
             <li>Feeds are updated hourly</li>
@@ -69,7 +55,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">QUEUE-BASED INTERFACE</div>
+        <div class="feature-title">QUEUE DASHBOARD</div>
         <div class="feature-body">
           Upstream feeds are organized into queues.
           <ul>
@@ -110,6 +96,20 @@
             <li>This feed is published in RSS, ATOM, and JSON format.</li>
             <li>These links may be shared with others so that they may follow you 'starred' items in any given queue. </li>
           </ul>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">RSS/ATOM</div>
+        <div class="feature-body">
+          FeedGears was built on the open-source project ROME, and supports all versions of RSS/ATOM, with high-level support for modules such as: 
+          <ul>
+            <li>iTunes Podcasting</li>
+            <li>iPhoto Photocasting</li>
+            <li>MediaRSS (Youtube)</li>
+            <li>GeoRSS</li>
+            <li>Creative Commons</li>
+          </ul>
+          We strive to give you access to all content in the RSS/ATOM envelope, organized in a sensible, accessible, and presentable way.
         </div>
       </div>
       <div class="feature">

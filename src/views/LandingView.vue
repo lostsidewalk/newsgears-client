@@ -56,6 +56,10 @@ export default {
   color: v-bind('theme.normalmessage');
 }
 
+.banner {
+  width: fit-content;
+}
+
 .panel {
   border: 1px solid transparent;
 }

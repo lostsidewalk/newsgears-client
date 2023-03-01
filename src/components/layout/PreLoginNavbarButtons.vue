@@ -29,7 +29,7 @@
       <!-- login button -->
       <LoginButton :disabled="false" :theme="theme" />
       <!-- sign-up button -->
-      <SignUpButton :disabled="false" :theme="theme" />
+      <SignUpButton :disabled="false" :theme="theme" style="float: right;"/>
       <!-- display mode switch -->
       <DisplayModeButton :disabled="false" :theme="theme" />
       </div>

@@ -1,11 +1,24 @@
 <template>
   <div>
     <div class="banner-view">
-      <div>
-        <h1>FeedGears RSS</h1>
-        <i class="fa fa-rss fa-5x"></i>
+      <div class="logocontainer">
+        <h1 class="logotext">FeedGears RSS</h1>
+        <i class="logo fa fa-rss fa-5x"></i>
       </div>
-      <GoogleAuthButton :theme="theme" :disabled="false" />
+      <h2 class="logosubtext fancy">
+        A secure, private, accessible feed reader.
+      </h2>
+      <h2 class="logosubtext fancy">
+        FeedGears is free because we believe in RSS <i class="fa fa-rss" />
+      </h2>
+      <h3 class="logosubduedtext fancy">
+        (You can still pay for it if you want to support our mission.)
+      </h3>
+      <div class="flex" style="padding-top: 2vh;padding-bottom: 2vh;">
+        <GoogleAuthButton :theme="theme" :disabled="false" />
+        <!-- sign-up button -->
+        <SignUpButton :disabled="false" :theme="theme" />
+      </div>
       <!-- TODO: add feed discovery button -->
     </div>
   </div>
@@ -13,11 +26,15 @@
 
 <script>
 import GoogleAuthButton from '../auth/GoogleAuthButton.vue';
+import SignUpButton from '../nav/SignUpButton.vue';
 
 export default {
     name: "BannerPanel",
     props: ["theme"],
-    components: { GoogleAuthButton }
+    components: { 
+      GoogleAuthButton,
+    SignUpButton 
+  }
 }
 </script>
 
@@ -25,24 +42,42 @@ export default {
 
 .banner-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  display: flex;
-  flex-direction: column;
-  width: 100%;
   align-items: center;
+  width: 100%;
+}
+
+.logocontainer {
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+.logotext {
   font-family: 'Russo One';
-  font-size: larger;
-  margin-bottom: 2%;
+  color: v-bind('theme.logosubtextcolor');
+  text-shadow: 1px 0px 1px v-bind('theme.logocolor');
 }
 
-.banner-view > h1 {
-  translate: 0 100px;
-  text-shadow: 1px 0px 1px rgb(224 224 224);
+.logo {
+  color: v-bind('theme.logosubtextcolor');
+  text-shadow: 3px 3px 3px v-bind('theme.logosubshadow');
 }
 
-.banner-view > i {
-  color: rgb(16,16,16);
-  margin-bottom: 2%;
-  text-shadow: 3px 3px 3px rgba(0,0,255,0.3);
+.logosubtext {
+  font-size: 3.0rem;
+  color: v-bind('theme.logosubtextcolor');
+  text-shadow: 3px 3px 3px v-bind('theme.logosubshadow');
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+  margin-left: 17vw;
+  margin-right: 17vw;
+}
+
+.logosubduedtext {
+  font-size: 2.0rem;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  margin-left: 17vw;
+  margin-right: 17vw;
 }
 
 .tab-label {
@@ -62,5 +97,11 @@ export default {
 
 .underline {
   text-decoration: underline;
+}
+
+.fancy {
+  font-family: math; /* oh yeah */
+  font-weight: bold;
+  text-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 </style>
