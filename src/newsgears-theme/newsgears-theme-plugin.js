@@ -8,7 +8,7 @@ const LIGHT_THEME = {
   logobrightcolor: 'darkblue',
   logoaccentcolor: 'lightgrey',
   logoshadowcolor: 'rgb(255 0 0 / 50%)',
-  logosubtextcolor: 'rgb(32,32,32)',
+  logosubtextcolor: 'rgb(224,224,224)',
   logosubshadow: 'dimgrey',
   modalbodybg: '#cccccc',
   navbarshadow: 'cornflowerblue',
@@ -60,7 +60,7 @@ const DARK_THEME = {
   logosubshadow: 'slateblue', // banner 
   modalbodybg: '#141414',
   navbarshadow: 'cornflowerblue', 
-  navbarsubshadow: 'rgb(0 0 0 / 75%)', 
+  navbarsubshadow: 'rgb(255 255 255 / 75%)', 
   subduedmessage: 'rgb(116,116,116)', // links, detail messages, etc. 
   normalmessage: 'rgb(136,136,136)', // foreground text 
   highlightedmessage: 'rgba(144,238,144,0.7)', // hover effect for messages 

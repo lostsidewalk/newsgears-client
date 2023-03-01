@@ -8,13 +8,13 @@
       </template>
     </NavbarFixedHeader>
 
-    <BannerPanel :theme="theme" class="banner panel" />
+    <BannerPanel :theme="theme" class="banner" />
 
-    <DemoPanel :theme="theme" class="demo panel" /> 
+    <DemoPanel :theme="theme" class="demo" /> 
 
-    <FeaturesPanel :theme="theme" class="features panel" /> 
+    <FeaturesPanel :theme="theme" class="features" /> 
 
-    <FooterPanel :theme="theme" class="footer panel" />
+    <FooterPanel :theme="theme" class="footer" />
 
     <!-- <SystemStatusPanel :theme="theme" class="system-status panel" /> -->
 </div>
@@ -58,19 +58,14 @@ export default {
 
 .banner {
   width: fit-content;
+  background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.basecolor'));
 }
 
-.panel {
-  border: 1px solid transparent;
+.demo {
+  background-image: linear-gradient(180deg, v-bind('theme.basecolor'), v-bind('theme.darkshadow'));
 }
 
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(180deg, v-bind('theme.basecolor'), v-bind('theme.appbg'));
-  z-index: -9999;
+.features {
+  background-image: linear-gradient(180deg, v-bind('theme.darkshadow'), v-bind('theme.lightshadow'));
 }
 </style>

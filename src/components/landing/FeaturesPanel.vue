@@ -156,8 +156,8 @@ export default {
   gap: 1rem;
   margin-left: 4%;
   margin-right: 4%;
-  margin-top: 2%;
-  margin-bottom: 2%;
+  padding-top: 2%;
+  padding-bottom: 2%;
 }
 
 .feature {
