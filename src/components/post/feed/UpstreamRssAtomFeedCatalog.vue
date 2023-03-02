@@ -488,7 +488,7 @@ export default {
   float: right;
 }
 
-.feed-catalog-filter input {
+.feed-catalog-filter > input {
   padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
@@ -496,7 +496,6 @@ export default {
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   width: 100%;
-  font-size: x-large;
 }
 
 .feed-catalog-filter input:hover, .feed-catalog-filter > input:focus {

@@ -241,7 +241,6 @@ export default {
   color: v-bind('theme.normalmessage');
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  font-size: x-large;
 }
 
 .rss-atom-url-row input:hover, .rss-atom-url-row > input:focus {

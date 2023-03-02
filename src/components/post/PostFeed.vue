@@ -1559,7 +1559,17 @@ export default {
         } else if (event.key === '/') {
           this.$nextTick(() => {
             let filterElem = document.getElementById('feed-filter');
-            filterElem.focus();
+            if (filterElem) {
+              filterElem.focus();
+            } else {
+              this.showFullInboundQueueHeader = true;
+              this.$nextTick(() => {
+                let filterElem = document.getElementById('feed-filter');
+                if (filterElem) {
+                  filterElem.focus();
+                }
+              });
+            }
           });
           event.stopPropagation();
           event.preventDefault();
@@ -1816,7 +1826,6 @@ footer {
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   width: 100%;
-  font-size: x-large;
 }
 
 .feed-filter input:hover, .feed-filter > input:focus {

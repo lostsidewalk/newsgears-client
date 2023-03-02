@@ -252,7 +252,7 @@ export default {
         {
           "name": "NEWS_DISCOVERY",
           "description": "News Discovery",
-          "icon": "television",
+          "icon": "newspaper-o",
         },
         {
           "name": "RSS_ATOM_DISCOVERY",

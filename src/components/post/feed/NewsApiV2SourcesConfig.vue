@@ -6,6 +6,7 @@
     <input class="newsapiv2-sources-filter" type="text" v-model="newsApiV2SourcesFilter" :disabled="disabled" placeholder="Filter"/>
     <div class="newsapiv2-sources-filter-pills">
       <!-- source language -->
+      SOURCE LANGUAGE
       <div class="pill-container">
         <button class="br-pill" :class="{ selectedLanguage: this.newsApiV2Language.toLowerCase() === language.toLowerCase() }" 
           @click="toggleNewsApiV2LanguageFilter(language)"
@@ -14,6 +15,7 @@
         </button>
       </div>
       <!-- source country -->
+      SOURCE COUNTRY
       <div class="pill-container">
         <button class="br-pill" :class="{ selectedCountry: this.newsApiV2Country.toLowerCase() === country.toLowerCase() }" 
           @click="toggleNewsApiV2CountryFilter(country)"
@@ -23,6 +25,7 @@
         </button>
       </div>
       <!-- source category -->
+      SOURCE CATEGORY
       <div class="pill-container">
         <button class="br-pill" :class="{ selectedCategory: this.newsApiV2Category.toLowerCase() === category.toLowerCase() }"
           @click="toggleNewsApiV2CategoryFilter(category)"
