@@ -20,7 +20,7 @@ export default {
   color: v-bind('theme.normalmessage');
 }
 
-.auth-field > a:hover {
+.auth-field > a:hover, .auth-field > a:focus {
   color: v-bind('theme.highlightedmessage') !important;
   cursor: pointer;
   text-decoration: underline !important;

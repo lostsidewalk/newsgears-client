@@ -39,7 +39,7 @@ export default {
   cursor: auto;
 }
 
-.logout-button:hover {
+.logout-button:hover, .logout-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 

@@ -84,7 +84,7 @@ export default {
   font-size: smaller;
 }
 
-.post-enclosure > span:hover {
+.post-enclosure > span:hover, .post-enclosure > span:focus {
   /* cursor: pointer; */
   text-decoration: underline;
 }
@@ -99,7 +99,7 @@ export default {
   object-fit: scale-down;
 }
 
-.post-enclosure-image:hover {
+.post-enclosure-image:hover, .post-enclosure-image:focus {
   cursor: pointer;
 }
 </style>

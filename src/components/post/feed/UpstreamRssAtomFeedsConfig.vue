@@ -186,18 +186,12 @@ export default {
   resize: none;
 }
 
-.feed-config-field input:hover, .feed-config-field textarea:hover {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
+.feed-config-field input:hover, .feed-config-field textarea:hover, 
 .feed-config-field input:focus, .feed-config-field textarea:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
 .feed-config-field input:disabled, .feed-config-field textarea:disabled {
@@ -226,18 +220,11 @@ export default {
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
-.rss-atom-url-wrapper input:hover {
+.rss-atom-url-wrapper input:hover, .rss-atom-url-wrapper input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.rss-atom-url-wrapper input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .rss-atom-url-row {
@@ -257,18 +244,11 @@ export default {
   font-size: x-large;
 }
 
-.rss-atom-url-row input:hover {
+.rss-atom-url-row input:hover, .rss-atom-url-row > input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.rss-atom-url-row > input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .rss-atom-url-row > input:disabled {
@@ -286,18 +266,11 @@ export default {
   text-align: center;
 }
 
-.rss-atom-url-row-button:hover {
+.rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.rss-atom-url-row-button:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .rss-atom-url-row-button:disabled {
@@ -336,7 +309,7 @@ export default {
   cursor: auto;
 }
 
-.feed-config-button:hover {
+.feed-config-button:hover, .feed-config-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 

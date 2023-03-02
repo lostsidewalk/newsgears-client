@@ -2,7 +2,7 @@
   <div id="landing" style="height: 100%;">
     <div class="background" />
     <!-- fixed header -->
-    <NavbarFixedHeader :theme="theme" :inTransit="false">
+    <NavbarFixedHeader :theme="theme" :inTransit="false" class="landing-navbar">
       <template v-slot:buttons>
         <PreLoginNavbarButtons :theme="theme"/>
       </template>
@@ -54,6 +54,14 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: v-bind('theme.normalmessage');
+}
+
+.landing-navbar {
+  position: sticky;
+  top: 0;
+  background-color: v-bind('theme.basecolor');
+  border-bottom: 1px solid v-bind('theme.navbarsubshadow');
+  box-shadow: 0px 3px 3px v-bind('theme.darksubshadow');
 }
 
 .banner {

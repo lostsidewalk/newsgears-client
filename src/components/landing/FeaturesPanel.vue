@@ -2,60 +2,48 @@
   <div>
     <div class="features-view">
       <div class="feature">
-        <div class="feature-title">IT'S FREE</div>
+        <div class="feature-title">IT'S FREE <i class="fa fa-beer" /></div>
         <div class="feature-body">
-          You can always have a free account that will never go away.  There will never be ads while using FeedGears.  
-          <ul>
-            <li>Free accounts are limited to a single queue with a maximum of 25 upstream RSS/ATOM subscriptions.</li>
-            <li>Feeds are updated hourly</li>
-          </ul>
+          You can always have a free account, and there will never be ads while using FeedGears.  
           We love RSS/ATOM, and we want people to use our software. You can even host it yourself! 
+          We will try to keep resources unlimited, but we will sensibly rate limit the backend as needed.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">UPGRADE FOR ADDITIONAL CAPACITY</div>
+        <div class="feature-title">SUBSCRIBE TO KEEP THE LIGHTS ON <i class="fa fa-lightbulb-o" /></div>
         <div class="feature-body">
-          Upgrade your feed reading experience by subscribing for $4 per month: 
-          <ul>
-            <li>Unlimited queues</li>
-            <li>Unlimited number of upstream subscriptions</li>
-            <li>More frequent update interval (as needed)</li>
-          </ul>
+          We encourage you to subscribe and contribute $4 per month to support hosting and ongoing development 
+          of FeedGears.  We believe in RSS, and we believe that you do as well.  We value having a secure, user-respecting 
+          platform for exploring the world's information in this unique, interesting, and fun way.  
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">PRIVACY</div>
+        <div class="feature-title">PRIVACY AND SECURITY <i class="fa fa-lock" /></div>
         <div class="feature-body">
           FeedGears is a tool built for users.  
           <ul>
-            <li>The application employs cookies for authentication purposes only.  We will never engage in any sort of tracking activity.</li>
+            <li>We will never engage in any sort of tracking activity.</li>
             <li>User data can be downloaded and fully purged upon request (an automated process built in the 'settings' page).</li>
+            <li>We will never disclose anything about you to anyone, without your permission.</li>
+            <li>FeedGears eploys a sensible content security policy, as well as a secure image proxy, to limit your exposure when rendering feed content in HTML.</li>
+            <li>On the server side, FeedGears will upgrade all feed connections to SSL where possible, and handle your credentials in a secure manner when dealing with authenticated feeds.</li>
             <li>Privacy Policy</li>
           </ul>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">SECURITY</div>
-        <div class="feature-body">
-          FeedGears is built for your security. 
-          <ul>
-            <li>FeedGears eploys a sensible content security policy, as well as a secure image proxy, to limit your exposure when rendering feed content in HTML.</li>
-            <li>On the server side, FeedGears will upgrade all feed connections to SSL where possible, and handle your credentials appropriately.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">ACCESSIBILITY</div>
+        <div class="feature-title">ACCESSIBILITY <i class="fa fa-universal-access" /></div>
         <div class="feature-body">
           We believe in building highly accessible software.  
           <ul>
-            <li>Focus order and keyboard navigation makes sense throughout the application, and resources are tagged appropriately to work with readers.</li>
+            <li>Tab order and keyboard navigation makes sense throughout the application.</li>
             <li>Hot-key support allows you to perform any function with the keyboard.</li>
+            <li>We use vue-announce to properly integrate asynchronous server responses with accessibility software for a seemless experience.</li>
           </ul>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">QUEUE DASHBOARD</div>
+        <div class="feature-title">QUEUE DASHBOARD <i class="fa fa-dashboard" /></div>
         <div class="feature-body">
           Upstream feeds are organized into queues.
           <ul>
@@ -65,21 +53,21 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">FILTERING AND ALERTS</div>
+        <div class="feature-title">FILTERING AND ALERTS <i class="fa fa-filter" /></div>
         <div class="feature-body">
-          You can define multiple filters for each queue.  FeedGears will (quietly) alert you in the queue dashboard when new articles match a filter you have defined.  
+          You can define multiple filters for each queue.  FeedGears will alert you in the queue dashboard when new articles match a filter you have defined.  
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">NewsApi.org INTEGRATION</div>
+        <div class="feature-title">NewsApi.org INTEGRATION <i class="fa fa-newspaper-o" /></div>
         <div class="feature-body">
           FeedGears offers upstream access to NewsApi.org, a service that provides curated news articles from sources around the world.  The NewsApi query expression language is simple, allowing you to build highly focused queries.  If enabled, NewsApi articles are imported into your queue along with content from upstream RSS/ATOM sources.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">THEMEABLE</div>
+        <div class="feature-title">THEMEABLE <i class="fa fa-paint-brush" /></div>
         <div class="feature-body">
-          FeedGears has built-in support for light/dark themes.
+          FeedGears has built-in support for light/dark themes.  We will soon be offering the capability to customize each of the 44 colors that comprise a FeedGears theme.  Stay tuned! 
         </div>
       </div>
       <!-- <div class="feature">
@@ -89,51 +77,51 @@
         </div>
       </div> -->
       <div class="feature">
-        <div class="feature-title">RSS/ATOM/JSON PUBLISHING</div>
+        <div class="feature-title">RSS/ATOM/JSON PUBLISHING <i class="fa fa-bullhorn" /></div>
         <div class="feature-body">
           Posts that are 'starred' in FeedGears can be published on a public-facing, queue-specific feed.
           <ul>
-            <li>This feed is published in RSS, ATOM, and JSON format.</li>
-            <li>These links may be shared with others so that they may follow you 'starred' items in any given queue. </li>
+            <li>One feed per queue, published in RSS, ATOM and JSON formats.</li>
+            <li>These links may be shared with others so that they may follow your 'starred' items in any given queue. </li>
           </ul>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">RSS/ATOM</div>
+        <div class="feature-title">RSS/ATOM <i class="fa fa-rss" /></div>
         <div class="feature-body">
           FeedGears was built on the open-source project ROME, and supports all versions of RSS/ATOM, with high-level support for modules such as: 
           <ul>
             <li>iTunes Podcasting</li>
             <li>iPhoto Photocasting</li>
             <li>MediaRSS (Youtube)</li>
-            <li>GeoRSS</li>
             <li>Creative Commons</li>
           </ul>
-          We strive to give you access to all content in the RSS/ATOM envelope, organized in a sensible, accessible, and presentable way.
+          We strive to give you access to all content in the RSS/ATOM envelope, organized in a sensible, accessible, and presentable way.  
+          We will soon offer support for GeoRSS, an RSS module which conveys location data to maps-capable readers.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">FREE AND OPEN-SOURCE</div>
+        <div class="feature-title">FREE AND OPEN-SOURCE <i class="fa fa-code-fork" /></div>
         <div class="feature-body">
           FeedGears was built using free and open source tools.  
           <ul>
             <li>The back-end is built entirely in Java, mainly using Spring Boot.  </li>
             <li>The front-end is a VueJs 3 application.  </li>
             <li>All source code is available in our <i class="fa fa-github" /> GitHub repository, and is updated daily. </li>
-            <li>All source code is protected by the GPLV3 licensed.</li>
+            <li>All source code is protected by the GPLV3 license.</li>
           </ul>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">SELF HOSTING</div>
+        <div class="feature-title">SELF HOSTING <i class="fa fa-cloud" /></div>
         <div class="feature-body">
           For those who would prefer to self-host FeedGears, *here* are the instructions.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">DEV BLOG</div>
+        <div class="feature-title">DEV BLOG <i class="fa fa-laptop" /></div>
         <div class="feature-body">
-          Follow along with the development of FeedGears via our dev blog, or the Lost Sidewalk coding live stream.
+          Follow along with the development of FeedGears via our dev blog, or the Lost Sidewalk coding live stream.  We push front-end builds daily, back-end builds weekly, or as needed.
         </div>
       </div>
     </div>

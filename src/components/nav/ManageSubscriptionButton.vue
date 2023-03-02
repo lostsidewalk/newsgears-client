@@ -29,7 +29,7 @@ export default {
   cursor: auto;
 }
 
-.manage-subscription-button:hover {
+.manage-subscription-button:hover, .manage-subscription-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 

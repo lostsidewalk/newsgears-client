@@ -565,7 +565,7 @@ export default {
   cursor: auto;
 }
 
-.feed-config-button:hover {
+.feed-config-button:hover, .feed-config-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 

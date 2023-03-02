@@ -343,7 +343,7 @@ export default {
   max-width: fit-content;
 }
 
-.download-button:hover {
+.download-button:hover, .download-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -368,7 +368,7 @@ export default {
   max-width: fit-content;
 }
 
-.pw-reset-button:hover {
+.pw-reset-button:hover, .pw-reset-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -393,7 +393,7 @@ export default {
   max-width: fit-content;
 }
 
-.deactivate-button:hover {
+.deactivate-button:hover, .deactivate-button:focus {
   background-color: v-bind('theme.dangerbuttonhighlight');
 }
 
@@ -420,12 +420,8 @@ export default {
   user-select: none;
 }
 
-.header-button:hover {
+.header-button:hover, .header-button:focus {
   background-color: v-bind('theme.buttonhighlight');
-}
-
-.header-button-danger:hover {
-  background-color: v-bind('theme.dangerbuttonhighlight');
 }
 
 .header-button:disabled {
@@ -496,18 +492,11 @@ export default {
   margin-top: .125rem;
 }
 
-.settings-field input:hover {
+.settings-field input:hover, .settings-field input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.settings-field input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .notifications-view {
@@ -532,7 +521,7 @@ export default {
   box-shadow: unset;
 }
 
-.notification-checkbox > input:hover {
+.notification-checkbox > input:hover, .notification-checkbox > input:focus {
   box-shadow: unset;
 }
 

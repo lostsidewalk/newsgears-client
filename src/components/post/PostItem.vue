@@ -428,7 +428,7 @@ export default {
   column-gap: .31rem;
 }
 
-.post-item-header:hover {
+.post-item-header:hover, .post-item-header:focus {
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
 }
 
@@ -451,7 +451,7 @@ export default {
   cursor: auto;
 }
 
-.post-admin-button:hover {
+.post-admin-button:hover, .post-admin-button:focus {
   border: 1px solid v-bind('theme.buttonborder');
   color: v-bind('theme.buttonfg');
   background-color: v-bind('theme.buttonhighlight');
@@ -589,19 +589,19 @@ export default {
   background-color: v-bind('theme.sectionbrighterhighlight');
 }
 
-/** has references */
-.post-wrapper:hover {
+.post-wrapper:hover, .post-wrapper:focus {
   color: v-bind('theme.normalmessage');
   border: 1px solid v-bind('theme.fieldborderhighlight') !important;
 }
 
-.post-wrapper-selected, .post-wrapper-selected:hover {
-  color: v-bind('theme.normalmessage');
-  border: 1px solid lightblue !important;
+.post-wrapper:focus {
+    outline: none;
 }
 
-.post-wrapper:focus {
-    outline:none;
+/** has references */
+.post-wrapper-selected, .post-wrapper-selected:hover, .post-wrapper-selected:focus {
+  color: v-bind('theme.normalmessage');
+  border: 1px solid lightblue !important;
 }
 
 .post-item-wrapper {
@@ -629,7 +629,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:focus, .link:hover {
+.link:hover, .link:focus {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -651,7 +651,7 @@ export default {
   user-select: none;
 }
 
-.br-pill:hover {
+.br-pill:hover, .br-pill:focus {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }

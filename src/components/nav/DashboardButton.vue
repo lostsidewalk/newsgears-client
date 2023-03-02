@@ -29,7 +29,7 @@ export default {
   cursor: auto;
 }
 
-.dashboard-button:hover {
+.dashboard-button:hover, .dashboard-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 

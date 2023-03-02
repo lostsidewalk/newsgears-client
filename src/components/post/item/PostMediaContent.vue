@@ -106,11 +106,6 @@ export default {
   font-size: smaller;
 }
 
-.post-media-content > span:hover {
-  /* cursor: pointer; */
-  text-decoration: underline;
-}
-
 .post-media-content-wrapper {
 
 }
@@ -141,7 +136,7 @@ export default {
   object-fit: scale-down;
 }
 
-.post-media-content-image:hover {
+.post-media-content-image:hover, .post-media-content-image:focus {
   cursor: pointer;
 }
 
@@ -155,7 +150,7 @@ export default {
   padding-top: .125rem;
 }
 
-.post-media-content-handle:hover {
+.post-media-content-handle:hover, .post-media-content-handle:focus {
   border: 1px solid v-bind('theme.buttonborder');
   color: v-bind('theme.buttonfg');
   background-color: v-bind('theme.buttonhighlight');

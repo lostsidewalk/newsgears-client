@@ -157,7 +157,7 @@ export default {
   cursor: pointer;
 }
 
-.footer-link:hover {
+.footer-link:hover, .footer-link:focus {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }

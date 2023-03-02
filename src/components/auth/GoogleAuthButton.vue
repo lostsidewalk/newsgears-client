@@ -33,7 +33,7 @@ export default {
   background-position: 12px 11px;  
 }
 
-.login-with-google-btn:hover {
+.login-with-google-btn:hover, .login-with-google-btn:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
   

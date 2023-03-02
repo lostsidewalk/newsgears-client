@@ -39,18 +39,11 @@ export default {
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
-.auth-field > input:hover {
+.auth-field > input:hover, .auth-field > input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.auth-field > input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .auth-error-message {

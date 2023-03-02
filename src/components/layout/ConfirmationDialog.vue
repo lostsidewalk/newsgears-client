@@ -86,7 +86,7 @@ export default {
   text-align: center;
 }
 
-.modal-button:hover {
+.modal-button:hover, .modal-button:focus {
   background-color: v-bind('theme.buttonhighlight') !important;
 }
 

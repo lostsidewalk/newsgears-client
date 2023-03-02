@@ -62,18 +62,13 @@ export default {
   resize: none;
 }
 
-.feed-config-field input:hover, .feed-config-field textarea:hover {
+.feed-config-field input:hover, .feed-config-field textarea:hover,
+.feed-config-field input:focus, .feed-config-field textarea:focus
+{
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-config-field input:focus, .feed-config-field textarea:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .feed-config-field input:disabled, .feed-config-field textarea:disabled {

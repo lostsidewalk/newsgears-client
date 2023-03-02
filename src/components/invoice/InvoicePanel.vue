@@ -177,7 +177,7 @@ export default {
   user-select: none;
 }
 
-.header-button:hover {
+.header-button:hover, .header-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -236,7 +236,7 @@ export default {
   color: v-bind('theme.subduedmessage');
 }
 
-.subscription-detail-field > a:hover {
+.subscription-detail-field > a:hover, .subscription-detail-field > a:focus {
   color: v-bind('theme.highlightedmessage');
 }
 
@@ -255,17 +255,10 @@ export default {
   margin-top: .125rem;
 }
 
-.subscription-field input:hover {
+.subscription-field input:hover, .subscription-field input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.subscription-field input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 </style>

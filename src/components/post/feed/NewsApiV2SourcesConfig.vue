@@ -222,18 +222,12 @@ export default {
   resize: none;
 }
 
-.feed-config-field input:hover, .feed-config-field textarea:hover, .newsapiv2-sources-toolbar input:hover {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
+.feed-config-field input:hover, .feed-config-field textarea:hover, .newsapiv2-sources-toolbar input:hover, 
 .feed-config-field input:focus, .feed-config-field textarea:focus, .newsapiv2-sources-toolbar input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
 .feed-config-field input:disabled, .feed-config-field textarea:disabled, .newsapiv2-sources-toolbar input:disabled {
@@ -261,7 +255,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:focus, .link:hover {
+.link:hover, .link:focus {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -283,7 +277,7 @@ export default {
   user-select: none;
 }
 
-.br-pill:hover {
+.br-pill:hover, .br-pill:focus {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
@@ -292,7 +286,7 @@ export default {
   color: v-bind('theme.subduedmessage');
 }
 
-.br-pill > a:hover {
+.br-pill > a:hover, .br-pill > a:focus {
   color: v-bind('theme.highlightedmessage');
 }
 
@@ -347,7 +341,7 @@ export default {
   vertical-align: middle;
 }
 
-.newsapiv2-source-label > input:hover {
+.newsapiv2-source-label > input:hover, .newsapiv2-source-label > input:focus {
   box-shadow: unset;
 }
 

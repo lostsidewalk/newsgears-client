@@ -39,7 +39,7 @@ export default {
 }
 
 /** has-references */
-.auth-button:hover {
+.auth-button:hover, .auth-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 

@@ -35,11 +35,6 @@ export default {
   gap: .31rem;
 }
 
-.post-itunes-content > span:hover {
-  /* cursor: pointer; */
-  text-decoration: underline;
-}
-
 .post-itunes-content-wrapper {
 
 }

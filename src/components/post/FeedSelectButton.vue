@@ -118,7 +118,7 @@ export default {
 }
 
 /** has references */
-.feed-select:hover {
+.feed-select:hover, .feed-select:focus {
   background-color: v-bind('theme.buttonhighlight');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
@@ -211,7 +211,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:focus, .link:hover {
+.link:hover, .link:focus {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }

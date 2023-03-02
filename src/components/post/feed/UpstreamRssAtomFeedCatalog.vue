@@ -403,18 +403,11 @@ export default {
   margin-top: .125rem;
 }
 
-.feed-config-field input:hover {
+.feed-config-field input:hover, .feed-config-field input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-config-field input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .feed-config-field input:disabled {
@@ -458,7 +451,7 @@ export default {
   user-select: none;
 }
 
-.br-pill:hover {
+.br-pill:hover, .br-pill:focus {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
@@ -479,7 +472,7 @@ export default {
   cursor: auto;
 }
 
-.add-catalog-feed-button:hover {
+.add-catalog-feed-button:hover, .add-catalog-feed-button:focus {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -506,18 +499,11 @@ export default {
   font-size: x-large;
 }
 
-.feed-catalog-filter input:hover {
+.feed-catalog-filter input:hover, .feed-catalog-filter > input:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-catalog-filter > input:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .feed-catalog-filter > input:disabled {
@@ -535,18 +521,11 @@ export default {
   text-align: center;
 }
 
-.feed-catalog-filter-button:hover {
+.feed-catalog-filter-button:hover, .feed-catalog-filter-button:focus {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-catalog-filter-button:focus {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  outline: none;
 }
 
 .feed-catalog-filter-button:disabled {
