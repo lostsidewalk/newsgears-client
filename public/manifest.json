@@ -2,12 +2,13 @@
     "name": "FeedGears RSS",
     "short_name": "FeedGears",
     "description": "FeedGears RSS Reader",
-    "theme_color": "#2196f3",
-    "background_color": "#2196f3",
+    "theme_color": "red",
+    "background_color": "#171717",
     "display": "standalone",
     "orientation": "portrait",
     "scope": "/",
-    "start_url": "/app",
+    "start_url": "/",
+    "id": "/",
     "icons": [
         {
           "src": "feedgears.png",

@@ -1,209 +1,173 @@
 <template>
   <div class="settings-container" v-if="this.account">
-    <!-- account settings -->
-    <div class="settings-view">
-      <!-- account config header -->
-      <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
-        <template v-slot:count>
-          <i class="fa fa-user fa-1x"/>
-          {{ this.getModeVerbiage() }}
-        </template>
-        <template v-slot:body>
-          <!-- account config form -->
-          <div class="view-header update-settings-body">
-            <!-- oauth2 profile (remote) -->
-            <div class="settings-field" v-if="authProvider !== 'LOCAL' && !this.showDeactivateUser">
-              <div style="display: flex;">
-                <!-- profile image -->
-                <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img"/>
-                <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
-                  <!-- auth provider username (auth provider user Id) -->
-                  <span style="padding: .125rem;">{{ authProviderUsername }}</span>
-                  <!-- email address -->
-                  <span style="padding: .125rem;">{{ emailAddress }}</span>
-                  <!-- auth provider -->
-                  <!-- <span style="padding: .125rem;">AUTH PROVIDER: {{ authProvider }}</span> -->
-                </div>
-              </div>
-            </div>
-            <!-- username (local) -->
-            <div class="settings-field" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
-              <label for="username">USERNAME:</label>
-              <input name="username" type="text" v-model="username" :disabled="true"/>
-            </div>
-            <!-- email address (local) -->
-            <div class="settings-field" :class="{ error: v$.emailAddress.$errors.length }" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
-              <label for="email">EMAIL ADDRESS:</label>
-              <input name="email" type="text" v-model="v$.emailAddress.$model" :disabled="inTransit"/>
-              <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
-                <div class="settings-error-message">{{ error.$message }}</div>
-              </div>
-            </div>
-            <div class="settings-field" v-if="this.showDeactivateUser">
-              <label for="email">DOWNLOAD YOUR DATA:</label>
-              <button class="download-button" @click="exportOpml()">Click here</button>
-            </div>
-            <div class="settings-field" v-if="this.showDeactivateUser">
-              <label for="email">PERMANENTLY DELETE YOUR ACCOUNT:</label>
-              <button class="deactivate-button" @click="finalizeDeactivation()">Click here</button>
-            </div>
-            <div class="settings-field" v-if="this.showResetPassword">
-              <label for="email">SEND PASSWORD RESET EMAIL</label>
-              <button class="pw-reset-button" @click="initPasswordReset()">Send</button>
+    <!-- account config header -->
+    <ViewHeader class="settings-view" :disabled="inTransit" :inTransit="false" :theme="theme">
+      <template v-slot:count>
+        <i class="fa fa-user fa-1x"/>
+        {{ this.getModeVerbiage() }}
+      </template>
+      <template v-slot:body>
+        <!-- oauth2 profile (remote) -->
+        <div class="settings-field" v-if="authProvider !== 'LOCAL' && !this.showDeactivateUser">
+          <div style="display: flex;">
+            <!-- profile image -->
+            <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img"/>
+            <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
+              <!-- auth provider username (auth provider user Id) -->
+              <span style="padding: .125rem;">{{ authProviderUsername }}</span>
+              <!-- email address -->
+              <span style="padding: .125rem;">{{ emailAddress }}</span>
+              <!-- auth provider -->
+              <!-- <span style="padding: .125rem;">AUTH PROVIDER: {{ authProvider }}</span> -->
             </div>
           </div>
-        </template>
-      </ViewHeader>
-      <!-- account config toolbar -->
-      <div class="view-header-toolbar">
+        </div>
+        <!-- username (local) -->
+        <div class="settings-field" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
+          <label for="username">USERNAME:</label>
+          <input name="username" type="text" v-model="username" :disabled="true"/>
+        </div>
+        <!-- email address (local) -->
+        <div class="settings-field" :class="{ error: v$.emailAddress.$errors.length }" v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
+          <label for="email">EMAIL ADDRESS:</label>
+          <input name="email" type="text" v-model="v$.emailAddress.$model" :disabled="inTransit"/>
+          <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
+            <div class="settings-error-message">{{ error.$message }}</div>
+          </div>
+        </div>
+      </template>
+      <template v-slot:toolbar>
+        <button v-if="this.showDeactivateUser" class="download-button" @click="exportOpml()">
+          DOWNLOAD YOUR DATA
+        </button>
+        <button v-if="this.showDeactivateUser" class="deactivate-button" @click="finalizeDeactivation()">
+          PERMANENTLY DELETE YOUR ACCOUNT
+        </button>
+        <button v-if="this.showResetPassword" class="pw-reset-button" @click="initPasswordReset()">
+          SEND PASSWORD RESET EMAIL
+        </button>
         <!-- apply changes button (local) -->
-        <div v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
-          <button id="updateAccount" class="header-button" @click="updateAccount()" :disabled="inTransit || v$.$invalid">
-            Apply Changes
-          </button>
-        </div>
+        <button v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword" id="updateAccount" class="header-button" @click="updateAccount()" :disabled="inTransit || v$.$invalid">
+          Apply Changes
+        </button>
         <!-- reset password button (local) -->
-        <div v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword">
-          <button id="resetPassword" class="header-button" @click="resetPassword()" :disabled="inTransit">
-            Reset Password
-          </button>
-        </div>
+        <button v-if="authProvider === 'LOCAL' && !this.showDeactivateUser && !this.showResetPassword" id="resetPassword" class="header-button" @click="resetPassword()" :disabled="inTransit">
+          Reset Password
+        </button>
         <!-- deactivate account button -->
-        <div v-if="!this.showDeactivateUser && !this.showResetPassword">
-          <button id="deactivateAccount" class="header-button" @click="this.showDeactivateUser = true" :disabled="inTransit">
-            Deactivate Account
-          </button>
-        </div>
+        <button v-if="!this.showDeactivateUser && !this.showResetPassword" id="deactivateAccount" class="header-button" @click="this.showDeactivateUser = true" :disabled="inTransit">
+          Deactivate Account
+        </button>
         <!-- cancel (deactivate account) -->
-        <div v-if="this.showDeactivateUser">
-          <button id="cancelDeactivateAccount" class="header-button" @click="this.showDeactivateUser = false" :disabled="inTransit">
-            Cancel
-          </button>
-        </div>
+        <button v-if="this.showDeactivateUser" id="cancelDeactivateAccount" class="header-button" @click="this.showDeactivateUser = false" :disabled="inTransit">
+          Cancel
+        </button>
         <!-- cancel (reset password) -->
-        <div v-if="this.showResetPassword">
-          <button id="cancelResetPassword" class="header-button" @click="this.showResetPassword = false" :disabled="inTransit">
-            Cancel
-          </button>
+        <button v-if="this.showResetPassword" id="cancelResetPassword" class="header-button" @click="this.showResetPassword = false" :disabled="inTransit">
+          Cancel
+        </button>
+      </template>
+    </ViewHeader>
+    <!-- notifications config header -->
+    <ViewHeader class="settings-view notifications-view" :disabled="inTransit" :inTransit="false" :theme="theme">
+      <template v-slot:count>
+        <i class="fa fa-envelope fa-1x"/>
+        NOTIFICATION SETTINGS
+      </template>
+      <template v-slot:body>
+        <!-- notifications config body text -->
+        <p>
+          Email notifications are currently {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 'disabled' : 'enabled' }}.  Please note that we will neve sell or disclose your personal information to anyone.
+        </p>
+        <div class="update-settings-body">
+          <div class="settings-field">
+            <span class="notification-option">
+              <label class="notification-checkbox" for="enableAccountAlerts">
+                <input type="checkbox" id="enableAccountAlerts" name="enableAccountAlerts" v-model="enableAccountAlerts" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>ACCOUNT ALERTS AND MAINTENANCE NOTIFICATIONS
+              </label>
+            </span>
+            <!-- <span class="notification-option">
+              <label class="notification-checkbox" for="enableDailyFeedReport">
+                <input type="checkbox" id="enableDailyFeedReport" name="enableDailyFeedReport" v-model="enableDailyFeedReport" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>DAILY FEED REPORT
+              </label>
+            </span> -->
+            <span class="notification-option">
+              <label class="notification-checkbox" for="enableProductNotifications">
+                <input type="checkbox" id="enableProductNotifications" name="enableProductNotifications" v-model="enableProductNotifications" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>PRODUCT NOTIFICATIONS, NEW FEATURES, ETC.
+              </label>
+            </span>
+          </div>
         </div>
-      </div>
-    </div>
-    <!-- notifications -->
-    <div class="settings-view notifications-view">
-      <!-- notifications config header -->
-      <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
-        <template v-slot:count>
-          <i class="fa fa-envelope fa-1x"/>
-          NOTIFICATION SETTINGS
-        </template>
-        <template v-slot:body>
-          <!-- notifications config body text -->
-          <p>
-            Email notifications are currently {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 'disabled' : 'enabled' }}.  Please note that we will neve sell or disclose your personal information to anyone.
-          </p>
-        </template>
-      </ViewHeader>
-      <!-- notification config form -->
-      <div class="view-header update-settings-body">
-        <div class="settings-field">
-          <span class="notification-option">
-            <label class="notification-checkbox" for="enableAccountAlerts">
-              <input type="checkbox" id="enableAccountAlerts" name="enableAccountAlerts" v-model="enableAccountAlerts" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>ACCOUNT ALERTS AND MAINTENANCE NOTIFICATIONS
-            </label>
-          </span>
-          <!-- <span class="notification-option">
-            <label class="notification-checkbox" for="enableDailyFeedReport">
-              <input type="checkbox" id="enableDailyFeedReport" name="enableDailyFeedReport" v-model="enableDailyFeedReport" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>DAILY FEED REPORT
-            </label>
-          </span> -->
-          <span class="notification-option">
-            <label class="notification-checkbox" for="enableProductNotifications">
-              <input type="checkbox" id="enableProductNotifications" name="enableProductNotifications" v-model="enableProductNotifications" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>PRODUCT NOTIFICATIONS, NEW FEATURES, ETC.
-            </label>
-          </span>
-        </div>
-      </div>
-      <!-- notification config toolbar -->
-      <div class="view-header-toolbar">
+      </template>
+      <template v-slot:toolbar>
         <!-- update notification preferences button -->
-        <div>
-          <button id="updateNotificationPreferences" class="header-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
-            Update Notification Preferences
-          </button>
-        </div>
+        <button id="updateNotificationPreferences" class="header-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
+          Update Notification Preferences
+        </button>
         <!-- toggle (all) notifications button -->
-        <div>
-          <button id="toggleNotifications" class="header-button" @click="toggleNotifications()" :disabled="inTransit">
-            {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? 'Enable Selected Notifications' : 'Disable All Notifications' }} 
-          </button>
+        <button id="toggleNotifications" class="header-button" @click="toggleNotifications()" :disabled="inTransit">
+          {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? 'Enable Selected Notifications' : 'Disable All Notifications' }} 
+        </button>
+      </template>
+    </ViewHeader>
+    <!-- checkout header-->
+    <ViewHeader class="settings-view checkout-view" :disabled="inTransit" :inTransit="false" :theme="theme">
+      <template v-slot:count>
+        <i class="fa fa-gears fa-1x"/>
+        JOIN THE FEEDGEARS COMMUNITY
+      </template>
+      <template v-slot:body>
+        <!-- plans -->
+        <div class="plans-view">
+          <div class="free-view">
+            <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+              <template v-slot:count>
+                FREE TIER
+              </template>
+              <template v-slot:body>
+                <p class="price-description">
+                  Free, forever.
+                </p>
+                <p class="plan-description">
+                  Basic features:
+                </p>
+                <ul class="plan-features">
+                  <li>Hourly data import</li>
+                  <li>We will never show you ads, or disclose your data to anyone</li>
+                  <li>We are committed to security, privacy, and accessibility</li>
+                  <li>Randomize kitten</li>
+                </ul>
+              </template>
+            </ViewHeader>
+          </div>
+          <div class="premium-view">
+            <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
+              <template v-slot:count>
+                PREMIUM TIER
+              </template>
+              <template v-slot:body>
+                <p class="price-description">
+                  Pioneer pricing: $4.00 per month billed monthly
+                </p>
+                <p class="plan-description">
+                  Everything in the free tier, as well as: 
+                </p>
+                <ul class="plan-features">
+                  <li>Our unending gratitude for helping to keep this project in development</li>
+                  <li>Cancel any time</li>
+                </ul>
+              </template>
+            </ViewHeader>
+          </div>
         </div>
-      </div>
-    </div>
-    <!-- checkout view -->
-    <div class="settings-view checkout-view">
-      <!-- checkout header-->
-      <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
-        <template v-slot:count>
-          <i class="fa fa-gears fa-1x"/>
-          JOIN THE FEEDGEARS COMMUNITY
-        </template>
-      </ViewHeader>
-      <!-- plans -->
-      <div class="plans-view">
-        <div class="free-view">
-          <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
-            <template v-slot:count>
-              FREE TIER
-            </template>
-            <template v-slot:body>
-              <p class="price-description">
-                Free, forever.
-              </p>
-              <p class="plan-description">
-                Basic features:
-              </p>
-              <ul class="plan-features">
-                <li>Single queue with a maximum of 15 upstream subscriptions</li>
-                <li>Hourly data import</li>
-                <li>Configure FeedGears to query the world's news sources via NewsApi.org integration</li>
-                <li>Publish a feed of your starred items in RSS/ATOM/JSON format</li>
-                <li>We will never show you ads, or disclose your data to anyone</li>
-                <li>We are committed to security, privacy, and accessibility</li>
-                <li>Randomize kitten</li>
-              </ul>
-            </template>
-          </ViewHeader>
-        </div>
-        <div class="premium-view">
-          <ViewHeader :disabled="inTransit" :inTransit="false" :theme="theme">
-            <template v-slot:count>
-              PREMIUM TIER
-            </template>
-            <template v-slot:body>
-              <p class="price-description">
-                Pioneer pricing: $4.00 per month billed monthly
-              </p>
-              <p class="plan-description">
-                Everything in the free tier, as well as: 
-              </p>
-              <ul class="plan-features">
-                <li>No upper limit on number queues or upstream subscriptions</li>
-                <li>No obligation, cancel any time</li>
-              </ul>
-            </template>
-          </ViewHeader>
-        </div>
-      </div>
-      <!-- checkout button -->
-      <div class="view-header-toolbar">
+      </template>
+      <template v-slot:toolbar>
         <!-- deactivate account button -->
-        <div v-if="this.showCheckout">
-          <button id="checkout" class="header-button" @click="this.$emit('submitOrder')" :disabled="inTransit">
-            Checkout
-          </button>
-        </div>
-      </div>
-    </div>
+        <button v-if="this.showCheckout" id="checkout" class="header-button" @click="this.$emit('submitOrder')" :disabled="inTransit">
+          Checkout
+        </button>
+      </template>
+    </ViewHeader>
   </div>
 </template>
 
@@ -432,25 +396,6 @@ export default {
   background-color: unset;
 }
 
-.view-header {
-  margin-left: .75rem;
-  margin-right: .75rem;
-  padding: .75rem;
-  padding-top: 1.25rem;
-  text-align: left;
-  border-radius: 4px 4px 0px 0px;
-}
-
-.view-header-toolbar {
-  margin-left: .75rem;
-  margin-right: .75rem;
-  border-radius: 0px 0px 4px 4px;
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  border-top: 0px;
-  margin-bottom: .75rem;
-}
-
 .update-settings-body {
   margin-top: 0rem;
   padding-top: 0rem;
@@ -468,13 +413,10 @@ export default {
 
 .settings-field {
   text-align: left;
-  margin-bottom: 1rem;
-  margin-right: 1rem;
   display: flex;
   flex-direction: column;
   padding: .75rem;
   border-radius: 5px;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
 }
 
 .settings-field label {

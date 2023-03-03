@@ -77,7 +77,7 @@
         </div>
       </div> -->
       <div class="feature">
-        <div class="feature-title">RSS/ATOM/JSON PUBLISHING <i class="fa fa-bullhorn" /></div>
+        <div class="feature-title">FEED PUBLISHING <i class="fa fa-bullhorn" /></div>
         <div class="feature-body">
           Posts that are 'starred' in FeedGears can be published on a public-facing, queue-specific feed.
           <ul>

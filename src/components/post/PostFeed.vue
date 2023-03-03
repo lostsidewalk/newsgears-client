@@ -93,18 +93,17 @@
                       </div>
                     </div>
                   </div>
-                  <!-- feed config toolbar -->
-                  <div class="view-header-toolbar">
-                    <!-- new queue button -->
-                    <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit">
-                      <i class="underline">N</i>ew Queue
-                    </button>
-                    <!-- upload OPML button -->
-                    <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit">
-                      Upload OP<i class="underline">M</i>L
-                    </button>
-                  </div>
                 </div>
+              </template>
+              <template v-slot:toolbar>
+                <!-- new queue button -->
+                <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit">
+                  <i class="underline">N</i>ew Queue
+                </button>
+                <!-- upload OPML button -->
+                <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit">
+                  Upload OP<i class="underline">M</i>L
+                </button>
               </template>
           </ViewHeader>
         </div>
@@ -1724,10 +1723,6 @@ export default {
 .view-header-field > div {
   margin-top: .125rem;
   resize: none;
-}
-
-.view-header-toolbar {
-  padding-top: .75rem;
 }
 
 .grid-container {

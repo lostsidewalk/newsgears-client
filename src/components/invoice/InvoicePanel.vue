@@ -35,17 +35,15 @@
             <div class="subscription-detail-field"><label>PRODUCT:</label> {{ getProductDescription() }}</div>
           </div>
         </template>
-      </ViewHeader>
-      <div class="view-header-toolbar">
-        <div>
+        <template v-slot:toolbar>
           <button id="cancelSubscription" class="header-button" @click="cancelSubscription()" :disabled="disabled" v-if="!isCanceled()">
             Cancel Subscription
           </button>
           <button id="resumeSubscription" class="header-button" @click="resumeSubscription()" :disabled="disabled" v-else>
             Resume Subscription
           </button>
-        </div>
-      </div>
+        </template>
+      </ViewHeader>
     </div>
   </div>
 </template>
@@ -195,15 +193,6 @@ export default {
   padding: .75rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
-}
- 
-.view-header-toolbar {
-  margin-left: .75rem;
-  margin-right: .75rem;
-  border-radius: 0px 0px 4px 4px;
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  border-top: 0px;
 }
 
 .subscription-view {

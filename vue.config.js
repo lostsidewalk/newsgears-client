@@ -1,5 +1,15 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StrictCspHtmlWebpackPlugin = require('strict-csp-html-webpack-plugin');
+const SitemapPlugin = require('sitemap-webpack-plugin').default;
+
+const paths = [
+  {
+    path: '/',
+    lastmod: new Date().toISOString().split('T')[0],
+    priority: 1.0,
+    changefreq: 'monthly'
+  },
+];
 
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
@@ -17,6 +27,7 @@ module.exports = defineConfig({
       new StrictCspHtmlWebpackPlugin(HtmlWebpackPlugin, {
         enableUnsafeEval: true,
       }),
+      new SitemapPlugin({ base: 'https://www.feedgears.com', paths })
     ],
   },
 });

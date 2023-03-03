@@ -20,7 +20,7 @@
         </a>
       </span>
       <span>
-        <a class="footer-link" href="mailto:feedgears@lostsidewalk.com" target="_blank"><i class="fa fa-envelope" /> Email</a>
+        <a class="footer-link" href="mailto:support@feedgears.com" target="_blank"><i class="fa fa-envelope" /> Email</a>
       </span>
       <span>
         <a class="footer-link" href="https://twitter.com/lostsidewalkllc" target="_blank"><i class="fa fa-twitter" /> Twitter</a>
@@ -30,6 +30,9 @@
       </span>
       <span>
         <a class="footer-link" href="https://twitch.tv/elderscrollsjesus" target="_blank"><i class="fa fa-twitch" /> Twitch</a>
+      </span>
+      <span>
+        <a class="footer-link" href="https://discord.gg/7nyY89UrNw" target="_blank"><i class="fa fa-comments-o" /> Discord</a>
       </span>
     </div>
     <div class="footer-divider"/>

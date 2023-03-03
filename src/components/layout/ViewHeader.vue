@@ -8,6 +8,9 @@
     </span>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <slot name="body" />
+    <div class="view-header-toolbar">
+      <slot name="toolbar" />
+    </div>
   </div>
 </template>
 
@@ -28,6 +31,7 @@ export default {
 
 <style scoped>
 @media (min-width: 1023px) {
+  /** has references */
   .sticky-header {
     position: sticky;
     top: 0px;
@@ -36,6 +40,7 @@ export default {
   }
 }
 
+/** has references */
 .collapsible-header {
   display: inline-flex;
   flex-direction: row;
@@ -43,11 +48,13 @@ export default {
   justify-content: space-between;
 }
 
+/** has references */
 .inline-header {
   display: inline-flex;
   flex-direction: row;
 }
 
+/** has references */
 .view-header {
   margin-left: .75rem;
   margin-right: .75rem;
@@ -56,6 +63,7 @@ export default {
   border-radius: 4px 4px 0px 0px;
 }
 
+/** has references */
 .view-header-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
@@ -65,5 +73,11 @@ export default {
   margin: 0rem;
   white-space: nowrap;
   overflow: auto;
+}
+
+/** has references */
+.view-header-toolbar {
+  border-top: 0px;
+  border-radius: 0px 0px 4px 4px;
 }
 </style>

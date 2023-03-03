@@ -12,13 +12,13 @@
         <img src="demo1.png">
       </div>
       <div v-show="this.activeTab === 2" class="tab-panel">
-        <img src="demo2.png">
+        <!-- <img src="demo2.png"> -->
       </div>
       <div v-show="this.activeTab === 3" class="tab-panel">
-        <img src="demo3.png">
+        <!-- <img src="demo3.png"> -->
       </div>
       <div v-show="this.activeTab === 4" class="tab-panel">
-        <img src="demo4.png">
+        <!-- <img src="demo4.png"> -->
       </div>
     </div>
   </div>

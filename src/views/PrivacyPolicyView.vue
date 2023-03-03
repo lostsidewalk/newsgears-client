@@ -94,7 +94,7 @@
           <!-- section -->
           <div class="section-header">How can you contact us about this notice?</div>
           <div class="section-summary">
-            If you have questions or comments about this notice, you may email us at meh@lostsidewalk.com. 
+            If you have questions or comments about this notice, you may email us at support@feedgears.com. 
           </div>
         </template>
       </ViewHeader>

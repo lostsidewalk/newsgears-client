@@ -33,9 +33,6 @@
           <img src="newsapiv2_logo.png" /> {{ feed.newsApiV2QueryText }}
         </label>
         <!-- RSS/ATOM feeds -->
-        <a class="feed-info-label feed-info-label-small link" v-if="feed.rssAtomFeedUrls.length === 0" href="#" @click="this.$emit('rssAtomUrlQuickAdd', feed.id)" tabindex="0">
-          + Add RSS/ATOM subscription
-        </a>
         <label class="feed-info-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
           <!-- RSS logo -->
           <img src="rss_logo.svg" /> 
@@ -48,6 +45,9 @@
             {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
           </a>
         </label>
+        <a class="feed-info-label feed-info-label-small link" href="#" @click="this.$emit('rssAtomUrlQuickAdd', feed.id)" tabindex="0">
+          + Add RSS/ATOM subscription
+        </a>
       </div>
     </div>
   </button>

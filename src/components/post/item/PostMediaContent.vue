@@ -101,13 +101,8 @@ export default {
 
 <style scoped>
 .post-media-content {
-  /* user-select: none; */
   width: 100%;
   font-size: smaller;
-}
-
-.post-media-content-wrapper {
-
 }
 
 .pill-container {

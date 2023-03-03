@@ -21,27 +21,29 @@
             <!-- feed ident -->
             <FeedConfigTextField 
               ref="feedIdent"
-              :label="'FEED IDENTIFIER'"
+              :label="'QUEUE IDENTIFIER'"
               :required="true"
-              :placeholder="'Feed identifier'" 
+              :placeholder="'Queue identifier'" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedIdent.$model" 
               :errorValue="v$.feedIdent.$errors"
+              :helpText="'The queue identifier is a short textual description of this queue.  It is case insensitive, and must container only numbers, letters, dashes, or underscores.  This identifier can used to locate the starred feed for this queue.  Click for more information.'"
               @update:modelValue="v$.feedIdent.$model = $event" />
             <!-- feed title -->
             <FeedConfigTextField 
-              :label="'FEED TITLE'"
+              :label="'QUEUE TITLE'"
               :required="true"
-              :placeholder="'Feed title'" 
+              :placeholder="'Queue title'" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedTitle.$model" 
               :errorValue="v$.feedTitle.$errors"
+              :helpText="'The queue title is a textual description of this queue that appears on the queue dashboard.'"
               @update:modelValue="v$.feedTitle.$model = $event" />
             <!-- feed image -->
             <FeedConfigImageField 
-              :label="'FEED IMAGE'"
+              :label="'QUEUE IMAGE'"
               :required="false"
               :baseUrl="baseUrl"
               :disabled="disabled || inTransit" 
@@ -51,43 +53,47 @@
               @update:modelValue="this.feedImgSrc = $event" />
             <!-- feed description -->
             <FeedConfigTextField 
-              :label="'FEED DESCRIPTION'"
+              :label="'QUEUE DESCRIPTION'"
               :required="false"
-              :placeholder="'Feed description'" 
+              :placeholder="'Queues description'" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedDescription.$model" 
-              :errorValue="v$.feedDescription.$errors"
+              :errorValue="v$.feedDescription.$errors" 
+              :helpText="'This value is a more verbose textual description of this queue.  It appears in the published RSS/ATOM feed for this queue.'"
               @update:modelValue="v$.feedDescription.$model = $event" />
             <!-- feed generator -->
             <FeedConfigTextField 
-              :label="'FEED GENERATOR'"
+              :label="'QUEUE FEED GENERATOR'"
               :required="false"
               :placeholder="'Feed generator'" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedGenerator.$model" 
               :errorValue="v$.feedGenerator.$errors"
+              :helpText="'This value appears as the \'feed generator\' in the published RSS/ATOM feed for this queue.'"
               @update:modelValue="v$.feedGenerator.$model = $event" />
             <!-- feed copyright -->
             <FeedConfigTextField 
-              :label="'FEED COPYRIGHT'"
+              :label="'QUEUE FEED COPYRIGHT'"
               :required="false"
               :placeholder="'Feed copyright'" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedCopyright.$model" 
-              :errorValue="v$.feedCopyright.$errors"
+              :errorValue="v$.feedCopyright.$errors" 
+              :helpText="'This value appears as the \'feed copyright\' in the published RSS/ATOM feed for this queue.'"
               @update:modelValue="v$.feedCopyright.$model = $event" />
             <!-- feed language -->
             <FeedConfigTextField 
-              :label="'FEED LANGUAGE'"
+              :label="'STARRED FEED LANGUAGE'"
               :required="false"
               :placeholder="'Feed language'" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedLanguage.$model" 
-              :errorValue="v$.feedLanguage.$errors"
+              :errorValue="v$.feedLanguage.$errors" 
+              :helpText="'This value appears as the value for the \'language\' field in the published RSS/ATOM feed for this queue.'"
               @update:modelValue="v$.feedLanguage.$model = $event" />
           </div>
           <!-- tab 2: News Discovery -->
@@ -100,7 +106,8 @@
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.newsApiV2QueryText.$model" 
-              :errorValue="v$.newsApiV2QueryText.$errors"
+              :errorValue="v$.newsApiV2QueryText.$errors" 
+              :helpText="'This value is a NewsApiV2 search expression.  Click to learn more about how to formulate and use these search expressions.'"
               @update:modelValue="v$.newsApiV2QueryText.$model = $event" />
             <!-- NewsApiV2 sources config -->
             <NewsApiV2SourcesConfig 
@@ -579,10 +586,6 @@ export default {
   background-color: v-bind('theme.errorbg') !important;
 }
 
-.feed-config-errors {
-  margin-top: .31rem;
-}
-
 .tabbed-panel {
   padding: .75rem;
   border-top: 0px;
@@ -600,10 +603,6 @@ export default {
 .tab {
   display: grid;
   contain: content;
-}
-
-.feed-config-item-label > input:disabled {
-  cursor: auto;
 }
 
 .view-header-no-count {

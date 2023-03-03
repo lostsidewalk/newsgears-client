@@ -2,16 +2,19 @@
   <div class="feed-config-field">
     <label v-if="label">
       <span v-if="required" class="required">*</span>
-      {{ label }}
+      {{ label }} 
     </label>
-    <input 
-      ref="feedConfigTextFieldInput" 
-      :type="type ? type : 'text'"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      @input="this.$emit('update:modelValue', $event.target.value)"
-    />
+    <div style="display: flex;">
+      <input 
+        ref="feedConfigTextFieldInput" 
+        :type="type ? type : 'text'"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        @input="this.$emit('update:modelValue', $event.target.value)"
+      />
+      <button class="helptext fa fa-question" v-if="this.helpText" :title="this.helpText" />
+    </div>
     <div class="feed-config-error-message" v-for="(error, index) of errorValue" :key="index">
       {{ error.$message }}
     </div>
@@ -23,7 +26,7 @@
 export default {
   name: "FeedConfigTextField",
   components: { },
-  props: [ "label", "required", "placeholder", "type", "disabled", "theme", "modelValue", "errorValue" ],
+  props: [ "label", "required", "placeholder", "type", "disabled", "theme", "modelValue", "errorValue", "helpText" ],
   emits: [ "update:modelValue" ],
   methods: {
     focus() {
@@ -51,7 +54,7 @@ export default {
   /* padding-bottom: .125rem; */
 }
 
-.feed-config-field > input, .feed-config-field > textarea {
+.feed-config-field input, .feed-config-field textarea {
   padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
@@ -60,6 +63,7 @@ export default {
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   margin-top: .125rem;
   resize: none;
+  width: 100%;
 }
 
 .feed-config-field input:hover, .feed-config-field textarea:hover,
@@ -73,5 +77,21 @@ export default {
 
 .feed-config-field input:disabled, .feed-config-field textarea:disabled {
   cursor: auto;
+}
+
+.helptext {
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
+  color: v-bind('theme.buttonfg');;
+  cursor: help;
+  float: right;
+  border-radius: 3px;
+  text-align: center;
+  margin-top: .125rem;
+  margin-left: .31rem;
+}
+
+.helptext:hover, .helptext:focus {
+  background-color: v-bind('theme.buttonhighlight');
 }
 </style>

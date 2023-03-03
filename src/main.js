@@ -11,6 +11,7 @@ import '@vue-a11y/announcer/dist/style.css'
 import 'vue-plyr/dist/vue-plyr.css'
 import 'font-awesome/scss/font-awesome.scss'
 import 'flag-icons/css/flag-icons.min.css';
+import './registerServiceWorker'
 
 // import { loadStripe } from '@stripe/stripe-js'
 // import { defineComponent, ref, onBeforeMount } from 'vue'
