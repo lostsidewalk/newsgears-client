@@ -79,7 +79,7 @@
         <div class="post-item-row">
           <a @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()" tabindex="0">
             <img v-if="post.postImgSrc" 
-              :src="'data:image/png;base64,' + post.postImgSrc" 
+              :src="post.postImgSrc"
               class="post-thumbnail" 
               :disabled="disabled" /> 
           </a>
