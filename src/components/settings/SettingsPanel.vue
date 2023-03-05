@@ -420,7 +420,6 @@ export default {
 }
 
 .settings-field label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
@@ -453,7 +452,6 @@ export default {
 .notification-checkbox {
   padding: .31rem .31rem .31rem 0rem;
   border-radius: 3px;
-  font-size: smaller;
   user-select: none;
 }
 

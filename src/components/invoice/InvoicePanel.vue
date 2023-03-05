@@ -230,7 +230,6 @@ export default {
 }
 
 .subscription-field label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 

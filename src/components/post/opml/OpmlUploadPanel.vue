@@ -276,7 +276,6 @@ export default {
 }
 
 .opml-upload-field label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 

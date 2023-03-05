@@ -119,7 +119,7 @@
               </template>
               <template v-slot:body>
                 <!-- feed filter field -->
-                <div class="view-header-field" v-if="this.showFullInboundQueueHeader">
+                <div class="article-queue" v-if="this.showFullInboundQueueHeader">
                   <!-- feed filter label -->
                   <label>ARTICLE QUEUE {{ '(' + this.filteredInboundQueue.length + ' ARTICLES MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + this.totalPages + ')' }}</label>
                   <div class="feed-filter">
@@ -1703,7 +1703,7 @@ export default {
   padding-top: .75rem;
 }
 
-.view-header-field {
+.article-queue {
   margin-left: 1rem;
   margin-right: 1rem;
   border-radius: 0px 0px 4px 4px;
@@ -1714,15 +1714,6 @@ export default {
   text-align: left;
   display: flex;
   flex-direction: column;
-}
-
-.view-header-field label {
-  font-size: smaller;
-}
-
-.view-header-field > div {
-  margin-top: .125rem;
-  resize: none;
 }
 
 .grid-container {
@@ -1788,7 +1779,6 @@ footer {
   background-color: transparent;
   color: v-bind('theme.buttonfg');
   padding-top: .125rem;
-  font-size: smaller;
   margin: .125rem;
 }
 
@@ -1811,6 +1801,8 @@ footer {
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: flex-end;
+  margin-top: .125rem;
+  resize: none;
 }
 
 .feed-filter input {

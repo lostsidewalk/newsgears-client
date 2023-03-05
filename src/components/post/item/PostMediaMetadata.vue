@@ -41,12 +41,9 @@ pre {
   max-width: fit-content;
   padding-top: .75rem;
   padding-bottom: .75rem;
-  /* cursor: pointer; */
-  /* user-select: none; */
 }
 
 .post-media-metadata > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 

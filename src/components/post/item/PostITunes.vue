@@ -26,9 +26,7 @@ export default {
 
 <style scoped>
 .post-itunes-content {
-  /* user-select: none; */
   width: 100%;
-  font-size: smaller;
   display: flex;
   flex-direction: row;
   align-items: flex-start;

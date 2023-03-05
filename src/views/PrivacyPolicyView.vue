@@ -94,7 +94,7 @@
           <!-- section -->
           <div class="section-header">How can you contact us about this notice?</div>
           <div class="section-summary">
-            If you have questions or comments about this notice, you may email us at support@feedgears.com. 
+            If you have questions or comments about this notice, you may email us at <a class="footer-link" href="mailto:support@feedgears.com" target="_blank">support@feedgears.com</a>. 
           </div>
         </template>
       </ViewHeader>
@@ -175,5 +175,16 @@ export default {
   font-style: italic;
   margin-top: .56rem;
   margin-bottom: .56rem;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: v-bind('theme.subduedmessage');
+  cursor: pointer;
+}
+
+.footer-link:hover, .footer-link:focus {
+  text-decoration: underline;
+  color: v-bind('theme.highlightedmessage');
 }
 </style>

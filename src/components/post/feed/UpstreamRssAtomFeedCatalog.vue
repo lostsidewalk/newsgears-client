@@ -389,10 +389,6 @@ export default {
   overflow-x: auto;
 }
 
-.feed-config-field > label {
-  font-size: smaller;
-}
-
 .feed-config-field > input {
   padding: .31rem;
   border: 1px solid v-bind('theme.fieldborder');

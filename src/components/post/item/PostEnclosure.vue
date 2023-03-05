@@ -79,9 +79,7 @@ export default {
 
 <style scoped>
 .post-enclosure {
-  /* user-select: none; */
   width: 100%;
-  font-size: smaller;
 }
 
 .post-enclosure > span:hover, .post-enclosure > span:focus {

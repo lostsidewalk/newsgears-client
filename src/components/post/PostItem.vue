@@ -468,7 +468,6 @@ export default {
 }
 
 .post-rights-area > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
@@ -483,7 +482,6 @@ export default {
 }
 
 .post-comment-area > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
@@ -502,7 +500,6 @@ export default {
 }
 
 .post-title-area > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
@@ -517,7 +514,6 @@ export default {
 }
 
 .post-desc-area > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
@@ -550,7 +546,6 @@ export default {
 }
 
 .post-url-area > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
@@ -563,7 +558,6 @@ export default {
 }
 
 .post-img-url-area > label {
-  font-size: smaller;
   padding-bottom: .125rem;
 }
 
