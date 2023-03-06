@@ -19,7 +19,7 @@
     </div>
     <div class="footer-divider"/>
     <div class="copyright-view">
-      <div>COPYRIGHT <span class="fa fa-copyright" /> 2023 <a class="footer-link" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
+      <div>COPYRIGHT <span class="fa fa-copyright" /> 2023 <a class="footer-link" aria-label="Visit the Lost Sidewalk homepage" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
       <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
     </div>
   </div>
