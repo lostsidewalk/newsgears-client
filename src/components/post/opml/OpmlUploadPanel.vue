@@ -3,7 +3,7 @@
     <div class="modal-body">
       <div class="modal-header">
         <h3 class="view-header-no-count">
-          <i class="fa fa-feed fa-1x" />
+          <span class="fa fa-feed fa-1x" />
           OPML UPLOAD
           <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
         </h3>
@@ -20,7 +20,7 @@
                 @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" 
                 style="margin-left: .125rem;" 
                 :disabled="disabled || inTransit">
-                <i class="fa fa-trash"/>
+                <span class="fa fa-trash"/>
               </button>
             </div>
           </div>
@@ -330,7 +330,7 @@ export default {
   background-color: v-bind('theme.buttonhighlight') !important;
 }
 
-.opml-file-action-button i {
+.opml-file-action-button span {
   padding: .125rem;
 }
 

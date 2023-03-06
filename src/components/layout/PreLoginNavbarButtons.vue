@@ -1,28 +1,5 @@
 <template>
   <div style="display: flex;flex-wrap: wrap;justify-content: space-between;">
-    <!-- 
-    <div id="newsgears-logo" class="fixed-header-item left-header">
-      <img src="newsgears-logo.png" alt="NewsGears Logo"/>
-    </div>
-    <div class="fixed-header-item right-header">
-      <router-link to="/app" class="link ph3 pv2 dib bg-transparent no-pill">
-        LOGIN
-      </router-link>
-    </div>
-    <div class="fixed-header-item right-header">
-      <a class="link ph3 pv2 dib bg-transparent no-pill" href="#0">DOCUMENTATION</a>
-    </div>
-    <div class="fixed-header-item right-header">
-      <a class="link ph3 pv2 dib bg-transparent no-pill" href="#0">RSS/ATOM FEED DISCOVERY</a>
-    </div>
-    <div class="fixed-header-item right-header">
-      <a class="link ph3 pv2 dib bg-transparent no-pill" href="#0">NEWS DISCOVERY</a>
-    </div>
-    <div class="fixed-header-item right-header">
-      <a class="link ph3 pv2 dib bg-transparent no-pill" href="#0">PRICING</a>
-    </div>
-    -->
-
     <!-- dashboard button -->
     <FeedGearsLogo :theme="theme" />
     <div style="display: flex;flex-direction: row-reverse;">

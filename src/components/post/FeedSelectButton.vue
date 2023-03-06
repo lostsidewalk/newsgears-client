@@ -11,11 +11,11 @@
       </label>
       <!-- card -->
       <div class="feed-image-wrapper">
-        <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc">
+        <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" alt="Queue logo image">
         <div class="feed-info-wrapper">
           <!-- inbound / published count -->
-          <label class="feed-info-label"><i class="fa fa-eye"></i> {{ this.inboundCount }}</label>
-          <label class="feed-info-label"><i class="fa fa-star"></i> {{ this.publishedCount }}</label>
+          <label class="feed-info-label"><span class="fa fa-eye" /> {{ this.inboundCount }}</label>
+          <label class="feed-info-label"><span class="fa fa-star" /> {{ this.publishedCount }}</label>
           <!-- <label class="feed-info-label">{{ feed.title }}</label>
           <label class="feed-info-label">{{ feed.description }}</label> -->
         </div>
@@ -30,12 +30,12 @@
         <label class="feed-info-label-small">SUBSCRIPTIONS</label>
         <!-- NewsApiV2 -->
         <label class="feed-info-label" v-if="feed.newsApiV2QueryText">
-          <img src="newsapiv2_logo.png" /> {{ feed.newsApiV2QueryText }}
+          <img src="newsapiv2_logo.png" alt="NewsApiV2 logo" /> {{ feed.newsApiV2QueryText }}
         </label>
         <!-- RSS/ATOM feeds -->
         <label class="feed-info-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
           <!-- RSS logo -->
-          <img src="rss_logo.svg" /> 
+          <img src="rss_logo.svg" alt="RSS logo" /> 
           <!-- last http status -->
           <span v-if="hasFeedMetrics(rssAtomFeedUrl)" :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
             {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}

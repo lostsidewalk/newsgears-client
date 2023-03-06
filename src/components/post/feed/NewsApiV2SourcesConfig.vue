@@ -53,8 +53,8 @@
           <button class="br-pill" @click="toggleNewsApiV2LanguageFilter(source.language)">
             {{ source.language.toUpperCase() }}
           </button>
-          <button class="br-pill" v-if="source.url" @click="window.open(source.url, '_blank')">
-            <i class="fa fa-link fa-1x"/>
+          <button class="br-pill" v-if="source.url" aria-label="Visit this news source URL in new tab" @click="window.open(source.url, '_blank')">
+            <span class="fa fa-link fa-1x"/>
           </button>
         </div>
       </div>

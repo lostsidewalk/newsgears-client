@@ -13,15 +13,19 @@
       @change="selectFeedImage"
       :disabled="disabled || inTransit" />
     <label for="feed-image-select" class="feed-image-select-label">
-      <img v-if="modelValue" class="feed-image" :src="'data:image/png;base64,' + modelValue" title="Click here to change the feed image."/>
+      <img v-if="modelValue" 
+        class="feed-image" 
+        :src="'data:image/png;base64,' + modelValue" 
+        title="Click here to change the feed image."
+        alt="Queue logo image" />
       <div v-else class="feed-image" title="Click here to add a feed image."></div>
     </label>
     <span>
     <button :disabled="disabled || inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">
-      <i class="fa fa-trash-o"></i>
+      <span class="fa fa-trash-o" />
     </button>
     <button :disabled="disabled || inTransit" class="feed-image-randomize" @click="randomizeFeedImage">
-      <i class="fa fa-paw"></i>
+      <span class="fa fa-paw" />
     </button>
     </span>
     <div class="feed-image-upload-errors" v-if="this.feedImageUploadErrors.length > 0">

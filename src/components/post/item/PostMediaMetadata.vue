@@ -3,7 +3,8 @@
     <img v-for="thumbnail of this.metadata.thumbnails" :key="thumbnail" 
       :src="thumbnail.url" 
       style="display: block" 
-      class="post-media-metadata-thumbnail">
+      class="post-media-metadata-thumbnail"
+      alt="Post media thumbnail" />
     <div>
       <PostMediaCommunity v-if="this.metadata.community" :community="this.metadata.community" :theme="theme" />
       <pre>{{ this.metadata.desc }}</pre>

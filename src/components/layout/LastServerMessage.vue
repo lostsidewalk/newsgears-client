@@ -3,7 +3,7 @@
     <!-- server response -->
     <span class="timestamp">{{ this.serverMessages[this.serverMessages.length - 1].timestamp }}</span>
     <button class="last-server-message" @click="clearLastServerMessage" accesskey="x">
-      <i class="fa fa-check fa-1x clear-last-server-message" /> &nbsp;
+      <span class="fa fa-check fa-1x clear-last-server-message" /> &nbsp;
       {{ this.serverMessages[this.serverMessages.length - 1].text }}
     </button>
   </div>

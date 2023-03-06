@@ -3,7 +3,7 @@
     <!-- account config header -->
     <ViewHeader class="settings-view" :disabled="inTransit" :inTransit="false" :theme="theme">
       <template v-slot:count>
-        <i class="fa fa-user fa-1x"/>
+        <span class="fa fa-user fa-1x"/>
         {{ this.getModeVerbiage() }}
       </template>
       <template v-slot:body>
@@ -11,7 +11,7 @@
         <div class="settings-field" v-if="authProvider !== 'LOCAL' && !this.showDeactivateUser">
           <div style="display: flex;">
             <!-- profile image -->
-            <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img"/>
+            <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img" alt="OAuth2 profile image" />
             <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
               <!-- auth provider username (auth provider user Id) -->
               <span style="padding: .125rem;">{{ authProviderUsername }}</span>
@@ -71,7 +71,7 @@
     <!-- notifications config header -->
     <ViewHeader class="settings-view notifications-view" :disabled="inTransit" :inTransit="false" :theme="theme">
       <template v-slot:count>
-        <i class="fa fa-envelope fa-1x"/>
+        <span class="fa fa-envelope fa-1x"/>
         NOTIFICATION SETTINGS
       </template>
       <template v-slot:body>
@@ -113,7 +113,7 @@
     <!-- checkout header-->
     <ViewHeader class="settings-view checkout-view" :disabled="inTransit" :inTransit="false" :theme="theme">
       <template v-slot:count>
-        <i class="fa fa-gears fa-1x"/>
+        <span class="fa fa-gears fa-1x"/>
         JOIN THE FEEDGEARS COMMUNITY
       </template>
       <template v-slot:body>

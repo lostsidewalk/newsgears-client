@@ -29,13 +29,13 @@
           class="rss-atom-url-row-button"
           @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
           :disabled="disabled || inTransit">
-          <i class="fa fa-refresh"/>
+          <span class="fa fa-refresh"/>
         </button>
         <button 
           class="rss-atom-url-row-button" 
           @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
           :disabled="disabled || inTransit">
-          <i class="fa fa-trash"/>
+          <span class="fa fa-trash"/>
         </button>
       </div>
       <RssAtomFeedInfo 

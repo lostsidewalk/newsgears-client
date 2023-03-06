@@ -1,6 +1,6 @@
 <template>
   <div class="volume-control">
-      <i class="fa" :class="volumeIcon"></i>
+      <span class="fa" :class="volumeIcon" />
       <input type="range"
           v-model="volume"
           height="4px"

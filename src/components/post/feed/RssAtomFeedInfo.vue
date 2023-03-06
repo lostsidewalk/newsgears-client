@@ -6,10 +6,14 @@
         <!-- icon -->
         <div class="rss-atom-feed-info-image">
           <a v-if="this.info.icon" :href="this.info.icon.link" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)" tabindex="0">
-            <img :src="'data:image/png;base64,' + this.info.icon.imgSrc" :title="this.info.icon.title" />
+            <img :src="'data:image/png;base64,' + this.info.icon.imgSrc" 
+              :title="this.info.icon.title" 
+              alt="RSS feed logo image" />
           </a>
           <a v-if="this.info.image && !this.info.icon" :href="this.info.image.link" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)" tabindex="0">
-            <img :src="'data:image/png;base64,' + this.info.image.imgSrc" :title="this.info.image.title" />
+            <img :src="'data:image/png;base64,' + this.info.image.imgSrc" 
+              :title="this.info.image.title" 
+              alt="RSS feed logo image" />
           </a>
           <a v-if="!this.info.image && !this.info.icon" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
           </a>
@@ -132,7 +136,7 @@
           <span v-if="this.info.isUrlUpgradable === true" 
             class="br-pill-subdued" 
             title="This feed is also available in HTTPS">
-            <i class="fa fa-lock-o fa-1x">SSL</i>
+            <span class="fa fa-lock-o fa-1x">SSL</span>
           </span>
         </div>
       </div>
@@ -146,10 +150,10 @@
           :title="'HTTP ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')' + (this.info.redirectFeedUrl ? (', redirected to ' + this.info.redirectFeedUrl) : '')">
           {{ 'HTTP ' + this.info.httpStatusCode + ' ' + this.info.httpStatusMessage }} &nbsp;
           <span v-if="this.info.redirectFeedUrl">
-            <i class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectFeedUrl }}
+            <span class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectFeedUrl }}
           </span>
           <span v-if="this.info.redirectHttpStatusCode">
-            &nbsp; <i class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectHttpStatusCode + ' ' + this.info.redirectHttpStatusMessage }}
+            &nbsp; <span class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectHttpStatusCode + ' ' + this.info.redirectHttpStatusMessage }}
           </span>
         </span>
       </div>

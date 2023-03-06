@@ -9,7 +9,7 @@
         A secure, private, accessible feed reader.
       </h2>
       <h2 class="logosubtext fancy">
-        FeedGears is free because we believe in RSS <i class="fa fa-rss" />
+        FeedGears is free because we believe in RSS <span class="fa fa-rss" />
       </h2>
       <h3 class="logosubduedtext fancy">
         (You can still pay for it if you want to support our mission.)

@@ -31,11 +31,9 @@
       <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
       <!-- privacy policy -->
       <div class="footer-view">
-        <span>
-          <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
-            <i class="fa fa-file-text" /> Privacy Policy
-          </a>
-        </span>
+        <button class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
+          <span class="fa fa-file-text" /> Privacy Policy
+        </button>
       </div>
     </div>
   </div>
@@ -141,12 +139,10 @@ export default {
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
-
 .footer-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-  resize: none;
+  display: flex;
+  justify-content: center;
   gap: .75rem;
   padding: 1.25rem;
 }
@@ -155,6 +151,11 @@ export default {
   text-decoration: none;
   color: v-bind('theme.subduedmessage');
   cursor: pointer;
+  background: unset;
+  border: unset;
+  max-width: fit-content;
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .footer-link:hover, .footer-link:focus {

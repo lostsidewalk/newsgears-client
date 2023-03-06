@@ -2,7 +2,7 @@
   <div>
     <div class="features-view">
       <div class="feature">
-        <div class="feature-title">IT'S FREE <i class="fa fa-beer" /></div>
+        <div class="feature-title">IT'S FREE <span class="fa fa-beer" /></div>
         <div class="feature-body">
           You can always have a free account, and there will never be ads while using FeedGears.  
           We love RSS/ATOM, and we want people to use our software. You can even host it yourself! 
@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">SUBSCRIBE TO KEEP THE LIGHTS ON <i class="fa fa-lightbulb-o" /></div>
+        <div class="feature-title">SUBSCRIBE TO KEEP THE LIGHTS ON <span class="fa fa-lightbulb-o" /></div>
         <div class="feature-body">
           We encourage you to subscribe and contribute $4 per month to support hosting and ongoing development 
           of FeedGears.  We believe in RSS, and we believe that you do as well.  We value having a secure, user-respecting 
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">PRIVACY AND SECURITY <i class="fa fa-lock" /></div>
+        <div class="feature-title">PRIVACY AND SECURITY <span class="fa fa-lock" /></div>
         <div class="feature-body">
           FeedGears is a tool built for users.  
           <ul>
@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">ACCESSIBILITY <i class="fa fa-universal-access" /></div>
+        <div class="feature-title">ACCESSIBILITY <span class="fa fa-universal-access" /></div>
         <div class="feature-body">
           We believe in building highly accessible software.  
           <ul>
@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">QUEUE DASHBOARD <i class="fa fa-dashboard" /></div>
+        <div class="feature-title">QUEUE DASHBOARD <span class="fa fa-dashboard" /></div>
         <div class="feature-body">
           Upstream feeds are organized into queues.
           <ul>
@@ -53,19 +53,19 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">FILTERING AND ALERTS <i class="fa fa-filter" /></div>
+        <div class="feature-title">FILTERING AND ALERTS <span class="fa fa-filter" /></div>
         <div class="feature-body">
           You can define multiple filters for each queue.  FeedGears will alert you in the queue dashboard when new articles match a filter you have defined.  
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">NewsApi.org INTEGRATION <i class="fa fa-newspaper-o" /></div>
+        <div class="feature-title">NewsApi.org INTEGRATION <span class="fa fa-newspaper-o" /></div>
         <div class="feature-body">
           FeedGears offers upstream access to NewsApi.org, a service that provides curated news articles from sources around the world.  The NewsApi query expression language is simple, allowing you to build highly focused queries.  If enabled, NewsApi articles are imported into your queue along with content from upstream RSS/ATOM sources.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">THEMEABLE <i class="fa fa-paint-brush" /></div>
+        <div class="feature-title">THEMEABLE <span class="fa fa-paint-brush" /></div>
         <div class="feature-body">
           FeedGears has built-in support for light/dark themes.  We will soon be offering the capability to customize each of the 44 colors that comprise a FeedGears theme.  Stay tuned! 
         </div>
@@ -77,7 +77,7 @@
         </div>
       </div> -->
       <div class="feature">
-        <div class="feature-title">FEED PUBLISHING <i class="fa fa-bullhorn" /></div>
+        <div class="feature-title">FEED PUBLISHING <span class="fa fa-bullhorn" /></div>
         <div class="feature-body">
           Posts that are 'starred' in FeedGears can be published on a public-facing, queue-specific feed.
           <ul>
@@ -87,7 +87,7 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">RSS/ATOM <i class="fa fa-rss" /></div>
+        <div class="feature-title">RSS/ATOM <span class="fa fa-rss" /></div>
         <div class="feature-body">
           FeedGears was built on the open-source project ROME, and supports all versions of RSS/ATOM, with high-level support for modules such as: 
           <ul>
@@ -101,25 +101,25 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">FREE AND OPEN-SOURCE <i class="fa fa-code-fork" /></div>
+        <div class="feature-title">FREE AND OPEN-SOURCE <span class="fa fa-code-fork" /></div>
         <div class="feature-body">
           FeedGears was built using free and open source tools.  
           <ul>
             <li>The back-end is built entirely in Java, mainly using Spring Boot.  </li>
             <li>The front-end is a VueJs 3 application.  </li>
-            <li>All source code is available in our <i class="fa fa-github" /> GitHub repository, and is updated daily. </li>
+            <li>All source code is available in our <span class="fa fa-github" /> GitHub repository, and is updated daily. </li>
             <li>All source code is protected by the GPLV3 license.</li>
           </ul>
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">SELF HOSTING <i class="fa fa-cloud" /></div>
+        <div class="feature-title">SELF HOSTING <span class="fa fa-cloud" /></div>
         <div class="feature-body">
           For those who would prefer to self-host FeedGears, *here* are the instructions.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">DEV BLOG <i class="fa fa-laptop" /></div>
+        <div class="feature-title">DEV BLOG <span class="fa fa-laptop" /></div>
         <div class="feature-body">
           Follow along with the development of FeedGears via our dev blog, or the Lost Sidewalk coding live stream.  We push front-end builds daily, back-end builds weekly, or as needed.
         </div>

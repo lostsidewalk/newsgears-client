@@ -1,6 +1,12 @@
 <template>
   <div class="post-itunes-content">
-    <img v-if="this.iTunes.imageUri" :src="this.iTunes.imageUri" class="post-itunes-content-image" tabindex="0" @click="this.$emit('playFirstEnclosure', this.iTunes)" />
+    <button v-if="this.iTunes.imageUri" class="post-itunes-content-image-wrapper" @click="this.$emit('playFirstEnclosure', this.iTunes)">
+      <img 
+      :src="this.iTunes.imageUri" 
+      class="post-itunes-content-image" 
+      tabindex="0" 
+      alt="iTunes content image" />
+    </button>
     <div class="pill-container">
       <button class="br-pill-subdued fa fa-headphones audio-player-control" @click="this.$emit('playFirstEnclosure', this.iTunes)" />
       <div class="br-pill-subdued" v-if="this.iTunes.title">{{ this.iTunes.title }}</div>
@@ -50,6 +56,11 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+}
+
+.post-itunes-content-image-wrapper {
+  background: unset;
+  border: unset;
 }
 
 .post-itunes-content-image {

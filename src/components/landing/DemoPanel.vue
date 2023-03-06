@@ -9,16 +9,16 @@
         <button class="tab-label" @click="this.activeTab=4">Reddit</button>
       </div>
       <div v-show="this.activeTab === 1" class="tab-panel">
-        <img src="demo1.png">
+        <img src="demo1.png" alt="FeedGears queue page screenshot">
       </div>
       <div v-show="this.activeTab === 2" class="tab-panel">
-        <!-- <img src="demo2.png"> -->
+        <!-- <img src="demo2.png" alt="FeedGears queue page screenshot"> -->
       </div>
       <div v-show="this.activeTab === 3" class="tab-panel">
-        <!-- <img src="demo3.png"> -->
+        <!-- <img src="demo3.png" alt="FeedGears queue page screenshot"> -->
       </div>
       <div v-show="this.activeTab === 4" class="tab-panel">
-        <!-- <img src="demo4.png"> -->
+        <!-- <img src="demo4.png" alt="FeedGears queue page screenshot"> -->
       </div>
     </div>
   </div>

@@ -1,43 +1,25 @@
 <template>
   <div>
     <div class="links-view">
-      <span>
-        <a class="footer-link" href="https://www.lostsidewalk.com/feedgears/devblog" target="_blank"><i class="fa fa-code-fork" /> Dev Blog</a>
-      </span>
-      <span>
-        <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/docs');">
-          <i class="fa fa-question-circle" /> Docs
-        </a>
-      </span>
-      <span>
-        <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
-          <i class="fa fa-file-text" /> Privacy Policy
-        </a>
-      </span>
-      <span>
-        <a class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/api');">
-          <i class="fa fa-plug" /> API
-        </a>
-      </span>
-      <span>
-        <a class="footer-link" href="mailto:support@feedgears.com" target="_blank"><i class="fa fa-envelope" /> Email</a>
-      </span>
-      <span>
-        <a class="footer-link" href="https://twitter.com/lostsidewalkllc" target="_blank"><i class="fa fa-twitter" /> Twitter</a>
-      </span>
-      <span>
-        <a class="footer-link" href="https://github.com/lostsidewalk" target="_blank"><i class="fa fa-github" /> Github</a>
-      </span>
-      <span>
-        <a class="footer-link" href="https://twitch.tv/elderscrollsjesus" target="_blank"><i class="fa fa-twitch" /> Twitch</a>
-      </span>
-      <span>
-        <a class="footer-link" href="https://discord.gg/7nyY89UrNw" target="_blank"><i class="fa fa-comments-o" /> Discord</a>
-      </span>
+      <button class="footer-link" aria-label="Visit the Lost Sidewalk dev blog in a new tab" @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')"><span class="fa fa-code-fork" /> Dev Blog</button>
+      <button class="footer-link" @click.prevent="this.$router.push('/docs');">
+        <span class="fa fa-question-circle" /> Docs
+      </button>
+      <button class="footer-link" @click.prevent="this.$router.push('/privacy');">
+        <span class="fa fa-file-text" /> Privacy Policy
+      </button>
+      <button class="footer-link" @click.prevent="this.$router.push('/api');">
+        <span class="fa fa-plug" /> API
+      </button>
+      <button class="footer-link" aria-label="Open your email client to send email to support@feedgears.com" @click.prevent="window.open('mailto:support@feedgears.com', '_blank')"><span class="fa fa-envelope" /> Email</button>
+      <button class="footer-link" aria-label="Visit the Lost Sidewalk Twitter in a new tab" @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')"><span class="fa fa-twitter" /> Twitter</button>
+      <button class="footer-link" aria-label="Visit the Lost Sidewalk Github in a new tab" @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')"><span class="fa fa-github" /> Github</button>
+      <button class="footer-link" aria-label="Visit Lost Sidewalk on Twitch in a new tab " @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')"><span class="fa fa-twitch" /> Twitch</button>
+      <button class="footer-link" aria-label="Visit the Lost Sidewalk Discord in a new tab" @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')"><span class="fa fa-comments-o" /> Discord</button>
     </div>
     <div class="footer-divider"/>
     <div class="copyright-view">
-      <div>COPYRIGHT <i class="fa fa-copyright" /> 2023 <a class="footer-link" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
+      <div>COPYRIGHT <span class="fa fa-copyright" /> 2023 <a class="footer-link" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
       <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
     </div>
   </div>
@@ -53,9 +35,8 @@ export default {
 <style scoped>
 .links-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-  resize: none;
+  display: flex;
+  justify-content: space-evenly;
   gap: .75rem;
   padding: 1.25rem;
 }
@@ -64,6 +45,11 @@ export default {
   text-decoration: none;
   color: v-bind('theme.subduedmessage');
   cursor: pointer;
+  background: unset;
+  border: unset;
+  max-width: fit-content;
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .footer-link:hover, .footer-link:focus {

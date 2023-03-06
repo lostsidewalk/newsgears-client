@@ -3,7 +3,7 @@
     <div class="modal-body">
       <div class="modal-header">
         <h3 class="view-header-no-count">
-          <i class="fa fa-feed fa-1x" />
+          <span class="fa fa-feed fa-1x" />
           {{ this.getModeVerbiage() }}
           <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
         </h3>

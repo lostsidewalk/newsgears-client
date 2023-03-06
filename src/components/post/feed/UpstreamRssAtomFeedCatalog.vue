@@ -8,19 +8,19 @@
       <input type="text" v-model="feedCatalogFilter" :disabled="disabled" placeholder="Filter">
       <!-- first page button-->
       <button v-if="needsPagination()" title="first" class="feed-catalog-filter-button" @click="firstPage">
-        <i class="fa fa-angle-double-left"/>
+        <span class="fa fa-angle-double-left"/>
       </button>
       <!-- previous page button -->
       <button v-if="needsPagination()" title="previous" class="feed-catalog-filter-button" @click="previousPage">
-        <i class="fa fa-angle-left"/>
+        <span class="fa fa-angle-left"/>
       </button>
       <!-- next page button -->
       <button v-if="needsPagination()" title="next" class="feed-catalog-filter-button" @click="nextPage">
-        <i class="fa fa-angle-right"/>
+        <span class="fa fa-angle-right"/>
       </button>
       <!-- last page button-->
       <button v-if="needsPagination()" title="last" class="feed-catalog-filter-button" @click="lastPage">
-        <i class="fa fa-angle-double-right"/>
+        <span class="fa fa-angle-double-right"/>
       </button>
     </div>
     <!-- feed catalog filter pills -->

@@ -49,6 +49,7 @@
           <!-- link button -->
           <button
             class="post-admin-button"
+            aria-label="Open this article URL in a new tab"
             @click.stop="this.$emit('openPostUrl')"
             :disabled="disabled"
             title="Open original article">
@@ -77,12 +78,13 @@
       <div class="post-item-body" :class="(post.isRead ? ' post-read' : '')">
         <!-- post title -->
         <div class="post-item-row">
-          <a @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()" tabindex="0">
+          <button @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()">
             <img v-if="post.postImgSrc" 
               :src="post.postImgSrc"
               class="post-thumbnail" 
-              :disabled="disabled" /> 
-          </a>
+              :disabled="disabled" 
+              alt="Post thumbnail image" /> 
+          </button>
           <div v-if="isHtmlContent(post.postTitle)" 
             class="post-field-wrapper post-html-frame"
             v-html="post.postTitle.value" frameborder="0" />
@@ -152,7 +154,7 @@
                 :href="postUrl.href" 
                 :target="'window_' + (Math.random() + 1).toString(36).substring(7)"
                 :disabled="disabled">
-                <i class="fa fa-link fa-1x"></i>
+                <span class="fa fa-link fa-1x" />
               </a>
               {{ 
                 (postUrl.title ? postUrl.title : postUrl.type) + 
@@ -392,6 +394,11 @@ export default {
   align-items: flex-start;
   width: 100%;
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
+}
+
+.post-item-row button {
+  background: unset;
+  border: unset;
 }
 
 .post-item-media {

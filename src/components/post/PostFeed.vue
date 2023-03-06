@@ -55,7 +55,7 @@
         }">
           <ViewHeader :sticky="true" :collapsible="true" @toggle="this.showQueueDashboard = !this.showQueueDashboard" :show="this.showQueueDashboard" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
               <template v-slot:count>
-                <i class="fa fa-feed fa-1x"/>
+                <span class="fa fa-feed fa-1x"/>
                 QUEUE DASHBOARD
               </template>
               <template v-slot:body>
@@ -94,7 +94,7 @@
           <div id="staging-header-view" class="staging-header-view" :class="this.isModalShowing ? 'invisible' : ''" v-if="this.selectedFeedId">
             <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
               <template v-slot:count>
-                <i class="fa fa-gears fa-1x"/>
+                <span class="fa fa-gears fa-1x"/>
                 {{ this.getFeedById(this.selectedFeedId).ident }}
               </template>
               <template v-slot:body>
@@ -108,23 +108,23 @@
                     <div class="feed-filter-buttons">
                       <!-- first page button-->
                       <button v-if="needsPagination()" title="first" class="feed-filter-button" @click="firstPage" :disabled="disabled || inTransit">
-                        <i class="fa fa-angle-double-left"/>
+                        <span class="fa fa-angle-double-left"/>
                       </button>
                       <!-- previous page button -->
                       <button v-if="needsPagination()" title="previous" class="feed-filter-button" @click="previousPage" :disabled="disabled || inTransit">
-                        <i class="fa fa-angle-left"/>
+                        <span class="fa fa-angle-left"/>
                       </button>
                       <!-- next page button -->
                       <button v-if="needsPagination()" title="next" class="feed-filter-button" @click="nextPage" :disabled="disabled || inTransit">
-                        <i class="fa fa-angle-right"/>
+                        <span class="fa fa-angle-right"/>
                       </button>
                       <!-- last page button-->
                       <button v-if="needsPagination()" title="last" class="feed-filter-button" @click="lastPage" :disabled="disabled || inTransit">
-                        <i class="fa fa-angle-double-right"/>
+                        <span class="fa fa-angle-double-right"/>
                       </button>
                       <!-- sort direction button -->
                       <button class="feed-filter-button" @click="toggleInboundQueueSortOrder()" :disabled="disabled || inTransit" aria-label="Toggle sort order">
-                        <i :class="'fa fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')"></i>
+                        <span :class="'fa fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
                       </button>
                       <!-- refresh feed button -->
                       <button class="feed-filter-button" 
@@ -236,7 +236,7 @@
             </div>
           </div>
           <div class="logo">
-            <i class="fa fa-rss" style="font-size: 15em;" />
+            <span class="fa fa-rss" style="font-size: 15em;" />
           </div>
         </div>
       </div>
@@ -1720,7 +1720,8 @@ export default {
 }
 
 .grid-container {
-  padding: 1.25rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
   overflow: auto;
 }
 

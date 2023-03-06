@@ -23,12 +23,11 @@
           <div class="br-pill-subdued" v-if="this.mediaContent.medium">MEDIUM: {{ this.mediaContent.medium }}</div>
         </div>
       </div>
-      <a @click.stop="fetchAndSaveImage()" v-if="isImage() && this.showContents">
-        <img 
-          :src="this.mediaContent.reference.uri"
-          class="post-media-content-image" 
-          tabindex="0" />
-      </a>
+      <img v-if="isImage() && this.showContents"
+        :src="this.mediaContent.reference.uri"
+        class="post-media-content-image" 
+        tabindex="0" 
+        alt="Post media content image" />
       <div v-else-if="isVideo() && this.showContents" class="post-media-content-video">
         <vue-plyr ref="player">
           <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
@@ -74,22 +73,22 @@ export default {
       return this.mediaContent.medium === "image" || this.mediaContent.type.indexOf("image") === 0;
     },
     isVideo() {
-      return this.mediaContent.type.indexOf("shockwave-flash") >= 0;
+      return this.mediaContent.type && this.mediaContent.type.indexOf("shockwave-flash") >= 0;
     },
     isAudio() {
-      return this.mediaContent.type.indexOf("audio/mpeg") >= 0;
+      return this.mediaContent.type && this.mediaContent.type.indexOf("audio/mpeg") >= 0;
     },
-    fetchAndSaveImage() {
-      this.inTransit = true;
-      fetch(this.mediaContent.reference.uri) 
-        .then(res => res.blob())
-        .then(blob => {
-          let file = window.URL.createObjectURL(blob);
-          window.open(file, '_blank');
-        }).finally(() => {
-          this.inTransit = false;
-        })
-    }
+    // fetchAndSaveImage() {
+    //   this.inTransit = true;
+    //   fetch(this.mediaContent.reference.uri) 
+    //     .then(res => res.blob())
+    //     .then(blob => {
+    //       let file = window.URL.createObjectURL(blob);
+    //       window.open(file, '_blank');
+    //     }).finally(() => {
+    //       this.inTransit = false;
+    //     })
+    // }
   },
   data() {
     return {
@@ -122,6 +121,11 @@ export default {
   padding: .31rem;
   user-select: none;
   margin-bottom: .31rem;
+}
+
+.post-media-content-image-wrapper {
+  background: unset;
+  border: unset;
 }
 
 .post-media-content-image {

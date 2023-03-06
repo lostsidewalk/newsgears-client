@@ -1,7 +1,7 @@
 <template>
-  <div class="feedgears-logo">
+  <h1 class="feedgears-logo">
     FeedGears RSS
-  </div>
+  </h1>
 </template>
 
 <script>

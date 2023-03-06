@@ -1,12 +1,12 @@
 <template>
   <div class="post-enclosure">
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-    <a v-if="isImage()" @click.stop="fetchAndSaveImage()">
-      <img 
-        :src="this.enclosure.uri"
-        class="post-enclosure-image" 
-        tabindex="0" />
-      </a>
+    <img 
+      v-if="isImage()" 
+      :src="this.enclosure.uri"
+      class="post-enclosure-image" 
+      tabindex="0" 
+      alt="Post enclosure image" />
     <div v-else-if="isVideo()" class="post-enclosure-image">
       <vue-plyr ref="player">
         <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
@@ -18,10 +18,6 @@
         </div>
       </vue-plyr>        
     </div>
-    <!-- PLAY BUTTON PLACEHOLDER -->
-    <!-- <div v-else-if="isAudio()" class="post-enclosure-image">
-      <button class="fa fa-play audio-player-control" @click="playAudio" />
-    </div> -->
   </div>
 </template>
 
@@ -57,17 +53,17 @@ export default {
     isAudio() {
       return this.enclosure.type.indexOf("audio/mpeg") >= 0;
     },
-    fetchAndSaveImage() {
-      this.inTransit = true;
-      fetch(this.enclosure.uri)
-        .then(res => res.blob())
-        .then(blob => {
-          let file = window.URL.createObjectURL(blob);
-          window.open(file, '_blank');
-        }).finally(() => {
-          this.inTransit = false;
-        });
-    }
+    // fetchAndSaveImage() {
+    //   this.inTransit = true;
+    //   fetch(this.enclosure.uri)
+    //     .then(res => res.blob())
+    //     .then(blob => {
+    //       let file = window.URL.createObjectURL(blob);
+    //       window.open(file, '_blank');
+    //     }).finally(() => {
+    //       this.inTransit = false;
+    //     });
+    // }
   },
   data() {
     return {
@@ -87,8 +83,9 @@ export default {
   text-decoration: underline;
 }
 
-.post-enclosure-wrapper {
-
+.post-enclosure-image-wrapper {
+  background: unset;
+  border: unset;
 }
 
 .post-enclosure-image {

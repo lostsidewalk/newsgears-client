@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <div class="app-banner">
-      <i class="fa fa-gear"></i>
+      <span class="fa fa-gear"></span>
       FeedGears
     </div>
     <div class="app-sub-banner"></div> -->
@@ -30,7 +30,7 @@ export default {
   user-select: none;
 }
 
-.app-banner > i {
+.app-banner > span {
   position: relative;
   color: v-bind('theme.logoaccentcolor');
   text-shadow: 0px 0px 1px v-bind('theme.logoshadowcolor');

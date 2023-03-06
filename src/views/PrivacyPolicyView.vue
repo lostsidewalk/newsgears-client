@@ -181,6 +181,8 @@ export default {
   text-decoration: none;
   color: v-bind('theme.subduedmessage');
   cursor: pointer;
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .footer-link:hover, .footer-link:focus {
