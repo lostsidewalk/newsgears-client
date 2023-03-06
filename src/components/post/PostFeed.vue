@@ -71,26 +71,6 @@
                         :theme="theme" 
                         @click.stop="this.setSelectedFeedId(feed.id)" 
                         @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" />
-                      <div class="feed-select-buttons">
-                        <button class="feed-select-button" 
-                          @click.stop="this.configureFeed(feed.id)" 
-                          :disabled="disabled || inTransit" 
-                          title="Configure this feed">
-                          <span class="fa fa-wrench"></span>
-                        </button>
-                        <button class="feed-select-button"
-                          @click.stop="this.markFeedAsRead(feed.id, feed.value)"
-                          :disabled="disabled || inTransit"
-                          title="Mark this queue as read">
-                          <span class="fa fa-eye"></span>
-                        </button>
-                        <button class="feed-select-button" 
-                          @click.stop="this.deleteFeed(feed.id, feed.value)" 
-                          :disabled="disabled || inTransit" 
-                          title="Delete this feed">
-                          <span class="fa fa-trash"></span>
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -152,6 +132,27 @@
                         :disabled="disabled || inTransit" 
                         aria-label="Refresh feeds">
                         <span class="fa fa-refresh"/>
+                      </button>
+                      <!-- queue config button -->
+                      <button class="feed-filter-button" 
+                        @click.stop="this.configureFeed(this.selectedFeedId)" 
+                        :disabled="disabled || inTransit" 
+                        title="Configure this feed">
+                        <span class="fa fa-wrench"></span>
+                      </button>
+                      <!-- mark as read button -->
+                      <button class="feed-filter-button"
+                        @click.stop="this.markFeedAsRead(this.selectedFeedId)"
+                        :disabled="disabled || inTransit"
+                        title="Mark this queue as read">
+                        <span class="fa fa-eye"></span>
+                      </button>
+                      <!-- delete queue button -->
+                      <button class="feed-filter-button" 
+                        @click.stop="this.deleteFeed(this.selectedFeedId)" 
+                        :disabled="disabled || inTransit" 
+                        title="Delete this feed">
+                        <span class="fa fa-trash"></span>
                       </button>
                       <!-- show feed filter pills button -->
                       <button class="feed-filter-button" 
@@ -1638,6 +1639,8 @@ export default {
   margin-right: .75rem;
   text-align: center;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .header-button:hover, .header-button:focus {
@@ -1764,29 +1767,6 @@ footer {
   display: block;
 }
 
-.feed-select-buttons {
-  white-space: nowrap;
-  display: flex;
-  flex-direction: row;
-  border-radius: 3px;
-  margin-top: .125rem;
-}
-
-.feed-select-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  text-align: center;
-  border-radius: 3px;
-  background-color: transparent;
-  color: v-bind('theme.buttonfg');
-  padding-top: .125rem;
-  margin: .125rem;
-}
-
-.feed-select-button:hover:enabled {
-  background-color: v-bind('theme.buttonhighlight') !important;
-  cursor: pointer;
-}
-
 /** has references */
 .selected-feed {
   color: v-bind('theme.fieldcolorhighlight');
@@ -1842,6 +1822,8 @@ footer {
   cursor: pointer;
   float: right;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .feed-filter-button:hover, .feed-filter-button:focus {
@@ -1864,7 +1846,6 @@ footer {
 }
 
 .feed-filter-pills {
-  font-size: smaller;
   margin-left: 1rem;
   margin-right: 1rem;
   padding-bottom: .75rem;
@@ -1887,6 +1868,8 @@ footer {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus {

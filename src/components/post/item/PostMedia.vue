@@ -110,7 +110,6 @@ export default {
 <style scoped>
 .post-info-label-small {
   max-width: fit-content;
-  font-size: smaller;
   color: v-bind('theme.subduedmessage');
 }
 </style>

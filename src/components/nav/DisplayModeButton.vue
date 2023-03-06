@@ -23,6 +23,8 @@ export default {
   border-radius: 3px;
   margin: .56rem;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .mode-switch-button:disabled {

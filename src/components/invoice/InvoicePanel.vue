@@ -173,6 +173,8 @@ export default {
   margin-right: .75rem;
   text-align: center;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .header-button:hover, .header-button:focus {

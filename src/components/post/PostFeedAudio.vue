@@ -221,9 +221,9 @@ export default {
 }
 
 .audio-player-buttons span {
-	width: 48px;
-	min-width: 48px;
-	height: 48px;
+	width: 3rem;
+	min-width: 3rem;
+	height: 3rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;

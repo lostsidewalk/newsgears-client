@@ -119,7 +119,6 @@
         <div class="rss-atom-feed-info-field pill-container">
           <!-- http satus code + status message -->
           <span v-if="this.info.httpStatusCode" 
-            class="br-pill-subdued" 
             :title="'HTTP status code ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')'">
             {{ 'HTTP ' + this.info.httpStatusCode }}
           </span>
@@ -253,6 +252,7 @@ export default {
   gap: .31rem;
 }
 
+/** has references */
 .br-pill {
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
@@ -261,8 +261,11 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
+/** has references */
 .br-pill:hover, .br-pill:focus {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
@@ -276,6 +279,8 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .br-pill-subdued:hover, .br-pill-subdued:focus {

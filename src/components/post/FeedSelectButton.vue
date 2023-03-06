@@ -175,7 +175,6 @@ export default {
 
 .feed-info-label-small {
   max-width: fit-content;
-  font-size: smaller;
   cursor: pointer;
   color: v-bind('theme.subduedmessage');
 }

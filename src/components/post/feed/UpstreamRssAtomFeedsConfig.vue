@@ -259,6 +259,8 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus {
@@ -298,6 +300,8 @@ export default {
   float: left;
   border-radius: 3px;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .feed-config-button:disabled {

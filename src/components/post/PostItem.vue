@@ -445,6 +445,8 @@ export default {
   background-color: transparent;
   color: v-bind('theme.sectionsubdued');
   padding-top: .125rem;
+  min-height: 3rem;
+  min-width: 3rem;
 }
 
 .post-admin-button:disabled {
@@ -562,8 +564,8 @@ export default {
 }
 
 .post-thumbnail {
-  max-width: 70px;
-  max-height: 70px;
+  max-width: 140px;
+  max-height: 140px;
   display: inline-block; 
   background-size: cover; 
   background-position: center center;
@@ -643,6 +645,8 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus {
@@ -652,13 +656,11 @@ export default {
 
 .post-item-header-pills {
   display: flex;
-  font-size: smaller;
   flex-direction: row-reverse;
 }
 
 .post-info-label-small {
   max-width: fit-content;
-  font-size: smaller;
   color: v-bind('theme.subduedmessage');
 }
 

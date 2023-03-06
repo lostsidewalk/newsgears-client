@@ -154,17 +154,12 @@ export default {
   overflow-x: auto;
 }
 
-.feed-config-field label {
-  font-size: smaller;
-  /* padding-bottom: .125rem; */
-}
-
 .feed-image {
   border: 1px solid v-bind('theme.sectionbrighthighlight');
-  width: 70px;
-  height: 70px;
-  max-width: 70px;
-  max-height: 70px;
+  width: 140px;
+  height: 140px;
+  max-width: 140px;
+  max-height: 140px;
   display: inline-block; 
   background-size: cover; 
   background-position: center center;
@@ -191,10 +186,6 @@ export default {
   z-index: 3;
   border-radius: 3px;
   width: fit-content;
-}
-
-.feed-image-clear > i, .feed-image-randomize > i {
-  font-size: smaller;
 }
 
 .feed-image-upload-errors {

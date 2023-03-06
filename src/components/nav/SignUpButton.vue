@@ -1,5 +1,5 @@
 <template>
-  <button id="signup" class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
+  <button class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
     Create an account
   </button>
 </template>
@@ -23,6 +23,8 @@ export default {
   color: v-bind('theme.buttonfg');
   margin: .56rem;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .signup-button:disabled {

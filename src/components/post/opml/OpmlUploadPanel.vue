@@ -290,6 +290,8 @@ export default {
   border-radius: 3px;
   margin-right: .75rem;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .opml-upload-button:disabled {
@@ -316,6 +318,8 @@ export default {
   margin-top: .125rem;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   float: right;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .opml-file-action-button:disabled {

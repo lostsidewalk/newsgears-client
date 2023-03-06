@@ -426,7 +426,6 @@ export default {
 }
 
 .feed-catalog-filter-pills {
-  font-size: smaller;
   margin-bottom: .75rem;
 }
 
@@ -445,6 +444,8 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus {
@@ -462,6 +463,8 @@ export default {
   float: left;
   border-radius: 3px;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .add-catalog-feed-button:disabled {
@@ -514,6 +517,8 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .feed-catalog-filter-button:hover, .feed-catalog-filter-button:focus {

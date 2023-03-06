@@ -53,9 +53,9 @@
           <button class="br-pill" @click="toggleNewsApiV2LanguageFilter(source.language)">
             {{ source.language.toUpperCase() }}
           </button>
-          <span v-if="source.url" class="br-pill">
-            Link: <a class="link" :href="source.url" :target="'window_' + (Math.random() + 1).toString(36).substring(7)"><i class="fa fa-link fa-1x"/></a>
-          </span>
+          <button class="br-pill" v-if="source.url" @click="window.open(source.url, '_blank')">
+            <i class="fa fa-link fa-1x"/>
+          </button>
         </div>
       </div>
     </div>
@@ -274,6 +274,8 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .31rem;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus {
@@ -308,10 +310,6 @@ export default {
 .newsapiv2-sources-filter {
   margin-top: .75rem;
   margin-bottom: .75rem;
-}
-
-.newsapiv2-sources-filter-pills {
-  font-size: smaller;
 }
 
 .newsapiv2-sources-filter-pills > div {

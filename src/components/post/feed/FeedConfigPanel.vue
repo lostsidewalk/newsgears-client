@@ -566,6 +566,8 @@ export default {
   float: left;
   border-radius: 3px;
   text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .feed-config-button:disabled {

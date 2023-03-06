@@ -305,6 +305,8 @@ export default {
   text-align: center;
   user-select: none;
   max-width: fit-content;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .download-button:hover, .download-button:focus {
@@ -330,6 +332,8 @@ export default {
   text-align: center;
   user-select: none;
   max-width: fit-content;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .pw-reset-button:hover, .pw-reset-button:focus {
@@ -355,6 +359,8 @@ export default {
   text-align: center;
   user-select: none;
   max-width: fit-content;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .deactivate-button:hover, .deactivate-button:focus {
@@ -382,6 +388,8 @@ export default {
   margin-right: 0rem;
   text-align: center;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .header-button:hover, .header-button:focus {

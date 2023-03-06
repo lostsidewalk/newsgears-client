@@ -36,6 +36,8 @@ export default {
   border-radius: 3px;
   text-align: center;
   user-select: none;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 /** has-references */

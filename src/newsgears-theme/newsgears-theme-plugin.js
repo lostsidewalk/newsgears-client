@@ -61,12 +61,12 @@ const DARK_THEME = {
   modalbodybg: '#141414',
   navbarshadow: 'cornflowerblue', 
   navbarsubshadow: 'rgb(255 255 255 / 75%)', 
-  subduedmessage: 'rgb(116,116,116)', // links, detail messages, etc. 
+  subduedmessage: 'rgb(136,136,136)', // links, detail messages, etc. 
   normalmessage: 'rgb(136,136,136)', // foreground text 
   highlightedmessage: 'rgba(144,238,144,0.7)', // hover effect for messages 
   buttonbg: 'transparent',
   buttonfg: 'rgb(136,136,136)',
-  buttonborder: 'rgb(116,116,116)',
+  buttonborder: 'rgb(136,136,136)',
   buttonhighlight: 'rgba(100,149,237,0.1)', // hover effect for buttons, bg for selected 'mode' buttons 
   dangerbuttonhighlight: 'lightpink', // settings 
   lightshadow: 'rgb(32,32,32)', // box shadow applied to form fields 

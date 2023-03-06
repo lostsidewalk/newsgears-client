@@ -33,10 +33,6 @@ export default {
   gap: .31rem;
 }
 
-.post-itunes-content-wrapper {
-
-}
-
 .pill-container {
   border: 1px solid transparent;
   display: flex;
@@ -57,8 +53,8 @@ export default {
 }
 
 .post-itunes-content-image {
-  max-width: 70px;
-  max-height: 70px;
+  max-width: 140px;
+  max-height: 140px;
   display: inline-block; 
   background-size: cover; 
   background-position: center center;

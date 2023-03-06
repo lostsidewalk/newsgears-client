@@ -48,8 +48,8 @@ pre {
 }
 
 .post-media-metadata-thumbnail {
-  max-width: 70px;
-  max-height: 70px;
+  max-width: 140px;
+  max-height: 140px;
   display: inline-block; 
   background-size: cover; 
   background-position: center center;
