@@ -34,7 +34,7 @@
       <div class="feature">
         <div class="feature-title">ACCESSIBILITY <span class="fa fa-universal-access" role="presentation" /></div>
         <div class="feature-body">
-          We believe in building highly accessible software.  
+          We believe in building highly accessible software.  FeedGears is WCAG 2.1 compliant at the 'AA' level. 
           <ul>
             <li>Tab order and keyboard navigation makes sense throughout the application.</li>
             <li>Hot-key support allows you to perform any function with the keyboard.</li>
