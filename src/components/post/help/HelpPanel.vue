@@ -49,10 +49,6 @@ export default {
             key: "ALT + O",
           },
           {
-            label: "Manage subscription",
-            key: "ALT + S",
-          },
-          {
             label: "Go to account settings",
             key: "ALT + T",
           },

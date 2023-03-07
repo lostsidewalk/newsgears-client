@@ -7,8 +7,6 @@
     <!-- reference -->
     <div>
       <div class="pill-container">
-        <button class="post-media-content-handle" :class="'fa ' + (this.showContents ? 'fa-minus' : 'fa-plus')" @click.stop="this.showContents = !this.showContents">
-        </button>
         <div class="inner-pill-container">
           <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">AUDIO CHANNELS: {{ this.mediaContent.audioChannels }}</div>
           <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">BIT RATE: {{ this.mediaContent.bitRate }}</div>
@@ -20,7 +18,7 @@
           <div class="br-pill-subdued" v-if="this.mediaContent.width">WIDTH: {{ this.mediaContent.width }}</div>
           <div class="br-pill-subdued" v-if="this.mediaContent.language">LANGUAGE: {{ this.mediaContent.language }}</div>
           <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">SAMPLING RATE: {{ this.mediaContent.samplingRate }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.medium">MEDIUM: {{ this.mediaContent.medium }}</div>
+          <!-- <div class="br-pill-subdued" v-if="this.mediaContent.medium">MEDIUM: {{ this.mediaContent.medium }}</div> -->
         </div>
       </div>
       <img v-if="isImage() && this.showContents"
@@ -136,22 +134,6 @@ export default {
 
 .post-media-content-image:hover, .post-media-content-image:focus {
   cursor: pointer;
-}
-
-.post-media-content-handle {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  cursor: pointer;
-  text-align: center;
-  border-radius: 3px;
-  background-color: transparent;
-  color: v-bind('theme.sectionsubdued');
-  padding-top: .125rem;
-}
-
-.post-media-content-handle:hover, .post-media-content-handle:focus {
-  border: 1px solid v-bind('theme.buttonborder');
-  color: v-bind('theme.buttonfg');
-  background-color: v-bind('theme.buttonhighlight');
 }
 
 .inner-pill-container {

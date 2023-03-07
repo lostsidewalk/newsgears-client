@@ -90,7 +90,6 @@ export default {
     return {
       //
       showModal: false,
-      overflowClass: 'hidden',
       // 
       files: [],
       atStep2: false,

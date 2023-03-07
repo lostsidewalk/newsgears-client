@@ -417,22 +417,20 @@ export default {
 /** has references */
 .post-item-header {
   border: 1px solid transparent;
-  justify-content: space-between;
   padding: .31rem;
-  text-align: right;
   padding-right: .31rem;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   background-color: v-bind('theme.sectionbg');
   cursor: pointer;
   user-select: none;
-  white-space: nowrap;
   display: flex;
   flex-direction: row;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   align-items: flex-start;
-  column-gap: .31rem;
+  gap: .31rem;
+  flex-wrap: wrap;
 }
 
 .post-item-header:hover, .post-item-header:focus {
@@ -441,7 +439,8 @@ export default {
 
 .post-admin-buttons {
   display: flex;
-  column-gap: .31rem;
+  gap: .31rem;
+  flex-wrap: wrap;
 }
 
 .post-admin-button {

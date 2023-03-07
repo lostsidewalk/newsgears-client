@@ -249,7 +249,6 @@ export default {
     return {
       // 
       showModal: false,
-      overflowClass: 'hidden',
       tabModel: [
         {
           "name": "BASIC_PROPERTIES",
@@ -338,7 +337,6 @@ export default {
       this.feedId = feed.id;
       this.feedIdent = feed.ident;
       this.setupFeed();
-      this.overflowClass = 'hidden';
       this.showModal = true;
       this.$nextTick(() => {
         this.$refs.feedIdent.focus();
@@ -349,7 +347,6 @@ export default {
       this.feedId = feed.id;
       this.feedIdent = feed.ident;
       this.setupFeed();
-      this.overflowClass = 'hidden';
       this.selectedTab = 'RSS_ATOM_DISCOVERY';
       this.addRssAtomUrl();
       this.showModal = true;
@@ -359,7 +356,6 @@ export default {
     },
     tearDown() {
       this.clearModel();
-      this.overflowClass = 'scroll';
       this.showModal = false;
     },
     error(error) {
@@ -551,9 +547,13 @@ export default {
 }
 
 .feed-config-button-wrapper {
-  display: inline-grid;
-  grid-auto-flow: column;
-  grid-column-gap: .75rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
 }
 
 .feed-config-button {

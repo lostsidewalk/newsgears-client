@@ -1,5 +1,5 @@
 <template>
-  <button class="settings-button" @click="this.$router.push('/settings');" accesskey="t" :disabled="disabled" aria-label="Go to settings">
+  <button class="settings-button" @click="this.$emit('showSettings')" accesskey="t" :disabled="disabled" aria-label="Go to settings">
     <span class="fa fa-wrench" />&nbsp; Se<i class="underline">t</i>tings
   </button>
 </template>
@@ -8,6 +8,7 @@
 export default {
   name: "SettingsButton", 
   props: [ "disabled", "theme" ],
+  emits: [ "showSettings" ],
 }
 </script>
 

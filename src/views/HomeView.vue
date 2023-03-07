@@ -16,7 +16,7 @@
       :baseUrl="this.baseUrl" 
       :theme="theme" 
       :disabled="inTransit" 
-      @updateServerMessage="this.setLastServerMessage" />
+      @updateServerMessage="setLastServerMessage" />
   </div>
 </template>
   

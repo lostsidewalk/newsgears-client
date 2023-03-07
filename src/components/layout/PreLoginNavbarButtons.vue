@@ -20,7 +20,7 @@ import SignUpButton from '@/components/nav/SignUpButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
 
 export default {
-    name: "NavbarButtons",
+    name: "PreLoginNavbarButtons",
     components: {
       FeedGearsLogo,
       LoginButton, 

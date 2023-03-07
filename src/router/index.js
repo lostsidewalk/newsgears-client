@@ -5,9 +5,7 @@ import PasswordResetRequestView from '@/views/PasswordResetRequestView.vue';
 import PasswordResetCallbackView from '@/views/PasswordResetCallbackView.vue';
 import RegistrationRequestView from '@/views/RegistrationRequestView.vue';
 import VerificationCallbackView from '@/views/VerificationCallbackView.vue';
-import SettingsView from '@/views/SettingsView.vue';
 import OrderConfirmedView from '@/views/OrderConfirmedView.vue';
-import ManageSubscriptionView from '@/views/ManageSubscriptionView.vue';
 import DocsView from '@/views/DocsView.vue';
 import ApiView from '@/views/ApiView.vue';
 import PrivacyPolicyView from '@/views/PrivacyPolicyView.vue';
@@ -63,25 +61,9 @@ const routes = [
     }
   },
   {
-    path: '/settings',
-    name: 'SettingsView',
-    component: SettingsView,
-    props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
-    }
-  },
-  {
     path: '/order-confirmed',
     name: 'OrderConfirmedView',
     component: OrderConfirmedView,
-    props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
-    }
-  },
-  {
-    path: '/manage-subscription',
-    name: 'ManageSubscriptionView',
-    component: ManageSubscriptionView,
     props: {
       baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }
@@ -128,7 +110,6 @@ const titlesByRoute = {
   'VerificationCallbackView': 'FeedGears RSS Email Verification Continuation',
   'SettingsView': 'FeedGears RSS User Settings, Notifications, and Checkout',
   'OrderConfirmedView': 'FeedGears RSS Order Confirmation', 
-  'ManageSubscriptionView': 'FeedGears RSS Subscription Management',
 }
 
 router.beforeEach((to, from, next) => {

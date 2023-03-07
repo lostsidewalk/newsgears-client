@@ -3,7 +3,10 @@
     <!-- fixed header -->
     <NavbarFixedHeader :theme="theme" :inTransit="false">
       <template v-slot:buttons>
-        <NavbarButtons :disableSettings="false" :disableSubscriptions="false" :disabled="false" :theme="theme"/>
+        <ControlPanel 
+          :disabled="false" 
+          :theme="theme" 
+          @updateServerMessage="this.serverMessages.push($event)" />
       </template>
     </NavbarFixedHeader>
     <!-- fixed subheader -->
@@ -35,7 +38,7 @@
   
 <script>
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import NavbarButtons from "@/components/layout/NavbarButtons.vue";
+import ControlPanel from "@/components/layout/ControlPanel.vue";
 import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
 import ViewHeader from "@/components/layout/ViewHeader.vue";
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";
@@ -45,7 +48,7 @@ export default {
   name: "ApiView",
   components: {
     NavbarFixedHeader,
-    NavbarButtons,
+    ControlPanel,
     NavbarFixedSubheader,
     ViewHeader,
     LastServerMessage,

@@ -20,7 +20,7 @@ export default {
   position: fixed;
   left: 16px;
   top: 16px;
-  z-index: 1000;
+  z-index: 99999;
   border: 1px solid v-bind('theme.sectionbordercolor');
   background-color: v-bind('theme.appbg');
   box-shadow: 7px 7px 7px v-bind('theme.navbarsubshadow');

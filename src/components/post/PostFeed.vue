@@ -40,11 +40,12 @@
       ref="helpPanel"
       :theme="theme"
       @dismiss="dismissHelpPanel" />
-    <NavbarFixedHeader :theme="theme" :inTransit="this.selectedFeedId ? false : this.inTransit" :class="this.showNavBar ? '' : 'invisible'">
-      <template v-slot:buttons>
-        <NavbarButtons :disableSettings="false" :disableSubscriptions="false" :disabled="disabled || inTransit" :theme="theme"/>
-      </template>
-    </NavbarFixedHeader>
+    <ControlPanel :baseUrl="baseUrl" 
+      ref="controlPanel"
+      :disabled="disabled || inTransit || isModalShowing" 
+      :theme="theme" 
+      @updateServerMessage="setLastServerMessage" />
+    <NavbarFixedHeader :theme="theme" :inTransit="this.selectedFeedId ? false : this.inTransit" />
     <div class="post-feed-container">
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
@@ -255,7 +256,7 @@ import OpmlUploadPanel from "./opml/OpmlUploadPanel.vue";
 import HelpPanel from "./help/HelpPanel.vue";
 // navbar 
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import NavbarButtons from "@/components/layout/NavbarButtons.vue";
+import ControlPanel from "@/components/layout/ControlPanel.vue";
 // post item panel 
 import ViewHeader from "@/components/layout/ViewHeader.vue";
 // pospt feed media player 
@@ -272,7 +273,7 @@ export default {
     OpmlUploadPanel,
     HelpPanel,
     NavbarFixedHeader,
-    NavbarButtons, 
+    ControlPanel, 
     PostFeedAudio,
     ViewHeader,
     PostItem, 
@@ -443,8 +444,6 @@ export default {
       showFullInboundQueueHeader: false,
       // show the feed filter pills in the inbound queue header (t/f)
       showFeedFilterPills: false, // show filter pills t/f 
-      // show the nav bar (t/f) 
-      showNavBar: true,
       // 
       inTransit: false,
 
@@ -502,7 +501,6 @@ export default {
       document.activeElement.blur();
       this.showHelpPanel = true;
       this.$refs.helpPanel.show();
-      this.showNavBar = false;
     },
     dismissHelpPanel() {
       this.showHelpPanel = false;
@@ -1041,13 +1039,11 @@ export default {
       document.activeElement.blur();
       this.showFeedConfigPanel = true;
       this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [{ id: 1, }] });
-      this.showNavBar = false;
     },
     uploadOpml() {
       document.activeElement.blur();
       this.showOpmlUploadPanel = true;
       this.$refs.opmlUploadPanel.show();
-      this.showNavBar = false;
     },
     validateFeed(feed) {
       if (this.len(feed.ident) > 2048) {
@@ -1123,24 +1119,20 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
-          this.showNavBar = true;
         });
       }).catch((error) => {
         this.handleServerError(error);
         this.inTransit = false;
-        this.showNavBar = true;
       });
     },
     cancelOpmlUpload() {
       this.$refs.opmlUploadPanel.hide();
       this.showOpmlUploadPanel = false;
-      this.showNavBar = true;
     },
     configureFeed(feedId) {
       document.activeElement.blur();
       this.$refs.feedConfigPanel.setup(this.getFeedById(feedId));
       this.showFeedConfigPanel = true;
-      this.showNavBar = false;
     },
     createOrUpdateFeed(feed) {
       try {
@@ -1214,20 +1206,17 @@ export default {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
-          this.showNavBar = true;
         });
       }).catch((error) => {
         // push the error to the modal since this method is only called by an emission from the modal, and we don't close the modal in this path 
         // this.$refs.feedConfigPanel.error(error);
         this.handleServerError(error); 
         this.inTransit = false;
-        this.showNavBar = true;
       });
     },
     cancelCreateOrUpdateFeed() {
       this.$refs.feedConfigPanel.tearDown();
       this.showFeedConfigPanel = false;
-      this.showNavBar = true;
     },
     // 
     // RSS/ATOM URL quick add 
@@ -1236,7 +1225,6 @@ export default {
       document.activeElement.blur();
       this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(feedId));
       this.showFeedConfigPanel = true;
-      this.showNavBar = false;
     },
     // 
     // delete queue 
@@ -1245,7 +1233,6 @@ export default {
       document.activeElement.blur();
       this.feedIdToDelete = feedId;
       this.$refs.feedDeleteConfirmationModal.show();
-      this.showNavBar = false;
     },
     performFeedDelete() {
       console.log("post-feed: deleting feed id=" + this.feedIdToDelete);
@@ -1287,20 +1274,17 @@ export default {
           this.feedIdToDelete = null;
           this.$refs.feedDeleteConfirmationModal.hide();
           this.inTransit = false;
-          this.showNavBar = true;
         });
       }).catch((error) => {
         this.handleServerError(error);
         this.feedIdToDelete = null;
         this.$refs.feedDeleteConfirmationModal.hide();
         this.inTransit = false;
-        this.showNavBar = true;
       });
     },
     cancelFeedDelete() {
       this.feedIdToDelete = null;
       this.$refs.feedDeleteConfirmationModal.hide();
-      this.showNavBar = true;
     },
     // 
     // mark queue as read 
@@ -1309,7 +1293,6 @@ export default {
       document.activeElement.blur();
       this.feedIdToMarkAsRead = this.selectedFeedId;
       this.$refs.feedMarkAsReadConfirmationModal.show();
-      this.showNavBar = false;
     },
     markFeedAsRead(feedId) {
       document.activeElement.blur();
@@ -1348,20 +1331,17 @@ export default {
           this.feedIdToMarkAsRead = null;
           this.$refs.feedMarkAsReadConfirmationModal.hide();
           this.inTransit = false;
-          this.showNavBar = true;
         });
       }).catch((error) => {
         this.handleServerError(error);
         this.feedIdToMarkAsRead = null;
         this.$refs.feedMarkAsReadConfirmationModal.hide();
         this.inTransit = false;
-        this.showNavBar = true;
       });
     },
     cancelFeedMarkAsRead() {
       this.feedIdToMarkAsRead = null;
       this.$refs.feedMarkAsReadConfirmationModal.hide();
-      this.showNavBar = true;
     },
     // 
     // data model methods 
@@ -1467,7 +1447,7 @@ export default {
       }
       // esc key handling 
       if (event.key === 'Escape') {
-        if (!this.isModalShowing) {
+        if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel) {
           document.activeElement.blur();
         } else {
           // TODO: extract to cancelFeedDelete' 
@@ -1480,12 +1460,12 @@ export default {
           this.dismissHelpPanel();
           this.cancelCreateOrUpdateFeed();
           this.cancelOpmlUpload();
-          this.showNavBar = true;
+          this.$refs.controlPanel.showSettingsPanel = false;
         }
         return;
       }
       // bail if a modal is showing
-      if (this.isModalShowing) {
+      if (this.isModalShowing || this.$refs.controlPanel.showSettingsPanel) {
         return;
       }
       // handle post-related key events 
