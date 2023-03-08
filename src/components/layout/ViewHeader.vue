@@ -82,6 +82,6 @@ export default {
 }
 
 .hidden {
-  visibility: none;
+  visibility: hidden;
 }
 </style>

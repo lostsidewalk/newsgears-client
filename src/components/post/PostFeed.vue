@@ -62,14 +62,32 @@
                 </div>
               </template>
               <template v-slot:toolbar>
-                <!-- new queue button -->
-                <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
-                  <i class="underline">N</i>ew Queue
-                </button>
-                <!-- upload OPML button -->
-                <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
-                  Upload OP<i class="underline">M</i>L
-                </button>
+                <div v-if="this.showQueueDashboard">
+                  <!-- new queue button -->
+                  <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
+                    <i class="underline">N</i>ew Queue
+                  </button>
+                  <!-- upload OPML button -->
+                  <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
+                    Upload OP<i class="underline">M</i>L
+                  </button>
+                  <!-- queue config button -->
+                  <button v-if="this.selectedFeedId"
+                    class="header-button" 
+                    @click.stop="this.configureFeed(this.selectedFeedId)" 
+                    :disabled="disabled || inTransit || isModalShowing" 
+                    title="Configure this feed">
+                    Configur<i class="underline">e</i> this feed &nbsp; <span class="fa fa-wrench"></span>
+                  </button>
+                  <!-- delete queue button -->
+                  <button v-if="this.selectedFeedId"
+                    class="header-button" 
+                    @click.stop="this.deleteFeed(this.selectedFeedId)" 
+                    :disabled="disabled || inTransit || isModalShowing" 
+                    title="Delete this feed">
+                    Delete this feed &nbsp; <span class="fa fa-trash"></span>
+                  </button>
+                </div>
               </template>
           </ViewHeader>
           <ViewHeader v-if="this.showFeedConfigPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
@@ -156,13 +174,6 @@
                         aria-label="Refresh feeds">
                         <span class="fa fa-refresh"/>
                       </button>
-                      <!-- queue config button -->
-                      <button class="feed-filter-button" 
-                        @click.stop="this.configureFeed(this.selectedFeedId)" 
-                        :disabled="disabled || inTransit || isModalShowing" 
-                        title="Configure this feed">
-                        <span class="fa fa-wrench"></span>
-                      </button>
                       <!-- mark as read button -->
                       <button class="feed-filter-button"
                         @click.stop="this.markFeedAsRead(this.selectedFeedId)"
@@ -170,19 +181,12 @@
                         title="Mark this queue as read">
                         <span class="fa fa-eye"></span>
                       </button>
-                      <!-- delete queue button -->
-                      <button class="feed-filter-button" 
-                        @click.stop="this.deleteFeed(this.selectedFeedId)" 
-                        :disabled="disabled || inTransit || isModalShowing" 
-                        title="Delete this feed">
-                        <span class="fa fa-trash"></span>
-                      </button>
                       <!-- show feed filter pills button -->
                       <button class="feed-filter-button" 
                         @click="this.showFeedFilterPills = !this.showFeedFilterPills"
                         :disabled="disabled || inTransit || isModalShowing" 
                         aria-label="Show filter options">
-                        <span class="fa fa-eye"/>
+                        <span class="fa fa-gears"/>
                       </button>
                     </div>
                   </div>
