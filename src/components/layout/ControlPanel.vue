@@ -2,11 +2,11 @@
   <div>
     <div>
       <!-- logout button -->
-      <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="disabled || this.showSettingsPanel" :theme="theme" />
+      <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="disabled" :theme="theme" />
       <!-- settings button -->
       <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
       <!-- display mode switch -->
-      <DisplayModeButton :disabled="disabled || this.showSettingsPanel" :theme="theme" />
+      <DisplayModeButton :disabled="disabled" :theme="theme" />
     </div>
     <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
       :theme="theme" 
