@@ -133,7 +133,7 @@
         <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
           <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId">
-            <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+            <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit || isModalShowing" :inTransit="false" :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-gears fa-1x"/>
                 {{ this.getFeedById(this.selectedFeedId).ident }}
