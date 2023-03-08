@@ -153,7 +153,7 @@
             @playFirstEnclosure="onPlayFirstEnclosure" />
         </div>
         <!-- post enclosures -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.enclosures && !post.postITunes)">
+        <div class="post-item-row" v-if="(this.showPostDetails && post.enclosures)">
           <PostEnclosure v-for="(enclosure,idx) in post.enclosures" :key="enclosure"
             :ref="'postEnclosure_' + idx"
             :theme="theme"

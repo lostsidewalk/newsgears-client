@@ -48,7 +48,7 @@ export default {
       return this.enclosure.type === "image" || this.enclosure.type.indexOf("image") === 0;
     },
     isVideo() {
-      return this.enclosure.type.indexOf("shockwave-flash") >= 0;
+      return this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("video/mp4") >= 0;
     },
     isAudio() {
       return this.enclosure.type.indexOf("audio/mpeg") >= 0;
