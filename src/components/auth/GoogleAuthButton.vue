@@ -19,6 +19,7 @@ export default {
 <style scoped>
 .login-with-google-btn {
   max-width: 256px;
+  min-height: 3rem;
   padding: .75rem 1rem .75rem 2.625rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.buttonborder');

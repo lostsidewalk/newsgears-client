@@ -17,7 +17,7 @@
         <!-- tab panel -->
         <div class="tabbed-panel">
           <!-- tab 1: settings -->
-          <div class="tab">
+          <div class="tab" v-if="isLoaded">
             <!-- oauth2 profile (remote) -->
             <div class="settings-field" style="flex-direction: row;" v-if="authProvider !== 'LOCAL'">
               <!-- profile image -->
