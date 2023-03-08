@@ -627,7 +627,7 @@ export default {
 /** has references */
 .post-wrapper-selected, .post-wrapper-selected:hover, .post-wrapper-selected:focus-visible {
   color: v-bind('theme.normalmessage');
-  border: 1px solid lightblue !important;
+  border: 1px solid v-bind('theme.fieldborderhighlight') !important;
 }
 
 .post-item-wrapper {
