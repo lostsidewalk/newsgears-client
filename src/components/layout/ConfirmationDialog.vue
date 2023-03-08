@@ -48,8 +48,10 @@ export default {
   left: 0;
   right: 0;
   width: 100%;
-  height: 100%;
+  overflow-y: auto;
   z-index: 1000;
+  border: 1px solid transparent;
+  border-radius: 5px;
 }
 
 .modal-body {
@@ -58,11 +60,11 @@ export default {
   text-align: center;
   width: 100%;
   height: 100%;
-  padding: 2rem;
+  padding-top: 2rem;
+  padding-left: .125rem;
+  padding-right: .125rem;
   padding-bottom: 1rem;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  border: 0px;
-  border-radius: 5px;
 }
 
 .modal-actions {

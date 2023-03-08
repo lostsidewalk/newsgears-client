@@ -162,15 +162,6 @@
           </div>
         </div>
       </div>
-      <!-- button panel -->
-      <div class="settings-button-wrapper">
-        <!-- cancel button -->
-        <button class="header-button" 
-          @click="cancelSettings" 
-          :disabled="inTransit">
-          Cancel
-        </button>
-      </div>
     </div>
   </div>
 </template>
@@ -198,7 +189,7 @@ export default {
     }
   },
   props: [ "baseUrl", "theme" ],
-  emits: ["updateServerMessage", "cancel"],
+  emits: ["updateServerMessage"],
   components: {
     NavbarFixedHeader,
     TabHeader,
@@ -689,14 +680,12 @@ export default {
 .modal-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 2%;
-  left: 2%;
-  right: 0;
-  width: 96%;
+  width: 100%;
   height: auto;
+  overflow-y: auto;
   z-index: 1000;
+  border: 1px solid transparent;
+  border-radius: 5px;
 }
 
 .modal-header {
@@ -708,26 +697,13 @@ export default {
   color: v-bind('theme.normalmessage');
   text-align: left;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   padding: 2rem;
-  padding-bottom: 1rem;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  border: 0px;
-  border-radius: 5px;
 }
 
 .modal-actions {
   padding-top: .75rem;
-}
-
-.settings-button-wrapper {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
-  gap: .5rem;
 }
 
 .header-button {
@@ -765,9 +741,6 @@ export default {
   border-radius: 0px 0px 3px 3px;
   margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  min-height: 50vh;
-  max-height: 50vh;
-  overflow-y: scroll;
 }
 
 .tab {

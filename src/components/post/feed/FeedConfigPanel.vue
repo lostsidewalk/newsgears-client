@@ -1,13 +1,7 @@
 <template>
   <div class="modal-container" v-if="this.showModal">
     <div class="modal-body">
-      <div class="modal-header">
-        <h3 class="view-header-no-count">
-          <span class="fa fa-feed fa-1x" />
-          {{ this.getModeVerbiage() }}
-          <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-        </h3>
-      </div>
+      <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
       <div class="modal-actions">
         <TabHeader :tabModel="tabModel" 
           :selectedTab="selectedTab" 
@@ -365,13 +359,6 @@ export default {
     handleAuthError(error) {
       this.$emit('authError', error);
     },
-    getModeVerbiage() {
-      if (this.feedId) {
-        return 'CONFIGURE QUEUE: ' + this.feedIdent;
-      } else {
-        return 'CREATE A NEW QUEUE';
-      }
-    },
     setupFeed() {
       // setup feed 
       this.feedId = this.feed.id;
@@ -515,14 +502,9 @@ export default {
 .modal-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 2%;
-  left: 2%;
-  right: 0;
-  width: 96%;
-  height: auto;
-  z-index: 1000;
+  width: 100%;
+  height: 96vh;
+  overflow-y: auto;
 }
 
 .modal-header {
@@ -530,16 +512,12 @@ export default {
 }
 
 .modal-body {
-  background: v-bind('theme.modalbodybg');
   color: v-bind('theme.normalmessage');
   text-align: left;
   width: 100%;
-  height: 100%;
-  padding: 2rem;
-  padding-bottom: 1rem;
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  border: 0px;
-  border-radius: 5px;
+  height: fit-content;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 
 .modal-actions {
@@ -559,7 +537,7 @@ export default {
 .feed-config-button {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');;
+  color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .44rem 1.25rem;
   cursor: pointer;
@@ -598,8 +576,7 @@ export default {
   margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   min-height: 50vh;
-  max-height: 50vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .tab {

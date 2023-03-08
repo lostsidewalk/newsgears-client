@@ -4,7 +4,7 @@
       <h3 class="view-header-count">
         <slot name="count" />
       </h3>
-      <MinMaxButton v-if="collapsible" class="min-max-button" @toggle="this.$emit('toggle')" :show="show" :theme="theme" :disabled="disabled || inTransit" />
+      <MinMaxButton :class="{ 'hidden': !collapsible }" class="min-max-button" @toggle="this.$emit('toggle')" :show="show" :theme="theme" :disabled="disabled || inTransit" />
     </span>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <slot name="body" />
@@ -79,5 +79,9 @@ export default {
 .view-header-toolbar {
   border-top: 0px;
   border-radius: 0px 0px 4px 4px;
+}
+
+.hidden {
+  visibility: none;
 }
 </style>

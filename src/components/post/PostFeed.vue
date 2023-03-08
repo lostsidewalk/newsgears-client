@@ -15,27 +15,6 @@
       @confirm="performFeedMarkAsRead" 
       @cancel="cancelFeedMarkAsRead"
       prompt="Mark all items in this queue as read?" />
-    <!-- feed configuration panel modal (hidden) -->
-    <FeedConfigPanel ref="feedConfigPanel"
-      :disabled="disabled || inTransit"
-      :theme="theme"
-      :baseUrl="baseUrl" 
-      :allNewsApiV2Sources="allNewsApiV2Sources"
-      :allNewsApiV2Countries="allNewsApiV2Countries"
-      :allNewsApiV2Categories="allNewsApiV2Categories"
-      :allNewsApiV2Languages="allNewsApiV2Languages"
-      :rssAtomFeedCatalog="rssAtomFeedCatalog"
-      @saveOrUpdate="createOrUpdateFeed"
-      @cancel="cancelCreateOrUpdateFeed"
-      @authError="handleServerError" />
-    <!-- OPML upload panel modal (hidden) -->
-    <OpmlUploadPanel ref="opmlUploadPanel"
-      :disabled="disabled || inTransit" 
-      :theme="theme"
-      :baseUrl="baseUrl" 
-      @finalizeUpload="createOpmlFeeds"
-      @cancel="cancelOpmlUpload"
-      @authError="handleServerError" />
     <HelpPanel 
       ref="helpPanel"
       :theme="theme"
@@ -50,11 +29,17 @@
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
         <div class="feed-select-view" :class="{ 
-          invisible: this.isModalShowing, 
           'feed-select-view-selected': this.selectedFeedId, 
           'feed-select-view-collapsed': !this.showFeedSelectView
         }">
-          <ViewHeader :sticky="true" :collapsible="true" @toggle="this.showQueueDashboard = !this.showQueueDashboard" :show="this.showQueueDashboard" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
+          <ViewHeader v-if="!this.showFeedConfigPanel && !this.showOpmlUploadPanel" 
+            :sticky="true" 
+            :collapsible="true" 
+            :show="this.showQueueDashboard" 
+            :disabled="disabled || inTransit || isModalShowing" 
+            :inTransit="inTransit" 
+            :theme="theme"
+            @toggle="this.showQueueDashboard = !this.showQueueDashboard">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
                 QUEUE DASHBOARD
@@ -68,7 +53,7 @@
                         :inboundCount="this.countInboundQueue(feed.id)" 
                         :publishedCount="this.countOutboundQueue(feed.id)" 
                         :class="this.selectedFeedId === feed.id ? 'selected-feed' : ''"
-                        :disabled="disabled || inTransit" 
+                        :disabled="disabled || inTransit || isModalShowing" 
                         :theme="theme" 
                         @click.stop="this.setSelectedFeedId(feed.id)" 
                         @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" />
@@ -78,22 +63,59 @@
               </template>
               <template v-slot:toolbar>
                 <!-- new queue button -->
-                <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit">
+                <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
                   <i class="underline">N</i>ew Queue
                 </button>
                 <!-- upload OPML button -->
-                <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit">
+                <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
                   Upload OP<i class="underline">M</i>L
                 </button>
               </template>
+          </ViewHeader>
+          <ViewHeader v-if="this.showFeedConfigPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+            <template v-slot:count>
+              <span class="fa fa-feed fa-1x"/>
+              QUEUE SETTINGS
+            </template>
+            <template v-slot:body>
+              <!-- feed configuration panel modal (hidden) -->
+              <FeedConfigPanel ref="feedConfigPanel"
+                :disabled="disabled || inTransit"
+                :theme="theme"
+                :baseUrl="baseUrl" 
+                :allNewsApiV2Sources="allNewsApiV2Sources"
+                :allNewsApiV2Countries="allNewsApiV2Countries"
+                :allNewsApiV2Categories="allNewsApiV2Categories"
+                :allNewsApiV2Languages="allNewsApiV2Languages"
+                :rssAtomFeedCatalog="rssAtomFeedCatalog"
+                @saveOrUpdate="createOrUpdateFeed"
+                @cancel="cancelCreateOrUpdateFeed"
+                @authError="handleServerError" />
+            </template>
+          </ViewHeader>
+          <ViewHeader v-if="this.showOpmlUploadPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+            <template v-slot:count>
+              <span class="fa fa-feed fa-1x"/>
+              OPML UPLOAD
+            </template>
+            <template v-slot:body>
+              <!-- OPML upload panel modal (hidden) -->
+              <OpmlUploadPanel ref="opmlUploadPanel"
+                :disabled="disabled || inTransit" 
+                :theme="theme"
+                :baseUrl="baseUrl" 
+                @finalizeUpload="createOpmlFeeds"
+                @cancel="cancelOpmlUpload"
+                @authError="handleServerError" />
+            </template>
           </ViewHeader>
         </div>
         <button v-if="this.selectedFeedId" class="toggle-feed-select-view" @click="this.showFeedSelectView = !this.showFeedSelectView" />
         <!-- right side -->
         <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
-          <div id="staging-header-view" class="staging-header-view" :class="this.isModalShowing ? 'invisible' : ''" v-if="this.selectedFeedId">
-            <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit" :inTransit="inTransit" :theme="theme">
+          <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId">
+            <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-gears fa-1x"/>
                 {{ this.getFeedById(this.selectedFeedId).ident }}
@@ -105,60 +127,60 @@
                   <label>ARTICLE QUEUE {{ '(' + this.filteredInboundQueue.length + ' ARTICLES MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + this.totalPages + ')' }}</label>
                   <div class="feed-filter">
                     <!-- feed filter input -->
-                    <input id="feed-filter" type="text" v-model="inboundQueueFilter" placeholder="Filter" :disabled="disabled || inTransit" />
+                    <input id="feed-filter" type="text" v-model="inboundQueueFilter" placeholder="Filter" :disabled="disabled || inTransit || isModalShowing" />
                     <div class="feed-filter-buttons">
                       <!-- first page button-->
-                      <button v-if="needsPagination()" title="first" class="feed-filter-button" @click="firstPage" :disabled="disabled || inTransit">
+                      <button v-if="needsPagination()" title="first" class="feed-filter-button" @click="firstPage" :disabled="disabled || inTransit || isModalShowing">
                         <span class="fa fa-angle-double-left"/>
                       </button>
                       <!-- previous page button -->
-                      <button v-if="needsPagination()" title="previous" class="feed-filter-button" @click="previousPage" :disabled="disabled || inTransit">
+                      <button v-if="needsPagination()" title="previous" class="feed-filter-button" @click="previousPage" :disabled="disabled || inTransit || isModalShowing">
                         <span class="fa fa-angle-left"/>
                       </button>
                       <!-- next page button -->
-                      <button v-if="needsPagination()" title="next" class="feed-filter-button" @click="nextPage" :disabled="disabled || inTransit">
+                      <button v-if="needsPagination()" title="next" class="feed-filter-button" @click="nextPage" :disabled="disabled || inTransit || isModalShowing">
                         <span class="fa fa-angle-right"/>
                       </button>
                       <!-- last page button-->
-                      <button v-if="needsPagination()" title="last" class="feed-filter-button" @click="lastPage" :disabled="disabled || inTransit">
+                      <button v-if="needsPagination()" title="last" class="feed-filter-button" @click="lastPage" :disabled="disabled || inTransit || isModalShowing">
                         <span class="fa fa-angle-double-right"/>
                       </button>
                       <!-- sort direction button -->
-                      <button class="feed-filter-button" @click="toggleInboundQueueSortOrder()" :disabled="disabled || inTransit" aria-label="Toggle sort order">
+                      <button class="feed-filter-button" @click="toggleInboundQueueSortOrder()" :disabled="disabled || inTransit || isModalShowing" aria-label="Toggle sort order">
                         <span :class="'fa fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
                       </button>
                       <!-- refresh feed button -->
                       <button class="feed-filter-button" 
                         @click="refreshFeeds(false, null, false)"
-                        :disabled="disabled || inTransit" 
+                        :disabled="disabled || inTransit || isModalShowing" 
                         aria-label="Refresh feeds">
                         <span class="fa fa-refresh"/>
                       </button>
                       <!-- queue config button -->
                       <button class="feed-filter-button" 
                         @click.stop="this.configureFeed(this.selectedFeedId)" 
-                        :disabled="disabled || inTransit" 
+                        :disabled="disabled || inTransit || isModalShowing" 
                         title="Configure this feed">
                         <span class="fa fa-wrench"></span>
                       </button>
                       <!-- mark as read button -->
                       <button class="feed-filter-button"
                         @click.stop="this.markFeedAsRead(this.selectedFeedId)"
-                        :disabled="disabled || inTransit"
+                        :disabled="disabled || inTransit || isModalShowing"
                         title="Mark this queue as read">
                         <span class="fa fa-eye"></span>
                       </button>
                       <!-- delete queue button -->
                       <button class="feed-filter-button" 
                         @click.stop="this.deleteFeed(this.selectedFeedId)" 
-                        :disabled="disabled || inTransit" 
+                        :disabled="disabled || inTransit || isModalShowing" 
                         title="Delete this feed">
                         <span class="fa fa-trash"></span>
                       </button>
                       <!-- show feed filter pills button -->
                       <button class="feed-filter-button" 
                         @click="this.showFeedFilterPills = !this.showFeedFilterPills"
-                        :disabled="disabled || inTransit" 
+                        :disabled="disabled || inTransit || isModalShowing" 
                         aria-label="Show filter options">
                         <span class="fa fa-eye"/>
                       </button>
@@ -170,22 +192,22 @@
                   <!-- post status filter pills -->
                   <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('UNREAD', this.feedFilterModes) }" 
                     @click="toggleFeedFilterMode('UNREAD')"
-                    :disabled="disabled || inTransit">
+                    :disabled="disabled || inTransit || isModalShowing">
                       UNREAD
                   </button>
                   <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('READ_LATER', this.feedFilterModes) }" 
                     @click="toggleFeedFilterMode('READ_LATER')"
-                    :disabled="disabled || inTransit">
+                    :disabled="disabled || inTransit || isModalShowing">
                       READ-LATER
                   </button>
                   <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('READ', this.feedFilterModes) }" 
                     @click="toggleFeedFilterMode('READ')"
-                    :disabled="disabled || inTransit">
+                    :disabled="disabled || inTransit || isModalShowing">
                       READ
                   </button>
                   <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('PUBLISHED', this.feedFilterModes) }" 
                     @click="toggleFeedFilterMode('PUBLISHED')"
-                    :disabled="disabled || inTransit">
+                    :disabled="disabled || inTransit || isModalShowing">
                       STARRED
                   </button>
                 </div>
@@ -195,7 +217,7 @@
                   <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
                     class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
                     @click="toggleFeedFilterSubscription(subscription)"
-                    :disabled="disabled || inTransit">
+                    :disabled="disabled || inTransit || isModalShowing">
                       {{ subscription }}
                   </button>
                 </div>
@@ -205,7 +227,7 @@
                   <button v-for="category of this.allPostCategories" :key="category"
                     class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
                     @click="toggleFeedFilterCategory(category)"
-                    :disabled="disabled || inTransit">
+                    :disabled="disabled || inTransit || isModalShowing">
                       {{ category }}
                   </button>
                 </div>
@@ -215,18 +237,18 @@
             </ViewHeader>
           </div>
           <!-- inbound queue -- hide when modal is showing -->
-          <div class="staging-view" :class="this.isModalShowing ? 'invisible' : ''" v-if="this.selectedFeedId">
+          <div class="staging-view" v-if="this.selectedFeedId">
             <div>
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" :post="post"
                 :id="'post_' + post.id"
                 :ref="'post_' + post.id"
-                :disabled="disabled || inTransit"
+                :disabled="disabled || inTransit || isModalShowing"
                 :theme="theme" 
                 :baseUrl="baseUrl"
                 :isSelected="this.selectedPostId === post.id"
                 tabindex="0"
-                @keypress.self="setSelectedPost($event, post.id)"
-                @click.prevent="setSelectedPost($event, post.id)"
+                @keypress.self="isModalShowing ? false : setSelectedPost($event, post.id)"
+                @click.prevent="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @setActive="setSelectedPost($event, post.id, false)" 
                 @openPostUrl="openPostUrl(post.id)"
                 @updatePostReadStatus="updatePostReadStatus"
@@ -422,7 +444,7 @@ export default {
       return Array.from(subscriptions);
     },
     isModalShowing: function() {
-      return (this.feedIdToDelete || this.feedIdToMarkAsRead || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showHelpPanel);
+      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
     }
   },
   data() {
@@ -1038,12 +1060,13 @@ export default {
     newFeed() {
       document.activeElement.blur();
       this.showFeedConfigPanel = true;
-      this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [{ id: 1, }] });
+      this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [{ id: 1, }] }));
+      
     },
     uploadOpml() {
       document.activeElement.blur();
       this.showOpmlUploadPanel = true;
-      this.$refs.opmlUploadPanel.show();
+      this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },
     validateFeed(feed) {
       if (this.len(feed.ident) > 2048) {
@@ -1131,8 +1154,8 @@ export default {
     },
     configureFeed(feedId) {
       document.activeElement.blur();
-      this.$refs.feedConfigPanel.setup(this.getFeedById(feedId));
       this.showFeedConfigPanel = true;
+      this.$nextTick(() => this.$refs.feedConfigPanel.setup(this.getFeedById(feedId)));
     },
     createOrUpdateFeed(feed) {
       try {
@@ -1223,8 +1246,8 @@ export default {
     // 
     rssAtomUrlQuickAdd(feedId) {
       document.activeElement.blur();
-      this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(feedId));
       this.showFeedConfigPanel = true;
+      this.$nextTick(() => this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(feedId)));
     },
     // 
     // delete queue 

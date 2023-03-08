@@ -4,7 +4,7 @@
       <!-- logout button -->
       <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="disabled || this.showSettingsPanel" :theme="theme" />
       <!-- settings button -->
-      <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled || this.showSettingsPanel" :theme="theme" />
+      <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
       <!-- display mode switch -->
       <DisplayModeButton :disabled="disabled || this.showSettingsPanel" :theme="theme" />
     </div>
@@ -12,8 +12,7 @@
       :theme="theme" 
       :disabled="disabled" 
       :baseUrl="baseUrl" 
-      @updateServerMessage="setLastServerMessage" 
-      @cancel="cancelSettings" />
+      @updateServerMessage="setLastServerMessage" />
   </div>
 </template>
 

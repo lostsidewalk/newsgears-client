@@ -1,13 +1,7 @@
 <template>
   <div class="modal-container" v-if="this.showModal">
     <div class="modal-body">
-      <div class="modal-header">
-        <h3 class="view-header-no-count">
-          <span class="fa fa-feed fa-1x" />
-          OPML UPLOAD
-          <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-        </h3>
-      </div>
+      <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
       <div class="modal-actions">
         <div class="opml-upload-field">
           <input type="file" ref="fileInput" multiple @change="eventHandler" style="display: none;" />
@@ -51,12 +45,13 @@
         </div>
       </div>
       <!-- save | cancel | back buttons -->
-      <div>
-        <button ref="continueOrFinalizeButton"
+      <div class="opml-upload-button-wrapper">
+        <!-- continue/finalize button -->
+        <button class="opml-upload-button" 
           @click="this.feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()" 
-          class="opml-upload-button" 
           :disabled="disabled || inTransit || (!this.files.length)" 
-          :title="this.feedConfigRequests.length > 0 ? 'Finalize upload' : (this.files.length ? 'Continue' : 'Add at least one OPML file to continue.')">
+          :title="this.feedConfigRequests.length > 0 ? 'Finalize upload' : (this.files.length ? 'Continue' : 'Add at least one OPML file to continue.')"
+          ref="continueOrFinalizeButton">
           {{ this.feedConfigRequests.length > 0 ? 'Finalize upload' : 'Continue to step (2)' }}
         </button>
         <button v-if="atStep2" 
@@ -222,14 +217,9 @@ export default {
 .modal-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 2%;
-  left: 2%;
-  right: 0;
-  width: 96%;
-  height: auto;
-  z-index: 1000;
+  width: 100%;
+  height: 96vh;
+  overflow-y: auto;
 }
 
 .modal-header {
@@ -237,30 +227,26 @@ export default {
 }
 
 .modal-body {
-  background: v-bind('theme.modalbodybg');
   color: v-bind('theme.normalmessage');
   text-align: left;
   width: 100%;
-  height: 100%;
-  padding: 2rem;
-  padding-bottom: 1rem;
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-  border: 0px;
-  border-radius: 5px;
+  height: fit-content;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 
 .modal-actions {
   padding-top: .75rem;
 }
 
-.view-header-no-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
-  overflow: hidden;
+.opml-upload-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
 }
 
 .opml-upload-field {
@@ -287,7 +273,6 @@ export default {
   cursor: pointer;
   float: left;
   border-radius: 3px;
-  margin-right: .75rem;
   text-align: center;
   min-width: 3rem;
   min-height: 3rem;
@@ -303,6 +288,12 @@ export default {
 
 .opml-upload-button:hover:disabled {
   background-color: unset;
+}
+
+.error > input, .error > textarea {
+  border: 1px solid v-bind('theme.errorborder') !important;
+  box-shadow: 1px 1px 1px v-bind('theme.errorshadow') !important;
+  background-color: v-bind('theme.errorbg') !important;
 }
 
 .opml-file-action-button {
@@ -398,12 +389,6 @@ export default {
 .opml-upload-summary-header {
   padding-bottom: .75rem;
   border-bottom: 1px solid black;
-}
-
-.error > input, .error > textarea {
-  border: 1px solid v-bind('theme.errorborder') !important;
-  box-shadow: 1px 1px 1px v-bind('theme.errorshadow') !important;
-  background-color: v-bind('theme.errorbg') !important;
 }
 
 @keyframes load {
