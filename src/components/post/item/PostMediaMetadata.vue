@@ -32,7 +32,7 @@ p {
 }
 
 pre {
-  font-family: system-ui, system-ui, sans-serif
+  font-family: 'Merriweather', system-ui, system-ui, sans-serif
 }
 
 .post-media-metadata {

@@ -100,7 +100,7 @@ export default {
 }
 
 .fancy {
-  font-family: math; /* oh yeah */
+  font-family: 'Merriweather';
   font-weight: bold;
   text-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }

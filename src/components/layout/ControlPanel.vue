@@ -1,6 +1,7 @@
 <template>
   <div>
     <div>
+      <FeedGearsLogo :theme="theme" />
       <!-- logout button -->
       <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="disabled" :theme="theme" />
       <!-- settings button -->
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+import FeedGearsLogo from '@/components/nav/FeedGearsLogo.vue';
 import SettingsPanel from '@/components/settings/SettingsPanel.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';
 import SettingsButton from '@/components/nav/SettingsButton.vue';
@@ -25,6 +27,7 @@ import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
 export default {
     name: "ControlPanel",
     components: {
+      FeedGearsLogo,
       SettingsPanel,
       LogoutButton,
       SettingsButton, 

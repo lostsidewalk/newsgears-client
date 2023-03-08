@@ -60,7 +60,7 @@ const DARK_THEME = {
   logosubshadow: 'slateblue', // banner 
   modalbodybg: '#141414',
   navbarshadow: 'cornflowerblue', 
-  navbarsubshadow: 'rgb(255 255 255 / 75%)', 
+  navbarsubshadow: 'rgb(255 255 255 / 5%)', 
   subduedmessage: 'rgb(136,136,136)', // links, detail messages, etc. 
   normalmessage: 'rgb(136,136,136)', // foreground text 
   highlightedmessage: 'rgba(144,238,144,0.7)', // hover effect for messages 

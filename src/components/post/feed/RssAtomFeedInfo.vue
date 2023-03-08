@@ -25,7 +25,7 @@
         <!-- title -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-title">
           <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
-            {{ this.info.title.value }}
+            {{ this.info.title.value ? this.info.title.value : this.info.feedUrl }}
           </a>
         </div>
         <!-- author -->
