@@ -1658,7 +1658,7 @@ export default {
   min-height: 3rem;
 }
 
-.header-button:hover, .header-button:focus {
+.header-button:hover, .header-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -1680,7 +1680,7 @@ export default {
   cursor: pointer;
 }
 
-.toggle-feed-select-view:hover, .toggle-feed-select-view:focus {
+.toggle-feed-select-view:hover, .toggle-feed-select-view:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -1796,7 +1796,7 @@ footer {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: .125rem;
   resize: none;
 }
@@ -1811,7 +1811,7 @@ footer {
   width: 100%;
 }
 
-.feed-filter input:hover, .feed-filter > input:focus {
+.feed-filter input:hover, .feed-filter > input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -1842,7 +1842,7 @@ footer {
   min-height: 3rem;
 }
 
-.feed-filter-button:hover, .feed-filter-button:focus {
+.feed-filter-button:hover, .feed-filter-button:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -1888,7 +1888,7 @@ footer {
   min-height: 3rem;
 }
 
-.br-pill:hover, .br-pill:focus {
+.br-pill:hover, .br-pill:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
 }
 

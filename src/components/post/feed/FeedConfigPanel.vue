@@ -552,7 +552,7 @@ export default {
   cursor: auto;
 }
 
-.feed-config-button:hover, .feed-config-button:focus {
+.feed-config-button:hover, .feed-config-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

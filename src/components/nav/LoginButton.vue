@@ -31,7 +31,7 @@ export default {
   cursor: auto;
 }
 
-.login-button:hover, .login-button:focus {
+.login-button:hover, .login-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

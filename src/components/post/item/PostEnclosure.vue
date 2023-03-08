@@ -78,7 +78,7 @@ export default {
   width: 100%;
 }
 
-.post-enclosure > span:hover, .post-enclosure > span:focus {
+.post-enclosure > span:hover, .post-enclosure > span:focus-visible {
   /* cursor: pointer; */
   text-decoration: underline;
 }
@@ -94,7 +94,7 @@ export default {
   object-fit: scale-down;
 }
 
-.post-enclosure-image:hover, .post-enclosure-image:focus {
+.post-enclosure-image:hover, .post-enclosure-image:focus-visible {
   cursor: pointer;
 }
 </style>

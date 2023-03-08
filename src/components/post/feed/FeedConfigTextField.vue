@@ -62,7 +62,7 @@ export default {
 }
 
 .feed-config-field input:hover, .feed-config-field textarea:hover,
-.feed-config-field input:focus, .feed-config-field textarea:focus
+.feed-config-field input:focus-visible, .feed-config-field textarea:focus-visible
 {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
@@ -86,7 +86,7 @@ export default {
   margin-left: .31rem;
 }
 
-.helptext:hover, .helptext:focus {
+.helptext:hover, .helptext:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 </style>

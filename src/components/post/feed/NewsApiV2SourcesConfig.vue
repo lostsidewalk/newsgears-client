@@ -222,7 +222,7 @@ export default {
 }
 
 .feed-config-field input:hover, .feed-config-field textarea:hover, .newsapiv2-sources-toolbar input:hover, 
-.feed-config-field input:focus, .feed-config-field textarea:focus, .newsapiv2-sources-toolbar input:focus {
+.feed-config-field input:focus-visible, .feed-config-field textarea:focus-visible, .newsapiv2-sources-toolbar input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -254,7 +254,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:hover, .link:focus {
+.link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -278,7 +278,7 @@ export default {
   min-height: 3rem;
 }
 
-.br-pill:hover, .br-pill:focus {
+.br-pill:hover, .br-pill:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
@@ -287,7 +287,7 @@ export default {
   color: v-bind('theme.subduedmessage');
 }
 
-.br-pill > a:hover, .br-pill > a:focus {
+.br-pill > a:hover, .br-pill > a:focus-visible {
   color: v-bind('theme.highlightedmessage');
 }
 
@@ -338,7 +338,7 @@ export default {
   vertical-align: middle;
 }
 
-.newsapiv2-source-label > input:hover, .newsapiv2-source-label > input:focus {
+.newsapiv2-source-label > input:hover, .newsapiv2-source-label > input:focus-visible {
   box-shadow: unset;
 }
 

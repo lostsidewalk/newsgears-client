@@ -185,7 +185,7 @@ export default {
 }
 
 .feed-config-field input:hover, .feed-config-field textarea:hover, 
-.feed-config-field input:focus, .feed-config-field textarea:focus {
+.feed-config-field input:focus-visible, .feed-config-field textarea:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -218,7 +218,7 @@ export default {
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
-.rss-atom-url-wrapper input:hover, .rss-atom-url-wrapper input:focus {
+.rss-atom-url-wrapper input:hover, .rss-atom-url-wrapper input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -245,7 +245,7 @@ export default {
   width: 100%;
 }
 
-.rss-atom-url-row input:hover, .rss-atom-url-row > input:focus {
+.rss-atom-url-row input:hover, .rss-atom-url-row > input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -276,7 +276,7 @@ export default {
   min-height: 3rem;
 }
 
-.rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus {
+.rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -321,7 +321,7 @@ export default {
   cursor: auto;
 }
 
-.feed-config-button:hover, .feed-config-button:focus {
+.feed-config-button:hover, .feed-config-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

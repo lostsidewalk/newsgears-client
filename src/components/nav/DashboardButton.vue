@@ -31,7 +31,7 @@ export default {
   cursor: auto;
 }
 
-.dashboard-button:hover, .dashboard-button:focus {
+.dashboard-button:hover, .dashboard-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

@@ -190,7 +190,7 @@ export default {
   text-decoration: none;
 }
 
-.rss-atom-feed-info-field > a:hover, .rss-atom-feed-info-field > a:focus {
+.rss-atom-feed-info-field > a:hover, .rss-atom-feed-info-field > a:focus-visible {
   color: v-bind('theme.highlightedmessage');
 }
 
@@ -220,7 +220,7 @@ export default {
   text-decoration: none;
 }
 
-.rss-atom-feed-info-sample a:hover, .rss-atom-feed-info-sample a:focus {
+.rss-atom-feed-info-sample a:hover, .rss-atom-feed-info-sample a:focus-visible {
   color: v-bind('theme.highlightedmessage');
 }
 
@@ -245,7 +245,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:hover, .link:focus {
+.link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -271,7 +271,7 @@ export default {
 }
 
 /** has references */
-.br-pill:hover, .br-pill:focus {
+.br-pill:hover, .br-pill:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
@@ -288,7 +288,7 @@ export default {
   min-height: 3rem;
 }
 
-.br-pill-subdued:hover, .br-pill-subdued:focus {
+.br-pill-subdued:hover, .br-pill-subdued:focus-visible {
   border-color: unset;
   background-color: unset !important;
 }

@@ -119,7 +119,7 @@ export default {
 }
 
 /** has references */
-.feed-select:hover, .feed-select:focus {
+.feed-select:hover, .feed-select:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
@@ -211,7 +211,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:hover, .link:focus {
+.link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }

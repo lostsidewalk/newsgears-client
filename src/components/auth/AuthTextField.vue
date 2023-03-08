@@ -39,7 +39,7 @@ export default {
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
-.auth-field > input:hover, .auth-field > input:focus {
+.auth-field > input:hover, .auth-field > input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');

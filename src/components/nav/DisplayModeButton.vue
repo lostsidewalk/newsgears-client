@@ -31,7 +31,7 @@ export default {
   cursor: auto;
 }
 
-.mode-switch-button:hover, .mode-switch-button:focus {
+.mode-switch-button:hover, .mode-switch-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

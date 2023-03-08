@@ -182,7 +182,7 @@ export default {
   min-height: 48px;
 }
 
-.footer-link:hover, .footer-link:focus {
+.footer-link:hover, .footer-link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }

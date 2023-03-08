@@ -48,7 +48,7 @@
           Upstream feeds are organized into queues.
           <ul>
             <li>The FeedGears queue dashboard provides summary information for all of your feeds.</li>
-            <li>Select a queue to see the articles in those feeds, sorted and filtered according to the queue configuration.</li>
+            <li>Select a queue to see the articles in those feeds, sorted and filtered according to your stored preferences, from anywhere.</li>
           </ul>
         </div>
       </div>

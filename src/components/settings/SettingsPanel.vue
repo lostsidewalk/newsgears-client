@@ -725,7 +725,7 @@ export default {
   cursor: auto;
 }
 
-.header-button:hover, .header-button:focus {
+.header-button:hover, .header-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -822,7 +822,7 @@ export default {
   margin-top: .125rem;
 }
 
-.settings-field input:hover, .settings-field input:focus {
+.settings-field input:hover, .settings-field input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -845,7 +845,7 @@ export default {
   box-shadow: unset;
 }
 
-.notification-checkbox > input:hover, .notification-checkbox > input:focus {
+.notification-checkbox > input:hover, .notification-checkbox > input:focus-visible {
   box-shadow: unset;
 }
 

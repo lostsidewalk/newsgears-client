@@ -44,7 +44,7 @@ export default {
   color: v-bind('theme.logocolor');
 }
 
-.tab-label:hover, .tab-label:focus {
+.tab-label:hover, .tab-label:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

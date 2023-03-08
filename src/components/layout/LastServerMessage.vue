@@ -48,7 +48,7 @@ export default {
   cursor: pointer;
 }
 
-.clear-last-server-message:hover, .clear-last-server-message:focus {
+.clear-last-server-message:hover, .clear-last-server-message:focus-visible {
   color: v-bind('theme.highlightedmessage');
 }
 </style>

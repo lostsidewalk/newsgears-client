@@ -282,7 +282,7 @@ export default {
   cursor: auto;
 }
 
-.opml-upload-button:hover, .opml-upload-button:focus {
+.opml-upload-button:hover, .opml-upload-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -344,7 +344,7 @@ export default {
   color: v-bind('theme.subduedmessage');
 }
 
-.opml-file-row > a:hover, .opml-file-row > a:focus {
+.opml-file-row > a:hover, .opml-file-row > a:focus-visible {
   color: v-bind('theme.highlightedmessage');
 }
 

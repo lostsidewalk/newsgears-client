@@ -201,7 +201,7 @@ export default {
   min-height: 3rem;
 }
 
-.modal-button:hover, .modal-button:focus {
+.modal-button:hover, .modal-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight') !important;
 }
 

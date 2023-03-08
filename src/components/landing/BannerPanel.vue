@@ -68,16 +68,12 @@ export default {
   text-shadow: 3px 3px 3px v-bind('theme.logosubshadow');
   padding-top: 2vh;
   padding-bottom: 2vh;
-  margin-left: 17vw;
-  margin-right: 17vw;
 }
 
 .logosubduedtext {
   font-size: 2.0rem;
   padding-top: 1vh;
   padding-bottom: 1vh;
-  margin-left: 17vw;
-  margin-right: 17vw;
 }
 
 .tab-label {
@@ -91,7 +87,7 @@ export default {
   color: v-bind('theme.logocolor');
 }
 
-.tab-label:hover, .tab-label:focus {
+.tab-label:hover, .tab-label:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

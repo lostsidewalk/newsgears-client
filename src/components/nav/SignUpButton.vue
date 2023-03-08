@@ -31,7 +31,7 @@ export default {
   cursor: auto;
 }
 
-.signup-button:hover, .signup-button:focus {
+.signup-button:hover, .signup-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 

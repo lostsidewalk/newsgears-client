@@ -401,7 +401,7 @@ export default {
   margin-top: .125rem;
 }
 
-.feed-config-field input:hover, .feed-config-field input:focus {
+.feed-config-field input:hover, .feed-config-field input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -450,7 +450,7 @@ export default {
   min-height: 3rem;
 }
 
-.br-pill:hover, .br-pill:focus {
+.br-pill:hover, .br-pill:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
@@ -473,7 +473,7 @@ export default {
   cursor: auto;
 }
 
-.add-catalog-feed-button:hover, .add-catalog-feed-button:focus {
+.add-catalog-feed-button:hover, .add-catalog-feed-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
 }
 
@@ -486,7 +486,7 @@ export default {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: .125rem;
   margin-bottom: .75rem;
   resize: none;
@@ -502,7 +502,7 @@ export default {
   width: 100%;
 }
 
-.feed-catalog-filter input:hover, .feed-catalog-filter > input:focus {
+.feed-catalog-filter input:hover, .feed-catalog-filter > input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
@@ -533,7 +533,7 @@ export default {
   min-height: 3rem;
 }
 
-.feed-catalog-filter-button:hover, .feed-catalog-filter-button:focus {
+.feed-catalog-filter-button:hover, .feed-catalog-filter-button:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');

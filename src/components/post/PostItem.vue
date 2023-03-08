@@ -457,7 +457,7 @@ export default {
   flex-wrap: wrap;
 }
 
-.post-item-header:hover, .post-item-header:focus {
+.post-item-header:hover, .post-item-header:focus-visible {
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
 }
 
@@ -483,7 +483,7 @@ export default {
   cursor: auto;
 }
 
-.post-admin-button:hover, .post-admin-button:focus {
+.post-admin-button:hover, .post-admin-button:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
   color: v-bind('theme.buttonfg');
   background-color: v-bind('theme.buttonhighlight');
@@ -615,17 +615,17 @@ export default {
   background-color: v-bind('theme.sectionbrighterhighlight');
 }
 
-.post-wrapper:hover, .post-wrapper:focus {
+.post-wrapper:hover, .post-wrapper:focus-visible {
   color: v-bind('theme.normalmessage');
   border: 1px solid v-bind('theme.fieldborderhighlight') !important;
 }
 
-.post-wrapper:focus {
+.post-wrapper:focus-visible {
     outline: none;
 }
 
 /** has references */
-.post-wrapper-selected, .post-wrapper-selected:hover, .post-wrapper-selected:focus {
+.post-wrapper-selected, .post-wrapper-selected:hover, .post-wrapper-selected:focus-visible {
   color: v-bind('theme.normalmessage');
   border: 1px solid lightblue !important;
 }
@@ -655,7 +655,7 @@ export default {
   border: 1px solid transparent;
 }
 
-.link:hover, .link:focus {
+.link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
@@ -679,7 +679,7 @@ export default {
   min-height: 3rem;
 }
 
-.br-pill:hover, .br-pill:focus {
+.br-pill:hover, .br-pill:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
