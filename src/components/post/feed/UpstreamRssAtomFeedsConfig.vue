@@ -25,18 +25,20 @@
         <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
           :disabled="disabled || inTransit"
           placeholder="Feed URL" />
-        <button 
-          class="rss-atom-url-row-button"
-          @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
-          :disabled="disabled || inTransit">
-          <span class="fa fa-refresh"/>
-        </button>
-        <button 
-          class="rss-atom-url-row-button" 
-          @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
-          :disabled="disabled || inTransit">
-          <span class="fa fa-trash"/>
-        </button>
+        <div class="rss-atom-url-row-buttons">
+          <button 
+            class="rss-atom-url-row-button"
+            @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
+            :disabled="disabled || inTransit">
+            <span class="fa fa-refresh"/>
+          </button>
+          <button 
+            class="rss-atom-url-row-button" 
+            @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
+            :disabled="disabled || inTransit">
+            <span class="fa fa-trash"/>
+          </button>
+        </div>
       </div>
       <RssAtomFeedInfo 
         v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
@@ -224,9 +226,12 @@ export default {
 }
 
 .rss-atom-url-row {
+  text-align: left;
   display: inline-flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
   margin-top: .125rem;
+  resize: none;
   width: 100%;
 }
 
@@ -237,6 +242,7 @@ export default {
   color: v-bind('theme.normalmessage');
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  width: 100%;
 }
 
 .rss-atom-url-row input:hover, .rss-atom-url-row > input:focus {
@@ -248,6 +254,13 @@ export default {
 
 .rss-atom-url-row > input:disabled {
   cursor: auto;
+}
+
+.rss-atom-url-row-buttons {
+  padding-top: .75rem;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: .5rem;
 }
 
 .rss-atom-url-row-button {

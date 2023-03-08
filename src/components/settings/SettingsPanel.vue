@@ -21,7 +21,8 @@
             <!-- oauth2 profile (remote) -->
             <div class="settings-field" style="flex-direction: row;" v-if="authProvider !== 'LOCAL'">
               <!-- profile image -->
-              <img :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img" alt="OAuth2 profile image" />
+              <img v-if="authProviderProfileImgUrl" :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img" alt="OAuth2 profile image" />
+              <img v-else src="feedgears.png" referrerpolicy="no-referrer" class="oauth2-profile-img" alt="Default OAuth2 profile image" />
               <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
                 <!-- auth provider username (auth provider user Id) -->
                 <span style="padding: .125rem;">{{ authProviderUsername }}</span>

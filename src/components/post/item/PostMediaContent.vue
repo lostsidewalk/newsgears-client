@@ -132,10 +132,6 @@ export default {
   object-fit: scale-down;
 }
 
-.post-media-content-image:hover, .post-media-content-image:focus {
-  cursor: pointer;
-}
-
 .inner-pill-container {
   display: flex;
   flex-direction: column;

@@ -12,6 +12,7 @@
       <!-- card -->
       <div class="feed-image-wrapper">
         <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" alt="Queue logo image">
+        <img v-else class="feed-image" src="feedgears.png" alt="Queue logo image">
         <div class="feed-info-wrapper">
           <!-- inbound / published count -->
           <label class="feed-info-label"><span class="fa fa-eye" /> {{ this.inboundCount }}</label>

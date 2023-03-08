@@ -16,6 +16,7 @@
               alt="RSS feed logo image" />
           </a>
           <a v-if="!this.info.image && !this.info.icon" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
+            <img src="feedgears.png" />
           </a>
         </div>
       </div>

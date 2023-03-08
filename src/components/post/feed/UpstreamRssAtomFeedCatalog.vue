@@ -6,22 +6,24 @@
     <div class="feed-catalog-filter">
       <!-- feed catalog filter input -->
       <input type="text" v-model="feedCatalogFilter" :disabled="disabled" placeholder="Filter">
-      <!-- first page button-->
-      <button v-if="needsPagination()" title="first" class="feed-catalog-filter-button" @click="firstPage">
-        <span class="fa fa-angle-double-left"/>
-      </button>
-      <!-- previous page button -->
-      <button v-if="needsPagination()" title="previous" class="feed-catalog-filter-button" @click="previousPage">
-        <span class="fa fa-angle-left"/>
-      </button>
-      <!-- next page button -->
-      <button v-if="needsPagination()" title="next" class="feed-catalog-filter-button" @click="nextPage">
-        <span class="fa fa-angle-right"/>
-      </button>
-      <!-- last page button-->
-      <button v-if="needsPagination()" title="last" class="feed-catalog-filter-button" @click="lastPage">
-        <span class="fa fa-angle-double-right"/>
-      </button>
+      <div class="feed-catalog-filter-buttons">
+        <!-- first page button-->
+        <button v-if="needsPagination()" title="first" class="feed-catalog-filter-button" @click="firstPage">
+          <span class="fa fa-angle-double-left"/>
+        </button>
+        <!-- previous page button -->
+        <button v-if="needsPagination()" title="previous" class="feed-catalog-filter-button" @click="previousPage">
+          <span class="fa fa-angle-left"/>
+        </button>
+        <!-- next page button -->
+        <button v-if="needsPagination()" title="next" class="feed-catalog-filter-button" @click="nextPage">
+          <span class="fa fa-angle-right"/>
+        </button>
+        <!-- last page button-->
+        <button v-if="needsPagination()" title="last" class="feed-catalog-filter-button" @click="lastPage">
+          <span class="fa fa-angle-double-right"/>
+        </button>
+      </div>
     </div>
     <!-- feed catalog filter pills -->
     <div v-if="hasFeedCatalogFilters()" class="feed-catalog-filter-pills pill-container">
@@ -482,9 +484,12 @@ export default {
 .feed-catalog-filter {
   text-align: left;
   display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
   margin-top: .125rem;
   margin-bottom: .75rem;
-  float: right;
+  resize: none;
 }
 
 .feed-catalog-filter > input {
@@ -506,6 +511,13 @@ export default {
 
 .feed-catalog-filter > input:disabled {
   cursor: auto;
+}
+
+.feed-catalog-filter-buttons {
+  padding-top: .75rem;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: .5rem;
 }
 
 .feed-catalog-filter-button {

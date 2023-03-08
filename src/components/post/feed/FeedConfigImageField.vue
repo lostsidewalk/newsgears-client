@@ -18,7 +18,11 @@
         :src="'data:image/png;base64,' + modelValue" 
         title="Click here to change the feed image."
         alt="Queue logo image" />
-      <div v-else class="feed-image" title="Click here to add a feed image."></div>
+      <img v-else 
+        class="feed-image"
+        src="feedgears.png"
+        title="Click here to add a feed image."
+        alt="Queue logo image" />
     </label>
     <span>
     <button :disabled="disabled || inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">

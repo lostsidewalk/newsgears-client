@@ -14,6 +14,22 @@
             title="Show post details">
             <span :class="this.showPostDetails ? 'fa fa-minus' : 'fa fa-plus'"></span>
           </button>
+          <!-- go to next post button -->
+          <button
+            class="post-admin-button"
+            @click.stop="goToNextPost"
+            :disabled="disabled"
+            title="Go to next post">
+            <span class="fa fa-arrow-down"></span>
+          </button>
+          <!-- go to previous post button -->
+          <button
+            class="post-admin-button"
+            @click.stop="goToPreviousPost"
+            :disabled="disabled"
+            title="Go to previous post">
+            <span class="fa fa-arrow-up"></span>
+          </button>
           <!-- toggle read status button -->
           <button
             class="post-admin-button"
@@ -236,6 +252,8 @@ export default {
     "openPostUrl",
     "playing",
     "audioPlay",
+    "goToNextPost",
+    "goToPreviousPost",
   ],
   data() {
     return {
@@ -366,6 +384,12 @@ export default {
             feedIdent: feedIdent,
             originator: successSignal
           });
+    },
+    goToNextPost() {
+      this.$emit('goToNextPost');
+    },
+    goToPreviousPost() {
+      this.$emit('goToPreviousPost');
     },
     // 
     // utility methods 

@@ -259,7 +259,9 @@
                 @updatePostPubStatus="updatePostPubStatus" 
                 @updateFilter="updatePostFeedFilter" 
                 @playing="onMediaPlaying" 
-                @audioPlay="onAudioPlay" />
+                @audioPlay="onAudioPlay" 
+                @goToNextPost="selectNextPost" 
+                @goToPreviousPost="selectPreviousPost" />
             </div>
           </div>
           <div class="logo">
@@ -1396,6 +1398,20 @@ export default {
         }
       }
     },
+    selectNextPost() {
+      let currentPostIdx = this.getCurrentPostIdx();
+      if (currentPostIdx < this.filteredInboundQueue.length - 1) {
+        let nextPostId = this.filteredInboundQueue[currentPostIdx + 1].id;
+        this.setSelectedPost(null, nextPostId);
+      }
+    },
+    selectPreviousPost() {
+      let currentPostIdx = this.getCurrentPostIdx();
+      if (currentPostIdx > 0) {
+        let nextPostId = this.filteredInboundQueue[currentPostIdx - 1].id;
+        this.setSelectedPost(null, nextPostId);
+      }
+    },
     setSelectedPost($event, postId, doFocus) {
       if ($event && ($event.target.classList.contains('plyr__control') || $event.target.classList.contains('audio-player-control')))  {
         return;
@@ -1502,21 +1518,13 @@ export default {
           return;
         }
         if (event.key === 'ArrowDown') {
-          let currentPostIdx = this.getCurrentPostIdx();
-          if (currentPostIdx < this.filteredInboundQueue.length - 1) {
-            let nextPostId = this.filteredInboundQueue[currentPostIdx + 1].id;
-            this.setSelectedPost(null, nextPostId);
-            event.stopPropagation();
-            event.preventDefault();
-          }
+          this.selectNextPost();
+          event.stopPropagation();
+          event.preventDefault();
         } else if (event.key === 'ArrowUp') {
-          let currentPostIdx = this.getCurrentPostIdx();
-          if (currentPostIdx > 0) {
-            let nextPostId = this.filteredInboundQueue[currentPostIdx - 1].id;
-            this.setSelectedPost(null, nextPostId);
-            event.stopPropagation();
-            event.preventDefault();
-          }
+          this.selectPreviousPost();
+          event.stopPropagation();
+          event.preventDefault();
         } else if (event.key === 'Home') {
           this.setSelectedPost(null, this.getCurrentPage(this.filteredInboundQueue)[0].id, false);
           event.stopPropagation();
