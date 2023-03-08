@@ -1927,6 +1927,10 @@ footer {
   .post-feed-container-inner-selected {
     display: unset;
   }
+
+  .toggle-feed-select-view {
+    display: none;
+  }
 }
 
 @media (min-width: 1023px) {
