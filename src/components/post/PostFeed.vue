@@ -24,7 +24,7 @@
       :disabled="disabled || inTransit || isModalShowing" 
       :theme="theme" 
       @updateServerMessage="setLastServerMessage" />
-    <NavbarFixedHeader :theme="theme" :inTransit="this.selectedFeedId ? false : this.inTransit" />
+    <NavbarFixedHeader :theme="theme" :inTransit="false" />
     <div class="post-feed-container">
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
