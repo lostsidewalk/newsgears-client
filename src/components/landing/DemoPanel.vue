@@ -52,6 +52,7 @@ export default {
   justify-content: space-evenly;
   margin-top: 2%;
   margin-bottom: 2%;
+  overflow: auto;
 }
 
 .tab-label {

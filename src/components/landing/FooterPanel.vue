@@ -37,6 +37,7 @@ export default {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
   display: flex;
   justify-content: space-evenly;
+  flex-wrap: wrap;
   gap: .75rem;
   padding: 1.25rem;
 }
@@ -71,11 +72,10 @@ export default {
   padding-bottom: 1%;
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-  align-content: flex-end;
-  align-items: flex-end;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
   font-size: smaller;
 }
 
