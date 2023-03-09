@@ -750,6 +750,7 @@ export default {
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
           let queryDefinition = qd[i].queryDefinition;
+          let queryDefinitionImageUrl = qd[i].queryDefinitionImageUrl;
           let queryType = queryDefinition.queryType;
           if (queryType === 'NEWSAPIV2_HEADLINES') {
             let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : null;
@@ -764,7 +765,7 @@ export default {
               "id": queryDefinition.id,
               "feedMetrics": qm[queryDefinition.id],
               "feedTitle": queryDefinition.queryTitle,
-              "feedImageUrl": queryDefinition.queryImageUrl,
+              "feedImageUrl": queryDefinitionImageUrl,
               "feedUrl": queryDefinition.queryText,
             });
           }
