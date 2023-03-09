@@ -257,7 +257,7 @@ export default {
   ],
   data() {
     return {
-      showPostDetails: true,
+      showPostDetails: false,
     };
   },
   methods: {
@@ -618,10 +618,6 @@ export default {
 .post-wrapper:hover, .post-wrapper:focus-visible {
   color: v-bind('theme.normalmessage');
   border: 1px solid v-bind('theme.fieldborderhighlight') !important;
-}
-
-.post-wrapper:focus-visible {
-    outline: none;
 }
 
 /** has references */

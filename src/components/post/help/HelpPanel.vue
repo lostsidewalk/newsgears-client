@@ -61,28 +61,20 @@ export default {
             key: "ALT + M",
           },
           {
-            label: "Previous article in queue",
+            label: "Select the previous article in queue",
             icon: "fa-arrow-up",
           },
           {
-            label: "Next article in queue",
+            label: "Select the next article in queue",
             icon: "fa-arrow-down",
           },
           {
-            label: "First article on page",
+            label: "Select the first article in the queue",
             key: "HOME",
           },
           {
-            label: "Last article on page",
+            label: "Select the last loaded article in the queue",
             key: "END",
-          },
-          {
-            label: "Select previous page, first article",
-            key: "PG UP",
-          },
-          {
-            label: "Select next page, first article",
-            key: "PG DOWN",
           },
           {
             label: "Edit selected queue",

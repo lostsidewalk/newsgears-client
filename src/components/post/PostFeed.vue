@@ -25,7 +25,7 @@
       :theme="theme" 
       @updateServerMessage="setLastServerMessage" />
     <NavbarFixedHeader :theme="theme" :inTransit="false" />
-    <div class="post-feed-container">
+    <div class="post-feed-container" id="post-feed-container">
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
         <div class="feed-select-view" :class="{ 
@@ -142,27 +142,11 @@
                 <!-- feed filter field -->
                 <div class="article-queue" v-if="this.showFullInboundQueueHeader">
                   <!-- feed filter label -->
-                  <label>ARTICLE QUEUE {{ '(' + this.filteredInboundQueue.length + ' ARTICLES MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + this.totalPages + ')' }}</label>
+                  <label>ARTICLE QUEUE {{ '(' + this.filteredInboundQueue.length + ')' }}</label>
                   <div class="feed-filter">
                     <!-- feed filter input -->
                     <input id="feed-filter" type="text" v-model="inboundQueueFilter" placeholder="Filter" :disabled="disabled || inTransit || isModalShowing" />
                     <div class="feed-filter-buttons">
-                      <!-- first page button-->
-                      <button v-if="needsPagination()" title="first" class="feed-filter-button" @click="firstPage" :disabled="disabled || inTransit || isModalShowing">
-                        <span class="fa fa-angle-double-left"/>
-                      </button>
-                      <!-- previous page button -->
-                      <button v-if="needsPagination()" title="previous" class="feed-filter-button" @click="previousPage" :disabled="disabled || inTransit || isModalShowing">
-                        <span class="fa fa-angle-left"/>
-                      </button>
-                      <!-- next page button -->
-                      <button v-if="needsPagination()" title="next" class="feed-filter-button" @click="nextPage" :disabled="disabled || inTransit || isModalShowing">
-                        <span class="fa fa-angle-right"/>
-                      </button>
-                      <!-- last page button-->
-                      <button v-if="needsPagination()" title="last" class="feed-filter-button" @click="lastPage" :disabled="disabled || inTransit || isModalShowing">
-                        <span class="fa fa-angle-double-right"/>
-                      </button>
                       <!-- sort direction button -->
                       <button class="feed-filter-button" @click="toggleInboundQueueSortOrder()" :disabled="disabled || inTransit || isModalShowing" aria-label="Toggle sort order">
                         <span :class="'fa fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
@@ -322,6 +306,7 @@ export default {
     if (this.$auth.$isAuthenticated) {
         this.refreshFeeds(true, null, true); // need staging posts for all feeds and feed definitions 
     }
+    window.onwheel = this.wheelHandler;
   },
   beforeUnmount() {
     window.removeEventListener("keydown", this.eventHandler);
@@ -473,6 +458,8 @@ export default {
       // show the feed filter pills in the inbound queue header (t/f)
       showFeedFilterPills: false, // show filter pills t/f 
       // 
+      atBottomOfPage: false,
+      // 
       inTransit: false,
 
       // feed material 
@@ -561,45 +548,20 @@ export default {
         this.itemCount = items.length; 
         this.currentPage = 0;
       }
-      let startIdx = this.currentPage * this.itemsPerPage;
-      let endIdx = startIdx + this.itemsPerPage;
-      return items.slice(startIdx, endIdx);
+      let endIdx = (this.currentPage * this.itemsPerPage) + this.itemsPerPage;
+      return items.slice(0, endIdx);
     },
-    firstPage() {
-      this.currentPage = 0; 
-      let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
-      this.$nextTick(() => {
-        this.setSelectedPost(null, newFirstItem.id);
-      });
-    },
-    nextPage() {
+    nextPage(selectFirstItem) {
       let n = this.currentPage + 1;
       if (n === this.totalPages) {
-        n -= 1;
+        return;
       }
       this.currentPage = n;
-      let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
-      this.$nextTick(() => {
-        this.setSelectedPost(null, newFirstItem.id);
-      });
-    },
-    previousPage() {
-      let p = this.currentPage - 1;
-      if (p < 0) {
-        p = 0;
+      if (selectFirstItem === true) {
+        this.$nextTick(() => {
+          this.selectNextPost();
+        });
       }
-      this.currentPage = p;
-      let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
-      this.$nextTick(() => {
-        this.setSelectedPost(null, newFirstItem.id);
-      });
-    },
-    lastPage() {
-      this.currentPage = this.totalPages - 1;
-      let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
-      this.$nextTick(() => {
-        this.setSelectedPost(null, newFirstItem.id);
-      });
     },
     // 
     // server error 
@@ -1383,6 +1345,8 @@ export default {
       this.inboundQueue = feedId ? this.inboundQueuesByFeed[feedId] : null;
       this.selectedFeedFilterCategories = [];
       this.selectedFeedFilterSubscriptions = [];
+      this.currentPage = 0;
+      this.itemCount = 0;
     },
     getSelectedFeed() {
       if (this.selectedFeedId) {
@@ -1422,7 +1386,8 @@ export default {
       doFocus = doFocus === undefined ? true : doFocus;
       let r = this.$refs['post_' + postId];
       if (!r || r.length === 0) {
-        console.debug("requested post is not on this page");
+        // request article is not on this page, load the next page and select the next article 
+        this.nextPage(true); 
         return;
       }
       this.$refs['post_' + postId][0].showFullPost();
@@ -1538,14 +1503,6 @@ export default {
           this.setSelectedPost(null, c[c.length - 1].id);
           event.stopPropagation();
           event.preventDefault();
-        } else if (event.key === 'PageUp') {
-          this.previousPage();
-          event.stopPropagation();
-          event.preventDefault();
-        } else if (event.key === 'PageDown') {
-          this.nextPage();
-          event.stopPropagation();
-          event.preventDefault();
         } else if (event.key === 's') {
           this.starSelectedPost();
           event.stopPropagation();
@@ -1626,6 +1583,29 @@ export default {
         this.showHelp();
         event.stopPropagation();
         event.preventDefault();
+      }
+    },
+    wheelHandler(wheelEvent) {
+      if (!this.selectedFeedId) {
+        return;
+      }
+      if (wheelEvent.deltaY <= 0) {
+        return true;
+      }
+      let c = document.getElementById('post-feed-container');
+      if (c) {
+        let w = (window.innerHeight + window.scrollY);
+        if (w >= c.offsetHeight) {
+          if (this.atBottomOfPage) {
+            this.atBottomOfPage = false;
+            this.nextPage(false);
+            wheelEvent.stopPropagation();
+          } else {
+            this.atBottomOfPage = true;
+          }
+        } else {
+          this.atBottomOfPage = false;
+        }
       }
     }
   }
