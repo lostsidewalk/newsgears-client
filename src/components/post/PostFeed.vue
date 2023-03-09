@@ -831,6 +831,7 @@ export default {
               let queryDefinitionData = data.queryDefinitions;
               for (let i = 0; i < feedDefinitionData.length; i++) {
                 let fd = feedDefinitionData[i];
+                // 
                 let qd = queryDefinitionData[fd.id];
                 this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
                 // parse feed definition export config (if present) 
@@ -891,21 +892,23 @@ export default {
       // 
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
-          let queryType = qd[i].queryType;
+          let queryDefinition = qd[i].queryDefinition;
+          let queryType = queryDefinition.queryType;
           if (queryType === 'NEWSAPIV2_HEADLINES') {
-            let queryConfig = qd[i].queryConfig ? JSON.parse(qd[i].queryConfig) : null;
-            fd.newsApiV2QueryText = qd[i].queryText;
-            fd.newsApiV2QueryMetrics = qm[qd[i].id];
+            let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : null;
+            fd.newsApiV2QueryText = queryDefinition.queryText;
+            fd.newsApiV2QueryMetrics = qm[queryDefinition.id];
             fd.newsApiV2Sources = queryConfig ? queryConfig.sources : null;
             fd.newsApiV2Language = queryConfig ? queryConfig.language : null;
             fd.newsApiV2Country = queryConfig ? queryConfig.country : null;
             fd.newsApiV2Category = queryConfig ? queryConfig.category : null;
           } else if (queryType === 'RSS' || queryType === 'ATOM') {
             fd.rssAtomFeedUrls.push({
-              "id": qd[i].id,
-              "feedMetrics": qm[qd[i].id],
-              "feedTitle": qd[i].queryTitle,
-              "feedUrl": qd[i].queryText,
+              "id": queryDefinition.id,
+              "feedMetrics": qm[queryDefinition.id],
+              "feedTitle": queryDefinition.queryTitle,
+              "feedImageUrl": queryDefinition.queryImageUrl,
+              "feedUrl": queryDefinition.queryText,
             });
           }
         }

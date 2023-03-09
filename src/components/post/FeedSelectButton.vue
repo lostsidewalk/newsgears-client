@@ -35,8 +35,10 @@
         </label>
         <!-- RSS/ATOM feeds -->
         <label class="feed-info-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
+          <!-- Feed logo image -->
+          <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" alt="Feed logo image" /> 
           <!-- RSS logo -->
-          <img src="rss_logo.svg" alt="RSS logo" /> 
+          <img v-else src="rss_logo.svg" alt="RSS logo" /> 
           <!-- last http status -->
           <span v-if="hasFeedMetrics(rssAtomFeedUrl)" :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
             {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
