@@ -224,6 +224,7 @@ export default {
 	width: 3rem;
 	min-width: 3rem;
 	height: 3rem;
+  padding: .44rem 1.25rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;

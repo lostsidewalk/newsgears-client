@@ -200,24 +200,28 @@
                   </button>
                 </div>
                 <!-- post subscription filter pills -->
-                <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 1">
-                  SUBSCRIPTIONS:
-                  <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
-                    class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
-                    @click="toggleFeedFilterSubscription(subscription)"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      {{ subscription }}
-                  </button>
+                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 1">
+                  <label>SUBSCRIPTIONS</label>
+                  <div class="pill-container">
+                    <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
+                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
+                      @click="toggleFeedFilterSubscription(subscription)"
+                      :disabled="disabled || inTransit || isModalShowing">
+                        {{ subscription }}
+                    </button>
+                  </div>
                 </div>
                 <!-- post category filter pills -->
-                <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 1">
-                  CATEGORIES: 
-                  <button v-for="category of this.allPostCategories" :key="category"
-                    class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
-                    @click="toggleFeedFilterCategory(category)"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      {{ category }}
-                  </button>
+                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 1">
+                  <label>CATEGORIES</label>
+                  <div class="pill-container">
+                    <button v-for="category of this.allPostCategories" :key="category"
+                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
+                      @click="toggleFeedFilterCategory(category)"
+                      :disabled="disabled || inTransit || isModalShowing">
+                        {{ category }}
+                    </button>
+                  </div>
                 </div>
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
@@ -246,6 +250,8 @@
                 @audioPlay="onAudioPlay" 
                 @goToNextPost="selectNextPost" 
                 @goToPreviousPost="selectPreviousPost" />
+              <div v-if="this.totalPages === 0" class="queue-message">There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.</div>  
+              <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.</div>
             </div>
           </div>
           <div class="logo">
@@ -1865,7 +1871,7 @@ footer {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: .31rem;
+  padding: .44rem 1.25rem;
   user-select: none;
   min-width: 3rem;
   min-height: 3rem;
@@ -1906,6 +1912,13 @@ footer {
 
 .logo > div {
   padding-bottom: 3%;
+}
+
+.queue-message {
+  font-size: larger;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  margin: .56rem;
 }
 
 @media (max-width: 1023px) {

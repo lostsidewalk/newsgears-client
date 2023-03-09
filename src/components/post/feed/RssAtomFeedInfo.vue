@@ -264,7 +264,7 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: .31rem;
+  padding: .44rem 1.25rem;
   user-select: none;
   min-width: 3rem;
   min-height: 3rem;
@@ -282,7 +282,7 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: .31rem;
+  padding: .44rem 1.25rem;
   user-select: none;
   min-width: 3rem;
   min-height: 3rem;
