@@ -216,6 +216,7 @@ export default {
       subscription: null,
       forceLogout: false,
       // 
+      isLoaded: false,
       inTransit: true,
       serverMessages: [],
 
@@ -818,14 +819,20 @@ export default {
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
   border-radius: 3px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   margin-top: .125rem;
+}
+
+.settings-field input[type="text"] {
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
 .settings-field input:hover, .settings-field input:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
+}
+
+.settings-field input[type="text"]:hover, .settings-field input[type="text"]:focus-visible  {
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
