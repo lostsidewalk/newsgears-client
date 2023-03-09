@@ -370,8 +370,6 @@ export default {
                 break;
               }
             }
-          } else {
-            categoriesMatch = true;
           }
           if (!categoriesMatch) {
             return false;
