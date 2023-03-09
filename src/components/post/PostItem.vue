@@ -418,6 +418,7 @@ export default {
   align-items: flex-start;
   width: 100%;
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
+  overflow: auto;
 }
 
 .post-item-row button {
@@ -549,11 +550,8 @@ export default {
   padding-bottom: .125rem;
 }
 
-.post-html-frame {
-  display: block;
-  overflow: auto;
-  font-family: serif;
-  font-size: larger;
+.post-html-frame > * {
+  object-fit: scale-down;
 }
 
 .post-text-frame {

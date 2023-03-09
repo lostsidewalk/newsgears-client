@@ -162,30 +162,6 @@
                       STARRED
                   </button>
                 </div>
-                <!-- post subscription filter pills -->
-                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 1">
-                  <label>SUBSCRIPTIONS</label>
-                  <div class="pill-container">
-                    <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
-                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
-                      @click="toggleFeedFilterSubscription(subscription)"
-                      :disabled="disabled || inTransit || isModalShowing">
-                        {{ subscription }}
-                    </button>
-                  </div>
-                </div>
-                <!-- post category filter pills -->
-                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 1">
-                  <label>CATEGORIES</label>
-                  <div class="pill-container">
-                    <button v-for="category of this.allPostCategories" :key="category"
-                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
-                      @click="toggleFeedFilterCategory(category)"
-                      :disabled="disabled || inTransit || isModalShowing">
-                        {{ category }}
-                    </button>
-                  </div>
-                </div>
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
               </template>
@@ -349,31 +325,6 @@ export default {
           if (!modeMatches) {
             return false;
           }
-          // check the subscription (importer desc) against the filter subscriptions (if any) 
-          let subscriptionMatches = false;
-          if (this.selectedFeedFilterSubscriptions.length === 0) {
-            subscriptionMatches = true;
-          } else {
-            subscriptionMatches = this.lcSetContainsStr(post.importerDesc, this.selectedFeedFilterSubscriptions);
-          }
-          if (!subscriptionMatches) {
-            return false;
-          }
-          // check the categories against the filter categories (if any) 
-          let categoriesMatch = false;
-          if (this.selectedFeedFilterCategories.length === 0) {
-            categoriesMatch = true;
-          } else if (post.postCategories) {
-            for (let i = 0; i < post.postCategories.length; i++) {
-              categoriesMatch = this.lcSetContainsStr(post.postCategories[i], this.selectedFeedFilterCategories);
-              if (categoriesMatch) {
-                break;
-              }
-            }
-          }
-          if (!categoriesMatch) {
-            return false;
-          }
           // check title and desc against filter text, if defined 
           let lcFilter = this.inboundQueueFilter ? this.inboundQueueFilter.toLowerCase() : null;
           return lcFilter ? (
@@ -420,24 +371,24 @@ export default {
       });
       return feedIdentOptions;
     },
-    allPostCategories: function () {
-      let categories = new Set();
-      let f = this.inboundQueue;
-      for (let i = 0; i < f.length; i++) {
-        if (f[i].postCategories) {
-          f[i].postCategories.forEach((c) => categories.add(c));
-        }
-      }
-      return Array.from(categories);
-    },
-    allPostSubscriptions: function() {
-      let subscriptions = new Set();
-      let f = this.inboundQueue;
-      for (let i = 0; i < f.length; i++) {
-        subscriptions.add(f[i].importerDesc);
-      }
-      return Array.from(subscriptions);
-    },
+    // allPostCategories: function () {
+    //   let categories = new Set();
+    //   let f = this.inboundQueue;
+    //   for (let i = 0; i < f.length; i++) {
+    //     if (f[i].postCategories) {
+    //       f[i].postCategories.forEach((c) => categories.add(c));
+    //     }
+    //   }
+    //   return Array.from(categories);
+    // },
+    // allPostSubscriptions: function() {
+    //   let subscriptions = new Set();
+    //   let f = this.inboundQueue;
+    //   for (let i = 0; i < f.length; i++) {
+    //     subscriptions.add(f[i].importerDesc);
+    //   }
+    //   return Array.from(subscriptions);
+    // },
     isModalShowing: function() {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
     }
@@ -480,8 +431,6 @@ export default {
       // queue filter material 
       inboundQueueFilter: null, // user-supplied filter text 
       feedFilterModes: ['UNREAD', 'READ', 'PUBLISHED'], // currently selected filter modes 
-      selectedFeedFilterSubscriptions: [],
-      selectedFeedFilterCategories: [],
       // queue sorting material 
       inboundQueueSortOrder: 'DSC',
       // NewsApiV2 material 
@@ -652,66 +601,8 @@ export default {
         }
       });
     },
-    toggleFeedFilterCategory(category) {
-      if (this.lcSetContainsStr(category, this.selectedFeedFilterCategories)) {
-        let idxToSplice = -1;
-        for (let i = 0; i < this.selectedFeedFilterCategories.length; i++) {
-          if (this.selectedFeedFilterCategories[i] === category) {
-            idxToSplice = i;
-            break;
-          }
-        }
-        if (idxToSplice >= 0) {
-          this.selectedFeedFilterCategories.splice(idxToSplice, 1);
-        }
-      } else {
-        this.selectedFeedFilterCategories.push(category);
-      }
-    },
-    toggleFeedFilterSubscription(subscription) {
-      if (this.lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)) {
-        let idxToSplice = -1;
-        for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
-          if (this.selectedFeedFilterSubscriptions[i] === subscription) {
-            idxToSplice = i;
-            break;
-          }
-        }
-        if (idxToSplice >= 0) {
-          this.selectedFeedFilterSubscriptions.splice(idxToSplice, 1);
-        }
-      } else {
-        this.selectedFeedFilterSubscriptions.push(subscription);
-      }
-    },
     updatePostFeedFilter(f) {
-      if (f.name === "subscription") {
-        if (this.selectedFeedFilterSubscriptions.indexOf(f.value) < 0) {
-          this.selectedFeedFilterSubscriptions.push(f.value);
-          this.showFeedFilterPills = true;
-        } else {
-          this.removeFilterFromSet(this.selectedFeedFilterSubscriptions, f.value);
-        }
-      } else if (f.name === "category") {
-        if (this.selectedFeedFilterCategories.indexOf(f.value) < 0) {
-          this.selectedFeedFilterCategories.push(f.value);
-          this.showFeedFilterPills = true;
-        } else {
-          this.removeFilterFromSet(this.selectedFeedFilterCategories, f.value);
-        }
-      }
-    },
-    removeFilterFromSet(filterSet, filterValue) {
-      let idxToSplice = -1;
-      for (let i = 0; i < filterSet.length; i++) {
-        if (filterSet[i] === filterValue) {
-          idxToSplice = i;
-          break;
-        }
-      }
-      if (idxToSplice >= 0) {
-        filterSet = filterSet.splice(idxToSplice, 1);
-      }
+      console.log("updatePostFeedFilter, f=" + JSON.stringify(f));
     },
     countInboundQueue(feedId) {
       let iq = this.inboundQueuesByFeed[feedId];
@@ -1347,8 +1238,6 @@ export default {
     setSelectedFeedId(feedId) {
       this.selectedFeedId = feedId;
       this.inboundQueue = feedId ? this.inboundQueuesByFeed[feedId] : null;
-      this.selectedFeedFilterCategories = [];
-      this.selectedFeedFilterSubscriptions = [];
       this.currentPage = 0;
       this.itemCount = 0;
     },
