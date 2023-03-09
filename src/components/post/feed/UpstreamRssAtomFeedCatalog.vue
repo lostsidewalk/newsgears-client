@@ -517,7 +517,7 @@ export default {
   padding-top: .75rem;
   display: flex;
   flex-wrap: wrap;
-  row-gap: .5rem;
+  gap: .5rem;
 }
 
 .feed-catalog-filter-button {

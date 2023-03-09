@@ -42,6 +42,7 @@ export default {
   user-select: none;
   background-color: v-bind('theme.sectionbrighthighlight');
   color: v-bind('theme.logocolor');
+  margin: 1px;
 }
 
 .tab-label:hover, .tab-label:focus-visible {

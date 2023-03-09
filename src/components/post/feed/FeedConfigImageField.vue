@@ -24,14 +24,14 @@
         title="Click here to add a feed image."
         alt="Queue logo image" />
     </label>
-    <span>
-    <button :disabled="disabled || inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">
-      <span class="fa fa-trash-o" />
-    </button>
-    <button :disabled="disabled || inTransit" class="feed-image-randomize" @click="randomizeFeedImage">
-      <span class="fa fa-paw" />
-    </button>
-    </span>
+    <div class="feed-image-buttons">
+      <button :disabled="disabled || inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">
+        <span class="fa fa-trash-o" />
+      </button>
+      <button :disabled="disabled || inTransit" class="feed-image-randomize" @click="randomizeFeedImage">
+        <span class="fa fa-paw" />
+      </button>
+    </div>
     <div class="feed-image-upload-errors" v-if="this.feedImageUploadErrors.length > 0">
       <div class="error feed-image-upload-error" v-for="error in this.feedImageUploadErrors" :key="error">
         {{ error }}
@@ -185,6 +185,11 @@ export default {
   width: fit-content;
   height: fit-content;
   cursor: pointer;
+}
+
+.feed-image-buttons {
+  margin: 1px;
+  display: flex;gap: .31rem
 }
 
 .feed-image-clear, .feed-image-randomize {

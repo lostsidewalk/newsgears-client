@@ -32,7 +32,7 @@
           'feed-select-view-selected': this.selectedFeedId, 
           'feed-select-view-collapsed': !this.showFeedSelectView
         }">
-          <ViewHeader v-if="!this.showFeedConfigPanel && !this.showOpmlUploadPanel" 
+          <ViewHeader 
             :sticky="true" 
             :collapsible="true" 
             :show="this.showQueueDashboard" 
@@ -90,49 +90,12 @@
                 </div>
               </template>
           </ViewHeader>
-          <ViewHeader v-if="this.showFeedConfigPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
-            <template v-slot:count>
-              <span class="fa fa-feed fa-1x"/>
-              QUEUE SETTINGS
-            </template>
-            <template v-slot:body>
-              <!-- feed configuration panel modal (hidden) -->
-              <FeedConfigPanel ref="feedConfigPanel"
-                :disabled="disabled || inTransit"
-                :theme="theme"
-                :baseUrl="baseUrl" 
-                :allNewsApiV2Sources="allNewsApiV2Sources"
-                :allNewsApiV2Countries="allNewsApiV2Countries"
-                :allNewsApiV2Categories="allNewsApiV2Categories"
-                :allNewsApiV2Languages="allNewsApiV2Languages"
-                :rssAtomFeedCatalog="rssAtomFeedCatalog"
-                @saveOrUpdate="createOrUpdateFeed"
-                @cancel="cancelCreateOrUpdateFeed"
-                @authError="handleServerError" />
-            </template>
-          </ViewHeader>
-          <ViewHeader v-if="this.showOpmlUploadPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
-            <template v-slot:count>
-              <span class="fa fa-feed fa-1x"/>
-              OPML UPLOAD
-            </template>
-            <template v-slot:body>
-              <!-- OPML upload panel modal (hidden) -->
-              <OpmlUploadPanel ref="opmlUploadPanel"
-                :disabled="disabled || inTransit" 
-                :theme="theme"
-                :baseUrl="baseUrl" 
-                @finalizeUpload="createOpmlFeeds"
-                @cancel="cancelOpmlUpload"
-                @authError="handleServerError" />
-            </template>
-          </ViewHeader>
         </div>
         <button v-if="this.selectedFeedId" class="toggle-feed-select-view" @click="this.showFeedSelectView = !this.showFeedSelectView" />
         <!-- right side -->
         <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
-          <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId">
+          <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
             <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit || isModalShowing" :inTransit="false" :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-gears fa-1x"/>
@@ -229,7 +192,7 @@
             </ViewHeader>
           </div>
           <!-- inbound queue -- hide when modal is showing -->
-          <div class="staging-view" v-if="this.selectedFeedId">
+          <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
             <div>
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" :post="post"
                 :id="'post_' + post.id"
@@ -253,6 +216,43 @@
               <div v-if="this.totalPages === 0" class="queue-message">There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.</div>  
               <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.</div>
             </div>
+          </div>
+          <div class="staging-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel">
+            <ViewHeader v-if="this.showFeedConfigPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+              <template v-slot:count>
+                <span class="fa fa-feed fa-1x"/>
+                QUEUE SETTINGS
+              </template>
+              <template v-slot:body>
+                <FeedConfigPanel ref="feedConfigPanel"
+                  :disabled="disabled || inTransit"
+                  :theme="theme"
+                  :baseUrl="baseUrl" 
+                  :allNewsApiV2Sources="allNewsApiV2Sources"
+                  :allNewsApiV2Countries="allNewsApiV2Countries"
+                  :allNewsApiV2Categories="allNewsApiV2Categories"
+                  :allNewsApiV2Languages="allNewsApiV2Languages"
+                  :rssAtomFeedCatalog="rssAtomFeedCatalog"
+                  @saveOrUpdate="createOrUpdateFeed"
+                  @cancel="cancelCreateOrUpdateFeed"
+                  @authError="handleServerError" />
+              </template>
+            </ViewHeader>
+            <ViewHeader v-if="this.showOpmlUploadPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+              <template v-slot:count>
+                <span class="fa fa-feed fa-1x"/>
+                OPML UPLOAD
+              </template>
+              <template v-slot:body>
+                <OpmlUploadPanel ref="opmlUploadPanel"
+                  :disabled="disabled || inTransit" 
+                  :theme="theme"
+                  :baseUrl="baseUrl" 
+                  @finalizeUpload="createOpmlFeeds"
+                  @cancel="cancelOpmlUpload"
+                  @authError="handleServerError" />
+              </template>
+            </ViewHeader>
           </div>
           <div class="logo">
             <span class="fa fa-rss" style="font-size: 15em;" />
@@ -1735,6 +1735,7 @@ export default {
   max-width: 100%; 
   gap: .75rem;
   padding-top: .75rem;
+  margin: 1px;
 }
 
 footer {
@@ -1813,7 +1814,7 @@ footer {
   padding-top: .75rem;
   display: flex;
   flex-wrap: wrap;
-  row-gap: .5rem;
+  gap: .5rem;
 }
 
 .feed-filter-button {

@@ -280,6 +280,6 @@ export default {
   align-items: center;
   flex-wrap: wrap;
   justify-content: start;
-  row-gap: .5rem;
+  gap: .5rem;
 }
 </style>

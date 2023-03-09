@@ -260,7 +260,7 @@ export default {
   padding-top: .75rem;
   display: flex;
   flex-wrap: wrap;
-  row-gap: .5rem;
+  gap: .5rem;
 }
 
 .rss-atom-url-row-button {
