@@ -1,9 +1,31 @@
 <template>
   <div class="feed-config-field">
-    <!-- filter label -->
-    <label>NEWS SOURCES {{ '(SHOWING ' + filteredNewsApiV2Sources.length + ' SOURCES)'}}</label>
-    <!-- filter input -->
-    <input class="newsapiv2-sources-filter" type="text" v-model="newsApiV2SourcesFilter" :disabled="disabled" placeholder="Filter"/>
+    <!-- newsapiv2 sources filter label -->
+    <label>NEWS SOURCES {{ '(' + this.filteredNewsApiV2Sources.length + ' SOURCES MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + (this.totalPages > 0 ? this.totalPages : 1) + ')' }}</label>
+    <!-- newsapiv2 sources filter input w/pagination buttons -->
+    <div class="newsapiv2-sources-filter">
+      <!-- newsapiv2 sources filter input -->
+      <input type="text" v-model="newsApiV2SourcesFilter" :disabled="disabled" placeholder="Filter"/>
+      <div class="newsapiv2-sources-filter-buttons">
+        <!-- first page button-->
+        <button title="first" class="newsapiv2-sources-filter-button" @click="firstPage">
+          <span class="fa fa-angle-double-left"/>
+        </button>
+        <!-- previous page button -->
+        <button title="previous" class="newsapiv2-sources-filter-button" @click="previousPage">
+          <span class="fa fa-angle-left"/>
+        </button>
+        <!-- next page button -->
+        <button title="next" class="newsapiv2-sources-filter-button" @click="nextPage">
+          <span class="fa fa-angle-right"/>
+        </button>
+        <!-- last page button-->
+        <button title="last" class="newsapiv2-sources-filter-button" @click="lastPage">
+          <span class="fa fa-angle-double-right"/>
+        </button>
+      </div>
+    </div>
+    <!-- newsapiv2 sources filter pills -->
     <div class="newsapiv2-sources-filter-pills">
       <!-- source language -->
       SOURCE LANGUAGE
@@ -34,29 +56,27 @@
         </button>
       </div>
     </div>
-    <div class="newsapiv2-sources">
-      <div class="newsapiv2-source" v-for="source of this.filteredNewsApiV2Sources" :key="source">
-        <label class="newsapiv2-source-label">
-          <input type="checkbox" :checked="newsApiV2Sources[source.key]" @click="toggleNewsApiV2SourceFilter(source)" :disabled="disabled"/>
-          {{ source.name }}
-        </label>
-        <div style="padding-top: .31rem;">{{ source.description }}</div>
-        <!-- <div>URL: {{ source.url }}</div> -->
-        <div style="padding-top: .31rem;" class="pill-container">
-          <button class="br-pill" @click="toggleNewsApiV2CategoryFilter(source.category)">
-            {{ source.category.toUpperCase() }}
-          </button>
-          <button class="br-pill" @click="toggleNewsApiV2CountryFilter(source.country)">
-            {{ source.country.toUpperCase() }}
-            <span :class="'newsapiv2-country-icon fi fi-' + source.country.toLowerCase()"></span>
-          </button>
-          <button class="br-pill" @click="toggleNewsApiV2LanguageFilter(source.language)">
-            {{ source.language.toUpperCase() }}
-          </button>
-          <button class="br-pill" v-if="source.url" aria-label="Visit this news source URL in new tab" @click="window.open(source.url, '_blank')">
-            <span class="fa fa-link fa-1x"/>
-          </button>
-        </div>
+    <div class="newsapiv2-source" v-for="source in this.getCurrentPage(this.filteredNewsApiV2Sources)" :key="source">
+      <label class="newsapiv2-source-label">
+        <input type="checkbox" :checked="newsApiV2Sources[source.key]" @click="toggleNewsApiV2SourceFilter(source)" :disabled="disabled"/>
+        {{ source.name }}
+      </label>
+      <div style="padding-top: .31rem;">{{ source.description }}</div>
+      <!-- <div>URL: {{ source.url }}</div> -->
+      <div style="padding-top: .31rem;" class="pill-container">
+        <button class="br-pill" @click="toggleNewsApiV2CategoryFilter(source.category)">
+          {{ source.category.toUpperCase() }}
+        </button>
+        <button class="br-pill" @click="toggleNewsApiV2CountryFilter(source.country)">
+          {{ source.country.toUpperCase() }}
+          <span :class="'newsapiv2-country-icon fi fi-' + source.country.toLowerCase()"></span>
+        </button>
+        <button class="br-pill" @click="toggleNewsApiV2LanguageFilter(source.language)">
+          {{ source.language.toUpperCase() }}
+        </button>
+        <button class="br-pill" v-if="source.url" aria-label="Visit this news source URL in new tab" @click="window.open(source.url, '_blank')">
+          <span class="fa fa-link fa-1x"/>
+        </button>
       </div>
     </div>
   </div>
@@ -115,6 +135,10 @@ export default {
     }
   },
   computed: {
+    totalPages: function() {
+      let t = Math.ceil(this.filteredNewsApiV2Sources.length / 10);
+      return t;
+    },
     filteredNewsApiV2Languages: function() {
       let filtered = [];
       if (this.allNewsApiV2Languages && this.allNewsApiV2Sources) {
@@ -169,6 +193,36 @@ export default {
     },
   },
   methods: {
+    getCurrentPage(items) {
+      if (items.length != this.itemCount) {
+        this.itemCount = items.length;
+        this.currentPage = 0;
+      }
+      let startIdx = this.currentPage * 10;
+      let endIdx = startIdx + 10;
+      return items.slice(startIdx, endIdx);
+    },
+    firstPage() {
+      this.currentPage = 0;
+    },
+    nextPage() {
+      let n = this.currentPage + 1;
+      if (n === this.totalPages) {
+        n -= 1;
+      }
+      this.currentPage = n;
+    },
+    previousPage() {
+      let p = this.currentPage - 1;
+      if (p < 0) {
+        p = 0;
+      }
+      this.currentPage = p;
+    },
+    lastPage() {
+      this.currentPage = this.totalPages - 1;
+    },
+    //
     toggleNewsApiV2LanguageFilter(language) {
       let l = (this.newsApiV2Language === language ? '' : language);
       this.$emit('update:newsApiV2Language', l);
@@ -192,6 +246,8 @@ export default {
       newsApiV2SourceCountByCountry: {},
       newsApiV2SourceCountByCategory: {},
       newsApiV2SourcesFilter: '',
+      currentPage: 0,
+      itemCount: 0,
     }
   }
 }
@@ -300,16 +356,30 @@ export default {
   width: 100%;
 }
 
-.newsapiv2-sources {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
-  resize: none;
-  gap: .75rem;
-}
-
 .newsapiv2-sources-filter {
   margin-top: .75rem;
   margin-bottom: .75rem;
+}
+
+.newsapiv2-sources-filter > input {
+  padding: .31rem;
+  border: 1px solid v-bind('theme.fieldborder');
+  background-color: v-bind('theme.fieldbackground');
+  color: v-bind('theme.normalmessage');
+  border-radius: 3px 0px 0px 3px;
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  width: 100%;
+}
+
+.newsapiv2-sources-filter input:hover, .feed-catalog-filter > input:focus-visible {
+  border: 1px solid v-bind('theme.fieldborderhighlight');
+  background: v-bind('theme.fieldbackgroundhighlight');
+  color: v-bind('theme.fieldcolorhighlight');
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+.newsapiv2-sources-filter > input:disabled {
+  cursor: auto;
 }
 
 .newsapiv2-sources-filter-pills > div {
@@ -344,5 +414,44 @@ export default {
 
 .newsapiv2-source-label > input:disabled {
   cursor: auto;
+}
+
+.newsapiv2-sources-filter-buttons {
+  padding-top: .75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.newsapiv2-sources-filter-button {
+  border: 1px solid v-bind('theme.fieldborder');
+  background-color: v-bind('theme.fieldbackground');
+  color: v-bind('theme.buttonfg');
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  padding: .44rem 1.25rem;
+  cursor: pointer;
+  float: right;
+  text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+.newsapiv2-sources-filter-button:hover, .newsapiv2-sources-filter-button:focus-visible {
+  border: 1px solid v-bind('theme.fieldborderhighlight');
+  background: v-bind('theme.fieldbackgroundhighlight');
+  color: v-bind('theme.fieldcolorhighlight');
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+.newsapiv2-sources-filter-button:disabled {
+  cursor: auto;
+}
+
+.newsapiv2-sources-filter-button:hover:disabled {
+  background-color: unset;
+}
+
+.newsapiv2-sources-filter-button:last-child {
+  border-radius: 0px 3px 3px 0px;
 }
 </style>
