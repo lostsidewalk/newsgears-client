@@ -182,8 +182,8 @@
                 @click.prevent="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @setActive="setSelectedPost($event, post.id, false)" 
                 @openPostUrl="openPostUrl(post.id)"
-                @updatePostReadStatus="updatePostReadStatus"
-                @updatePostPubStatus="updatePostPubStatus" 
+                @updatePostReadStatus="$event => { this.updatePostReadStatus($event); this.selectNextPost(); }"
+                @updatePostPubStatus="$event => { this.updatePostPubStatus($event); this.selectNextPost(); }" 
                 @updateFilter="updatePostFeedFilter" 
                 @playing="onMediaPlaying" 
                 @audioPlay="onAudioPlay" 
@@ -309,24 +309,19 @@ export default {
           // check mode 
           let modeMatches = false;
           if (this.feedFilterModes.length === 0) {
-            modeMatches = true;
+            modeMatches = false;
           } else {
-            if (this.lcSetContainsStr('PUBLISHED', this.feedFilterModes)) {
-              modeMatches = post.isPublished;
-            }
-            if (!modeMatches && this.lcSetContainsStr('UNREAD', this.feedFilterModes)) {
-              modeMatches = !post.isRead;
-            }
-            if (!modeMatches) {
-              modeMatches = this.lcSetContainsStr(post.postReadStatus, this.feedFilterModes) || 
-                this.lcSetContainsStr(post.postPubStatus, this.feedFilterModes);
-            }
+            modeMatches = this.lcSetContainsStr('PUBLISHED', this.feedFilterModes) && post.isPublished;
+            modeMatches = modeMatches || (this.lcSetContainsStr('UNREAD', this.feedFilterModes) && !post.isRead);
+            modeMatches = modeMatches || this.lcSetContainsStr(post.postReadStatus, this.feedFilterModes);
+            modeMatches = modeMatches || this.lcSetContainsStr(post.postPubStatus, this.feedFilterModes);
           }
           if (!modeMatches) {
             return false;
           }
           // check title and desc against filter text, if defined 
           let lcFilter = this.inboundQueueFilter ? this.inboundQueueFilter.toLowerCase() : null;
+          // TODO: parse the filter expression 
           return lcFilter ? (
             post.postTitle.value.toLowerCase().includes(lcFilter) || 
             (post.postDesc && post.postDesc.value.toLowerCase().includes(lcFilter)) // TODO: add post contents and consider cases where title, description, contents are HTML 
@@ -791,6 +786,7 @@ export default {
             newStatus: newStatus, 
             originator: originator
           });
+      this.selectNextPost();
     },
     markSelectedPostAsRead() {
       let p = this.getPostFromQueue(this.selectedPostId);
@@ -807,6 +803,7 @@ export default {
             newStatus: newStatus, 
             originator: "togglePostReadStatus"
           });
+      this.selectNextPost();
     },
     updatePostReadStatus(result) {
       console.log("post-feed: updating post status, statusObj=" + JSON.stringify(result));
