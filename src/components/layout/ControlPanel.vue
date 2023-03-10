@@ -2,12 +2,12 @@
   <div>
     <div>
       <FeedGearsLogo :theme="theme" />
-      <!-- logout button -->
-      <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="disabled" :theme="theme" />
+      <!-- logout button, don't disable -->
+      <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="false" :theme="theme" />
       <!-- settings button -->
       <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
-      <!-- display mode switch -->
-      <DisplayModeButton :disabled="disabled" :theme="theme" />
+      <!-- display mode switch, don't disable -->
+      <DisplayModeButton :disabled="false" :theme="theme" />
     </div>
     <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
       :theme="theme" 

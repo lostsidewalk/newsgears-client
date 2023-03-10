@@ -74,13 +74,6 @@
         </span>
         <!-- post header pills -->
         <span class="post-item-header-pills pill-container">
-          <!-- importer desc (query) -->
-          <button
-            class="br-pill"
-            @click.stop="updateFeedFilter('subscription', post.importerDesc)"
-            :title="'Add this subscription (' + post.importerDesc + ') to the filter'">
-            {{ post.importerDesc }}
-          </button> 
           <!-- post categories -->
           <button v-for="postCategory in post.postCategories" :key="postCategory"
             class="br-pill"

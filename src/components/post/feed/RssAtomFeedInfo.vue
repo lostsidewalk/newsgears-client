@@ -31,7 +31,7 @@
         <!-- author -->
         <div v-if="this.info.author" class="rss-atom-feed-info-field pill-container">
           <button 
-            :class="filterSupport ? '' : 'br-pill-subdued'"
+            :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? 'Add/remove this author (' + this.info.author + ') to the current filter' : this.info.author"
             @click="updateFeedFilter('author', this.info.author)"
             :disabled="!filterSupport">
@@ -70,7 +70,7 @@
             :title="filterSupport ? 'Add/remove this language (' + this.info.language + ') to the current filter' : this.info.language"
             @click="updateFeedFilter('language', this.info.language)"
             :disabled="!filterSupport">
-            Language: {{ this.info.language }}
+            {{ this.info.language }}
           </button>
           <!-- docs -->
           <button v-if="this.info.docs" 
@@ -78,7 +78,7 @@
             :title="filterSupport ? 'Add/remove this doc string (' + this.info.docs + ') to the current filter' : this.info.docs"
             @click="updateFeedFilter('docs', this.info.docs)"
             :disabled="!filterSupport">
-            Docs: {{ this.info.docs }}
+            {{ this.info.docs }}
           </button>
           <!-- encoding -->
           <button v-if="this.info.encoding" 
@@ -86,24 +86,24 @@
             :title="filterSupport ? 'Add/remove this encoding (' + this.info.encoding + ') to the current filter' : this.info.encoding"
             @click="updateFeedFilter('encoding', this.info.encoding)"
             :disabled="!filterSupport">
-            Encoding: {{ this.info.encoding }}
+            {{ this.info.encoding }}
           </button>
           <!-- feed type -->
-          <button v-if="this.info.feedType" 
+          <!-- <button v-if="this.info.feedType" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? 'Add/remove this feed type (' + this.info.feedType + ') to the current filter' : this.info.feedType"
             @click="updateFeedFilter('feedType', this.info.feedType)"
             :disabled="!filterSupport">
-            Feed type: {{ this.info.feedType }}
-          </button>
+            {{ this.info.feedType }}
+          </button> -->
           <!-- generator -->
-          <button v-if="this.info.generator" 
+          <!-- <button v-if="this.info.generator" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? 'Add/remove this generator (' + this.info.generator + ') to the current filter' : this.info.generator"
             @click="updateFeedFilter('generator', this.info.generator)"
             :disabled="!filterSupport">
             Generator: {{ this.info.generator }}
-          </button>
+          </button> -->
           <!-- managing editor -->
           <button v-if="this.info.managingEditor" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
@@ -123,7 +123,7 @@
         </div>
         <div class="rss-atom-feed-info-field pill-container">
           <!-- http satus code + status message -->
-          <span v-if="this.info.httpStatusCode" 
+          <span v-if="this.info.httpStatusCode && this.info.httpStatusCode !== 200" 
             :title="'HTTP status code ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')'">
             {{ 'HTTP ' + this.info.httpStatusCode }}
           </span>

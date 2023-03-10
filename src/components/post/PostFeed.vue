@@ -385,7 +385,7 @@ export default {
     //   return Array.from(subscriptions);
     // },
     isModalShowing: function() {
-      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
+      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showHelpPanel);
     }
   },
   data() {
@@ -770,7 +770,7 @@ export default {
     // 
     // post status 
     //
-    starSelectedPost() {
+    toggleSelectedPostPubStatus() {
       let p = this.getPostFromQueue(this.selectedPostId);
       let newStatus;
       let originator;
@@ -788,7 +788,7 @@ export default {
           });
       this.selectNextPost();
     },
-    markSelectedPostAsRead() {
+    toggleSelectedPostReadStatus() {
       let p = this.getPostFromQueue(this.selectedPostId);
       let newStatus;
       if (p.postStatus !== 'READ') {
@@ -1274,6 +1274,9 @@ export default {
       if ($event && ($event.target.classList.contains('plyr__control') || $event.target.classList.contains('audio-player-control')))  {
         return;
       }
+      if (this.selectedPostId && this.selectedPostId === postId) {
+        return;
+      }
       doFocus = doFocus === undefined ? true : doFocus;
       let r = this.$refs['post_' + postId];
       if (!r || r.length === 0) {
@@ -1395,11 +1398,11 @@ export default {
           event.stopPropagation();
           event.preventDefault();
         } else if (event.key === 's') {
-          this.starSelectedPost();
+          this.toggleSelectedPostPubStatus();
           event.stopPropagation();
           event.preventDefault();
         } else if (event.key === 'm') {
-          this.markSelectedPostAsRead();
+          this.toggleSelectedPostReadStatus();
           event.stopPropagation();
           event.preventDefault();
         } else if (event.key === 'v') {
