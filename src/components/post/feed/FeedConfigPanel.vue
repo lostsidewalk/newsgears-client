@@ -123,28 +123,16 @@
           <!-- tab 3: RSS/ATOM Feed Discovery -->
           <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
             <!-- Upstream RSS/ATOM URLs -->
-            <UpstreamRssAtomFeedsConfig v-if="!this.showFeedCatalog" 
+            <UpstreamRssAtomFeedsConfig 
               ref="upstreamRssAtomFeedsConfig"
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :baseUrl="baseUrl"
               :rssAtomFeedUrls="this.rssAtomFeedUrls" 
               @addRssAtomUrl="this.addRssAtomUrl" 
-              @showRssAtomUrlBrowser="this.showRssAtomUrlBrowser"
               @deleteRssAtomUrl="this.deleteRssAtomUrl"
               @update:rssAtomFeedUrl="updateRssAtomFeedUrl" 
               @authError="handleAuthError" />
-            <div class="feed-catalog-errors" v-if="this.showFeedCatalog && this.feedCatalogErrors.length > 0">
-              <div class="error feed-catalog-error" v-for="error in this.feedCatalogErrors" :key="error">
-                {{ error }}
-              </div>
-            </div>
-            <UpstreamRssAtomFeedCatalog v-if="this.showFeedCatalog"
-              :disabled="disabled || inTransit"
-              :theme="theme"
-              :feedCatalog="this.feedCatalog" 
-              :rssAtomFeedUrls="this.rssAtomFeedUrls"
-              @addCatalogFeed="this.addCatalogFeed" />
           </div>
         </div>
       </div>
@@ -158,15 +146,10 @@
           {{ this.feed.id ? 'Update' : 'Save' }}
         </button>
         <!-- cancel button -->
-        <button v-if="!this.showFeedCatalog" class="feed-config-button" 
+        <button class="feed-config-button" 
           @click="cancelFeedConfig" 
           :disabled="disabled || inTransit">
           Cancel
-        </button>
-        <button v-if="this.showFeedCatalog" class="feed-config-button" 
-          @click="cancelRssAtomUrlBrowser" 
-          :disabled="disabled || inTransit">
-          Return to feed config 
         </button>
       </div>
     </div>
@@ -182,7 +165,6 @@ import NewsApiV2SourcesConfig from './NewsApiV2SourcesConfig.vue';
 import { required, maxLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import UpstreamRssAtomFeedsConfig from './UpstreamRssAtomFeedsConfig.vue';
-import UpstreamRssAtomFeedCatalog from './UpstreamRssAtomFeedCatalog.vue';
 
 
 export default {
@@ -199,7 +181,6 @@ export default {
     FeedConfigImageField,
     NewsApiV2SourcesConfig,
     UpstreamRssAtomFeedsConfig,
-    UpstreamRssAtomFeedCatalog
 },
   props: [
     "baseUrl", 
@@ -283,10 +264,6 @@ export default {
       rssAtomFeedUrls: [],
       // currently selected tab 
       selectedTab: 'BASIC_PROPERTIES',
-      // feed catalog 
-      feedCatalog: null,
-      showFeedCatalog: false,
-      feedCatalogErrors: [],
     };
   },
   methods: {
@@ -413,63 +390,15 @@ export default {
     cancelFeedConfig() {
       this.$emit('cancel'); 
     },
-    addRssAtomUrl() {
+    addRssAtomUrl(source) {
       if (!this.rssAtomFeedUrls) {
         this.rssAtomFeedUrls = [];
       }
-      this.rssAtomFeedUrls.unshift({
-        id: Math.floor(Math.random() * 1000000000)
-      });
-    },
-    showRssAtomUrlBrowser() {
-      this.showFeedCatalog = true;
-      if (!this.feedCatalog) {
-        console.log("feed-config-panel: loading feed catalog...");
-        this.inTransit = true;
-        this.$auth.getTokenSilently().then((token) => {
-          const requestOptions = {
-              method: 'GET',
-              headers: { 
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include',
-            };
-            fetch(this.baseUrl + "/catalog", requestOptions)
-            .then((response) => {
-              if (response.status === 200) {
-                return response.json();
-              } else { // framework is rejecting the request 
-                throw Error('We weren\'t able to fetch our feed catalog.  Please try again later.');
-              }
-            }).then((data) => {
-              this.feedCatalog = data;
-              for (let i = 0; i < this.feedCatalog.length; i++) {
-                let c = this.feedCatalog[i];
-                c.discoveryUrl = c.feedUrl;
-              }
-            }).catch((error) => {
-              console.error(error);
-              if (error.name === 'TypeError') {
-                this.feedCatalogErrors.push('Something went wrong.  Please try again later.');
-              } else {
-                this.feedCatalogErrors.push(error.message);
-              }
-            }).finally(() => {
-              this.inTransit = false;
-            });
-        }).catch((error) => {
-          this.handleAuthError(error);
-          this.inTransit = false;
-        })
-        this.feedCatalog = [];
+      if (source === undefined) {
+        source = {};
       }
-    },
-    addCatalogFeed(source) {
       source.id = Math.floor(Math.random() * 1000000000);
       this.rssAtomFeedUrls.unshift(source);
-    },
-    cancelRssAtomUrlBrowser() {
-      this.showFeedCatalog = false;
     },
     deleteRssAtomUrl(id) {
       let deleteIdx = -1;
@@ -629,12 +558,5 @@ export default {
     12.5% {
         top: 30px;
     }
-}
-
-.feed-catalog-errors {
-  background-color: v-bind('theme.sectionnegativehighlight');
-  padding: .75rem;
-  border-radius: 3px;
-  margin-bottom: .75rem;
 }
 </style>

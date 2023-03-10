@@ -418,6 +418,8 @@ export default {
   margin-bottom: .75rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.sectionbordercolor');
+  contain: content;
+  overflow: auto;
 }
 
 .rss-atom-url-row {

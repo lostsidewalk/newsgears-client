@@ -208,7 +208,7 @@ export default {
   border-radius: 3px;
 }
 
-.feed-image-upload-error, .feed-catalog-error {
+.feed-image-upload-error {
   width: 100%;
 }
 </style>

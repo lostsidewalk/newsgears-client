@@ -14,40 +14,53 @@
       <!-- browse feed catalog button -->
       <button  
         class="feed-config-button" 
-        @click="this.$emit('showRssAtomUrlBrowser')" 
+        @click="toggleRssAtomUrlBrowser" 
         :disabled="disabled || inTransit">
-        Browse our catalog of feeds  
+        Feed catalog &nbsp; <span class="fa fa-expand" />
       </button>
     </div>
-    <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.rssAtomFeedUrls" :key="idx">
-      <!-- url input field w/refresh and delete buttons -->
-      <div class="rss-atom-url-row">
-        <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
-          :disabled="disabled || inTransit"
-          placeholder="Feed URL" />
-        <div class="rss-atom-url-row-buttons">
-          <button 
-            class="rss-atom-url-row-button"
-            @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
-            :disabled="disabled || inTransit">
-            <span class="fa fa-refresh"/>
-          </button>
-          <button 
-            class="rss-atom-url-row-button" 
-            @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
-            :disabled="disabled || inTransit">
-            <span class="fa fa-trash"/>
-          </button>
-        </div>
+    <div v-if="this.showFeedCatalog && this.feedCatalogErrors.length > 0">
+      <div class="error feed-catalog-error" v-for="error in this.feedCatalogErrors" :key="error">
+          {{ error }}
       </div>
-      <RssAtomFeedInfo 
-        v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
-        :ref="'rss-atom-url-info-' + rssAtomUrl.id" 
-        :info="rssAtomUrl" 
+    </div>
+    <UpstreamRssAtomFeedCatalog v-if="this.showFeedCatalog"
         :disabled="disabled || inTransit"
-        :theme="theme" 
-        :filterSupport="false" 
-        style="margin-top: .75rem;" />
+        :theme="theme"
+        :feedCatalog="this.feedCatalog" 
+        :rssAtomFeedUrls="this.rssAtomFeedUrls"
+        @addCatalogFeed="this.addCatalogFeed" />
+    <div v-else>
+      <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.rssAtomFeedUrls" :key="idx">
+        <!-- url input field w/refresh and delete buttons -->
+        <div class="rss-atom-url-row">
+          <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
+            :disabled="disabled || inTransit"
+            placeholder="Feed URL" />
+          <div class="rss-atom-url-row-buttons">
+            <button 
+              class="rss-atom-url-row-button"
+              @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
+              :disabled="disabled || inTransit">
+              <span class="fa fa-refresh"/>
+            </button>
+            <button 
+              class="rss-atom-url-row-button" 
+              @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
+              :disabled="disabled || inTransit">
+              <span class="fa fa-trash"/>
+            </button>
+          </div>
+        </div>
+        <RssAtomFeedInfo 
+          v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
+          :ref="'rss-atom-url-info-' + rssAtomUrl.id" 
+          :info="rssAtomUrl" 
+          :disabled="disabled || inTransit"
+          :theme="theme" 
+          :filterSupport="false" 
+          style="margin-top: .75rem;" />
+      </div>
     </div>
   </div>
 </template>
@@ -55,6 +68,7 @@
 <script>
 import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
+import UpstreamRssAtomFeedCatalog from './UpstreamRssAtomFeedCatalog.vue';
 
 
 export default {
@@ -62,11 +76,11 @@ export default {
   components: {
     NavbarFixedHeader,
     RssAtomFeedInfo,
+    UpstreamRssAtomFeedCatalog
   },
   props: [ "rssAtomFeedUrls", "disabled", "theme", "baseUrl" ],
   emits: [
     "addRssAtomUrl",
-    "showRssAtomUrlBrowser",
     "deleteRssAtomUrl", 
     "update:rssAtomFeedUrl",
     "authError",
@@ -150,9 +164,70 @@ export default {
     len(str) {
       return (str !== null && str !== undefined) ? str.length : 0;
     },
+    // 
+    toggleRssAtomUrlBrowser() {
+      if (this.showFeedCatalog) {
+        this.cancelRssAtomUrlBrowser();
+      } else {
+        this.showRssAtomUrlBrowser();
+      }
+    },
+    showRssAtomUrlBrowser() {
+      this.showFeedCatalog = true;
+      if (!this.feedCatalog) {
+        console.log("feed-config-panel: loading feed catalog...");
+        this.inTransit = true;
+        this.$auth.getTokenSilently().then((token) => {
+          const requestOptions = {
+              method: 'GET',
+              headers: { 
+                "Authorization": `Bearer ${token}`
+              },
+              credentials: 'include',
+            };
+            fetch(this.baseUrl + "/catalog", requestOptions)
+            .then((response) => {
+              if (response.status === 200) {
+                return response.json();
+              } else { // framework is rejecting the request 
+                throw Error('We weren\'t able to fetch our feed catalog.  Please try again later.');
+              }
+            }).then((data) => {
+              this.feedCatalog = data;
+              for (let i = 0; i < this.feedCatalog.length; i++) {
+                let c = this.feedCatalog[i];
+                c.discoveryUrl = c.feedUrl;
+              }
+            }).catch((error) => {
+              console.error(error);
+              if (error.name === 'TypeError') {
+                this.feedCatalogErrors.push('Something went wrong.  Please try again later.');
+              } else {
+                this.feedCatalogErrors.push(error.message);
+              }
+            }).finally(() => {
+              this.inTransit = false;
+            });
+        }).catch((error) => {
+          this.handleAuthError(error);
+          this.inTransit = false;
+        })
+        this.feedCatalog = [];
+      }
+    },
+    cancelRssAtomUrlBrowser() {
+      this.showFeedCatalog = false;
+    },
+    addCatalogFeed(source) {
+      this.$emit('addRssAtomUrl', source);
+    },
   },
   data() {
     return {
+      // feed catalog 
+      feedCatalog: null,
+      showFeedCatalog: false,
+      feedCatalogErrors: [],
       // 
       inTransit: false,
     }
@@ -206,6 +281,8 @@ export default {
   margin-bottom: .75rem;
   border-radius: 3px;
   border: 1px solid v-bind('theme.sectionbordercolor');
+  contain: content;
+  overflow: auto;
 }
 
 .rss-atom-url-wrapper input {
@@ -327,5 +404,9 @@ export default {
 
 .feed-config-button:hover:disabled {
   background-color: unset;
+}
+
+.feed-catalog-error {
+  width: 100%;
 }
 </style>

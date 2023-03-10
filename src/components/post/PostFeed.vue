@@ -806,7 +806,7 @@ export default {
       this.selectNextPost();
     },
     updatePostReadStatus(result) {
-      console.log("post-feed: updating post status, statusObj=" + JSON.stringify(result));
+      console.log("post-feed: updating post status");
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -868,7 +868,7 @@ export default {
       this.setLastServerMessage(result.message);
     },
     updatePostPubStatus(result) {
-      console.log("post-feed: updating post status, statusObj=" + JSON.stringify(result));
+      console.log("post-feed: updating post status");
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -1031,7 +1031,7 @@ export default {
       let isUpdate = feed.id ? true : false;
       let method = isUpdate ? 'PUT' : 'POST';
       this.inTransit = true;
-      console.log("post-feed: pushing updated feed to remote, feed=" + JSON.stringify(feed));
+      console.log("post-feed: pushing updated feed to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
           method: method,
