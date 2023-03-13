@@ -1376,7 +1376,7 @@ export default {
       // handle post-related key events 
       if (this.selectedPostId) {
         let t = event.target.getAttribute("type") || event.target.type;
-        if (t === 'text' || t === 'submit') {
+        if (t === 'text') {
           return;
         }
         if (event.key === 'ArrowDown') {
@@ -1414,7 +1414,7 @@ export default {
       // handle feed-related key events 
       if (this.selectedFeedId) {
         let t = event.target.getAttribute("type") || event.target.type;
-        if (t === 'text' || t === 'submit') {
+        if (t === 'text') {
           return;
         }
         if (event.key === 'E' && event.shiftKey === true) {
