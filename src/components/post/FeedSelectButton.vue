@@ -221,5 +221,6 @@ export default {
 .feed-info-details {
   padding-top: .31rem;
   overflow: auto;
+  max-height: 25vh;
 }
 </style>
