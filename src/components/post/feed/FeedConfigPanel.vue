@@ -276,6 +276,7 @@ export default {
       if (data.error) {
         r.error = data.error;
       }
+      r.feedUrl = data.feedUrl; // updated the feed URL to the resolved URL 
       r.title = data.title;
       r.description = data.description;
       r.author = data.author;
