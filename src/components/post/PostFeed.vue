@@ -77,7 +77,7 @@
                     @click.stop="this.configureFeed(this.selectedFeedId)" 
                     :disabled="disabled || inTransit || isModalShowing" 
                     title="Configure this feed">
-                    Configur<i class="underline">e</i> this feed &nbsp; <span class="fa fa-wrench"></span>
+                    Configur<i class="underline">e</i> this queue &nbsp; <span class="fa fa-wrench"></span>
                   </button>
                   <!-- delete queue button -->
                   <button v-if="this.selectedFeedId"
@@ -85,7 +85,7 @@
                     @click.stop="this.deleteFeed(this.selectedFeedId)" 
                     :disabled="disabled || inTransit || isModalShowing" 
                     title="Delete this feed">
-                    Delete this feed &nbsp; <span class="fa fa-trash"></span>
+                    Delete this queue &nbsp; <span class="fa fa-trash"></span>
                   </button>
                 </div>
               </template>
@@ -750,7 +750,7 @@ export default {
           if (queryType === 'NEWSAPIV2_HEADLINES') {
             let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : null;
             fd.newsApiV2QueryText = queryDefinition.queryText;
-            fd.newsApiV2QueryMetrics = qm[queryDefinition.id];
+            fd.newsApiV2QueryMetrics = qm ? qm[queryDefinition.id] : null;
             fd.newsApiV2Sources = queryConfig ? queryConfig.sources : null;
             fd.newsApiV2Language = queryConfig ? queryConfig.language : null;
             fd.newsApiV2Country = queryConfig ? queryConfig.country : null;
@@ -758,7 +758,7 @@ export default {
           } else if (queryType === 'RSS' || queryType === 'ATOM') {
             fd.rssAtomFeedUrls.push({
               "id": queryDefinition.id,
-              "feedMetrics": qm[queryDefinition.id],
+              "feedMetrics": qm ? qm[queryDefinition.id] : null,
               "feedTitle": queryDefinition.queryTitle,
               "feedImageUrl": queryDefinitionImageUrl,
               "feedUrl": queryDefinition.queryText,
