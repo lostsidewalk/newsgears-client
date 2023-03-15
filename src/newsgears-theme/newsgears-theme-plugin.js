@@ -178,8 +178,18 @@ export default {
       }
     }
 
+    function setupMode(mode) {
+      if (mode === 'dark') {
+        setupDarkMode();
+      } else if (mode === 'light') {
+        setupLightMode();
+      }
+    }
+
     const themeObj = reactive({
       'switchMode': switchMode,
+      'setupMode': setupMode,
+      'setupDefaultMode': setupDarkMode,
       currentTheme: reactive({}),
       keySet: [
         { 'name': 'basecolor' },

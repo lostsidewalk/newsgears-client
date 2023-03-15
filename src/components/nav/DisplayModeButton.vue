@@ -1,5 +1,5 @@
 <template>
-  <button class="mode-switch-button" @click="this.$theme.switchMode();" accesskey="l" :disabled="disabled" aria-label="Switch to light or dark mode">
+  <button class="mode-switch-button" @click="switchMode" accesskey="l" :disabled="disabled || inTransit" aria-label="Switch to light or dark mode">
     <span class="fa fa-lightbulb-o" /> <!-- use fa-moon-o for dark mode -->
   </button>
 </template>
@@ -7,7 +7,121 @@
 <script>
 export default {
   name: "DisplayModeButton",
-  props: [ "disabled", "theme" ],
+  props: [ "baseUrl", "disabled", "theme" ],
+  emits: [
+    "updateServerMessage",
+  ],
+  watch: {
+    '$auth.$isAuthenticated' (isAuthenticated) {
+      if (isAuthenticated) {
+        this.refreshModeSetting(); 
+      } else {
+        this.$theme.setupDefaultMode();
+      }
+    }
+  },
+  methods: {
+    // 
+    // server error 
+    // 
+    handleServerError(error) {
+      console.error(error);
+      if (error.name === 'TypeError') {
+        this.setLastServerMessage('Something went wrong.  Please try again later.');
+      } else if (error.message) {
+        this.setLastServerMessage(error.message); 
+      } else {
+        this.setLastServerMessage(error); // $auth plugin errors 
+      }
+    },
+    setLastServerMessage(message) {
+      if (message) {
+        this.$emit('updateServerMessage', message);
+      }
+    },
+    // 
+    switchMode() {
+      this.$theme.switchMode();
+      if (this.$auth.$isAuthenticated) {
+        this.updateModeSetting();
+      }
+    },
+    refreshModeSetting() {
+      this.inTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const requestOptions = {
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              credentials: 'include' 
+            };
+        fetch(this.baseUrl + "/settings/display", requestOptions)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            return response.json().then(j => {throw new Error(j.message)})
+          }
+        }).then((data) => {
+          if (data.displayMode) {
+            this.$theme.setupMode(data.displayMode);
+          }
+        }).catch((error) => {
+          this.handleServerError(error);
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.isLoaded = false;
+      });
+    },
+    updateModeSetting() {
+      this.inTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+              frameworkConfig: { 
+                display: { 
+                  displayMode: this.$theme.currentTheme.ident 
+                } 
+              } 
+            }),
+            credentials: 'include' 
+          };
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return response.text(); 
+          } else {
+            return response.json().then(j => {throw new Error(j.message)})
+          }
+        }).catch((error) => {
+          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage('Something went wrong saving your display mode.  Please try again later.');
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+      });
+    }
+  },
+  data() {
+    return {
+      // 
+      inTransit: false,
+    }
+  }
 }
 </script>
 

@@ -8,7 +8,7 @@
       <!-- sign-up button -->
       <SignUpButton :disabled="false" :theme="theme" style="float: right;"/>
       <!-- display mode switch -->
-      <DisplayModeButton :disabled="false" :theme="theme" />
+      <DisplayModeButton :baseUrl="baseUrl" :disabled="false" :theme="theme" />
       </div>
   </div>
 </template>>
@@ -27,7 +27,7 @@ export default {
       SignUpButton, 
       DisplayModeButton, 
     },
-    props: [ "theme" ],
+    props: [ "baseUrl", "theme" ],
 }
 </script>
 

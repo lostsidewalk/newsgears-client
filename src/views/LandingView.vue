@@ -4,7 +4,7 @@
     <!-- fixed header -->
     <NavbarFixedHeader :theme="theme" :inTransit="false" class="landing-navbar">
       <template v-slot:buttons>
-        <PreLoginNavbarButtons :theme="theme"/>
+        <PreLoginNavbarButtons :baseUrl="baseUrl" :theme="theme"/>
       </template>
     </NavbarFixedHeader>
 
@@ -45,6 +45,18 @@ export default {
     return {
       theme: this.$theme.currentTheme,
     };
+  },
+  mounted() {
+    this.$auth.getTokenSilently()
+      .catch(() => {})
+      .finally(() => {
+        if (this.$auth.$isAuthenticated) {
+          console.log("landing: authenticated on mount");
+        } else {
+          console.log("landing: not authenticated on mount");
+        }
+        this.inTransit = false;
+    });
   },
 };
 </script>

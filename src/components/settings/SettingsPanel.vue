@@ -259,7 +259,6 @@ export default {
     },
     setLastServerMessage(message) {
       if (message) {
-        console.log("emitting updateServerMessage: " + message);
         this.$emit('updateServerMessage', message);
       }
     },
