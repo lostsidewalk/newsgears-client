@@ -813,7 +813,7 @@ export default {
 }
 
 .settings-field input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -840,7 +840,7 @@ export default {
 }
 
 .notification-checkbox {
-  padding: .31rem;
+  padding: .44rem;
   border-radius: 3px;
   user-select: none;
 }

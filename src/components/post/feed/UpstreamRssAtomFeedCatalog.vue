@@ -392,7 +392,7 @@ export default {
 }
 
 .feed-config-field > input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -437,7 +437,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-wrap: wrap;
-  gap: .31rem;
+  gap: .44rem;
 }
 
 .br-pill {
@@ -495,7 +495,7 @@ export default {
 }
 
 .feed-catalog-filter > input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');

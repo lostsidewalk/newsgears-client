@@ -1680,7 +1680,7 @@ footer {
 }
 
 .feed-filter input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -1751,7 +1751,7 @@ footer {
   border: 1px solid transparent;
   display: flex;
   flex-wrap: wrap;
-  gap: .31rem;
+  gap: .44rem;
 }
 
 .br-pill {

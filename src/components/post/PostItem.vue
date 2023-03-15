@@ -435,8 +435,8 @@ export default {
 /** has references */
 .post-item-header {
   border: 1px solid transparent;
-  padding: .31rem;
-  padding-right: .31rem;
+  padding: .44rem;
+  padding-right: .44rem;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   background-color: v-bind('theme.sectionbg');
@@ -447,7 +447,7 @@ export default {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   align-items: flex-start;
-  gap: .31rem;
+  gap: .44rem;
   flex-wrap: wrap;
 }
 
@@ -457,7 +457,7 @@ export default {
 
 .post-admin-buttons {
   display: flex;
-  gap: .31rem;
+  gap: .44rem;
   flex-wrap: wrap;
 }
 
@@ -489,7 +489,7 @@ export default {
   text-align: left;
   margin-left: .44rem;
   margin-top: .44rem;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
   margin-right: .75rem;
 }
 
@@ -503,7 +503,7 @@ export default {
   text-align: left;
   margin-left: .44rem;
   margin-top: .44rem;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
   margin-right: .75rem;
 }
 
@@ -521,7 +521,7 @@ export default {
   text-align: left;
   margin-left: .44rem;
   margin-top: .44rem;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
   margin-right: .75rem;
 }
 
@@ -535,7 +535,7 @@ export default {
   text-align: left;
   margin-left: .44rem;
   margin-top: .44rem;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
   margin-right: .75rem;
 }
 
@@ -564,7 +564,7 @@ export default {
   text-align: left;
   margin-left: .44rem;
   margin-top: .44rem;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
   margin-right: .75rem;
 }
 
@@ -576,7 +576,7 @@ export default {
   text-align: left;
   margin-left: .44rem;
   margin-top: .44rem;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
   margin-right: .75rem;
 }
 
@@ -651,7 +651,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-wrap: wrap;
-  gap: .31rem;
+  gap: .44rem;
 }
 
 .br-pill {

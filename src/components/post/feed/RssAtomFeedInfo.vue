@@ -182,7 +182,7 @@ export default {
 }
 
 .rss-atom-feed-info-field {
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
 }
 
 .rss-atom-feed-info-field > a {
@@ -203,7 +203,7 @@ export default {
 }
 
 .left {
-  padding-right: .31rem;
+  padding-right: .44rem;
 }
 
 .right {
@@ -254,7 +254,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-wrap: wrap;
-  gap: .31rem;
+  gap: .44rem;
 }
 
 /** has references */

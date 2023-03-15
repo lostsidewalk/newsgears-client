@@ -249,7 +249,7 @@ export default {
 }
 
 .feed-config-field > input, .feed-config-field > textarea {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -313,7 +313,7 @@ export default {
 }
 
 .rss-atom-url-row input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');

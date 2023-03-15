@@ -38,7 +38,7 @@ pre {
 .post-media-metadata {
   display: flex;
   flex-direction: row;
-  gap: .31rem;
+  gap: .44rem;
   max-width: fit-content;
   padding-top: .75rem;
   padding-bottom: .75rem;

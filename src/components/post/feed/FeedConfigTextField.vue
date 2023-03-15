@@ -50,7 +50,7 @@ export default {
 }
 
 .feed-config-field input, .feed-config-field textarea {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -83,7 +83,7 @@ export default {
   border-radius: 3px;
   text-align: center;
   margin-top: .125rem;
-  margin-left: .31rem;
+  margin-left: .44rem;
 }
 
 .helptext:hover, .helptext:focus-visible {

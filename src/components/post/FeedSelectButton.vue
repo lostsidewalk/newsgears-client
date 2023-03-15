@@ -150,7 +150,7 @@ export default {
 .feed-info-wrapper {
   flex-direction: row;
   display: flex;
-  padding-left: .31rem;
+  padding-left: .44rem;
   cursor: pointer;
   align-items: flex-start;
 }
@@ -160,19 +160,19 @@ export default {
   align-items: center;
   cursor: pointer;
   overflow-wrap: anywhere;
-  padding: .31rem;
-  gap: .31rem;
+  padding: .44rem;
+  gap: .44rem;
   overflow-wrap: break-word;
 }
 
 .feed-info-label > img {
   max-height: 24px;
   max-width: 24px;
-  padding-right: .31rem;
+  padding-right: .44rem;
 }
 
 .feed-info-label > span {
-  padding-right: .31rem;
+  padding-right: .44rem;
   word-wrap: break-word;
 }
 
@@ -186,7 +186,7 @@ export default {
   display: flex;
   cursor: pointer;
   overflow-wrap: anywhere;
-  padding: .31rem;
+  padding: .44rem;
   flex-direction: column;
   align-items: flex-start;
 }
@@ -219,7 +219,7 @@ export default {
 }
 
 .feed-info-details {
-  padding-top: .31rem;
+  padding-top: .44rem;
   overflow: auto;
   max-height: 25vh;
 }

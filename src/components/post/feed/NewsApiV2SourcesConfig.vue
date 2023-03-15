@@ -61,9 +61,9 @@
         <input type="checkbox" :checked="newsApiV2Sources[source.key]" @click="toggleNewsApiV2SourceFilter(source)" :disabled="disabled"/>
         {{ source.name }}
       </label>
-      <div style="padding-top: .31rem;">{{ source.description }}</div>
+      <div style="padding-top: .44rem;">{{ source.description }}</div>
       <!-- <div>URL: {{ source.url }}</div> -->
-      <div style="padding-top: .31rem;" class="pill-container">
+      <div style="padding-top: .44rem;" class="pill-container">
         <button class="br-pill" @click="toggleNewsApiV2CategoryFilter(source.category)">
           {{ source.category.toUpperCase() }}
         </button>
@@ -267,7 +267,7 @@ export default {
 }
 
 .feed-config-field > input, .feed-config-field > textarea, .newsapiv2-sources-toolbar > input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
@@ -290,7 +290,7 @@ export default {
 }
 
 .newsapiv2-language-label, .newsapiv2-country-label, .newsapiv2-category-label {
-  padding: .31rem;
+  padding: .44rem;
   border-radius: 3px;
   user-select: none;
   align-self: baseline;
@@ -319,7 +319,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-wrap: wrap;
-  gap: .31rem;
+  gap: .44rem;
 }
 
 .br-pill {
@@ -362,7 +362,7 @@ export default {
 }
 
 .newsapiv2-sources-filter > input {
-  padding: .31rem;
+  padding: .44rem;
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');

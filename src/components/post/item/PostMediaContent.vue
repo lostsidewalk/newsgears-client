@@ -105,7 +105,7 @@ export default {
   border: 1px solid transparent;
   display: flex;
   flex-flow: wrap;
-  gap: .31rem;
+  gap: .44rem;
   width: max-content;
   align-items: flex-start;
 }
@@ -116,9 +116,9 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: .31rem;
+  padding: .44rem;
   user-select: none;
-  margin-bottom: .31rem;
+  margin-bottom: .44rem;
 }
 
 .post-media-content-image-wrapper {

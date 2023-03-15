@@ -189,7 +189,7 @@ export default {
 
 .feed-image-buttons {
   margin: 1px;
-  display: flex;gap: .31rem
+  display: flex;gap: .44rem
 }
 
 .feed-image-clear, .feed-image-randomize {
