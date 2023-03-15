@@ -116,7 +116,7 @@
                       </button>
                       <!-- refresh feed button -->
                       <button class="feed-filter-button" 
-                        @click="refreshFeeds(false, null, false)"
+                        @click="refreshFeeds(false, null, true)"
                         :disabled="disabled || inTransit || isModalShowing" 
                         aria-label="Refresh feeds">
                         <span class="fa fa-refresh"/>
@@ -1466,7 +1466,7 @@ export default {
       }
       // handle others (global feed refresh, help, etc.)
       if (event.key === 'R' && event.shiftKey === true) {
-        this.refreshFeeds(false, null, false);
+        this.refreshFeeds(false, null, true);
         event.stopPropagation();
         event.preventDefault();
       } else if (event.key === 'Q') {
