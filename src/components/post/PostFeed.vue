@@ -161,30 +161,19 @@
                     :disabled="disabled || inTransit || isModalShowing">
                       STARRED
                   </button>
-                </div>
-                <!-- post subscription filter pills -->
-                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 0">
-                  <label>SUBSCRIPTIONS</label>
-                  <div class="pill-container">
-                    <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
-                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
-                      @click="toggleFeedFilterSubscription(subscription)"
-                      :disabled="disabled || inTransit || isModalShowing">
-                        {{ subscription }}
-                    </button>
-                  </div>
-                </div>
-                <!-- post category filter pills -->
-                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 0">
-                  <label>CATEGORIES</label>
-                  <div class="pill-container">
-                    <button v-for="category of this.allPostCategories" :key="category"
-                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
-                      @click="toggleFeedFilterCategory(category)"
-                      :disabled="disabled || inTransit || isModalShowing">
-                        {{ category }}
-                    </button>
-                  </div>
+                  <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
+                    class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions)}" 
+                    @click="toggleFeedFilterSubscription(subscription.feedTitle)"
+                    :disabled="disabled || inTransit || isModalShowing || Object.keys(this.allPostSubscriptions).length === 1">
+                      <img :src="subscription.feedImageUrl" />
+                      {{ subscription.feedTitle }}
+                  </button>
+                  <button v-for="category of this.allPostCategories" :key="category"
+                    class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
+                    @click="toggleFeedFilterCategory(category)"
+                    :disabled="disabled || inTransit || isModalShowing">
+                      {{ category }}
+                  </button>
                 </div>
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
@@ -416,12 +405,7 @@ export default {
       return Array.from(categories);
     },
     allPostSubscriptions: function() {
-      let subscriptions = new Set();
-      let f = this.inboundQueue;
-      for (let i = 0; i < f.length; i++) {
-        subscriptions.add(f[i].importerDesc);
-      }
-      return Array.from(subscriptions);
+      return this.getSelectedFeed().rssAtomFeedUrls;
     },
     isModalShowing: function() {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showHelpPanel);
@@ -1649,6 +1633,7 @@ export default {
 .post-feed-container {
 }
 
+/** has references */
 .post-feed-container-inner-selected {
   display: inline-flex;
 }
@@ -1789,13 +1774,6 @@ footer {
 .grid > footer {
 }
 
-.collapsible {
-  display: inline-flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-}
-
 .feed-select-wrapper {
   display: block;
 }
@@ -1884,6 +1862,8 @@ footer {
   padding-bottom: .75rem;
   justify-content: flex-start;
   align-items: center;
+  max-height: 25vh;
+  overflow: auto;
 }
 
 .pill-container {
@@ -1903,20 +1883,26 @@ footer {
   user-select: none;
   min-width: 3rem;
   min-height: 3rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .br-pill:hover, .br-pill:focus-visible {
   border: 1px solid v-bind('theme.buttonborder');
 }
 
+.br-pill > img {
+  max-height: 24px;
+  max-width: 24px;
+  padding-right: .44rem;
+}
+
 .selectedMode {
   color: v-bind('theme.buttonfg');
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.buttonhighlight') !important;
-}
-
-.invisible {
-  visibility: hidden;
 }
 
 .logo {
@@ -1956,6 +1942,7 @@ footer {
     max-width: unset;
   }
 
+  /** has references */
   .post-feed-container-inner-selected {
     display: unset;
   }
@@ -1972,10 +1959,6 @@ footer {
 
   .feed-select-view-collapsed {
     display: none;
-  }
-
-  .invisible {
-    display: unset;
   }
 }
 </style>
