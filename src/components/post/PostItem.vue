@@ -36,7 +36,7 @@
             @click.stop="togglePostReadStatus"
             :disabled="disabled"
             :title="post.isRead ? 'Mark as unread' : 'Mark as read'">
-            <span class="fa fa-eye-slash"></span>
+            <span class="fa" :class="post.isRead ? 'fa-eye' : 'fa-eye-slash'"></span>
           </button>
           <!-- toggle read-later status button -->
           <button
@@ -320,11 +320,6 @@ export default {
     },
     togglePostDetails() {
       this.showPostDetails = !this.showPostDetails;
-      // if (this.showPostDetails) {
-      //   if (!this.post.postStatus) {
-      //     this.updatePostReadStatus('READ', "togglePostDetails");
-      //   }
-      // }
     },
     stagePost() {
       console.log("post-item: publishing post id=" + this.post.id);
@@ -343,7 +338,7 @@ export default {
     },
     togglePostReadStatus() {
       let newStatus;
-      if (this.post.postStatus !== 'READ') {
+      if (!this.post.isRead) {
         console.log("post-item: marking post id=" + this.post.id + " as read");
         newStatus = 'READ';
       } else {
@@ -354,7 +349,7 @@ export default {
     },
     togglePostReadLaterStatus() {
       let newStatus;
-      if (this.post.postStatus !== 'READ_LATER') {
+      if (!this.post.isReadLater) {
         console.log("post-item: marking post id=" + this.post.id + " as read-later");
         newStatus = 'READ_LATER';
       } else {

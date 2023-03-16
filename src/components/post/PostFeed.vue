@@ -162,6 +162,30 @@
                       STARRED
                   </button>
                 </div>
+                <!-- post subscription filter pills -->
+                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostSubscriptions.length > 0">
+                  <label>SUBSCRIPTIONS</label>
+                  <div class="pill-container">
+                    <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
+                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)}" 
+                      @click="toggleFeedFilterSubscription(subscription)"
+                      :disabled="disabled || inTransit || isModalShowing">
+                        {{ subscription }}
+                    </button>
+                  </div>
+                </div>
+                <!-- post category filter pills -->
+                <div class="feed-filter-pills" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader && this.allPostCategories.length > 0">
+                  <label>CATEGORIES</label>
+                  <div class="pill-container">
+                    <button v-for="category of this.allPostCategories" :key="category"
+                      class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
+                      @click="toggleFeedFilterCategory(category)"
+                      :disabled="disabled || inTransit || isModalShowing">
+                        {{ category }}
+                    </button>
+                  </div>
+                </div>
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
               </template>
@@ -182,8 +206,8 @@
                 @click.prevent="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @setActive="setSelectedPost($event, post.id, false)" 
                 @openPostUrl="openPostUrl(post.id)"
-                @updatePostReadStatus="$event => { this.updatePostReadStatus($event); this.selectNextPost(); }"
-                @updatePostPubStatus="$event => { this.updatePostPubStatus($event); this.selectNextPost(); }" 
+                @updatePostReadStatus="setPostReadStatus"
+                @updatePostPubStatus="updatePostPubStatus" 
                 @updateFilter="updatePostFeedFilter" 
                 @playing="onMediaPlaying" 
                 @audioPlay="onAudioPlay" 
@@ -306,17 +330,32 @@ export default {
         // filter inbondQueue according to the filter modes, &c 
         // 
         let filtered = this.inboundQueue.filter((post) => {
-          // check mode 
-          let modeMatches = false;
-          if (this.feedFilterModes.length === 0) {
-            modeMatches = false;
-          } else {
-            modeMatches = this.lcSetContainsStr('PUBLISHED', this.feedFilterModes) && post.isPublished;
-            modeMatches = modeMatches || (this.lcSetContainsStr('UNREAD', this.feedFilterModes) && !post.isRead);
-            modeMatches = modeMatches || this.lcSetContainsStr(post.postReadStatus, this.feedFilterModes);
-            modeMatches = modeMatches || this.lcSetContainsStr(post.postPubStatus, this.feedFilterModes);
+          if (!this.modeMatches(post)) {
+            return false;
           }
-          if (!modeMatches) {
+          // check the subscription (importer desc) against the filter subscriptions (if any) 
+          let subscriptionMatches = false;
+          if (this.selectedFeedFilterSubscriptions.length === 0) {
+            subscriptionMatches = true;
+          } else {
+            subscriptionMatches = this.lcSetContainsStr(post.importerDesc, this.selectedFeedFilterSubscriptions);
+          }
+          if (!subscriptionMatches) {
+            return false;
+          }
+          // check the categories against the filter categories (if any) 
+          let categoriesMatch = false;
+          if (this.selectedFeedFilterCategories.length === 0) {
+            categoriesMatch = true;
+          } else if (post.postCategories) {
+            for (let i = 0; i < post.postCategories.length; i++) {
+              categoriesMatch = this.lcSetContainsStr(post.postCategories[i], this.selectedFeedFilterCategories);
+              if (categoriesMatch) {
+                break;
+              }
+            }
+          }
+          if (!categoriesMatch) {
             return false;
           }
           // check title and desc against filter text, if defined 
@@ -366,24 +405,24 @@ export default {
       });
       return feedIdentOptions;
     },
-    // allPostCategories: function () {
-    //   let categories = new Set();
-    //   let f = this.inboundQueue;
-    //   for (let i = 0; i < f.length; i++) {
-    //     if (f[i].postCategories) {
-    //       f[i].postCategories.forEach((c) => categories.add(c));
-    //     }
-    //   }
-    //   return Array.from(categories);
-    // },
-    // allPostSubscriptions: function() {
-    //   let subscriptions = new Set();
-    //   let f = this.inboundQueue;
-    //   for (let i = 0; i < f.length; i++) {
-    //     subscriptions.add(f[i].importerDesc);
-    //   }
-    //   return Array.from(subscriptions);
-    // },
+    allPostCategories: function () {
+      let categories = new Set();
+      let f = this.inboundQueue;
+      for (let i = 0; i < f.length; i++) {
+        if (f[i].postCategories) {
+          f[i].postCategories.forEach((c) => categories.add(c));
+        }
+      }
+      return Array.from(categories);
+    },
+    allPostSubscriptions: function() {
+      let subscriptions = new Set();
+      let f = this.inboundQueue;
+      for (let i = 0; i < f.length; i++) {
+        subscriptions.add(f[i].importerDesc);
+      }
+      return Array.from(subscriptions);
+    },
     isModalShowing: function() {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showHelpPanel);
     }
@@ -426,6 +465,8 @@ export default {
       // queue filter material 
       inboundQueueFilter: null, // user-supplied filter text 
       feedFilterModes: ['UNREAD', 'READ', 'PUBLISHED'], // currently selected filter modes 
+      selectedFeedFilterSubscriptions: [],
+      selectedFeedFilterCategories: [],
       // queue sorting material 
       inboundQueueSortOrder: 'DSC',
       // NewsApiV2 material 
@@ -438,6 +479,19 @@ export default {
     };
   },
   methods: {
+    modeMatches(post) {
+      // check mode (extract to function) 
+      let modeMatches = false;
+      if (this.feedFilterModes.length === 0) {
+        modeMatches = false;
+      } else {
+        modeMatches = this.lcSetContainsStr('PUBLISHED', this.feedFilterModes) && post.isPublished;
+        modeMatches = modeMatches || (this.lcSetContainsStr('UNREAD', this.feedFilterModes) && (!post.isRead && !post.isReadLater));
+        modeMatches = modeMatches || this.lcSetContainsStr(post.postReadStatus, this.feedFilterModes);
+        modeMatches = modeMatches || this.lcSetContainsStr(post.postPubStatus, this.feedFilterModes);
+      }
+      return modeMatches;
+    },
     onAudioPlay(bundle) {
       for (let j = 0; j < this.inboundQueue.length; j++) {
         let id = this.inboundQueue[j].id;
@@ -596,8 +650,66 @@ export default {
         }
       });
     },
+    toggleFeedFilterCategory(category) {
+      if (this.lcSetContainsStr(category, this.selectedFeedFilterCategories)) {
+        let idxToSplice = -1;
+        for (let i = 0; i < this.selectedFeedFilterCategories.length; i++) {
+          if (this.selectedFeedFilterCategories[i] === category) {
+            idxToSplice = i;
+            break;
+          }
+        }
+        if (idxToSplice >= 0) {
+          this.selectedFeedFilterCategories.splice(idxToSplice, 1);
+        }
+      } else {
+        this.selectedFeedFilterCategories.push(category);
+      }
+    },
+    toggleFeedFilterSubscription(subscription) {
+      if (this.lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)) {
+        let idxToSplice = -1;
+        for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
+          if (this.selectedFeedFilterSubscriptions[i] === subscription) {
+            idxToSplice = i;
+            break;
+          }
+        }
+        if (idxToSplice >= 0) {
+          this.selectedFeedFilterSubscriptions.splice(idxToSplice, 1);
+        }
+      } else {
+        this.selectedFeedFilterSubscriptions.push(subscription);
+      }
+    },
     updatePostFeedFilter(f) {
-      console.log("updatePostFeedFilter, f=" + JSON.stringify(f));
+      if (f.name === "subscription") {
+        if (this.selectedFeedFilterSubscriptions.indexOf(f.value) < 0) {
+          this.selectedFeedFilterSubscriptions.push(f.value);
+          this.showFeedFilterPills = true;
+        } else {
+          this.removeFilterFromSet(this.selectedFeedFilterSubscriptions, f.value);
+        }
+      } else if (f.name === "category") {
+        if (this.selectedFeedFilterCategories.indexOf(f.value) < 0) {
+          this.selectedFeedFilterCategories.push(f.value);
+          this.showFeedFilterPills = true;
+        } else {
+          this.removeFilterFromSet(this.selectedFeedFilterCategories, f.value);
+        }
+      }
+    },
+    removeFilterFromSet(filterSet, filterValue) {
+      let idxToSplice = -1;
+      for (let i = 0; i < filterSet.length; i++) {
+        if (filterSet[i] === filterValue) {
+          idxToSplice = i;
+          break;
+        }
+      }
+      if (idxToSplice >= 0) {
+        filterSet = filterSet.splice(idxToSplice, 1);
+      }
     },
     countInboundQueue(feedId) {
       let iq = this.inboundQueuesByFeed[feedId];
@@ -768,7 +880,7 @@ export default {
       }
     },
     // 
-    // post status 
+    // toggles the selected post pub status, invoked via key listener 
     //
     toggleSelectedPostPubStatus() {
       let p = this.getPostFromQueue(this.selectedPostId);
@@ -786,14 +898,18 @@ export default {
             newStatus: newStatus, 
             originator: originator
           });
-      this.selectNextPost();
     },
+    // 
+    // toggles the selected post read status, invoked via key listener 
+    // 
     toggleSelectedPostReadStatus() {
       let p = this.getPostFromQueue(this.selectedPostId);
       let newStatus;
-      if (p.postStatus !== 'READ') {
-        console.log("post-item: marking post id=" + p.id + " as read");
+      let selectNextPost = false;
+      if (!p.isRead) {
+        console.log("post-item: marking post id=" + p.id + " as read and selecting next unread");
         newStatus = 'READ';
+        selectNextPost = true;
       } else {
         console.log("post-item: unmarking post id=" + p.id + " as read");
         newStatus = 'UNREAD';
@@ -803,8 +919,29 @@ export default {
             newStatus: newStatus, 
             originator: "togglePostReadStatus"
           });
-      this.selectNextPost();
+      if (selectNextPost) {
+        this.selectNextPost();
+      }
     },
+    // 
+    // 
+    // 
+    setPostReadStatus(statusObj) {
+      this.updatePostReadStatus(statusObj); 
+      // select the next post IFF: 
+      //   (1) we're updating the status to something other than un-read 
+      //   (2) we're working with the currently selected post only 
+      //   (3) the filter mode includes the new status of the current post 
+      let correctStatus = statusObj.newStatus !== 'UNREAD';
+      let correctPostId = statusObj.id === this.selectedPostId;
+      let correctFilterMode = this.lcSetContainsStr(statusObj.newStatus, this.feedFilterModes);
+      if (correctStatus && correctPostId && correctFilterMode ) {
+        this.selectNextPost();
+      }
+    },
+    // 
+    // 
+    // 
     updatePostReadStatus(result) {
       console.log("post-feed: updating post status");
       this.inTransit = true;
@@ -842,30 +979,6 @@ export default {
         this.handleServerError(error);
         this.inTransit = false;
       });
-    },
-    onTogglePostDetails(result) {
-      let p = this.getPostFromQueue(result.id);
-      p.isRead = true;
-      p.postReadStatus = 'READ';
-      p.isReadLater = false;
-    },
-    onTogglePostReadStatus(result) {
-      let p = this.getPostFromQueue(result.id);
-      p.isRead = !p.isRead;
-      p.postReadStatus = p.isRead ? 'READ' : null;
-      if (p.isRead) {
-        p.isReadLater = false;
-      }
-      this.setLastServerMessage(result.message);
-    },
-    onTogglePostReadLaterStatus(result) {
-      let p = this.getPostFromQueue(result.id);
-      p.isReadLater = !p.isReadLater;
-      p.postReadStatus = p.isReadLater ? 'READ_LATER' : null;
-      if (p.isReadLater) {
-        p.isRead = false;
-      }
-      this.setLastServerMessage(result.message);
     },
     updatePostPubStatus(result) {
       console.log("post-feed: updating post status");
@@ -913,6 +1026,30 @@ export default {
         this.handleServerError(error);
         this.inTransit = false;
       });
+    },
+    onTogglePostDetails(result) {
+      let p = this.getPostFromQueue(result.id);
+      p.isRead = true;
+      p.postReadStatus = 'READ';
+      p.isReadLater = false;
+    },
+    onTogglePostReadStatus(result) {
+      let p = this.getPostFromQueue(result.id);
+      p.isRead = !p.isRead;
+      p.postReadStatus = p.isRead ? 'READ' : null;
+      if (p.isRead) {
+        p.isReadLater = false;
+      }
+      this.setLastServerMessage(result.message);
+    },
+    onTogglePostReadLaterStatus(result) {
+      let p = this.getPostFromQueue(result.id);
+      p.isReadLater = !p.isReadLater;
+      p.postReadStatus = p.isReadLater ? 'READ_LATER' : null;
+      if (p.isReadLater) {
+        p.isRead = false;
+      }
+      this.setLastServerMessage(result.message);
     },
     onPostItemError(message) {
       console.error(message);
@@ -1236,6 +1373,8 @@ export default {
     setSelectedFeedId(feedId) {
       this.selectedFeedId = feedId;
       this.inboundQueue = feedId ? this.inboundQueuesByFeed[feedId] : null;
+      this.selectedFeedFilterCategories = [];
+      this.selectedFeedFilterSubscriptions = [];
       this.currentPage = 0;
       this.itemCount = 0;
     },

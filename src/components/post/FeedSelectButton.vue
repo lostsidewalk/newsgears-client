@@ -17,8 +17,6 @@
           <!-- inbound / published count -->
           <label class="feed-info-label"><span class="fa fa-eye" /> {{ this.inboundCount }}</label>
           <label class="feed-info-label"><span class="fa fa-star" /> {{ this.publishedCount }}</label>
-          <!-- <label class="feed-info-label">{{ feed.title }}</label>
-          <label class="feed-info-label">{{ feed.description }}</label> -->
         </div>
       </div>
       <!-- show more/less information (also selects the feed) -->
@@ -30,12 +28,12 @@
         <!-- subscriptions -->
         <label class="feed-info-label-small">SUBSCRIPTIONS</label>
         <!-- NewsApiV2 -->
-        <label class="feed-info-label" v-if="feed.newsApiV2QueryText">
+        <label class="feed-info-label subscription-label" v-if="feed.newsApiV2QueryText">
           <img src="newsapiv2_logo.png" alt="NewsApiV2 logo" /> {{ feed.newsApiV2QueryText }}
         </label>
         <!-- RSS/ATOM feeds -->
-        <label class="feed-info-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
-          <!-- Feed logo image -->
+        <label class="feed-info-label subscription-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
+          <!-- feed logo image -->
           <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" alt="Feed logo image" /> 
           <!-- RSS logo -->
           <img v-else src="rss_logo.svg" alt="RSS logo" /> 
@@ -44,9 +42,7 @@
             {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
           </span>
           <!-- feed title w/direct link -->
-            <a class="link" :href="rssAtomFeedUrl.feedUrl" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
-            {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
-          </a>
+          {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
         </label>
         <a class="feed-info-label feed-info-label-small link" href="#" @click="this.$emit('rssAtomUrlQuickAdd', feed.id)" tabindex="0">
           + Add RSS/ATOM subscription
@@ -180,6 +176,11 @@ export default {
   max-width: fit-content;
   cursor: pointer;
   color: v-bind('theme.subduedmessage');
+}
+
+.subscription-label {
+  margin-top: .31rem;
+  margin-bottom: .31rem;
 }
 
 .feed-publication-label {
