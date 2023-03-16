@@ -176,17 +176,18 @@ export default {
               let discoveryUrl = lcStrContains(s.discoveryUrl, this.feedCatalogFilter);
               if (title || description || categories || generator || managingEditor || webMaster || copyright || language || docs || encoding || feedType || discoveryUrl) {
                 filtered.push(s);
-              } else {
-                if (s.sampleEntries) {
-                  for (let i = 0; i < s.sampleEntries.length; i++) {
-                    let se = s.sampleEntries[i];
-                    if (lcStrContains(se.link, this.feedCatalogFilter) || lcStrContains(se.title, this.feedCatalogFilter)) {
-                      filtered.push(s);
-                      break;
-                    }
-                  }
-                }
-              }
+              } 
+              // else {
+              //   if (s.sampleEntries) {
+              //     for (let i = 0; i < s.sampleEntries.length; i++) {
+              //       let se = s.sampleEntries[i];
+              //       if (lcStrContains(se.link, this.feedCatalogFilter) || lcStrContains(se.title, this.feedCatalogFilter)) {
+              //         filtered.push(s);
+              //         break;
+              //       }
+              //     }
+              //   }
+              // }
             } else {
               filtered.push(s);
             }

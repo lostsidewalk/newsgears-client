@@ -45,12 +45,12 @@
         <!-- description -->
         <div class="rss-atom-feed-info-field">{{ this.info.description ? this.info.description.value : '' }}</div>
         <!-- sample entries -->
-        <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.info.sampleEntries" :key="sampleEntry.title">
+        <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.info.sampleEntries.slice(0, 10)" :key="sampleEntry.title">
           <a class="link"
-            :href="sampleEntry.link" 
+            :href="sampleEntry.postUrl" 
             :style="this.disabled ? 'pointer-events: none' : ''" 
             :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
-            {{ sampleEntry.title }}
+            {{ sampleEntry.postTitle.value }}
           </a>
         </div>
         <!-- categories -->
