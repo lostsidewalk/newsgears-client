@@ -447,8 +447,12 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: .44rem 1.25rem;
+  padding: .44rem .75rem;
   user-select: none;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
   min-width: 3rem;
   min-height: 3rem;
 }

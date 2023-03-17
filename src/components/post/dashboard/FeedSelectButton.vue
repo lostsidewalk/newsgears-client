@@ -153,10 +153,10 @@ export default {
   display: flex;
   align-items: center;
   cursor: pointer;
-  overflow-wrap: anywhere;
   padding: .44rem;
   gap: .44rem;
   overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .feed-info-label > img {

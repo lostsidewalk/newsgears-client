@@ -1,29 +1,34 @@
 <template>
   <div class="feed-filter-pills pill-container">
-    <div class="filter-pills-pagination-buttons">
+    <div v-if="needsPagination()" class="filter-pills-pagination-buttons">
       <!-- first page button-->
-      <button v-if="needsPagination()" title="first" class="filter-pills-pagination-button" @click="firstPage">
+      <button title="first" class="filter-pills-pagination-button" @click="firstPage">
         <span class="fa fa-angle-double-left"/>
       </button>
       <!-- previous page button -->
-      <button v-if="needsPagination()" title="previous" class="filter-pills-pagination-button" @click="previousPage">
+      <button title="previous" class="filter-pills-pagination-button" @click="previousPage">
         <span class="fa fa-angle-left"/>
       </button>
       <!-- next page button -->
-      <button v-if="needsPagination()" title="next" class="filter-pills-pagination-button" @click="nextPage">
+      <button title="next" class="filter-pills-pagination-button" @click="nextPage">
         <span class="fa fa-angle-right"/>
       </button>
       <!-- last page button-->
-      <button v-if="needsPagination()" title="last" class="filter-pills-pagination-button" @click="lastPage">
+      <button title="last" class="filter-pills-pagination-button" @click="lastPage">
         <span class="fa fa-angle-double-right"/>
       </button>
     </div>
-    <button v-for="filterPill in this.getCurrentPage(this.allFilterPills)" :key="filterPill" class="br-pill" :class="{ selectedMode: filterPill.isSelected }" 
-      @click="filterPill.invoke"
-      :disabled="disabled">
-      <img v-if="filterPill.image" :src="filterPill.image" loading="lazy" />
-      {{ filterPill.label }}
-    </button>
+    <div class="filter-pills-buttons">
+      <button v-for="filterPill in this.getCurrentPage(this.allFilterPills)" :key="filterPill" 
+        class="br-pill" 
+        :class="{ selectedMode: filterPill.isSelected }" 
+        :title="filterPill.label"
+        @click="filterPill.invoke"
+        :disabled="disabled">
+        <img v-if="filterPill.image" :src="filterPill.image" loading="lazy" />
+        {{ filterPill.label }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -174,14 +179,14 @@ export default {
   border-radius: 3px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
-  padding: .44rem 1.25rem;
+  padding: .44rem .75rem;
   user-select: none;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
   min-width: 3rem;
   min-height: 3rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .br-pill:hover, .br-pill:focus-visible {
@@ -245,4 +250,9 @@ export default {
   border-radius: 0px 3px 3px 0px;
 }
 
+.filter-pills-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .75rem;
+}
 </style>
