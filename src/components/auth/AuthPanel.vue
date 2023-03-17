@@ -29,12 +29,8 @@
       <AuthPanelLink :to="'/register'" :message="'FeedGears is free.  Create an account here.'" :theme="theme" />
       <!-- server response -->
       <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
-      <!-- privacy policy -->
-      <div class="footer-view">
-        <button class="footer-link" href="#" target="_blank" @click.prevent="this.$router.push('/privacy');">
-          <span class="fa fa-file-text" /> Privacy Policy
-        </button>
-      </div>
+      <!-- footer -->
+      <AuthFooterView :theme="theme" />
     </div>
   </div>
 </template>
@@ -46,6 +42,7 @@ import AuthButton from './AuthButton.vue'
 import GoogleAuthButton from './GoogleAuthButton.vue';
 import AuthPanelLink from './AuthPanelLink.vue';
 import AuthServerResponse from './AuthServerResponse.vue';
+import AuthFooterView from './AuthFooterView.vue';
 
 export default {
   name: "AuthPanel",
@@ -56,6 +53,7 @@ export default {
     GoogleAuthButton,
     AuthPanelLink,
     AuthServerResponse,
+    AuthFooterView,
   },
   props: [ "disabled", "theme" ],
   mounted() {
@@ -137,29 +135,5 @@ export default {
   background: v-bind('theme.sectionhighlight');
   border-radius: 5px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.footer-view {
-  border-top: 1px solid v-bind('theme.navbarsubshadow');
-  display: flex;
-  justify-content: center;
-  gap: .75rem;
-  padding: 1.25rem;
-}
-
-.footer-link {
-  text-decoration: none;
-  color: v-bind('theme.subduedmessage');
-  cursor: pointer;
-  background: unset;
-  border: unset;
-  max-width: fit-content;
-  min-width: 48px;
-  min-height: 48px;
-}
-
-.footer-link:hover, .footer-link:focus-visible {
-  text-decoration: underline;
-  color: v-bind('theme.highlightedmessage');
 }
 </style>
