@@ -1,35 +1,35 @@
 <template>
   <div class="feed-filter-pills pill-container">
     <!-- post status filter pills -->
-    <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('UNREAD', this.feedFilterModes) }" 
+    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('UNREAD', this.feedFilterModes) }" 
       @click="this.$emit('unread')"
       :disabled="disabled">
         UNREAD
     </button>
-    <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('READ_LATER', this.feedFilterModes) }" 
+    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('READ_LATER', this.feedFilterModes) }" 
       @click="this.$emit('readLayer')"
       :disabled="disabled">
         READ-LATER
     </button>
-    <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('READ', this.feedFilterModes) }" 
+    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('READ', this.feedFilterModes) }" 
       @click="this.$emit('read')"
       :disabled="disabled">
         READ
     </button>
-    <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('PUBLISHED', this.feedFilterModes) }" 
+    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('PUBLISHED', this.feedFilterModes) }" 
       @click="this.$emit('published')"
       :disabled="disabled">
         STARRED
     </button>
     <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
-      class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions)}" 
+      class="br-pill" :class="{ selectedMode: this.lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions)}" 
       @click="this.$emit('subscription', subscription.feedTitle)"
       :disabled="disabled || Object.keys(this.allPostSubscriptions).length === 1">
         <img :src="subscription.feedImageUrl" loading="lazy" />
         {{ subscription.feedTitle }}
     </button>
     <button v-for="category of this.allPostCategories" :key="category"
-      class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
+      class="br-pill" :class="{ selectedMode: this.lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
       @click="this.$emit('category', category)"
       :disabled="disabled ">
         {{ category }}
@@ -49,6 +49,23 @@ export default {
     "disabled", 
     "theme"
   ],
+  methods: {
+    // lcStrEq is true IFF str1 and str2 are LC-EQ 
+    lcStrEq(str1, str2) {
+      return str1 && str2 && str1.toLowerCase() === str2.toLowerCase();
+    },
+    // lcSetContainsStr is true IFF str1 is contained in strSet 
+    lcSetContainsStr(str1, strSet) {
+      if (str1 && strSet) {
+        for (let i = 0; i < strSet.length; i++) {
+          if (this.lcStrEq(str1, strSet[i])) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+  }
 }
 </script>
 
@@ -101,5 +118,4 @@ export default {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.buttonhighlight') !important;
 }
-
 </style>

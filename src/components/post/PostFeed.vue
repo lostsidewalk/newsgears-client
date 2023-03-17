@@ -110,42 +110,16 @@
               </template>
               <template v-slot:body>
                 <!-- feed filter field -->
-                <div class="article-queue" v-if="this.showFullInboundQueueHeader">
-                  <!-- feed filter label -->
-                  <label>ARTICLE QUEUE {{ '(' + this.filteredInboundQueue.length + ')' }}</label>
-                  <div class="feed-filter">
-                    <!-- feed filter input -->
-                    <input id="feed-filter" type="text" v-model="inboundQueueFilter" placeholder="Filter" :disabled="disabled || inTransit || isModalShowing" />
-                    <div class="feed-filter-buttons">
-                      <!-- sort direction button -->
-                      <button class="feed-filter-button" @click="toggleInboundQueueSortOrder()" :disabled="disabled || inTransit || isModalShowing" aria-label="Toggle sort order">
-                        <span :class="'fa fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
-                      </button>
-                      <!-- refresh feed button -->
-                      <button class="feed-filter-button" 
-                        @click="refreshFeeds(false, null, true)"
-                        :disabled="disabled || inTransit || isModalShowing" 
-                        aria-label="Refresh feeds">
-                        <span class="fa fa-refresh"/>
-                      </button>
-                      <!-- mark as read button -->
-                      <button class="feed-filter-button"
-                        @click.stop="this.markFeedAsRead(this.selectedFeedId)"
-                        :disabled="disabled || inTransit || isModalShowing"
-                        title="Mark this queue as read">
-                        <span class="fa fa-eye"></span>
-                      </button>
-                      <!-- show feed filter pills button -->
-                      <button class="feed-filter-button" 
-                        @click="this.showFeedFilterPills = !this.showFeedFilterPills"
-                        :disabled="disabled || inTransit || isModalShowing" 
-                        aria-label="Show filter options">
-                        <span class="fa fa-gears"/>
-                      </button>
-
-                    </div>
-                  </div>
-                </div>
+                <FeedFilter v-if="this.showFullInboundQueueHeader" 
+                  @toggleSortOrder="toggleInboundQueueSortOrder"
+                  @refreshFeeds="this.refreshFeeds(false, null, true)"
+                  @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
+                  @toggleFeedFilterPills="this.showFeedFilterPills = !this.showFeedFilterPills"
+                  @update:modelValue="this.inboundQueueFilter = $event"
+                  :inboundQueueFilter="this.inboundQueueFilter"
+                  :queueLength="this.filteredInboundQueue.length"
+                  :disabled="disabled || inTransit || isModalShowing" 
+                  :theme="theme" />
                 <!-- feed filter pills -->
                 <FeedFilterPills v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
                   @unread="toggleFeedFilterMode('UNREAD')"
@@ -252,6 +226,7 @@ import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ControlPanel from "@/components/layout/ControlPanel.vue";
 // post item panel 
 import ViewHeader from "@/components/layout/ViewHeader.vue";
+import FeedFilter from "./filter/FeedFilter.vue";
 import FeedFilterPills from "./filter/FeedFilterPills.vue";
 // pospt feed media player 
 import PostFeedAudio from '@/components/post/PostFeedAudio.vue';
@@ -268,6 +243,7 @@ export default {
     HelpPanel,
     NavbarFixedHeader,
     ControlPanel, 
+    FeedFilter,
     FeedFilterPills,
     PostFeedAudio,
     ViewHeader,
@@ -1712,19 +1688,6 @@ export default {
   padding-top: .75rem;
 }
 
-.article-queue {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  border-radius: 0px 0px 4px 4px;
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  border-top: 0px;
-
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-}
-
 .grid-container {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
@@ -1774,76 +1737,6 @@ footer {
   border-color: v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-}
-
-.feed-filter {
-  text-align: left;
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: flex-start;
-  margin-top: .125rem;
-  resize: none;
-}
-
-.feed-filter input {
-  padding: .44rem;
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.normalmessage');
-  border-radius: 3px 0px 0px 3px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  width: 100%;
-}
-
-.feed-filter input:hover, .feed-filter > input:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-filter > input:disabled {
-  cursor: auto;
-}
-
-.feed-filter-buttons {
-  padding-top: .75rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-}
-
-.feed-filter-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
-}
-
-.feed-filter-button:hover, .feed-filter-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-filter-button:disabled {
-  cursor: auto;
-}
-
-.feed-filter-button:hover:disabled {
-  background-color: unset;
-}
-
-.feed-filter-button:last-child {
-  border-radius: 0px 3px 3px 0px;
 }
 
 .logo {
