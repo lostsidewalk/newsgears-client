@@ -20,9 +20,10 @@
         </div>
       </div>
       <!-- show more/less information (also selects the feed) -->
-      <a class="feed-info-label-small link" @click.stop="toggleMoreInformation()" @keypress.enter.prevent="toggleMoreInformation()" tabindex="0">
-        Show {{ this.showMoreInformation ? 'less' : 'more' }}
+      <a v-if="this.showMoreInformation || feed.rssAtomFeedUrls.length > 0" class="feed-info-label-small link" @click.stop="toggleMoreInformation()" @keypress.enter.prevent="toggleMoreInformation()" tabindex="0">
+        {{ this.showMoreInformation ? 'Hide subscriptions' : 'Show subscriptions' }}
       </a>
+      <span v-if="feed.rssAtomFeedUrls.length === 0">0 subscriptions</span>
       <!-- more information -->
       <div v-if="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
