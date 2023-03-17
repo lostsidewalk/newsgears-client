@@ -415,7 +415,7 @@ export default {
       itemCount: 0,
       // queue filter material 
       inboundQueueFilter: null, // user-supplied filter text 
-      feedFilterModes: [], // currently selected filter modes 
+      feedFilterModes: ['UNREAD'], // currently selected filter modes 
       selectedFeedFilterSubscriptions: [],
       selectedFeedFilterCategories: [],
       // queue sorting material 
@@ -1628,8 +1628,8 @@ export default {
 
 .staging-header-view-selected {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  min-width: 70vw;
-  max-width: 70vw;
+  min-width: 70svw;
+  max-width: 70svw;
 }
 
 .staging-header-view-collapsed {
@@ -1756,7 +1756,7 @@ footer {
 
 @media (min-width: 1023px) {
   .feed-select-view-selected {
-    width: 30vw;
+    width: 30svw;
   }
 
   .feed-select-view-collapsed {

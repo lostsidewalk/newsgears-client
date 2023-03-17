@@ -1,7 +1,7 @@
 <template>
   <div class="modal-container" v-if="showModal">
     <div class="modal-body">
-      <div style="overflow-y: auto; max-height: 75vh;display: grid;grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));gap: 1rem;align-items: start;place-items: start stretch;">
+      <div class="keyboard-shortcut-container">
         <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel" :key="desc">
           <span class="keyboard-label-wrapper">
             {{ desc.label }}
@@ -203,6 +203,16 @@ export default {
   align-self: end;
   right: -12px;
   top: -17px;
+}
+
+.keyboard-shortcut-container {
+  overflow-y: auto; 
+  max-height: 75svh;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+  align-items: start;
+  place-items: start stretch;
 }
 
 .keyboard-category {

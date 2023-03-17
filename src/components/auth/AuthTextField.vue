@@ -24,10 +24,10 @@ export default {
 
 <style scoped>
 .auth-field {
-  margin-left: 2vw;
-  margin-right: 2vw;
-  margin-top: 2vh;
-  margin-bottom: 2vh;
+  margin-left: 2svw;
+  margin-right: 2svw;
+  margin-top: 2svh;
+  margin-bottom: 2svh;
 }
 
 .auth-field > input {

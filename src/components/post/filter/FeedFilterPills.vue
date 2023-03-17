@@ -157,7 +157,7 @@ export default {
   padding-bottom: .75rem;
   justify-content: flex-start;
   align-items: center;
-  max-height: 25vh;
+  max-height: 25svh;
   overflow: auto;
 }
 
@@ -210,6 +210,7 @@ export default {
   margin-top: .125rem;
   margin-bottom: .75rem;
   resize: none;
+  width: 100%;
 }
 
 .filter-pills-pagination-button {

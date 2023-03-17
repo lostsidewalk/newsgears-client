@@ -14,7 +14,7 @@
       <h3 class="logosubduedtext fancy">
         (You can still pay for it if you want to support our mission.)
       </h3>
-      <div class="flex" style="padding-top: 2vh;padding-bottom: 2vh;">
+      <div class="flex" style="padding-top: 2svh;padding-bottom: 2svh;">
         <GoogleAuthButton :theme="theme" :disabled="false" />
         <!-- sign-up button -->
         <SignUpButton :disabled="false" :theme="theme" />
@@ -47,8 +47,8 @@ export default {
 }
 
 .logocontainer {
-  padding-top: 2vh;
-  padding-bottom: 2vh;
+  padding-top: 2svh;
+  padding-bottom: 2svh;
 }
 
 .logotext {
@@ -66,14 +66,14 @@ export default {
   font-size: 3.0rem;
   color: v-bind('theme.logosubtextcolor');
   text-shadow: 3px 3px 3px v-bind('theme.logosubshadow');
-  padding-top: 2vh;
-  padding-bottom: 2vh;
+  padding-top: 2svh;
+  padding-bottom: 2svh;
 }
 
 .logosubduedtext {
   font-size: 2.0rem;
-  padding-top: 1vh;
-  padding-bottom: 1vh;
+  padding-top: 1svh;
+  padding-bottom: 1svh;
 }
 
 .tab-label {

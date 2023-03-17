@@ -218,7 +218,7 @@ export default {
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 96vh;
+  height: 96svh;
   overflow-y: auto;
 }
 
@@ -376,7 +376,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-height: 75vh;
+  max-height: 75svh;
   overflow-y: auto;
   border: 1px solid;
   border-radius: 3px;
