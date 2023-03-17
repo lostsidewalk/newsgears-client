@@ -68,7 +68,7 @@
                     @click.stop="rssAtomUrlQuickAdd" 
                     :disabled="disabled || inTransit || isModalShowing" 
                     title="Add a new subscription to this feed">
-                    Add <i class="underline">s</i>subscription <span class="fa fa-rss"></span>
+                    Add <i class="underline">s</i>subscription &nbsp; <span class="fa fa-rss" />
                   </button>
                   <!-- queue config button -->
                   <button v-if="this.selectedFeedId"
@@ -76,15 +76,15 @@
                     @click.stop="this.configureFeed(this.selectedFeedId)" 
                     :disabled="disabled || inTransit || isModalShowing" 
                     title="Configure this feed">
-                    Configur<i class="underline">e</i> this queue &nbsp; <span class="fa fa-wrench"></span>
+                    Configur<i class="underline">e</i> this queue &nbsp; <span class="fa fa-wrench" />
                   </button>
                   <!-- new queue button -->
                   <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
-                    <i class="underline">N</i>ew queue
+                    <i class="underline">N</i>ew queue &nbsp; <span class="fa fa-plus" />
                   </button>
                   <!-- upload OPML button -->
                   <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
-                    Upload OP<i class="underline">M</i>L <span class="fa fa-file" />
+                    Upload OP<i class="underline">M</i>L &nbsp; <span class="fa fa-file" />
                   </button>
                   <!-- delete queue button -->
                   <button v-if="this.selectedFeedId"
@@ -92,7 +92,7 @@
                     @click.stop="this.deleteFeed(this.selectedFeedId)" 
                     :disabled="disabled || inTransit || isModalShowing" 
                     title="Delete this feed">
-                    Delete this queue &nbsp; <span class="fa fa-trash"></span>
+                    Delete this queue &nbsp; <span class="fa fa-trash" />
                   </button>
                 </div>
               </template>
@@ -142,46 +142,25 @@
                         aria-label="Show filter options">
                         <span class="fa fa-gears"/>
                       </button>
+
                     </div>
                   </div>
                 </div>
                 <!-- feed filter pills -->
-                <div class="feed-filter-pills pill-container" v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader">
-                  <!-- post status filter pills -->
-                  <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('UNREAD', this.feedFilterModes) }" 
-                    @click="toggleFeedFilterMode('UNREAD')"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      UNREAD
-                  </button>
-                  <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('READ_LATER', this.feedFilterModes) }" 
-                    @click="toggleFeedFilterMode('READ_LATER')"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      READ-LATER
-                  </button>
-                  <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('READ', this.feedFilterModes) }" 
-                    @click="toggleFeedFilterMode('READ')"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      READ
-                  </button>
-                  <button class="br-pill" :class="{ selectedMode: lcSetContainsStr('PUBLISHED', this.feedFilterModes) }" 
-                    @click="toggleFeedFilterMode('PUBLISHED')"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      STARRED
-                  </button>
-                  <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
-                    class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions)}" 
-                    @click="toggleFeedFilterSubscription(subscription.feedTitle)"
-                    :disabled="disabled || inTransit || isModalShowing || Object.keys(this.allPostSubscriptions).length === 1">
-                      <img :src="subscription.feedImageUrl" loading="lazy" />
-                      {{ subscription.feedTitle }}
-                  </button>
-                  <button v-for="category of this.allPostCategories" :key="category"
-                    class="br-pill" :class="{ selectedMode: lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
-                    @click="toggleFeedFilterCategory(category)"
-                    :disabled="disabled || inTransit || isModalShowing">
-                      {{ category }}
-                  </button>
-                </div>
+                <FeedFilterPills v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
+                  @unread="toggleFeedFilterMode('UNREAD')"
+                  @readLater="toggleFeedFilterMode('READ_LATER')"
+                  @read="toggleFeedFilterMode('READ')"
+                  @published="toggleFeedFilterMode('PUBLISHED')"
+                  @subscription="toggleFeedFilterSubscription"
+                  @category="toggleFeedFilterCategory"
+                  :feedFilterModes="feedFilterModes"
+                  :allPostSubscriptions="allPostSubscriptions"
+                  :selectedFeedFilterSubscriptions="selectedFeedFilterSubscriptions"
+                  :allPostCategories="allPostCategories"
+                  :selectedFeedFilterCategories="selectedFeedFilterCategories"
+                  :disabled="disabled || inTransit || isModalShowing"
+                  :theme="theme" />
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
               </template>
@@ -273,6 +252,7 @@ import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ControlPanel from "@/components/layout/ControlPanel.vue";
 // post item panel 
 import ViewHeader from "@/components/layout/ViewHeader.vue";
+import FeedFilterPills from "./filter/FeedFilterPills.vue";
 // pospt feed media player 
 import PostFeedAudio from '@/components/post/PostFeedAudio.vue';
 // post item 
@@ -288,6 +268,7 @@ export default {
     HelpPanel,
     NavbarFixedHeader,
     ControlPanel, 
+    FeedFilterPills,
     PostFeedAudio,
     ViewHeader,
     PostItem, 
@@ -1863,55 +1844,6 @@ footer {
 
 .feed-filter-button:last-child {
   border-radius: 0px 3px 3px 0px;
-}
-
-.feed-filter-pills {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  padding-bottom: .75rem;
-  justify-content: flex-start;
-  align-items: center;
-  max-height: 25vh;
-  overflow: auto;
-}
-
-.pill-container {
-  border: 1px solid transparent;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .44rem;
-}
-
-.br-pill {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  cursor: pointer;
-  border-radius: 3px;
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  padding: .44rem 1.25rem;
-  user-select: none;
-  min-width: 3rem;
-  min-height: 3rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.br-pill:hover, .br-pill:focus-visible {
-  border: 1px solid v-bind('theme.buttonborder');
-}
-
-.br-pill > img {
-  max-height: 24px;
-  max-width: 24px;
-  padding-right: .44rem;
-}
-
-.selectedMode {
-  color: v-bind('theme.buttonfg');
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.buttonhighlight') !important;
 }
 
 .logo {
