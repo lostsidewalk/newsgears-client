@@ -415,7 +415,7 @@ export default {
       itemCount: 0,
       // queue filter material 
       inboundQueueFilter: null, // user-supplied filter text 
-      feedFilterModes: ['UNREAD', 'READ', 'PUBLISHED'], // currently selected filter modes 
+      feedFilterModes: [], // currently selected filter modes 
       selectedFeedFilterSubscriptions: [],
       selectedFeedFilterCategories: [],
       // queue sorting material 
@@ -575,18 +575,8 @@ export default {
       }
     },
     toggleFeedFilterMode(filterMode) {
-      if (this.lcSetContainsStr(filterMode, this.feedFilterModes)) {
-        let idxToSplice = -1;
-        for (let i = 0; i < this.feedFilterModes.length; i++) {
-          if (this.feedFilterModes[i] === filterMode) {
-            idxToSplice = i;
-            break;
-          }
-        }
-        if (idxToSplice >= 0) {
-          this.feedFilterModes.splice(idxToSplice, 1);
-        }
-      } else {
+      this.feedFilterModes.splice(0);
+      if (!this.lcSetContainsStr(filterMode, this.feedFilterModes)) {
         this.feedFilterModes.push(filterMode);
       }
       this.$nextTick(() => {

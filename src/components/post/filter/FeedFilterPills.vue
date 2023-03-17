@@ -1,38 +1,10 @@
 <template>
   <div class="feed-filter-pills pill-container">
-    <!-- post status filter pills -->
-    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('UNREAD', this.feedFilterModes) }" 
-      @click="this.$emit('unread')"
+    <button v-for="filterPill in this.allFilterPills" :key="filterPill" class="br-pill" :class="{ selectedMode: filterPill.isSelected }" 
+      @click="filterPill.invoke"
       :disabled="disabled">
-        UNREAD
-    </button>
-    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('READ_LATER', this.feedFilterModes) }" 
-      @click="this.$emit('readLayer')"
-      :disabled="disabled">
-        READ-LATER
-    </button>
-    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('READ', this.feedFilterModes) }" 
-      @click="this.$emit('read')"
-      :disabled="disabled">
-        READ
-    </button>
-    <button class="br-pill" :class="{ selectedMode: this.lcSetContainsStr('PUBLISHED', this.feedFilterModes) }" 
-      @click="this.$emit('published')"
-      :disabled="disabled">
-        STARRED
-    </button>
-    <button v-for="subscription of this.allPostSubscriptions" :key="subscription"
-      class="br-pill" :class="{ selectedMode: this.lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions)}" 
-      @click="this.$emit('subscription', subscription.feedTitle)"
-      :disabled="disabled || Object.keys(this.allPostSubscriptions).length === 1">
-        <img :src="subscription.feedImageUrl" loading="lazy" />
-        {{ subscription.feedTitle }}
-    </button>
-    <button v-for="category of this.allPostCategories" :key="category"
-      class="br-pill" :class="{ selectedMode: this.lcSetContainsStr(category, this.selectedFeedFilterCategories)}"
-      @click="this.$emit('category', category)"
-      :disabled="disabled ">
-        {{ category }}
+      <img v-if="filterPill.image" :src="filterPill.image" loading="lazy" />
+      {{ filterPill.label }}
     </button>
   </div>
 </template>
@@ -49,6 +21,51 @@ export default {
     "disabled", 
     "theme"
   ],
+  computed: {
+    allFilterPills: function() {
+      let filterPills = [
+        {
+          isSelected: this.lcSetContainsStr('UNREAD', this.feedFilterModes),
+          invoke: () => this.$emit('unread'), 
+          label: 'UNREAD',
+        },
+        {
+          isSelected: this.lcSetContainsStr('READ_LATER', this.feedFilterModes),
+          invoke: () => this.$emit('readLater'), 
+          label: 'READ-LATER',
+        },
+        {
+          isSelected: this.lcSetContainsStr('READ', this.feedFilterModes),
+          invoke: () => this.$emit('read'), 
+          label: 'READ',
+        },
+        {
+          isSelected: this.lcSetContainsStr('PUBLISHED', this.feedFilterModes),
+          invoke: () => this.$emit('published'), 
+          label: 'STARRED',
+        },
+      ];
+      for (let i = 0; i < this.allPostSubscriptions.length; i++) {
+        let subscription = this.allPostSubscriptions[i];
+        filterPills.push({
+          isSelected: this.lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions),
+          invoke: () => this.$emit('subscription', subscription.feedTitle),
+          label: subscription.feedTitle,
+          image: subscription.feedImageUrl, 
+        });
+      }
+      for (let i = 0; i < this.allPostCategories.length; i++) {
+        let category = this.allPostCategories[i];
+        filterPills.push({
+          isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterSubscriptions),
+          invoke: () => this.$emit('category', category),
+          label: category 
+        });
+      }
+
+      return filterPills;
+    },
+  },
   methods: {
     // lcStrEq is true IFF str1 and str2 are LC-EQ 
     lcStrEq(str1, str2) {
