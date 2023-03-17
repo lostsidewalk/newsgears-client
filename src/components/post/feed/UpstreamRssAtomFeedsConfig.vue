@@ -2,7 +2,7 @@
   <div class="feed-config-field">
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- label -->
-    <label>UPSTREAM RSS/ATOM SOURCES:</label>
+    <label>UPSTREAM RSS/ATOM SOURCES {{ needsPagination() ? ('Showing page ' + this.currentPage + '/' + this.totalPages) : '' }}:</label>
     <div class="feed-config-button-wrapper">
       <!-- add RSS/ATOM feed URL button -->
       <button 
@@ -31,35 +31,56 @@
         :rssAtomFeedUrls="this.rssAtomFeedUrls"
         @addCatalogFeed="this.addCatalogFeed" />
     <div v-else>
-      <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.rssAtomFeedUrls" :key="idx">
-        <!-- url input field w/refresh and delete buttons -->
-        <div class="rss-atom-url-row">
-          <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
-            :disabled="disabled || inTransit"
-            placeholder="Feed URL" />
-          <div class="rss-atom-url-row-buttons">
-            <button 
-              class="rss-atom-url-row-button"
-              @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
-              :disabled="disabled || inTransit">
-              <span class="fa fa-refresh"/>
-            </button>
-            <button 
-              class="rss-atom-url-row-button" 
-              @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
-              :disabled="disabled || inTransit">
-              <span class="fa fa-trash"/>
-            </button>
+      <div class="feed-config-filter-buttons">
+        <!-- first page button-->
+        <button v-if="needsPagination()" title="first" class="feed-config-filter-button" @click="firstPage">
+          <span class="fa fa-angle-double-left"/>
+        </button>
+        <!-- previous page button -->
+        <button v-if="needsPagination()" title="previous" class="feed-config-filter-button" @click="previousPage">
+          <span class="fa fa-angle-left"/>
+        </button>
+        <!-- next page button -->
+        <button v-if="needsPagination()" title="next" class="feed-config-filter-button" @click="nextPage">
+          <span class="fa fa-angle-right"/>
+        </button>
+        <!-- last page button-->
+        <button v-if="needsPagination()" title="last" class="feed-config-filter-button" @click="lastPage">
+          <span class="fa fa-angle-double-right"/>
+        </button>
+      </div>
+      <div class="feed-config">
+        <!-- feed config items -->
+        <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx">
+          <!-- url input field w/refresh and delete buttons -->
+          <div class="rss-atom-url-row">
+            <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
+              :disabled="disabled || inTransit"
+              placeholder="Feed URL" />
+            <div class="rss-atom-url-row-buttons">
+              <button 
+                class="rss-atom-url-row-button"
+                @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
+                :disabled="disabled || inTransit">
+                <span class="fa fa-refresh"/>
+              </button>
+              <button 
+                class="rss-atom-url-row-button" 
+                @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
+                :disabled="disabled || inTransit">
+                <span class="fa fa-trash"/>
+              </button>
+            </div>
           </div>
+          <RssAtomFeedInfo 
+            v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
+            :ref="'rss-atom-url-info-' + rssAtomUrl.id" 
+            :info="rssAtomUrl" 
+            :disabled="disabled || inTransit"
+            :theme="theme" 
+            :filterSupport="false" 
+            style="margin-top: .75rem;" />
         </div>
-        <RssAtomFeedInfo 
-          v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
-          :ref="'rss-atom-url-info-' + rssAtomUrl.id" 
-          :info="rssAtomUrl" 
-          :disabled="disabled || inTransit"
-          :theme="theme" 
-          :filterSupport="false" 
-          style="margin-top: .75rem;" />
       </div>
     </div>
   </div>
@@ -79,6 +100,12 @@ export default {
     UpstreamRssAtomFeedCatalog
   },
   props: [ "rssAtomFeedUrls", "disabled", "theme", "baseUrl" ],
+  computed: {
+    totalPages: function() {
+      let t = Math.ceil(this.rssAtomFeedUrls.length / this.itemsPerPage);
+      return t;
+    },
+  },
   emits: [
     "addRssAtomUrl",
     "deleteRssAtomUrl", 
@@ -86,6 +113,41 @@ export default {
     "authError",
   ],
   methods: {
+    // 
+    // pagination 
+    // 
+    needsPagination() {
+      return this.itemCount > this.itemsPerPage;
+    },
+    getCurrentPage(items) {
+      if (items.length !== this.itemCount) {
+        this.itemCount = items.length; 
+        this.currentPage = 0;
+      }
+      let startIdx = this.currentPage * 10;
+      let endIdx = startIdx + 10;
+      return items.slice(startIdx, endIdx);
+    },
+    firstPage() {
+      this.currentPage = 0;
+    },
+    nextPage() {
+      let n = this.currentPage + 1;
+      if (n === this.totalPages) {
+        n -= 1;
+      }
+      this.currentPage = n;
+    },
+    previousPage() {
+      let p = this.currentPage - 1;
+      if (p < 0) {
+        p = 0;
+      }
+      this.currentPage = p;
+    },
+    lastPage() {
+      this.currentPage = this.totalPages - 1;
+    },
     //
     handleAuthError(error) {
       this.$emit('authError', error);
@@ -224,6 +286,10 @@ export default {
   },
   data() {
     return {
+      itemsPerPage: 25,
+      currentPage: 0,
+      itemCount: 0,
+      feedConfigFilter: '',
       // feed catalog 
       feedCatalog: null,
       showFeedCatalog: false,
@@ -408,5 +474,49 @@ export default {
 
 .feed-catalog-error {
   width: 100%;
+}
+
+.feed-config-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  text-align: left;
+  align-items: baseline;
+  justify-content: flex-start;
+  margin-top: .125rem;
+  margin-bottom: .75rem;
+  resize: none;
+}
+
+.feed-config-filter-button {
+  border: 1px solid v-bind('theme.fieldborder');
+  background-color: v-bind('theme.fieldbackground');
+  color: v-bind('theme.buttonfg');
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  padding: .44rem 1.25rem;
+  cursor: pointer;
+  float: right;
+  text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+.feed-config-filter-button:hover, .feed-config-filter-button:focus-visible {
+  border: 1px solid v-bind('theme.fieldborderhighlight');
+  background: v-bind('theme.fieldbackgroundhighlight');
+  color: v-bind('theme.fieldcolorhighlight');
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+.feed-config-filter-button:disabled {
+  cursor: auto;
+}
+
+.feed-config-filter-button:hover:disabled {
+  background-color: unset;
+}
+
+.feed-config-filter-button:last-child {
+  border-radius: 0px 3px 3px 0px;
 }
 </style>

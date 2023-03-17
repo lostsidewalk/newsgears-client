@@ -55,21 +55,20 @@
                         :class="this.selectedFeedId === feed.id ? 'selected-feed' : ''"
                         :disabled="disabled || inTransit || isModalShowing" 
                         :theme="theme" 
-                        @click.stop="this.setSelectedFeedId(feed.id)" 
-                        @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" />
+                        @click.stop="this.setSelectedFeedId(feed.id)" />
                     </div>
                   </div>
                 </div>
               </template>
               <template v-slot:toolbar>
                 <div v-if="this.showQueueDashboard">
-                  <!-- new queue button -->
-                  <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
-                    <i class="underline">N</i>ew Queue
-                  </button>
-                  <!-- upload OPML button -->
-                  <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
-                    Upload OP<i class="underline">M</i>L
+                  <!-- add subscription button -->
+                  <button v-if="this.selectedFeedId"
+                    class="header-button" 
+                    @click.stop="rssAtomUrlQuickAdd" 
+                    :disabled="disabled || inTransit || isModalShowing" 
+                    title="Add a new subscription to this feed">
+                    Add <i class="underline">s</i>subscription <span class="fa fa-rss"></span>
                   </button>
                   <!-- queue config button -->
                   <button v-if="this.selectedFeedId"
@@ -78,6 +77,14 @@
                     :disabled="disabled || inTransit || isModalShowing" 
                     title="Configure this feed">
                     Configur<i class="underline">e</i> this queue &nbsp; <span class="fa fa-wrench"></span>
+                  </button>
+                  <!-- new queue button -->
+                  <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
+                    <i class="underline">N</i>ew Queue
+                  </button>
+                  <!-- upload OPML button -->
+                  <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
+                    Upload OP<i class="underline">M</i>L <span class="fa fa-file" />
                   </button>
                   <!-- delete queue button -->
                   <button v-if="this.selectedFeedId"
@@ -1227,12 +1234,14 @@ export default {
       this.showFeedConfigPanel = false;
     },
     // 
-    // RSS/ATOM URL quick add 
+    // RSS/ATOM URL quick add (to currently selected feed) 
     // 
-    rssAtomUrlQuickAdd(feedId) {
-      document.activeElement.blur();
-      this.showFeedConfigPanel = true;
-      this.$nextTick(() => this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(feedId)));
+    rssAtomUrlQuickAdd() {
+      if (this.selectedFeedId) {
+        document.activeElement.blur();
+        this.showFeedConfigPanel = true;
+        this.$nextTick(() => this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(this.selectedFeedId)));
+      }
     },
     // 
     // delete queue 
@@ -1545,7 +1554,7 @@ export default {
           event.stopPropagation();
           event.preventDefault();
         } else if (event.key === 'S' && event.shiftKey === true) {
-          this.rssAtomUrlQuickAdd(this.selectedFeedId);
+          this.rssAtomUrlQuickAdd();
           event.stopPropagation();
           event.preventDefault();
         } else if (event.key === '/') {

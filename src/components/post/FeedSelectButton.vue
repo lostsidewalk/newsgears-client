@@ -44,9 +44,6 @@
           <!-- feed title w/direct link -->
           {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
         </label>
-        <a class="feed-info-label feed-info-label-small link" href="#" @click="this.$emit('rssAtomUrlQuickAdd', feed.id)" tabindex="0">
-          + Add RSS/ATOM subscription
-        </a>
       </div>
     </div>
   </button>
@@ -181,15 +178,6 @@ export default {
 .subscription-label {
   margin-top: .31rem;
   margin-bottom: .31rem;
-}
-
-.feed-publication-label {
-  display: flex;
-  cursor: pointer;
-  overflow-wrap: anywhere;
-  padding: .44rem;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .feed-image {
