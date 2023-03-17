@@ -61,40 +61,16 @@
                 </div>
               </template>
               <template v-slot:toolbar>
-                <div v-if="this.showQueueDashboard">
-                  <!-- add subscription button -->
-                  <button v-if="this.selectedFeedId"
-                    class="header-button" 
-                    @click.stop="rssAtomUrlQuickAdd" 
-                    :disabled="disabled || inTransit || isModalShowing" 
-                    title="Add a new subscription to this feed">
-                    Add <i class="underline">s</i>subscription &nbsp; <span class="fa fa-rss" />
-                  </button>
-                  <!-- queue config button -->
-                  <button v-if="this.selectedFeedId"
-                    class="header-button" 
-                    @click.stop="this.configureFeed(this.selectedFeedId)" 
-                    :disabled="disabled || inTransit || isModalShowing" 
-                    title="Configure this feed">
-                    Configur<i class="underline">e</i> this queue &nbsp; <span class="fa fa-wrench" />
-                  </button>
-                  <!-- new queue button -->
-                  <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
-                    <i class="underline">N</i>ew queue &nbsp; <span class="fa fa-plus" />
-                  </button>
-                  <!-- upload OPML button -->
-                  <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
-                    Upload OP<i class="underline">M</i>L &nbsp; <span class="fa fa-file" />
-                  </button>
-                  <!-- delete queue button -->
-                  <button v-if="this.selectedFeedId"
-                    class="header-button" 
-                    @click.stop="this.deleteFeed(this.selectedFeedId)" 
-                    :disabled="disabled || inTransit || isModalShowing" 
-                    title="Delete this feed">
-                    Delete this queue &nbsp; <span class="fa fa-trash" />
-                  </button>
-                </div>
+                <FeedDashboardButtons v-if="this.showQueueDashboard"
+                  :selectedFeedId="this.selectedFeedId" 
+                  :disabled="disabled || inTransit || isModalShowing"
+                  :theme="theme" 
+                  @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
+                  @configureFeed="this.configureFeed(this.selectedFeedId)" 
+                  @newFeed="newFeed"
+                  @uploadOpml="uploadOpml"
+                  @deleteFeed="deleteFeed(this.selectedFeedId)"
+                  /> 
               </template>
           </ViewHeader>
         </div>
@@ -103,7 +79,12 @@
         <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
           <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
-            <ViewHeader :collapsible="true" @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" :show="this.showFullInboundQueueHeader" :disabled="disabled || inTransit || isModalShowing" :inTransit="false" :theme="theme">
+            <ViewHeader :collapsible="true" 
+              @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" 
+              :show="this.showFullInboundQueueHeader" 
+              :disabled="disabled || inTransit || isModalShowing" 
+              :inTransit="false" 
+              :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-gears fa-1x"/>
                 {{ this.getFeedById(this.selectedFeedId).ident }}
@@ -162,12 +143,21 @@
                 @audioPlay="onAudioPlay" 
                 @goToNextPost="selectNextPost" 
                 @goToPreviousPost="selectPreviousPost" />
-              <div v-if="this.totalPages === 0" class="queue-message">There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.</div>  
-              <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.</div>
+              <div v-if="this.totalPages === 0" class="queue-message">
+                There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.
+              </div>  
+              <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">
+                You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.
+              </div>
             </div>
           </div>
           <div class="staging-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel">
-            <ViewHeader v-if="this.showFeedConfigPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+            <ViewHeader v-if="this.showFeedConfigPanel" 
+              :sticky="true" 
+              :collapsible="false" 
+              :disabled="disabled || inTransit || isModalShowing" 
+              :inTransit="inTransit" 
+              :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
                 QUEUE SETTINGS
@@ -187,7 +177,12 @@
                   @authError="handleServerError" />
               </template>
             </ViewHeader>
-            <ViewHeader v-if="this.showOpmlUploadPanel" :sticky="true" :collapsible="false" :disabled="disabled || inTransit || isModalShowing" :inTransit="inTransit" :theme="theme">
+            <ViewHeader v-if="this.showOpmlUploadPanel" 
+              :sticky="true" 
+              :collapsible="false" 
+              :disabled="disabled || inTransit || isModalShowing" 
+              :inTransit="inTransit" 
+              :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
                 OPML UPLOAD
@@ -223,32 +218,40 @@ import OpmlUploadPanel from "./opml/OpmlUploadPanel.vue";
 import HelpPanel from "./help/HelpPanel.vue";
 // navbar 
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import ControlPanel from "@/components/layout/ControlPanel.vue";
-// post item panel 
 import ViewHeader from "@/components/layout/ViewHeader.vue";
+// settings 
+import ControlPanel from "@/components/layout/ControlPanel.vue";
+// post item filter 
 import FeedFilter from "./filter/FeedFilter.vue";
 import FeedFilterPills from "./filter/FeedFilterPills.vue";
-// pospt feed media player 
 import PostFeedAudio from '@/components/post/PostFeedAudio.vue';
 // post item 
 import PostItem from "./PostItem.vue";
-// feed selector 
-import FeedSelectButton from './FeedSelectButton.vue';
+// feed dashboard 
+import FeedSelectButton from './dashboard/FeedSelectButton.vue';
+import FeedDashboardButtons from './dashboard/FeedDashboardButtons.vue';
 
 export default {
   components: { 
+    // modal 
     ConfirmationDialog,
     FeedConfigPanel,
     OpmlUploadPanel,
     HelpPanel,
+    // layout 
+    ViewHeader,
     NavbarFixedHeader,
+    // settings 
     ControlPanel, 
+    // filter 
     FeedFilter,
     FeedFilterPills,
     PostFeedAudio,
-    ViewHeader,
+    // item 
     PostItem, 
+    // dashboard 
     FeedSelectButton,
+    FeedDashboardButtons,
   },
   name: "PostFeed",
   props: [ "baseUrl", "disabled", "theme" ],
@@ -1606,35 +1609,6 @@ export default {
 
 .post-feed-container-inner {
   width: stretch;
-}
-
-.header-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: left;
-  border-radius: 3px;
-  margin-top: .75rem;
-  margin-right: .75rem;
-  text-align: center;
-  user-select: none;
-  min-width: 3rem;
-  min-height: 3rem;
-}
-
-.header-button:hover, .header-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.header-button:disabled {
-  cursor: auto;
-}
-
-.header-button:disabled:hover {
-  background-color: unset;
 }
 
 .toggle-feed-select-view {
