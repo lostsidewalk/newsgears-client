@@ -29,10 +29,10 @@ import GoogleAuthButton from '../auth/GoogleAuthButton.vue';
 import SignUpButton from '../nav/SignUpButton.vue';
 
 export default {
-    name: "BannerPanel",
-    props: ["theme"],
-    components: { 
-      GoogleAuthButton,
+  name: "BannerPanel",
+  props: ["theme"],
+  components: { 
+    GoogleAuthButton,
     SignUpButton 
   }
 }
