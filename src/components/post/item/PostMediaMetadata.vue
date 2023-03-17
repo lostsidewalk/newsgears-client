@@ -4,7 +4,8 @@
       :src="thumbnail.url" 
       style="display: block" 
       class="post-media-metadata-thumbnail"
-      alt="Post media thumbnail" />
+      alt="Post media thumbnail" 
+      loading="lazy" />
     <div>
       <PostMediaCommunity v-if="this.metadata.community" :community="this.metadata.community" :theme="theme" />
       <pre>{{ this.metadata.desc }}</pre>

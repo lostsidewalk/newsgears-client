@@ -6,7 +6,8 @@
       :src="this.enclosure.uri"
       class="post-enclosure-image" 
       tabindex="0" 
-      alt="Post enclosure image" />
+      alt="Post enclosure image" 
+      loading="lazy" />
     <div v-else-if="isVideo()" class="post-enclosure-image">
       <vue-plyr ref="player">
         <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>

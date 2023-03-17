@@ -80,7 +80,7 @@
                   </button>
                   <!-- new queue button -->
                   <button class="header-button" @click.stop="newFeed()" accesskey="n" :disabled="disabled || inTransit || isModalShowing">
-                    <i class="underline">N</i>ew Queue
+                    <i class="underline">N</i>ew queue
                   </button>
                   <!-- upload OPML button -->
                   <button class="header-button" @click.stop="uploadOpml()" accesskey="m" :disabled="disabled || inTransit || isModalShowing">
@@ -172,7 +172,7 @@
                     class="br-pill" :class="{ selectedMode: lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions)}" 
                     @click="toggleFeedFilterSubscription(subscription.feedTitle)"
                     :disabled="disabled || inTransit || isModalShowing || Object.keys(this.allPostSubscriptions).length === 1">
-                      <img :src="subscription.feedImageUrl" />
+                      <img :src="subscription.feedImageUrl" loading="lazy" />
                       {{ subscription.feedTitle }}
                   </button>
                   <button v-for="category of this.allPostCategories" :key="category"

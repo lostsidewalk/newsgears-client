@@ -92,7 +92,8 @@
               :src="post.postImgSrc"
               class="post-thumbnail" 
               :disabled="disabled" 
-              alt="Post thumbnail image" /> 
+              alt="Post thumbnail image" 
+              loading="lazy" /> 
           </button>
           <div v-if="isHtmlContent(post.postTitle)" 
             class="post-field-wrapper post-html-frame"

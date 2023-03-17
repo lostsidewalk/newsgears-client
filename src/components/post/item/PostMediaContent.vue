@@ -25,7 +25,8 @@
         :src="this.mediaContent.reference.uri"
         class="post-media-content-image" 
         tabindex="0" 
-        alt="Post media content image" />
+        alt="Post media content image" 
+        loading="lazy" />
       <div v-else-if="isVideo() && this.showContents" class="post-media-content-video">
         <vue-plyr ref="player">
           <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
