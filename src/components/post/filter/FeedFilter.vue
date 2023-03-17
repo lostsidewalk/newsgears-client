@@ -34,7 +34,7 @@
           @click="this.$emit('toggleFeedFilterPills')"
           :disabled="disabled" 
           aria-label="Show filter options">
-          <span class="fa fa-gears"/>
+          <span class="fa fa-expand"/>
         </button>
       </div>
     </div>
