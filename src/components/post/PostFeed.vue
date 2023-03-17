@@ -1101,8 +1101,10 @@ export default {
       });
     },
     cancelOpmlUpload() {
-      this.$refs.opmlUploadPanel.hide();
-      this.showOpmlUploadPanel = false;
+      if (this.$refs.opmlUploadPanel) {
+        this.$refs.opmlUploadPanel.hide();
+        this.showOpmlUploadPanel = false;
+      }
     },
     configureFeed(feedId) {
       document.activeElement.blur();
@@ -1190,8 +1192,10 @@ export default {
       });
     },
     cancelCreateOrUpdateFeed() {
-      this.$refs.feedConfigPanel.tearDown();
-      this.showFeedConfigPanel = false;
+      if (this.$refs.feedConfigPanel) {
+        this.$refs.feedConfigPanel.tearDown();
+        this.showFeedConfigPanel = false;
+      }
     },
     // 
     // RSS/ATOM URL quick add (to currently selected feed) 
