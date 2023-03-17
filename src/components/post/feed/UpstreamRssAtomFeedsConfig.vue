@@ -286,10 +286,9 @@ export default {
   },
   data() {
     return {
-      itemsPerPage: 25,
+      itemsPerPage: 10,
       currentPage: 0,
       itemCount: 0,
-      feedConfigFilter: '',
       // feed catalog 
       feedCatalog: null,
       showFeedCatalog: false,
