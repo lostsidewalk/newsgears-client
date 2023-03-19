@@ -105,7 +105,7 @@ export default {
       for (let i = 0; i < this.allPostCategories.length; i++) {
         let category = this.allPostCategories[i];
         filterPills.push({
-          isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterSubscriptions),
+          isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterCategories),
           invoke: () => this.$emit('category', category),
           label: category 
         });
