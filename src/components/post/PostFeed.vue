@@ -109,6 +109,7 @@
                   @published="toggleFeedFilterMode('PUBLISHED')"
                   @subscription="toggleFeedFilterSubscription"
                   @category="toggleFeedFilterCategory"
+                  @clearAll="clearFeedFilter"
                   :feedFilterModes="feedFilterModes"
                   :allPostSubscriptions="allPostSubscriptions"
                   :selectedFeedFilterSubscriptions="selectedFeedFilterSubscriptions"
@@ -580,6 +581,10 @@ export default {
           }
         }
       });
+    },
+    clearFeedFilter() {
+      this.selectedFeedFilterCategories.splice(0);
+      this.selectedFeedFilterSubscriptions.splice(0);
     },
     toggleFeedFilterCategory(category) {
       if (this.lcSetContainsStr(category, this.selectedFeedFilterCategories)) {

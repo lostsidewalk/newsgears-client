@@ -1,5 +1,18 @@
 <template>
   <div class="feed-filter-pills pill-container">
+    <!-- expression -->
+    <div class="filter-expression-container">
+      <div class="filter-expression">
+        Viewing: <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
+        <span class="filter-subscriptions-expression">{{ this.filterSubscriptionsExpression }}</span>
+        <span v-if="this.selectedFeedFilterCategories.length > 0"> with categories in: <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.toString() }}</span></span>
+      </div>
+    </div>
+    <!-- clear button -->
+    <div class="clear-all-container">
+      <button class="clear-all-button" @click="this.$emit('clearAll')"><i class="fa fa-eraser" /> &nbsp; Clear all filters.</button>
+    </div>
+    <!-- pills -->
     <div class="filter-pills-buttons">
       <button v-for="filterPill in this.allFilterPills" :key="filterPill" 
         class="br-pill" 
@@ -26,7 +39,37 @@ export default {
     "disabled", 
     "theme"
   ],
+  emits: [
+    "read",
+    "unread",
+    "readLater",
+    "published",
+    "subscription",
+    "category",
+    "clearAll",
+  ],
   computed: {
+    filterModeExpression: function() {
+      let selectedMode = null;
+      for (let i = 0; i < 4; i++) {
+        if (this.allFilterPills[i].isSelected) {
+          selectedMode = this.allFilterPills[i].label;
+          break;
+        }
+      }
+      return selectedMode;
+    },
+    filterSubscriptionsExpression() {
+      let subscriptionNames = [];
+      if (this.allPostSubscriptions.length === 1) {
+        subscriptionNames.push(this.allPostSubscriptions[0].feedTitle);
+      } else {
+        for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
+          subscriptionNames.push(this.selectedFeedFilterSubscriptions[i]);
+        }
+      }
+       return (subscriptionNames.length > 0 ? (subscriptionNames.toString()) : '');
+    },
     allFilterPills: function() {
       let filterPills = [
         {
@@ -109,14 +152,14 @@ export default {
   padding-bottom: .75rem;
   justify-content: flex-start;
   align-items: center;
-  max-height: 25svh;
-  overflow: auto;
 }
 
 .pill-container {
   border: 1px solid transparent;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: .44rem;
 }
 
@@ -152,55 +195,12 @@ export default {
   background-color: v-bind('theme.buttonhighlight') !important;
 }
 
-.filter-pills-pagination-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-  text-align: left;
-  align-items: baseline;
-  justify-content: flex-start;
-  margin-top: .125rem;
-  margin-bottom: .75rem;
-  resize: none;
-  width: 100%;
-}
-
-.filter-pills-pagination-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
-}
-
-.filter-pills-pagination-button:hover, .filter-pills-pagination-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.filter-pills-pagination-button:disabled {
-  cursor: auto;
-}
-
-.filter-pills-pagination-button:hover:disabled {
-  background-color: unset;
-}
-
-.filter-pills-pagination-button:last-child {
-  border-radius: 0px 3px 3px 0px;
-}
-
 .filter-pills-buttons {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: .75rem;
+  max-height: 25svh;
+  overflow: auto;
 }
 
 @media (max-width: 639px) {
@@ -213,5 +213,56 @@ export default {
   .filter-pills-buttons {
     grid-template-columns: repeat(1, 1fr);
   }
+}
+
+.filter-expression-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.filter-expression {
+  word-break: break-word;
+}
+
+.filter-mode-expression {
+  color: v-bind('theme.highlightedmessage');
+}
+
+.filter-subscriptions-expression {
+  color: v-bind('theme.normalmessage');
+}
+
+.filter-categories-expression {
+  color: v-bind('theme.highlightedmessage');
+}
+
+.clear-all-container {
+  padding-bottom: .75rem;
+}
+
+.clear-all-button {
+  border: 1px solid v-bind('theme.fieldborder');
+  background-color: v-bind('theme.fieldbackground');
+  color: v-bind('theme.buttonfg');
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  padding: .44rem 1.25rem;
+  cursor: pointer;
+  float: right;
+  text-align: center;
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+.clear-all-button:hover, .clear-all-button:focus-visible {
+  border: 1px solid v-bind('theme.fieldborderhighlight');
+  background: v-bind('theme.fieldbackgroundhighlight');
+  color: v-bind('theme.fieldcolorhighlight');
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+.clear-all-button:last-child {
+  border-radius: 0px 3px 3px 0px;
 }
 </style>
