@@ -1,25 +1,7 @@
 <template>
   <div class="feed-filter-pills pill-container">
-    <div v-if="needsPagination()" class="filter-pills-pagination-buttons">
-      <!-- first page button-->
-      <button title="first" class="filter-pills-pagination-button" @click="firstPage">
-        <span class="fa fa-angle-double-left"/>
-      </button>
-      <!-- previous page button -->
-      <button title="previous" class="filter-pills-pagination-button" @click="previousPage">
-        <span class="fa fa-angle-left"/>
-      </button>
-      <!-- next page button -->
-      <button title="next" class="filter-pills-pagination-button" @click="nextPage">
-        <span class="fa fa-angle-right"/>
-      </button>
-      <!-- last page button-->
-      <button title="last" class="filter-pills-pagination-button" @click="lastPage">
-        <span class="fa fa-angle-double-right"/>
-      </button>
-    </div>
     <div class="filter-pills-buttons">
-      <button v-for="filterPill in this.getCurrentPage(this.allFilterPills)" :key="filterPill" 
+      <button v-for="filterPill in this.allFilterPills" :key="filterPill" 
         class="br-pill" 
         :class="{ selectedMode: filterPill.isSelected }" 
         :title="filterPill.label"
@@ -94,41 +76,6 @@ export default {
     },
   },
   methods: {
-    // 
-    // pagination 
-    // 
-    needsPagination() {
-      return this.itemCount > this.itemsPerPage;
-    },
-    getCurrentPage(items) {
-      if (items.length !== this.itemCount) {
-        this.itemCount = items.length; 
-        this.currentPage = 0;
-      }
-      let startIdx = this.currentPage * 10;
-      let endIdx = startIdx + 10;
-      return items.slice(startIdx, endIdx);
-    },
-    firstPage() {
-      this.currentPage = 0;
-    },
-    nextPage() {
-      let n = this.currentPage + 1;
-      if (n === this.totalPages) {
-        n -= 1;
-      }
-      this.currentPage = n;
-    },
-    previousPage() {
-      let p = this.currentPage - 1;
-      if (p < 0) {
-        p = 0;
-      }
-      this.currentPage = p;
-    },
-    lastPage() {
-      this.currentPage = this.totalPages - 1;
-    },
     // lcStrEq is true IFF str1 and str2 are LC-EQ 
     lcStrEq(str1, str2) {
       return str1 && str2 && str1.toLowerCase() === str2.toLowerCase();
@@ -252,7 +199,19 @@ export default {
 
 .filter-pills-buttons {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: .75rem;
+}
+
+@media (max-width: 639px) {
+  .filter-pills-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 419px) {
+  .filter-pills-buttons {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 </style>
