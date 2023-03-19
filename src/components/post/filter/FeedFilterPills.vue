@@ -9,8 +9,8 @@
       </div>
     </div>
     <!-- clear button -->
-    <div class="clear-all-container">
-      <button class="clear-all-button" @click="this.$emit('clearAll')"><i class="fa fa-eraser" /> &nbsp; Clear all filters.</button>
+    <div class="reset-container">
+      <button class="reset-button" @click="this.$emit('resetFilterDefaults')"><i class="fa fa-undo" /> &nbsp; Reset to default.</button>
     </div>
     <!-- pills -->
     <div class="filter-pills-buttons">
@@ -46,7 +46,7 @@ export default {
     "published",
     "subscription",
     "category",
-    "clearAll",
+    "resetFilterDefaults",
   ],
   computed: {
     filterModeExpression: function() {
@@ -238,11 +238,11 @@ export default {
   color: v-bind('theme.highlightedmessage');
 }
 
-.clear-all-container {
+.reset-container {
   padding-bottom: .75rem;
 }
 
-.clear-all-button {
+.reset-button {
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.buttonfg');
@@ -255,14 +255,14 @@ export default {
   min-height: 3rem;
 }
 
-.clear-all-button:hover, .clear-all-button:focus-visible {
+.reset-button:hover, .reset-button:focus-visible {
   border: 1px solid v-bind('theme.fieldborderhighlight');
   background: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
-.clear-all-button:last-child {
+.reset-button:last-child {
   border-radius: 0px 3px 3px 0px;
 }
 </style>

@@ -109,7 +109,7 @@
                   @published="toggleFeedFilterMode('PUBLISHED')"
                   @subscription="toggleFeedFilterSubscription"
                   @category="toggleFeedFilterCategory"
-                  @clearAll="clearFeedFilter"
+                  @resetFilterDefaults="resetFilterDefaults"
                   :feedFilterModes="feedFilterModes"
                   :allPostSubscriptions="allPostSubscriptions"
                   :selectedFeedFilterSubscriptions="selectedFeedFilterSubscriptions"
@@ -582,7 +582,8 @@ export default {
         }
       });
     },
-    clearFeedFilter() {
+    resetFilterDefaults() {
+      this.feedFilterModes = ['UNREAD'];
       this.selectedFeedFilterCategories.splice(0);
       this.selectedFeedFilterSubscriptions.splice(0);
     },
