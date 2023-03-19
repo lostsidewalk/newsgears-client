@@ -167,10 +167,6 @@
                   :disabled="disabled || inTransit"
                   :theme="theme"
                   :baseUrl="baseUrl" 
-                  :allNewsApiV2Sources="allNewsApiV2Sources"
-                  :allNewsApiV2Countries="allNewsApiV2Countries"
-                  :allNewsApiV2Categories="allNewsApiV2Categories"
-                  :allNewsApiV2Languages="allNewsApiV2Languages"
                   :rssAtomFeedCatalog="rssAtomFeedCatalog"
                   @saveOrUpdate="createOrUpdateFeed"
                   @cancel="cancelCreateOrUpdateFeed"
@@ -347,7 +343,6 @@ export default {
           "imgSrc": t[i].feedImgSrc,
           "feedStatus": t[i].feedStatus,
           "lastDeployed": t[i].lastDeployed,
-          "newsApiV2QueryText": t[i].newsApiV2QueryText,
           "rssAtomFeedUrls": t[i].rssAtomFeedUrls,
         });
       }
@@ -420,11 +415,6 @@ export default {
       selectedFeedFilterCategories: [],
       // queue sorting material 
       inboundQueueSortOrder: 'DSC',
-      // NewsApiV2 material 
-      allNewsApiV2Sources: null,
-      allNewsApiV2Countries: null,
-      allNewsApiV2Categories: null,
-      allNewsApiV2Languages: null,
       // RSS/ATOM feed catalog 
       rssAtomFeedCatalog: null,
     };
@@ -745,11 +735,6 @@ export default {
                 console.log("post-feed: adding fd=" + fd.ident);
                 this.feeds.push(fd);
               }
-              // 
-              this.allNewsApiV2Sources = data.allNewsApiV2Sources;
-              this.allNewsApiV2Countries = data.allNewsApiV2Countries;
-              this.allNewsApiV2Categories = data.allNewsApiV2Categories;
-              this.allNewsApiV2Languages = data.allNewsApiV2Languages;
               this.rssAtomFeedCatalog = data.rssAtomFeedCatalog;
             })
           );
@@ -787,36 +772,19 @@ export default {
       });
     },
     decorateFeedWithQueryDefinitions(fd, qd, qm) {
-      // 
-      fd.newsApiV2QueryText = '';
-      fd.newsApiV2Sources = '';
-      fd.newsApiV2Language = '';
-      fd.newsApiV2Country = '';
-      fd.newsApiV2Category = '';
       fd.rssAtomFeedUrls = [];
       // 
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
           let queryDefinition = qd[i].queryDefinition;
           let queryDefinitionImageUrl = qd[i].queryDefinitionImageUrl;
-          let queryType = queryDefinition.queryType;
-          if (queryType === 'NEWSAPIV2_HEADLINES') {
-            let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : null;
-            fd.newsApiV2QueryText = queryDefinition.queryText;
-            fd.newsApiV2QueryMetrics = qm ? qm[queryDefinition.id] : null;
-            fd.newsApiV2Sources = queryConfig ? queryConfig.sources : null;
-            fd.newsApiV2Language = queryConfig ? queryConfig.language : null;
-            fd.newsApiV2Country = queryConfig ? queryConfig.country : null;
-            fd.newsApiV2Category = queryConfig ? queryConfig.category : null;
-          } else if (queryType === 'RSS' || queryType === 'ATOM') {
-            fd.rssAtomFeedUrls.push({
-              "id": queryDefinition.id,
-              "feedMetrics": qm ? qm[queryDefinition.id] : null,
-              "feedTitle": queryDefinition.queryTitle,
-              "feedImageUrl": queryDefinitionImageUrl,
-              "feedUrl": queryDefinition.queryText,
-            });
-          }
+          fd.rssAtomFeedUrls.push({
+            "id": queryDefinition.id,
+            "feedMetrics": qm ? qm[queryDefinition.id] : null,
+            "feedTitle": queryDefinition.queryTitle,
+            "feedImageUrl": queryDefinitionImageUrl,
+            "feedUrl": queryDefinition.queryText,
+          });
         }
       }
     },
@@ -1019,9 +987,6 @@ export default {
       }
       if (this.len(feed.generator) > 2048) {
         throw Error("Feed generator is too long (max 2048 characters).");
-      }
-      if (this.len(feed.newsApiV2QueryText) > 2048) {
-        throw Error("NewsAPIV2 query text is too long (max 2048 characters).");
       }
       if (feed.rssAtomFeedUrls) {
         for (let i = 0; i < feed.rssAtomFeedUrls.length; i++) {

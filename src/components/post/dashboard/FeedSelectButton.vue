@@ -28,10 +28,6 @@
       <div v-if="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
         <label class="feed-info-label-small">SUBSCRIPTIONS</label>
-        <!-- NewsApiV2 -->
-        <label class="feed-info-label subscription-label" v-if="feed.newsApiV2QueryText">
-          <img src="newsapiv2_logo.png" alt="NewsApiV2 logo" /> {{ feed.newsApiV2QueryText }}
-        </label>
         <!-- RSS/ATOM feeds -->
         <label class="feed-info-label subscription-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
           <!-- feed logo image -->

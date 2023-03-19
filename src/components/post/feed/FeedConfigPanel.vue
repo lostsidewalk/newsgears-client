@@ -90,36 +90,6 @@
               :helpText="'This value appears as the value for the \'language\' field in the published RSS/ATOM feed for this queue.'"
               @update:modelValue="v$.feedLanguage.$model = $event" />
           </div>
-          <!-- tab 2: News Discovery -->
-          <div class="tab" v-show="this.selectedTab === 'NEWS_DISCOVERY'">
-            <!-- NewsApiV2 query text -->
-            <FeedConfigTextField 
-              :label="'NEWSAPIV2 EXPRESSION'"
-              :required="false"
-              :placeholder="'NEWSAPIV2 Expression'" 
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.newsApiV2QueryText.$model" 
-              :errorValue="v$.newsApiV2QueryText.$errors" 
-              :helpText="'This value is a NewsApiV2 search expression.  Click to learn more about how to formulate and use these search expressions.'"
-              @update:modelValue="v$.newsApiV2QueryText.$model = $event" />
-            <!-- NewsApiV2 sources config -->
-            <NewsApiV2SourcesConfig 
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :allNewsApiV2Languages="this.allNewsApiV2Languages" 
-              :allNewsApiV2Countries="this.allNewsApiV2Countries" 
-              :allNewsApiV2Categories="this.allNewsApiV2Categories" 
-              :allNewsApiV2Sources="this.allNewsApiV2Sources" 
-              :newsApiV2Language="this.newsApiV2Language"
-              :newsApiV2Country="this.newsApiV2Country"
-              :newsApiV2Category="this.newsApiV2Category"
-              :newsApiV2Sources="this.newsApiV2Sources"
-              @update:newsApiV2Language="this.newsApiV2Language = $event" 
-              @update:newsApiV2Country="this.newsApiV2Country = $event" 
-              @update:newsApiV2Category="this.newsApiV2Category = $event" 
-              @update:newsApiV2Source="this.newsApiV2Sources[$event.source.key] = $event.enabled" />
-          </div>
           <!-- tab 3: RSS/ATOM Feed Discovery -->
           <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
             <!-- Upstream RSS/ATOM URLs -->
@@ -161,7 +131,6 @@ import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import TabHeader from '../../layout/TabHeader.vue';
 import FeedConfigTextField from './FeedConfigTextField.vue';
 import FeedConfigImageField from './FeedConfigImageField.vue';
-import NewsApiV2SourcesConfig from './NewsApiV2SourcesConfig.vue';
 import { required, maxLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import UpstreamRssAtomFeedsConfig from './UpstreamRssAtomFeedsConfig.vue';
@@ -179,17 +148,12 @@ export default {
     TabHeader,
     FeedConfigTextField,
     FeedConfigImageField,
-    NewsApiV2SourcesConfig,
     UpstreamRssAtomFeedsConfig,
 },
   props: [
     "baseUrl", 
     "disabled", 
     "theme", 
-    "allNewsApiV2Sources", 
-    "allNewsApiV2Countries", 
-    "allNewsApiV2Categories", 
-    "allNewsApiV2Languages",
     "rssAtomFeedCatalog"
   ],
   emits: [ "saveOrUpdate", "cancel", "authError" ],
@@ -215,9 +179,6 @@ export default {
       feedLanguage: {
         maxLength: maxLength(16),
       },
-      newsApiV2QueryText: {
-        maxLength: maxLength(512),
-      },
     }
   },
   data() {
@@ -229,11 +190,6 @@ export default {
           "name": "BASIC_PROPERTIES",
           "description": "Feed Properties",
           "icon": "list",
-        },
-        {
-          "name": "NEWS_DISCOVERY",
-          "description": "News Discovery",
-          "icon": "newspaper-o",
         },
         {
           "name": "RSS_ATOM_DISCOVERY",
@@ -254,12 +210,6 @@ export default {
       feedCopyright: '',
       feedLanguage: '',
       feedImgSrc: '',
-      // newsapiv2 query properties 
-      newsApiV2QueryText: '',
-      newsApiV2Language: '',
-      newsApiV2Country: '',
-      newsApiV2Category: '',
-      newsApiV2Sources: {},
       // RSS/ATOM feed query properties 
       rssAtomFeedUrls: [],
       // currently selected tab 
@@ -347,29 +297,9 @@ export default {
       this.feedCopyright = this.feed.copyright;
       this.feedLanguage = this.feed.language;
       this.feedImgSrc = this.feed.feedImgSrc; // TODO: annoyingly redundant use of 'feed' here; fix on the backend 
-      this.newsApiV2QueryText = this.feed.newsApiV2QueryText;
-      this.newsApiV2Language = this.feed.newsApiV2Language || '';
-      this.newsApiV2Country = this.feed.newsApiV2Country || '';
-      this.newsApiV2Category = this.feed.newsApiV2Category || '';
-
-      let sourcesConfig = this.feed.newsApiV2Sources;
-      if (sourcesConfig) {
-        for (let i = 0; i < sourcesConfig.length; i++) {
-          this.newsApiV2Sources[sourcesConfig[i]] = true;
-        }
-      }
-
       this.rssAtomFeedUrls = JSON.parse(JSON.stringify(this.feed.rssAtomFeedUrls));
     },
     saveFeedConfig() {
-      let newsApiV2SourcesObj = [];
-      let sourceKeys = Object.keys(this.newsApiV2Sources);
-      for (let i = 0; i < sourceKeys.length; i++) {
-        if (this.newsApiV2Sources[sourceKeys[i]] === true) {
-          newsApiV2SourcesObj.push(sourceKeys[i]);
-        }
-      }
-
       let saveObj = {
         id: this.feedId,
         ident: this.feedIdent,
@@ -379,11 +309,6 @@ export default {
         copyright: this.feedCopyright,
         language: this.feedLanguage,
         imgSrc: this.feedImgSrc,
-        newsApiV2QueryText: this.newsApiV2QueryText,
-        newsApiV2Sources: newsApiV2SourcesObj,
-        newsApiV2Language: this.newsApiV2Language.length > 0 ? this.newsApiV2Language : null,
-        newsApiV2Country: this.newsApiV2Country.length > 0 ? this.newsApiV2Country : null,
-        newsApiV2Category: this.newsApiV2Category.length > 0 ? this.newsApiV2Category : null,
         rssAtomFeedUrls: this.rssAtomFeedUrls.filter(r => r.feedUrl && r.feedUrl.length),
       };
       this.$emit('saveOrUpdate', saveObj);

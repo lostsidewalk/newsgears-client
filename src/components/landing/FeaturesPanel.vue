@@ -59,12 +59,6 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">NewsApi.org INTEGRATION (BETA) <span class="fa fa-newspaper-o" role="presentation" /></div>
-        <div class="feature-body">
-          FeedGears offers upstream access to NewsApi.org, a service that provides curated news articles from sources around the world.  The NewsApi query expression language is simple, allowing you to build highly focused queries.  If enabled, NewsApi articles are imported into your queue along with content from upstream RSS/ATOM sources.
-        </div>
-      </div>
-      <div class="feature">
         <div class="feature-title">THEMEABLE <span class="fa fa-paint-brush" role="presentation" /></div>
         <div class="feature-body">
           FeedGears has built-in support for light/dark themes.  We will soon be offering the capability to customize each of the 44 colors that comprise a FeedGears theme.  Stay tuned! 
