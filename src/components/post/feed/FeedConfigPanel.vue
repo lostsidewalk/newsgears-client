@@ -93,8 +93,8 @@
           <!-- tab 3: RSS/ATOM Feed Discovery -->
           <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
             <!-- Upstream RSS/ATOM URLs -->
-            <UpstreamRssAtomFeedsConfig 
-              ref="upstreamRssAtomFeedsConfig"
+            <UpstreamSourcesConfig 
+              ref="upstreamSourcesConfig"
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :baseUrl="baseUrl"
@@ -133,7 +133,7 @@ import FeedConfigTextField from './FeedConfigTextField.vue';
 import FeedConfigImageField from './FeedConfigImageField.vue';
 import { required, maxLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
-import UpstreamRssAtomFeedsConfig from './UpstreamRssAtomFeedsConfig.vue';
+import UpstreamSourcesConfig from './UpstreamSourcesConfig.vue';
 
 
 export default {
@@ -148,7 +148,7 @@ export default {
     TabHeader,
     FeedConfigTextField,
     FeedConfigImageField,
-    UpstreamRssAtomFeedsConfig,
+    UpstreamSourcesConfig,
 },
   props: [
     "baseUrl", 
@@ -273,7 +273,7 @@ export default {
       this.addRssAtomUrl();
       this.showModal = true;
       this.$nextTick(() => {
-        this.$refs.upstreamRssAtomFeedsConfig.focus();
+        this.$refs.upstreamSourcesConfig.focus();
       })
     },
     tearDown() {

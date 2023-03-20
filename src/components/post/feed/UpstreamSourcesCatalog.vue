@@ -130,7 +130,7 @@ const lcSetContainsSet = function(set, strSet) {
 }
 
 export default {
-  name: "UpstreamRssAtomFeedCatalog",
+  name: "UpstreamSourcesCatalog",
   props: [ "feedCatalog", "rssAtomFeedUrls", "disabled", "theme" ],
   emits: [ "addCatalogFeed" ],
   components: {

@@ -24,7 +24,7 @@
           {{ error }}
       </div>
     </div>
-    <UpstreamRssAtomFeedCatalog v-if="this.showFeedCatalog"
+    <UpstreamSourcesCatalog v-if="this.showFeedCatalog"
         :disabled="disabled || inTransit"
         :theme="theme"
         :feedCatalog="this.feedCatalog" 
@@ -89,15 +89,15 @@
 <script>
 import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
-import UpstreamRssAtomFeedCatalog from './UpstreamRssAtomFeedCatalog.vue';
+import UpstreamSourcesCatalog from './UpstreamSourcesCatalog.vue';
 
 
 export default {
-  name: "UpstreamRssAtomFeedsConfig",
+  name: "UpstreamSourcesConfig",
   components: {
     NavbarFixedHeader,
     RssAtomFeedInfo,
-    UpstreamRssAtomFeedCatalog
+    UpstreamSourcesCatalog
   },
   props: [ "rssAtomFeedUrls", "disabled", "theme", "baseUrl" ],
   computed: {
