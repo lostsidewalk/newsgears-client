@@ -52,6 +52,7 @@
       <div class="feed-config">
         <!-- feed config items -->
         <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx">
+          SUBSCRIPTION {{ idx + 1 }}/{{ this.rssAtomFeedUrls.length }}
           <!-- url input field w/refresh and delete buttons -->
           <div class="rss-atom-url-row">
             <label>

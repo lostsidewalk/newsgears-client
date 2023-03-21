@@ -14,10 +14,10 @@ const LIGHT_THEME = {
   navbarshadow: 'cornflowerblue',
   navbarsubshadow: 'rgb(0 0 0 / 75%)', 
   subduedmessage: 'dimgrey',
-  normalmessage: 'black',
+  normalmessage: 'rgb(32,32,32)',
   highlightedmessage: 'cornflowerblue',
   buttonbg: 'transparent',
-  buttonfg: 'rgb(92,92,92)',
+  buttonfg: 'rgb(32,32,32)',
   buttonborder: 'rgb(32,32,32)',
   buttonhighlight: '#ffffff', 
   dangerbuttonhighlight: 'lightpink',
@@ -34,8 +34,8 @@ const LIGHT_THEME = {
   sectionpositivehighlight: 'rgba(128,255,128,0.1)',
   sectionpositiveaccent: 'rgba(128,255,128,0.3)',
   sectionnegativehighlight: 'rgba(255,128,128,0.1)',
-  fieldborder: 'rgb(128,128,128)',
-  fieldborderhighlight: 'cornflowerblue',
+  fieldborder: 'rgb(32,32,32)',
+  fieldborderhighlight: 'rgb(32,32,32)',
   fieldbackground: 'transparent',
   fieldbackgroundhighlight: 'rgba(100,149,237,0.1)', 
   fieldcolorhighlight: 'black',
@@ -62,11 +62,11 @@ const DARK_THEME = {
   navbarshadow: 'cornflowerblue', 
   navbarsubshadow: 'rgb(255 255 255 / 5%)', 
   subduedmessage: 'rgb(136,136,136)', // links, detail messages, etc. 
-  normalmessage: 'rgb(136,136,136)', // foreground text 
+  normalmessage: 'lightskyblue', // foreground text 
   highlightedmessage: 'rgba(144,238,144,0.7)', // hover effect for messages 
   buttonbg: 'transparent',
-  buttonfg: 'rgb(136,136,136)',
-  buttonborder: 'rgb(136,136,136)',
+  buttonfg: 'lightskyblue',
+  buttonborder: 'lightskyblue',
   buttonhighlight: 'rgba(100,149,237,0.1)', // hover effect for buttons, bg for selected 'mode' buttons 
   dangerbuttonhighlight: 'lightpink', // settings 
   lightshadow: 'rgb(32,32,32)', // box shadow applied to form fields 
@@ -82,8 +82,8 @@ const DARK_THEME = {
   sectionpositivehighlight: 'rgba(128,255,128,0.1)',
   sectionpositiveaccent: 'rgba(128,255,128,0.3)',
   sectionnegativehighlight: 'rgba(255,128,128,0.1)',
-  fieldborder: 'rgb(128,128,128)',
-  fieldborderhighlight: 'cornflowerblue',
+  fieldborder: 'lightskyblue',
+  fieldborderhighlight: 'lightskyblue',
   fieldbackground: 'transparent',
   fieldbackgroundhighlight: 'rgba(100,149,237,0.1)', 
   fieldcolorhighlight: 'white',
