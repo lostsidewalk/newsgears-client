@@ -1594,13 +1594,16 @@ export default {
 
 .feed-select-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
+  border-radius: 3px;
   display: flex;
   flex-direction: column;
   width: 100%;
+  background: v-bind('theme.sectionhighlight');
 }
 
 .staging-header-view-selected {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
+  border-radius: 3px;
   min-width: 70svw;
   max-width: 70svw;
 }
