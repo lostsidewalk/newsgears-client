@@ -220,6 +220,7 @@ export default {
   width: 100%;
   height: 96svh;
   overflow-y: auto;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .modal-header {

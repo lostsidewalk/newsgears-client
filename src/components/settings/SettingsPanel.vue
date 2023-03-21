@@ -687,6 +687,7 @@ export default {
   z-index: 1000;
   border: 1px solid transparent;
   border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .modal-header {

@@ -47,6 +47,11 @@ export default {
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.feed-config-field label {
+  font-size: smaller;
 }
 
 .feed-config-field input, .feed-config-field textarea {

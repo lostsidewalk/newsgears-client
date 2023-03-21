@@ -313,7 +313,6 @@ export default {
           }
           // check title and desc against filter text, if defined 
           let lcFilter = this.inboundQueueFilter ? this.inboundQueueFilter.toLowerCase() : null;
-          // TODO: parse the filter expression 
           return lcFilter ? (
             post.postTitle.value.toLowerCase().includes(lcFilter) || 
             (post.postDesc && post.postDesc.value.toLowerCase().includes(lcFilter)) // TODO: add post contents and consider cases where title, description, contents are HTML 
@@ -784,12 +783,15 @@ export default {
         for (let i = 0; i < qd.length; i++) {
           let queryDefinition = qd[i].queryDefinition;
           let queryDefinitionImageUrl = qd[i].queryDefinitionImageUrl;
+          let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : queryDefinition.queryConfig;
           fd.rssAtomFeedUrls.push({
             "id": queryDefinition.id,
             "feedMetrics": qm ? qm[queryDefinition.id] : null,
             "feedTitle": queryDefinition.queryTitle,
             "feedImageUrl": queryDefinitionImageUrl,
             "feedUrl": queryDefinition.queryText,
+            "username": queryConfig ? queryConfig.username : null,
+            "password": queryConfig ? queryConfig.password : null,
           });
         }
       }
@@ -996,7 +998,7 @@ export default {
       }
       if (feed.rssAtomFeedUrls) {
         for (let i = 0; i < feed.rssAtomFeedUrls.length; i++) {
-          if (this.len(feed.rssAtomFeedUrls[i].url) > 2048) {
+          if (this.len(feed.rssAtomFeedUrls[i].feedUrl) > 2048) {
             throw Error("RSS/ATOM feed URL is too long (max 2048 characters).");
           }
         }
@@ -1706,6 +1708,7 @@ footer {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
   margin: .56rem;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 @media (max-width: 1023px) {

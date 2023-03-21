@@ -227,6 +227,8 @@ export default {
         r.error = data.error;
       }
       r.feedUrl = data.feedUrl; // updated the feed URL to the resolved URL 
+      r.username = data.username;
+      r.password = data.password;
       r.title = data.title;
       r.description = data.description;
       r.author = data.author;
@@ -309,7 +311,7 @@ export default {
         copyright: this.feedCopyright,
         language: this.feedLanguage,
         imgSrc: this.feedImgSrc,
-        rssAtomFeedUrls: this.rssAtomFeedUrls.filter(r => r.feedUrl && r.feedUrl.length),
+        rssAtomFeedUrls: this.rssAtomFeedUrls,
       };
       this.$emit('saveOrUpdate', saveObj);
     },
@@ -360,6 +362,7 @@ export default {
   width: 100%;
   height: fill-available;
   overflow-y: auto;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .modal-header {
@@ -437,15 +440,6 @@ export default {
 .tab {
   display: grid;
   contain: content;
-}
-
-.view-header-no-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
 }
 
 @keyframes load {

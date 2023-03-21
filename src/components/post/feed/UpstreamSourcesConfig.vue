@@ -54,6 +54,9 @@
         <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx">
           <!-- url input field w/refresh and delete buttons -->
           <div class="rss-atom-url-row">
+            <label>
+              FEED URL
+            </label>
             <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
               :disabled="disabled || inTransit"
               placeholder="Feed URL" />
@@ -70,7 +73,24 @@
                 :disabled="disabled || inTransit">
                 <span class="fa fa-trash"/>
               </button>
+              <button 
+                class="rss-atom-url-row-button" 
+                @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails" 
+                :disabled="disabled || inTransit">
+                <span class="fa fa-expand"/>
+              </button>
             </div>
+          </div>
+          <label v-if="rssAtomUrl.showDetails">* The following credentials will be supplied if this feed requests authentication.</label>
+          <div class="rss-atom-url-row" v-if="rssAtomUrl.showDetails">
+            <label>USERNAME</label>
+            <input type="text" v-model="rssAtomUrl.username" 
+              :disabled="disabled || inTransit"
+              placeholder="Username" style="margin-bottom: .75rem" />
+            <label>PASSWORD</label>
+            <input type="password" v-model="rssAtomUrl.password" 
+              :disabled="disabled || inTransit"
+              placeholder="Password" />
           </div>
           <RssAtomFeedInfo 
             v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
@@ -175,17 +195,22 @@ export default {
         if (this.len(r.feedUrl) > 2048) {
           console.log("RSS/ATOM feed URL is too long (max 2048 characters).");
         }
-        let u = encodeURIComponent(r.feedUrl);
         this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
           const requestOptions = {
-              headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include' 
-            };
-          fetch(this.baseUrl + "/discovery/?url=" + u, requestOptions).then((response) => {
+            method: 'POST', 
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            credentials: 'include', 
+            body: JSON.stringify({
+              url: r.feedUrl,
+              username: r.username,
+              password: r.password
+            })
+          };
+          fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
             if (response.status === 200) {
               return response.json();
             } else {
@@ -196,6 +221,8 @@ export default {
           }).then((data) => {
             data.id = r.id;
             data.discoveryUrl = r.feedUrl;
+            data.username = r.username;
+            data.password = r.password;
             this.$emit('update:rssAtomFeedUrl', data);
           }).catch((error) => {
             console.error(error);
@@ -311,6 +338,11 @@ export default {
   border-radius: 5px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.feed-config-field label {
+  font-size: smaller;
 }
 
 .feed-config-field > input, .feed-config-field > textarea {
@@ -348,6 +380,9 @@ export default {
   border: 1px solid v-bind('theme.sectionbordercolor');
   contain: content;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  row-gap: .44rem;
 }
 
 .rss-atom-url-wrapper input {
@@ -384,6 +419,7 @@ export default {
   color: v-bind('theme.normalmessage');
   border-radius: 3px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  margin-top: .125rem;
   width: 100%;
 }
 
@@ -400,6 +436,7 @@ export default {
 
 .rss-atom-url-row-buttons {
   padding-top: .75rem;
+  padding-bottom: .75rem;
   display: flex;
   flex-wrap: wrap;
   gap: .5rem;
