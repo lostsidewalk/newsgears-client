@@ -43,7 +43,9 @@ export default {
       this.$emit('audioPlay', { url: this.enclosure.url });
     },
     pause() {
-      this.$refs.player.player.pause();
+      if (this.isVideo()) {
+        this.$refs.player.player.pause();
+      }
     },
     isImage() {
       return this.enclosure.type === "image" || this.enclosure.type.indexOf("image") === 0;

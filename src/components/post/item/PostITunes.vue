@@ -73,4 +73,8 @@ export default {
   background-repeat: no-repeat;
   align-self: stretch;
 }
+
+.audio-player-control {
+  cursor: pointer;
+}
 </style>
