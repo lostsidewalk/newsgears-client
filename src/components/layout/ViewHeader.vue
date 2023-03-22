@@ -1,5 +1,5 @@
 <template>
-  <div :class="sticky ? 'view-header sticky-header' : 'view-header'" v-auto-animate>
+  <div :class="sticky ? 'view-header sticky-header' : 'view-header'">
     <span :class="collapsible ? 'collapsible-header' : 'inline-header'">
       <h3 class="view-header-count">
         <slot name="count" />

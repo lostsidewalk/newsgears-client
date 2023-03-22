@@ -3,7 +3,7 @@
     :value="feed.value" 
     :key="feed.value" 
     :disabled="disabled">
-    <div class="feed-select-underlay" v-auto-animate>
+    <div class="feed-select-underlay">
       <!-- feed name -->
       <label class="feed-select-label">
         {{ feed.label }}
