@@ -1,99 +1,79 @@
 import { reactive } from 'vue';
 
-const LIGHT_THEME = { 
-  basecolor: 'white',
+const DEFAULT_LIGHT_THEME = { 
   bodybg: '#aaaaaa',
   appbg: '#dddddd',
-  logocolor: 'dimgrey',
-  logobrightcolor: 'darkblue',
-  logoaccentcolor: 'lightgrey',
-  logoshadowcolor: 'rgb(255 0 0 / 50%)',
-  logosubtextcolor: 'rgb(224,224,224)',
-  logosubshadow: 'dimgrey',
+  logocolor: '#696969', 
+  logobrightcolor: '#00008b', 
+  logoaccentcolor: '#d3d3d3', 
+  logoshadowcolor: '#800000',
+  logosubtextcolor: '#e0e0e0',
+  logosubshadow: '#696969', 
   modalbodybg: '#cccccc',
-  navbarshadow: 'cornflowerblue',
-  navbarsubshadow: 'rgb(0 0 0 / 75%)', 
-  subduedmessage: 'dimgrey',
-  normalmessage: 'rgb(32,32,32)',
-  highlightedmessage: 'cornflowerblue',
-  buttonbg: 'transparent',
-  buttonfg: 'rgb(32,32,32)',
-  buttonborder: 'rgb(32,32,32)',
+  navbarshadow: '#6495ed', // cornflowerblue 
+  navbarsubshadow: '#161616',
+  subduedmessage: '#696969', 
+  normalmessage: '#202020',
+  highlightedmessage: '#6495ed', // cornflowerblue 
+  buttonbg: '#dddddd',
+  buttonfg: '#202020',
+  buttonborder: '#202020',
   buttonhighlight: '#ffffff', 
-  dangerbuttonhighlight: 'lightpink',
-  lightshadow: 'rgb(16,16,16)',
-  darkshadow: 'rgb(32 32 32)',
-  accentshadow: 'rgb(0 255 255 / 15%)',
-  sectionbg: 'transparent',
-  sectionsubdued: 'rgb(72,72,72)',
+  lightshadow: '#101010',
+  darkshadow: '#202020',
+  accentshadow: '#00ffff',
+  sectionbg: '#dddddd', 
+  sectionsubdued: '#484848',
   sectionhighlight: '#eeeeee',
-  sectionbrighthighlight: 'transparent', 
-  sectionbrighterhighlight: 'transparent',
-  sectionbrightesthighlight: 'transparent',
-  sectionbordercolor: 'rgb(16,16,16)',
-  sectionpositivehighlight: 'rgba(128,255,128,0.1)',
-  sectionpositiveaccent: 'rgba(128,255,128,0.3)',
-  sectionnegativehighlight: 'rgba(255,128,128,0.1)',
-  fieldborder: 'rgb(32,32,32)',
-  fieldborderhighlight: 'rgb(32,32,32)',
-  fieldbackground: 'transparent',
-  fieldbackgroundhighlight: 'rgba(100,149,237,0.1)', 
-  fieldcolorhighlight: 'black',
-  errorbg: 'lightpink',
-  errorborder: 'darkred',
-  errorshadow: 'rgb(255 0 0 / 50%)',
-  requiredind: 'red',
-  activetabcolor: 'rgba(100,149,237,0.3)',
-  tocbgcolor: 'transparent',
-  starcolor: 'burlywood',
+  sectionbrighthighlight: '#dddddd', 
+  sectionbrighterhighlight: '#dddddd', 
+  sectionbordercolor: '#101010',
+  sectionnegativehighlight: '#ff8080',
+  fieldborder: '#202020',
+  fieldborderhighlight: '#202020',
+  fieldbackground: '#dddddd',
+  fieldbackgroundhighlight: '#bedbf7', 
+  fieldcolorhighlight: '#000000', 
+  requiredind: '#ff0000', 
+  starcolor: '#deb887', // burlywood 
 };
 
-const DARK_THEME = { 
-  basecolor: 'black',
+const DEFAULT_DARK_THEME = { 
   bodybg: '#080808',
   appbg: '#171717',
-  logocolor: 'lightgrey', // tab labels, view headers, etc. 
-  logobrightcolor: 'lightskyblue', // selected tab label 
-  logoaccentcolor: 'rgb(32 32 32)', // banner 
-  logoshadowcolor: 'rgb(255 0 0 / 50%)', // banner 
-  logosubtextcolor: 'aliceblue', // banner 
-  logosubshadow: 'slateblue', // banner 
+  logocolor: '#d3d3d3', 
+  logobrightcolor: '#87cefa', // lightskyblue
+  logoaccentcolor: '#202020',
+  logoshadowcolor: '#800000',
+  logosubtextcolor: '#f0f8ff', // aliceblue
+  logosubshadow: '#6a5acd', // slateblue
   modalbodybg: '#141414',
-  navbarshadow: 'cornflowerblue', 
-  navbarsubshadow: 'rgb(255 255 255 / 5%)', 
-  subduedmessage: 'rgb(136,136,136)', // links, detail messages, etc. 
-  normalmessage: 'lightskyblue', // foreground text 
-  highlightedmessage: 'rgba(144,238,144,0.7)', // hover effect for messages 
-  buttonbg: 'transparent',
-  buttonfg: 'lightskyblue',
-  buttonborder: 'lightskyblue',
-  buttonhighlight: 'rgba(100,149,237,0.1)', // hover effect for buttons, bg for selected 'mode' buttons 
-  dangerbuttonhighlight: 'lightpink', // settings 
-  lightshadow: 'rgb(32,32,32)', // box shadow applied to form fields 
-  darkshadow: 'rgb(0 0 0 / 50%)',
-  accentshadow: 'rgb(255 0 0 / 50%)',
-  sectionbg: 'transparent',
-  sectionsubdued: 'rgb(72,72,72)',
+  navbarshadow: '#6495ed', // cornflowerblue  
+  navbarsubshadow: '#646464', 
+  subduedmessage: '#888888',
+  normalmessage: '#87cefa', // lightskyblue
+  highlightedmessage: '#90ee90',
+  buttonbg: '#171717',
+  buttonfg: '#87cefa', // lightskyblue 
+  buttonborder: '#87cefa', // lightskyblue 
+  buttonhighlight: '#080808',
+  lightshadow: '#202020',
+  darkshadow: '#000000',
+  accentshadow: '#ff0000',
+  sectionbg: '#171717',
+  sectionsubdued: '#484848',
   sectionhighlight: '#212121',
-  sectionbrighthighlight: 'transparent', 
-  sectionbrighterhighlight: 'transparent',
-  sectionbrightesthighlight: 'transparent',
-  sectionbordercolor: 'rgb(48,48,48)',
-  sectionpositivehighlight: 'rgba(128,255,128,0.1)',
-  sectionpositiveaccent: 'rgba(128,255,128,0.3)',
-  sectionnegativehighlight: 'rgba(255,128,128,0.1)',
-  fieldborder: 'lightskyblue',
-  fieldborderhighlight: 'lightskyblue',
-  fieldbackground: 'transparent',
-  fieldbackgroundhighlight: 'rgba(100,149,237,0.1)', 
-  fieldcolorhighlight: 'white',
-  errorbg: 'lightpink',
-  errorborder: 'darkred',
-  errorshadow: 'rgb(255 0 0 / 50%)',
-  requiredind: 'red',
-  activetabcolor: 'rgba(100,149,237,0.3)',
-  tocbgcolor: 'transparent',
-  starcolor: 'burlywood',
+  sectionbrighthighlight: '#171717',
+  sectionbrighterhighlight: '#171717',
+  sectionbordercolor: '#303030',
+  sectionnegativehighlight: '#118080',
+  fieldborder: '#87cefa', // lightskyblue 
+  fieldborderhighlight: '#87cefa', // lightskyblue 
+  fieldbackground: '#171717',
+  fieldbackgroundhighlight: '#324588', 
+  fieldcolorhighlight: '#ffffff',
+  requiredind: '#ff0000', 
+  starcolor: '#deb887', // burlywood 
 };
 
 export default {
@@ -103,18 +83,13 @@ export default {
     function installTheme(theme) {
       document.body.style.background=theme.bodybg;
 
-      app.config.globalProperties.$theme.currentTheme.basecolor = theme.basecolor;
       app.config.globalProperties.$theme.currentTheme.bodybg = theme.bodybg;
-      app.config.globalProperties.$theme.currentTheme.appbg = theme.appbg;
-      app.config.globalProperties.$theme.currentTheme.logocolor = theme.logocolor;
-      app.config.globalProperties.$theme.currentTheme.logobrightcolor = theme.logobrightcolor;
       app.config.globalProperties.$theme.currentTheme.logoaccentcolor = theme.logoaccentcolor;
-      app.config.globalProperties.$theme.currentTheme.logoshadowcolor = theme.logoshadowcolor;
       app.config.globalProperties.$theme.currentTheme.logosubtextcolor = theme.logosubtextcolor;
       app.config.globalProperties.$theme.currentTheme.logosubshadow = theme.logosubshadow;
-      app.config.globalProperties.$theme.currentTheme.modalbodybg = theme.modalbodybg;
-      app.config.globalProperties.$theme.currentTheme.navbarshadow = theme.navbarshadow;
-      app.config.globalProperties.$theme.currentTheme.navbarsubshadow = theme.navbarsubshadow;
+      // user configurable 
+      app.config.globalProperties.$theme.currentTheme.appbg = theme.appbg;
+      app.config.globalProperties.$theme.currentTheme.logocolor = theme.logocolor;
       app.config.globalProperties.$theme.currentTheme.subduedmessage = theme.subduedmessage;
       app.config.globalProperties.$theme.currentTheme.normalmessage = theme.normalmessage;
       app.config.globalProperties.$theme.currentTheme.highlightedmessage = theme.highlightedmessage;
@@ -122,48 +97,52 @@ export default {
       app.config.globalProperties.$theme.currentTheme.buttonfg = theme.buttonfg;
       app.config.globalProperties.$theme.currentTheme.buttonborder = theme.buttonborder;
       app.config.globalProperties.$theme.currentTheme.buttonhighlight = theme.buttonhighlight;
-      app.config.globalProperties.$theme.currentTheme.dangerbuttonhighlight = theme.dangerbuttonhighlight;
       app.config.globalProperties.$theme.currentTheme.lightshadow = theme.lightshadow;
       app.config.globalProperties.$theme.currentTheme.darkshadow = theme.darkshadow;
       app.config.globalProperties.$theme.currentTheme.accentshadow = theme.accentshadow;
+      app.config.globalProperties.$theme.currentTheme.logoshadowcolor = theme.logoshadowcolor;
+      app.config.globalProperties.$theme.currentTheme.navbarshadow = theme.navbarshadow;
       app.config.globalProperties.$theme.currentTheme.sectionbg = theme.sectionbg;
-      app.config.globalProperties.$theme.currentTheme.sectionsubdued = theme.sectionsubdued;
-      app.config.globalProperties.$theme.currentTheme.sectionhighlight = theme.sectionhighlight;
-      app.config.globalProperties.$theme.currentTheme.sectionbrighthighlight = theme.sectionbrighthighlight;
       app.config.globalProperties.$theme.currentTheme.sectionbrighterhighlight = theme.sectionbrighterhighlight;
-      app.config.globalProperties.$theme.currentTheme.sectionbrightesthighlight = theme.sectionbrightesthighlight;
       app.config.globalProperties.$theme.currentTheme.sectionbordercolor = theme.sectionbordercolor;
-      app.config.globalProperties.$theme.currentTheme.sectionpositivehighlight = theme.sectionpositivehighlight
-      app.config.globalProperties.$theme.currentTheme.sectionpositiveaccent = theme.sectionpositiveaccent;
+      app.config.globalProperties.$theme.currentTheme.sectionsubdued = theme.sectionsubdued;
+      app.config.globalProperties.$theme.currentTheme.starcolor = theme.starcolor;
+      app.config.globalProperties.$theme.currentTheme.sectionhighlight = theme.sectionhighlight;
+      app.config.globalProperties.$theme.currentTheme.navbarsubshadow = theme.navbarsubshadow;
+      app.config.globalProperties.$theme.currentTheme.modalbodybg = theme.modalbodybg;
+      app.config.globalProperties.$theme.currentTheme.sectionbrighthighlight = theme.sectionbrighthighlight;
+      app.config.globalProperties.$theme.currentTheme.logobrightcolor = theme.logobrightcolor;
       app.config.globalProperties.$theme.currentTheme.sectionnegativehighlight = theme.sectionnegativehighlight
       app.config.globalProperties.$theme.currentTheme.fieldborder = theme.fieldborder;
       app.config.globalProperties.$theme.currentTheme.fieldborderhighlight = theme.fieldborderhighlight;
       app.config.globalProperties.$theme.currentTheme.fieldbackground = theme.fieldbackground;
       app.config.globalProperties.$theme.currentTheme.fieldbackgroundhighlight = theme.fieldbackgroundhighlight;
       app.config.globalProperties.$theme.currentTheme.fieldcolorhighlight = theme.fieldcolorhighlight;
-      app.config.globalProperties.$theme.currentTheme.errorbg = theme.errorbg;
-      app.config.globalProperties.$theme.currentTheme.errorborder = theme.errorborder;
-      app.config.globalProperties.$theme.currentTheme.errorshadow = theme.errorshadow;
       app.config.globalProperties.$theme.currentTheme.requiredind = theme.requiredind;
-      app.config.globalProperties.$theme.currentTheme.activetabcolor = theme.activetabcolor;
-      app.config.globalProperties.$theme.currentTheme.activetabhoverbg = theme.activetabhoverbg;
-      app.config.globalProperties.$theme.currentTheme.activetabhoverfg = theme.activetabhoverfg;
-      app.config.globalProperties.$theme.currentTheme.inactivetabhoverbg = theme.inactivetabhoverbg;
-      app.config.globalProperties.$theme.currentTheme.inactivetabhoverfg = theme.inactivetabhoverfg;
-      app.config.globalProperties.$theme.currentTheme.tocbgcolor = theme.tocbgcolor;
-      app.config.globalProperties.$theme.currentTheme.starcolor = theme.starcolor;
     }
 
     function setupDarkMode() {
-      console.log("newsgears-theme: setting up dark mode...");
+      let systemTheme = DEFAULT_DARK_THEME;
+      let userTheme = app.config.globalProperties.$theme.userDarkTheme;
+      let userAttrs = Object.keys(userTheme);
+      for (let i = 0; i < userAttrs.length; i++) {
+        let attrName = userAttrs[i];
+        systemTheme[attrName] = userTheme[attrName];
+      }
       app.config.globalProperties.$theme.currentTheme.ident = 'dark';
-      installTheme(DARK_THEME);
+      installTheme(systemTheme);
     }
 
     function setupLightMode() {
-      console.log("newsgears-theme: setting up light mode...");
+      let systemTheme = DEFAULT_LIGHT_THEME;
+      let userTheme = app.config.globalProperties.$theme.userLightTheme;
+      let userAttrs = Object.keys(userTheme);
+      for (let i = 0; i < userAttrs.length; i++) {
+        let attrName = userAttrs[i];
+        systemTheme[attrName] = userTheme[attrName];
+      }
       app.config.globalProperties.$theme.currentTheme.ident = 'light';
-      installTheme(LIGHT_THEME);
+      installTheme(systemTheme);
     }
 
     function switchMode() {
@@ -178,7 +157,25 @@ export default {
       }
     }
 
-    function setupMode(mode) {
+    function setupModes(mode, themeConfig) {
+      if (themeConfig) {
+        if (themeConfig.lightTheme) {
+          console.log("newsgears-theme: installing custom light theme");
+          themeConfig.lightTheme.bodybg = DEFAULT_LIGHT_THEME.bodyBg;
+          themeConfig.lightTheme.logoaccentcolor = DEFAULT_LIGHT_THEME.logoaccentcolor;
+          themeConfig.lightTheme.logosubtextcolor = DEFAULT_DARK_THEME.logosubtextcolor;
+          themeConfig.lightTheme.logosubshadow = DEFAULT_DARK_THEME.logosubshadow;
+          app.config.globalProperties.$theme.userLightTheme = themeConfig.lightTheme;
+        }
+        if (themeConfig.darkTheme) {
+          console.log("newsgears-theme: installing custom dark theme");
+          themeConfig.darkTheme.bodybg = DEFAULT_DARK_THEME.bodybg;
+          themeConfig.darkTheme.logoaccentcolor = DEFAULT_DARK_THEME.logoaccentcolor;
+          themeConfig.darkTheme.logosubtextcolor = DEFAULT_DARK_THEME.logosubtextcolor;
+          themeConfig.darkTheme.logosubshadow = DEFAULT_DARK_THEME.logosubshadow;
+          app.config.globalProperties.$theme.userDarkTheme = themeConfig.darkTheme;
+        }
+      }
       if (mode === 'dark') {
         setupDarkMode();
       } else if (mode === 'light') {
@@ -188,55 +185,43 @@ export default {
 
     const themeObj = reactive({
       'switchMode': switchMode,
-      'setupMode': setupMode,
+      'setupModes': setupModes,
       'setupDefaultMode': setupDarkMode,
       currentTheme: reactive({}),
+      userLightTheme: reactive({}),
+      userDarkTheme: reactive({}),
       keySet: [
-        { 'name': 'basecolor' },
-        { 'name': 'bodybg' },
-        { 'name': 'appbg' },
-        { 'name': 'logocolor' },
-        { 'name': 'logobrightcolor' },
-        { 'name': 'logoaccentcolor' },
-        { 'name': 'logoshadowcolor' },
-        { 'name': 'logosubtextcolor' },
-        { 'name': 'logosubshadow' },
-        { 'name': 'modalbodybg' },
-        { 'name': 'navbarshadow' },
-        { 'name': 'navbarsubshadow' }, 
-        { 'name': 'subduedmessage' },
-        { 'name': 'normalmessage' },
-        { 'name': 'highlightedmessage' },
-        { 'name': 'buttonbg' },
-        { 'name': 'buttonfg' },
-        { 'name': 'buttonborder' },
-        { 'name': 'buttonhighlight' }, 
-        { 'name': 'dangerbuttonhighlight' },
-        { 'name': 'lightshadow' },
-        { 'name': 'darkshadow' },
-        { 'name': 'accentshadow' },
-        { 'name': 'sectionbg' },
-        { 'name': 'sectionsubdued' },
-        { 'name': 'sectionhighlight' },
-        { 'name': 'sectionbrighthighlight' },
-        { 'name': 'sectionbrighterhighlight' },
-        { 'name': 'sectionbrightesthighlight' },
-        { 'name': 'sectionbordercolor' },
-        { 'name': 'sectionpositivehighlight' },
-        { 'name': 'sectionpositiveaccent' },
-        { 'name': 'sectionnegativehighlight' },
-        { 'name': 'fieldborder' },
-        { 'name': 'fieldborderhighlight' },
-        { 'name': 'fieldbackground' },
-        { 'name': 'fieldbackgroundhighlight' },
-        { 'name': 'fieldcolorhighlight' },
-        { 'name': 'errorbg' },
-        { 'name': 'errorborder' },
-        { 'name': 'errorshadow' },
-        { 'name': 'requiredind' },
-        { 'name': 'activetabcolor' },
-        { 'name': 'tocbgcolor' },
-        { 'name': 'starcolor' }
+        { name: 'appbg', shortDescription: 'Background', longDescription: 'Application background color, visible behind the various panels.' },
+        { name: 'logocolor', shortDescription: 'Accent', longDescription: 'Accent color used on headers, labels, and buttons throughout the application.' },
+        { name: 'subduedmessage', shortDescription: 'Subdued message', longDescription: 'Color used for subdued messages/lesser labels.' },
+        { name: 'normalmessage', shortDescription: 'Normal message', longDescription: 'The normal foreground font color.' },
+        { name: 'highlightedmessage', shortDescription: 'Highlighted message', longDescription: 'Color used for highlighted messages.' },
+        { name: 'buttonbg', shortDescription: 'Button background', longDescription: 'Button background color.' },
+        { name: 'buttonfg', shortDescription: 'Button foreground', longDescription: 'Button foreground color.' },
+        { name: 'buttonborder', shortDescription: 'Button border', longDescription: 'Button border color.' },
+        { name: 'buttonhighlight', shortDescription: 'Highlighted button', longDescription: 'Highlighted button color, applied when the mouse is hovering over a button, or when the button has keyboard focus.' }, 
+        { name: 'lightshadow', shortDescription: 'Light shadow', longDescription: 'A lighter shadow color applied to various panels.' },
+        { name: 'darkshadow', shortDescription: 'Dark shadow', longDescription: 'A darker shadow color applied to various panels.' },
+        { name: 'accentshadow', shortDescription: 'Headers and label shadow', longDescription: 'Shadow color applied to headers and labels.' },
+        { name: 'logoshadowcolor', shortDescription: 'Logo shadow', longDescription: 'Shadow color of the logo, visible behind the queue dashboard.' },
+        { name: 'navbarshadow', shortDescription: 'Loading animation', longDescription: 'Loading animation color.' },
+        { name: 'sectionbg', shortDescription: 'Article header', longDescription: 'Article header background color.' },
+        { name: 'sectionbrighterhighlight', shortDescription: 'Article section background color', longDescription: 'Article body background color.' },
+        { name: 'sectionbordercolor', shortDescription: 'Article section inner border color', longDescription: 'Border color around sections of the article.' },
+        { name: 'sectionsubdued', shortDescription: 'Article text (read)', longDescription: 'Body color for articles marked as read.' },
+        { name: 'starcolor', shortDescription: 'Article \'starred\' indicator', longDescription: 'Color of the star used to indicate that an article is marked as a favorite.' },
+        { name: 'sectionhighlight', shortDescription: 'Queue dashboard background ', longDescription: 'Queue dashboard background color.' },
+        { name: 'navbarsubshadow', shortDescription: 'Queue dashboard border', longDescription: 'Queue dashboard border color.' }, 
+        { name: 'modalbodybg', shortDescription: 'Modal dialog background', longDescription: 'Background color of modal dialogs, such as settings, feed configuration, and OPML upload.' },
+        { name: 'sectionbrighthighlight', shortDescription: 'Tab label background', longDescription: 'Background color of tab labels.' },
+        { name: 'logobrightcolor', shortDescription: 'Selected tab label color', longDescription: 'Label color of the selected tab.' },
+        { name: 'sectionnegativehighlight', shortDescription: 'Error message background', longDescription: 'Background color for error messages.' },
+        { name: 'fieldborder', shortDescription: 'Input field border', longDescription: 'Border color of all input fields.' },
+        { name: 'fieldborderhighlight', shortDescription: 'Input field border (focused)', longDescription: 'Border color of input field that have the keyboard focus.' },
+        { name: 'fieldbackground', shortDescription: 'Input field background', longDescription: 'Background color of all input fields.' },
+        { name: 'fieldbackgroundhighlight', shortDescription: 'Input field background (focused)', longDescription: 'Background color of input fields that have the keyboard focus.' },
+        { name: 'fieldcolorhighlight', shortDescription: 'Input field color (focused)', longDescription: 'Color of input fields that have the keyboard focus.' },
+        { name: 'requiredind', shortDescription: 'Input field required indicator', longDescription: 'Color of the asterisk next to a field that indicates its value is required.' },
       ]
     });
 

@@ -1,7 +1,7 @@
 <template>
   <div class="auth-container" v-show="!this.$auth.$isAuthenticated">
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-    <div class="auth-container-inner">
+    <div class="auth-container-inner" v-auto-animate>
       <!-- username -->
       <AuthTextField :placeholder="'Username'" 
         :theme="theme" 
@@ -73,8 +73,6 @@ export default {
   },
   methods: {
       login() {
-        this.clearServerResponse();
-
         if (!this.username && !this.password) {
           this.serverMessage = "Username and password are required.";
           return;

@@ -1,5 +1,5 @@
 <template>
-  <div class="feed-config-field">
+  <div class="feed-config-field" v-auto-animate>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- label -->
     <label>UPSTREAM RSS/ATOM SOURCES {{ needsPagination() ? ('Showing page ' + this.currentPage + '/' + this.totalPages) : '' }}:</label>
@@ -51,7 +51,7 @@
       </div>
       <div class="feed-config">
         <!-- feed config items -->
-        <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx">
+        <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx" v-auto-animate>
           SUBSCRIPTION {{ idx + 1 }}/{{ this.rssAtomFeedUrls.length }}
           <!-- url input field w/refresh and delete buttons -->
           <div class="rss-atom-url-row">
@@ -444,8 +444,8 @@ export default {
 }
 
 .rss-atom-url-row-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .44rem 1.25rem;
@@ -457,10 +457,7 @@ export default {
 }
 
 .rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.buttonhighlight');
 }
 
 .rss-atom-url-row-button:disabled {
@@ -526,8 +523,8 @@ export default {
 }
 
 .feed-config-filter-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .44rem 1.25rem;
@@ -539,10 +536,7 @@ export default {
 }
 
 .feed-config-filter-button:hover, .feed-config-filter-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.buttonhighlight');
 }
 
 .feed-config-filter-button:disabled {

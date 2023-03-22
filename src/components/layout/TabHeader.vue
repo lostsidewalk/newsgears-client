@@ -52,6 +52,5 @@ export default {
 /** has references */
 .selected-tab-label {
   color: v-bind('theme.logobrightcolor');
-  background-color: v-bind('theme.sectionbrighthighlight') !important;
 }
 </style>

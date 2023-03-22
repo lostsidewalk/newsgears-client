@@ -2,7 +2,7 @@
   <div class="registration-request-container">
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- registration panel -->
-    <div class="registration-request-container-inner">
+    <div class="registration-request-container-inner" v-auto-animate>
       <!-- email address -->
       <AuthTextField :placeholder="'Email address'" 
         :disabled="disabled || inTransit" 

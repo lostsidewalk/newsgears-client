@@ -418,12 +418,6 @@ export default {
   background-color: unset;
 }
 
-.error > input, .error > textarea {
-  border: 1px solid v-bind('theme.errorborder') !important;
-  box-shadow: 1px 1px 1px v-bind('theme.errorshadow') !important;
-  background-color: v-bind('theme.errorbg') !important;
-}
-
 .tabbed-panel {
   padding: .75rem;
   border-top: 0px;
@@ -440,6 +434,8 @@ export default {
 .tab {
   display: grid;
   contain: content;
+  max-height: 50svh;
+  overflow: auto;
 }
 
 @keyframes load {

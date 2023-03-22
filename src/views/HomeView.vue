@@ -90,6 +90,10 @@ export default {
   transition: background-color .3s, box-shadow .3s, text-shadow .3s;
 }
 
+*:focus-visible {
+  outline-style: outset;
+}
+
 body {
   margin: 0rem !important;
 }
@@ -107,12 +111,6 @@ hr {
   text-align: center;
   color: v-bind('theme.highlightedmessage');
   padding: 4%;
-}
-
-.error > input, .error > textarea {
-  border: 1px solid v-bind('theme.errorborder') !important;
-  box-shadow: 1px 1px 1px v-bind('theme.errorshadow') !important;
-  background-color: v-bind('theme.errorbg') !important;
 }
 
 .animated {

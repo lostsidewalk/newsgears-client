@@ -14,7 +14,7 @@ export default {
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {
       if (isAuthenticated) {
-        this.refreshModeSetting(); 
+        this.refreshDisplaySettings(); 
       } else {
         this.$theme.setupDefaultMode();
       }
@@ -46,7 +46,7 @@ export default {
         this.updateModeSetting();
       }
     },
-    refreshModeSetting() {
+    refreshDisplaySettings() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -64,8 +64,10 @@ export default {
             return response.json().then(j => {throw new Error(j.message)})
           }
         }).then((data) => {
-          if (data.displayMode) {
-            this.$theme.setupMode(data.displayMode);
+          let displayConfig = data.displayConfig;
+          if (displayConfig) {
+            let themeConfig = data.themeConfig;
+            this.$theme.setupModes(displayConfig.displayMode, themeConfig);
           }
         }).catch((error) => {
           this.handleServerError(error);

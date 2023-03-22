@@ -1,5 +1,5 @@
 <template>
-  <div class="feed-config-field">
+  <div class="feed-config-field" v-auto-animate>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <label v-if="label">
       <span v-if="required" class="required">*</span>
@@ -168,7 +168,8 @@ export default {
 }
 
 .feed-image {
-  border: 1px solid v-bind('theme.sectionbrighthighlight');
+  border: 1px solid transparent;
+  border-radius: 5px;
   width: 140px;
   height: 140px;
   max-width: 140px;
@@ -178,7 +179,6 @@ export default {
   background-position: center center;
   background-repeat: no-repeat;
   align-self: stretch;
-  border-radius: 3px;
 }
 
 .feed-image-select {

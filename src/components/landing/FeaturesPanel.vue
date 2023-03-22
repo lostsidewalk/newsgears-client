@@ -61,7 +61,7 @@
       <div class="feature">
         <div class="feature-title">THEMEABLE <span class="fa fa-paint-brush" role="presentation" /></div>
         <div class="feature-body">
-          FeedGears has built-in support for light/dark themes.  We will soon be offering the capability to customize each of the 44 colors that comprise a FeedGears theme.  Stay tuned! 
+          FeedGears has built-in support for customizable light/dark themes.  Each theme is comprised of 31 colors; you may change them all.  
         </div>
       </div>
       <!-- <div class="feature">

@@ -2,7 +2,7 @@
   <div class="feed-filter-pills pill-container">
     <!-- expression -->
     <div class="filter-expression-container">
-      <div class="filter-expression">
+      <div class="filter-expression" v-auto-animate>
         Viewing: <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
         <span class="filter-subscriptions-expression">{{ this.filterSubscriptionsExpression }}</span>
         <span v-if="this.selectedFeedFilterCategories.length > 0"> with categories in: <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.toString() }}</span></span>
@@ -243,8 +243,8 @@ export default {
 }
 
 .reset-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .44rem 1.25rem;
@@ -256,10 +256,7 @@ export default {
 }
 
 .reset-button:hover, .reset-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.buttonhighlight');
 }
 
 .reset-button:last-child {

@@ -118,8 +118,8 @@ export default {
 }
 
 .feed-filter-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .44rem 1.25rem;
@@ -131,10 +131,7 @@ export default {
 }
 
 .feed-filter-button:hover, .feed-filter-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.buttonhighlight');
 }
 
 .feed-filter-button:disabled {

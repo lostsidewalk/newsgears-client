@@ -76,25 +76,6 @@ export default {
   padding-bottom: 1svh;
 }
 
-.tab-label {
-  text-align: center;
-  padding: 1rem;
-  border-radius: 5px;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  cursor: pointer;
-  user-select: none;
-  background-color: v-bind('theme.sectionbrighthighlight');
-  color: v-bind('theme.logocolor');
-}
-
-.tab-label:hover, .tab-label:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.underline {
-  text-decoration: underline;
-}
-
 .fancy {
   font-family: 'Merriweather';
   font-weight: bold;

@@ -1,5 +1,5 @@
 <template>
-  <div class="feed-config-field">
+  <div class="feed-config-field" v-auto-animate>
     <!-- feed catalog filter label -->
     <label>FEED CATALOG {{ '(' + this.filteredFeedCatalog.length + ' FEEDS MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + (this.totalPages > 0 ? this.totalPages : 1 ) + ')' }}</label>
     <!-- feed catalog filter input w/pagination buttons -->
@@ -533,8 +533,8 @@ export default {
 }
 
 .feed-catalog-filter-button {
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .44rem 1.25rem;
@@ -546,10 +546,7 @@ export default {
 }
 
 .feed-catalog-filter-button:hover, .feed-catalog-filter-button:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+  background: v-bind('theme.buttonhighlight');
 }
 
 .feed-catalog-filter-button:disabled {

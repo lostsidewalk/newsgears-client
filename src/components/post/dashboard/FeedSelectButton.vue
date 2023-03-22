@@ -1,10 +1,9 @@
 <template>
-  <button  
-    class="feed-select" 
+  <button class="feed-select" 
     :value="feed.value" 
     :key="feed.value" 
     :disabled="disabled">
-    <div class="feed-select-underlay">
+    <div class="feed-select-underlay" v-auto-animate>
       <!-- feed name -->
       <label class="feed-select-label">
         {{ feed.label }}
@@ -20,7 +19,11 @@
         </div>
       </div>
       <!-- show more/less information (also selects the feed) -->
-      <a v-if="this.showMoreInformation || feed.rssAtomFeedUrls.length > 0" class="feed-info-label-small link" @click.stop="toggleMoreInformation()" @keypress.enter.prevent="toggleMoreInformation()" tabindex="0">
+      <a v-if="this.showMoreInformation || feed.rssAtomFeedUrls.length > 0" 
+        class="feed-info-label-small link" 
+        @click.stop="toggleMoreInformation()" 
+        @keypress.enter.prevent="toggleMoreInformation()" 
+        tabindex="0">
         {{ this.showMoreInformation ? 'Hide subscriptions' : 'Show subscriptions' }}
       </a>
       <span v-if="feed.rssAtomFeedUrls.length === 0">0 subscriptions</span>
@@ -178,7 +181,8 @@ export default {
 }
 
 .feed-image {
-  border: 1px solid v-bind('theme.sectionbrighthighlight');
+  border: 1px solid transparent;
+  border-radius: 5px;
   width: 35px;
   height: 35px;
   max-width: 35px;
@@ -188,8 +192,6 @@ export default {
   background-position: center center;
   background-repeat: no-repeat;
   align-self: stretch;
-  border-radius: 3px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
 .link {

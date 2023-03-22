@@ -71,17 +71,17 @@ export default {
 .landing-navbar {
   position: sticky;
   top: 0;
-  background-color: v-bind('theme.basecolor');
+  background-color: v-bind('theme.appbg');
   border-bottom: 1px solid v-bind('theme.navbarsubshadow');
   box-shadow: 0px 3px 3px v-bind('theme.darksubshadow');
 }
 
 .banner {
-  background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.basecolor'));
+  background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.appbg'));
 }
 
 .demo {
-  background-image: linear-gradient(180deg, v-bind('theme.basecolor'), v-bind('theme.darkshadow'));
+  background-image: linear-gradient(180deg, v-bind('theme.appbg'), v-bind('theme.darkshadow'));
 }
 
 .features {

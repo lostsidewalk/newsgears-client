@@ -1,7 +1,7 @@
 <template>
-    <div v-if="this.serverMessage && !this.$auth.$isAuthenticated" class="server-message">
-      {{ this.serverMessage }}
-    </div>
+  <div v-if="this.serverMessage && !this.$auth.$isAuthenticated" class="server-message">
+    {{ this.serverMessage }}
+  </div>
 </template>
 
 <script>

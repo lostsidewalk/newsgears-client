@@ -21,9 +21,10 @@ export default {
   left: 16px;
   top: 16px;
   z-index: 99999;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  background-color: v-bind('theme.appbg');
-  box-shadow: 7px 7px 7px v-bind('theme.navbarsubshadow');
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
+  color: v-bind('theme.buttonfg');
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .75rem;
   border-radius: 3px;
 }

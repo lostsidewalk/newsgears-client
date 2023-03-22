@@ -45,7 +45,7 @@
                 QUEUE DASHBOARD
               </template>
               <template v-slot:body>
-                <div v-if="this.showQueueDashboard" class="grid-container">
+                <div v-if="this.showQueueDashboard" class="grid-container" v-auto-animate>
                   <div v-if="this.filteredFeedIdentOptions.length > 0" class="grid">
                     <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
                       <FeedSelectButton 
@@ -69,8 +69,7 @@
                   @configureFeed="this.configureFeed(this.selectedFeedId)" 
                   @newFeed="newFeed"
                   @uploadOpml="uploadOpml"
-                  @deleteFeed="deleteFeed(this.selectedFeedId)"
-                  /> 
+                  @deleteFeed="deleteFeed(this.selectedFeedId)" /> 
               </template>
           </ViewHeader>
         </div>
@@ -124,7 +123,7 @@
           </div>
           <!-- inbound queue -- hide when modal is showing -->
           <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
-            <div>
+            <div v-auto-animate>
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" :post="post"
                 :id="'post_' + post.id"
                 :ref="'post_' + post.id"
@@ -152,7 +151,7 @@
               </div>
             </div>
           </div>
-          <div class="staging-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel">
+          <div class="staging-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel" v-auto-animate>
             <ViewHeader v-if="this.showFeedConfigPanel" 
               :sticky="true" 
               :collapsible="false" 

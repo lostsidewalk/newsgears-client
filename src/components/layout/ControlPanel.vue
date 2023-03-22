@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-auto-animate>
     <div>
       <FeedGearsLogo :theme="theme" />
       <!-- logout button, don't disable -->

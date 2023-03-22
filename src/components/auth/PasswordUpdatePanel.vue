@@ -2,7 +2,7 @@
   <div class="password-update-container">
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- password reset panel -->
-    <div class="password-update-container-inner">
+    <div class="password-update-container-inner" v-auto-animate>
       <!-- new password -->
       <AuthTextField :placeholder="'New password'" 
         :theme="theme" 

@@ -17,7 +17,7 @@
         <!-- tab panel -->
         <div class="tabbed-panel">
           <!-- tab 1: settings -->
-          <div class="tab" v-if="isLoaded">
+          <div class="tab" v-if="isLoaded && this.selectedTab === 'SETTINGS'">
             <!-- oauth2 profile (remote) -->
             <div class="settings-field" style="flex-direction: row;" v-if="authProvider !== 'LOCAL'">
               <!-- profile image -->
@@ -161,6 +161,20 @@
               </div>
             </div>
           </div>
+          <div class="tab" v-if="isLoaded && this.selectedTab === 'THEME'">
+            <div class="color-field-buttons">
+              <button class="header-button" @click="updateDisplaySettings">
+                Click here to save your changes to the {{ this.$theme.currentTheme.ident }} theme &nbsp; <span class="fa fa-save" />
+              </button>
+            </div>
+            <div class="color-field-container">
+              <ColorField v-for="themeAttribute in this.$theme.keySet" :key="themeAttribute.name"
+              :attr="themeAttribute"
+              :value="this.$theme.currentTheme[themeAttribute.name]"
+              :theme="theme" 
+              @update:modelValue="$event => updateThemeAttribute(themeAttribute.name, $event)" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -172,6 +186,7 @@ import { maxLength, email } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import TabHeader from '@/components/layout/TabHeader.vue';
+import ColorField from './ColorField.vue';
 
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
@@ -194,6 +209,7 @@ export default {
   components: {
     NavbarFixedHeader,
     TabHeader,
+    ColorField,
   },
   validations() {
     return {
@@ -227,6 +243,11 @@ export default {
           "name": "SETTINGS",
           "description": "User Preferences",
           "icon": "list",
+        },
+        {
+          "name": "THEME",
+          "description": "Theme",
+          "icon": "paint-brush",
         }
       ],
       username: null,
@@ -301,6 +322,11 @@ export default {
         emailAddress: this.emailAddress
       });
     },
+    updateTheme() {
+      this.updateSettings({
+        theme: this.$theme.currentTheme,
+      });
+    },
     // 
     toLocalDate(epochTime) {
       return new Date(epochTime * 1000).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
@@ -369,7 +395,7 @@ export default {
       return this.subscription.lastInvoice !== null;
     },
     //
-    // 
+    // fetch framework config from /settings  
     refreshSettings() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
@@ -421,6 +447,7 @@ export default {
         this.isLoaded = false;
       });
     },
+    // put framework config to /settings 
     updateSettings(newSettings) {
       try {
         if (newSettings.emailAddress && newSettings.emailAddress.length > 512) {
@@ -460,7 +487,49 @@ export default {
           }
           this.setLastServerMessage("Settings updated.");
         }).catch((error) => {
-          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage('Something went wrong.  Please try again later.');
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+      });
+    },
+    // put theme config to /settings/display (see DisplayMode->refreshDisplaySettings for accessor) 
+    updateDisplaySettings() {
+      this.inTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        let t = {};
+        if (this.$theme.currentTheme.ident === 'light') {
+          t.lightTheme = this.$theme.currentTheme;
+        } else if (this.$theme.currentTheme.ident === 'dark') {
+          t.darkTheme = this.$theme.currentTheme;
+        }
+        const requestOptions = {
+              method: 'PUT',
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                themeConfig: t
+              }),
+              credentials: 'include' 
+            };
+        fetch(this.baseUrl + "/settings/display", requestOptions)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.text();
+          } else {
+            return response.json().then(j => {throw new Error(j.message)})
+          }
+        }).then(() => {
+          this.setLastServerMessage("Theme settings updated.");
+        }).catch((error) => {
           if (error.name === 'TypeError') {
             this.setLastServerMessage('Something went wrong.  Please try again later.');
           } else {
@@ -670,6 +739,14 @@ export default {
         this.handleServerError(error);
       });
     },
+    updateThemeAttribute(attrName, attrValue) {
+      this.$theme.currentTheme[attrName] = attrValue;
+      if (this.$theme.currentTheme.ident === 'light') {
+        this.$theme.userLightTheme[attrName] = attrValue;
+      } else if (this.$theme.currentTheme.ident === 'dark') {
+        this.$theme.userDarkTheme[attrName] = attrValue;
+      }
+    },
     cancelSettings() {
       this.$emit('cancel');
     }
@@ -748,6 +825,8 @@ export default {
 .tab {
   display: grid;
   contain: content;
+  max-height: 50svh;
+  overflow: auto;
 }
 
 .view-header-no-count {
@@ -871,5 +950,17 @@ export default {
   display: flex;
   flex-direction: row;
   gap: .5rem;
+}
+
+.color-field-container {
+  overflow: scroll;
+  max-height: 46svh;
+}
+
+.color-field-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: .5rem;
+  margin-bottom: 1svh;
 }
 </style>

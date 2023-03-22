@@ -1,5 +1,5 @@
 <template>
-  <div class="post-wrapper" :class="this.isSelected ? 'post-wrapper-selected' : ''">
+  <div class="post-wrapper" :class="this.isSelected ? 'post-wrapper-selected' : ''" v-auto-animate>
     <div class="post-item-wrapper">
       <!-- post header -->
       <div class="post-item-header">
@@ -458,12 +458,12 @@ export default {
 }
 
 .post-admin-button {
-  border: 1px solid v-bind('theme.sectionbordercolor');
+  border: 1px solid v-bind('theme.buttonborder');
   cursor: pointer;
   text-align: center;
   border-radius: 3px;
-  background-color: transparent;
-  color: v-bind('theme.sectionsubdued');
+  background-color: v-bind('theme.buttonbg');
+  color: v-bind('theme.buttonfg');
   padding-top: .125rem;
   min-height: 3rem;
   min-width: 3rem;
@@ -474,8 +474,6 @@ export default {
 }
 
 .post-admin-button:hover, .post-admin-button:focus-visible {
-  border: 1px solid v-bind('theme.buttonborder');
-  color: v-bind('theme.buttonfg');
   background-color: v-bind('theme.buttonhighlight');
 }
 

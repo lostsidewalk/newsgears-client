@@ -1,5 +1,5 @@
 <template>
-  <div :disabled="disabled">
+  <div :disabled="disabled" v-auto-animate>
     <div class="rss-atom-feed-info" v-if="this.info.discoveryUrl">
       <!-- left chunk (image) -->
       <div class="left">
