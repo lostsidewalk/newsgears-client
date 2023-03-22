@@ -150,7 +150,7 @@ export default {
   overflow-y: auto;
   z-index: 1000;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -187,7 +187,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
-  border-radius: 3px;
+  border-radius: 4px;
   margin: .56rem;
   text-align: center;
   min-width: 3rem;
@@ -237,7 +237,7 @@ export default {
 .keyboard-key {
   padding: .75rem;
   border: 1px solid v-bind('theme.buttonborder');
-  border-radius: 3px;
+  border-radius: 4px;
   box-shadow: 3px 3px 1px v-bind('theme.darkshadow');
   color: v-bind('theme.buttonfg');
   background-color: v-bind('theme.buttonbg');

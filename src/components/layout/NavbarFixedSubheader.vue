@@ -26,6 +26,6 @@ export default {
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   padding: .75rem;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 </style>

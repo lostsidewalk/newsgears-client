@@ -14,7 +14,7 @@ export default {
 <style scoped>
 .signup-button {
   padding: .75rem 1rem;
-  border-radius: 3px;
+  border-radius: 4px;
   border: 1px solid v-bind('theme.buttonborder');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   cursor: pointer;

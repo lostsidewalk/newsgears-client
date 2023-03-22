@@ -51,7 +51,7 @@ export default {
   overflow-y: auto;
   z-index: 1000;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -84,7 +84,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
-  border-radius: 3px;
+  border-radius: 4px;
   margin: .56rem;
   text-align: center;
   min-width: 3rem;

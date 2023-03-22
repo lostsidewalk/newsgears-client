@@ -21,7 +21,7 @@ export default {
   max-width: 256px;
   min-height: 3rem;
   padding: .75rem 1rem .75rem 2.625rem;
-  border-radius: 3px;
+  border-radius: 4px;
   border: 1px solid v-bind('theme.buttonborder');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   cursor: pointer;

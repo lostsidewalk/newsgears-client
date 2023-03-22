@@ -103,7 +103,7 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .44rem;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   align-self: start;
   user-select: none;
@@ -182,7 +182,7 @@ export default {
 
 .feed-image {
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   width: 35px;
   height: 35px;
   max-width: 35px;

@@ -58,7 +58,7 @@ export default {
 .tab-label {
   text-align: center;
   padding: 1rem;
-  border-radius: 5px 5px 0px 0px;
+  border-radius: 4px 5px 0px 0px;
   border-top: 0px;
   border-left: 0px;
   border-right: 0px;
@@ -80,7 +80,7 @@ export default {
 }
 
 .tab-panel > img {
-  border-radius: 3px;
+  border-radius: 4px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
   width: 75%;
   height: auto;

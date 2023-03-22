@@ -44,7 +44,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: .75rem;
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
   font-family: Arial, Helvetica, sans-serif;
@@ -59,7 +59,7 @@ export default {
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
-  border-radius: 3px;
+  border-radius: 4px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   margin-top: .125rem;
   resize: none;
@@ -85,7 +85,7 @@ export default {
   color: v-bind('theme.buttonfg');;
   cursor: help;
   float: right;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   margin-top: .125rem;
   margin-left: .44rem;

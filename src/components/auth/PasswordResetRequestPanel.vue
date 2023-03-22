@@ -115,7 +115,7 @@ export default {
   margin: 2%;
   border: 1px solid v-bind('theme.sectionbordercolor');
   background: v-bind('theme.sectionhighlight');
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 </style>

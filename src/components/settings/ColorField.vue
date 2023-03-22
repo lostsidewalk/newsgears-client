@@ -34,7 +34,7 @@ export default {
   gap: .75rem;
   margin-bottom: .75rem;
   border: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 5px;
+  border-radius: 4px;
   padding: .75rem;
 }
 

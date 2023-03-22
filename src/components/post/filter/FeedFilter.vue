@@ -94,7 +94,7 @@ export default {
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
-  border-radius: 3px 0px 0px 3px;
+  border-radius: 4px 0px 0px 3px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   width: 100%;
 }

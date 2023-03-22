@@ -763,7 +763,7 @@ export default {
   overflow-y: auto;
   z-index: 1000;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -793,7 +793,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   min-width: 3rem;
   min-height: 3rem;
@@ -883,7 +883,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: .75rem;
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
 }
@@ -897,7 +897,7 @@ export default {
   border: 1px solid v-bind('theme.fieldborder');
   background-color: v-bind('theme.fieldbackground');
   color: v-bind('theme.normalmessage');
-  border-radius: 3px;
+  border-radius: 4px;
   margin-top: .125rem;
 }
 
@@ -921,7 +921,7 @@ export default {
 
 .notification-checkbox {
   padding: .44rem;
-  border-radius: 3px;
+  border-radius: 4px;
   user-select: none;
 }
 
@@ -942,7 +942,7 @@ export default {
 .oauth2-profile-img {
   height: 96px;
   width: 96px;
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
@@ -953,7 +953,7 @@ export default {
 }
 
 .color-field-container {
-  overflow: scroll;
+  overflow: auto;
   max-height: 46svh;
 }
 

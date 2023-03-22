@@ -36,7 +36,7 @@ export default {
 .tab-label {
   text-align: center;
   padding: 1rem;
-  border-radius: 5px 5px 0px 0px;
+  border-radius: 4px 5px 0px 0px;
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
   user-select: none;

@@ -53,7 +53,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
-  border-radius: 3px;
+  border-radius: 4px;
   margin-top: .75rem;
   margin-right: .75rem;
   text-align: center;

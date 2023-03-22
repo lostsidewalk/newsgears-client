@@ -256,7 +256,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: .75rem;
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   border: 1px solid v-bind('theme.sectionbordercolor');
 }
@@ -273,7 +273,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   min-width: 3rem;
   min-height: 3rem;
@@ -295,7 +295,7 @@ export default {
   border: 1px solid v-bind('theme.buttonborder');
   cursor: pointer;
   text-align: center;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding-top: .125rem;
@@ -322,12 +322,12 @@ export default {
 .opml-file-wrapper {
   background-color: v-bind('theme.sectionbrighterhighlight');
   padding: .75rem;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .opml-file-wrapper input {
   width: inherit;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .opml-file-row {
@@ -352,12 +352,12 @@ export default {
   background-color: v-bind('theme.sectionnegativehighlight');
   padding: .75rem;
   margin-bottom: .75rem;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .opml-upload-errors input {
   width: inherit;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .opml-upload-error {
@@ -374,7 +374,7 @@ export default {
   max-height: 75svh;
   overflow-y: auto;
   border: 1px solid;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .opml-upload-summary-wrapper:last-of-type {

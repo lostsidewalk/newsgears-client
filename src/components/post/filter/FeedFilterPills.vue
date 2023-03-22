@@ -166,7 +166,7 @@ export default {
 .br-pill {
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding: .44rem .75rem;

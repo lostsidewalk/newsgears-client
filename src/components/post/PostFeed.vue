@@ -1593,7 +1593,7 @@ export default {
 
 .feed-select-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  border-radius: 3px;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -1602,7 +1602,7 @@ export default {
 
 .staging-header-view-selected {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  border-radius: 3px;
+  border-radius: 4px;
   min-width: 70svw;
   max-width: 70svw;
 }

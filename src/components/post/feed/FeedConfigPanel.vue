@@ -400,7 +400,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: left;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   min-width: 3rem;
   min-height: 3rem;

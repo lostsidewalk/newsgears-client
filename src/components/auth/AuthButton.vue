@@ -33,7 +33,7 @@ export default {
   padding: .44rem 1.25rem;
   margin: 4%;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
   text-align: center;
   user-select: none;
   min-width: 3rem;

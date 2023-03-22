@@ -144,7 +144,7 @@ export default {
 
 .feature {
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: v-bind('theme.appbg');
   padding: .75rem;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');

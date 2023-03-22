@@ -433,15 +433,15 @@ export default {
   border: 1px solid transparent;
   padding: .44rem;
   padding-right: .44rem;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   background-color: v-bind('theme.sectionbg');
   cursor: pointer;
   user-select: none;
   display: flex;
   flex-direction: row;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   align-items: flex-start;
   gap: .44rem;
   flex-wrap: wrap;
@@ -461,7 +461,7 @@ export default {
   border: 1px solid v-bind('theme.buttonborder');
   cursor: pointer;
   text-align: center;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding-top: .125rem;
@@ -596,7 +596,7 @@ export default {
   padding: .44rem;
   margin-left: .75rem;
   margin-right: .75rem;
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: v-bind('theme.sectionbrighterhighlight');
 }
 
@@ -614,7 +614,7 @@ export default {
 .post-item-wrapper {
   width: 100%;
   border: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: auto;
 }
 
@@ -651,7 +651,7 @@ export default {
 .br-pill {
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding: .44rem .75rem;

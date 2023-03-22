@@ -157,7 +157,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: .75rem;
-  border-radius: 5px;
+  border-radius: 4px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
   font-family: Arial, Helvetica, sans-serif;
@@ -169,7 +169,7 @@ export default {
 
 .feed-image {
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 4px;
   width: 140px;
   height: 140px;
   max-width: 140px;
@@ -202,7 +202,7 @@ export default {
   background-color: v-bind('theme.buttonbg');
   border: 1px solid v-bind('theme.buttonborder');
   z-index: 3;
-  border-radius: 3px;
+  border-radius: 4px;
   width: fit-content;
 }
 
@@ -210,7 +210,7 @@ export default {
   background-color: v-bind('theme.sectionnegativehighlight');
   padding: .75rem;
   margin-top: .75rem;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .feed-image-upload-error {

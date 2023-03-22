@@ -226,7 +226,7 @@ export default {
 
 .rss-atom-feed-info-image {
   border: 1px solid v-bind('theme.fieldborder');
-  border-radius: 5px;
+  border-radius: 4px;
   max-height: 32px;
   max-width: 32px;
   min-height: 32px;
@@ -261,7 +261,7 @@ export default {
 .br-pill {
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding: .44rem .75rem;
@@ -283,7 +283,7 @@ export default {
 .br-pill-subdued {
   border: 1px solid v-bind('theme.sectionbordercolor');
   cursor: unset;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding: .44rem 1.25rem;
