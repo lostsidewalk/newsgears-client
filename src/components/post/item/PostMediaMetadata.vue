@@ -8,7 +8,7 @@
       loading="lazy" />
     <div>
       <PostMediaCommunity v-if="this.metadata.community" :community="this.metadata.community" :theme="theme" />
-      <pre>{{ this.metadata.desc }}</pre>
+      <pre style="white-space: pre-line;">{{ this.metadata.desc }}</pre>
     </div>
 </div>
 </template>
