@@ -43,6 +43,7 @@ pre {
   max-width: fit-content;
   padding-top: .75rem;
   padding-bottom: .75rem;
+  flex-wrap: wrap;
 }
 
 .post-media-metadata > label {

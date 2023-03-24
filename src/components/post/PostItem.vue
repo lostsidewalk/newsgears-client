@@ -408,6 +408,7 @@ export default {
   width: 100%;
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
   overflow: auto;
+  flex-wrap: wrap;
 }
 
 .post-item-row button {
