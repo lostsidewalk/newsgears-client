@@ -1,6 +1,6 @@
 <template>
   <button class="go-back" @click="this.goBack()" accesskey="b" :disabled="disabled">
-    <span class="fa fa-arrow-left" />&nbsp; <i class="underline">G</i>o back.
+    <span class="fa fa-arrow-left" />&nbsp; {{ this.$t('goBack') }}
   </button>
 </template>
 

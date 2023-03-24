@@ -8,24 +8,23 @@
     <div>
       <div class="pill-container">
         <div class="inner-pill-container">
-          <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">AUDIO CHANNELS: {{ this.mediaContent.audioChannels }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">BIT RATE: {{ this.mediaContent.bitRate }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.duration">DURATION: {{ this.mediaContent.duration }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.expression">EXPRESSION: {{ this.mediaContent.expression }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.fileSize">FILE SIZE: {{ this.mediaContent.fileSize }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.frameRate">FRAME RATE: {{ this.mediaContent.frameRate }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.height">HEIGHT: {{ this.mediaContent.height }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.width">WIDTH: {{ this.mediaContent.width }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.language">LANGUAGE: {{ this.mediaContent.language }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">SAMPLING RATE: {{ this.mediaContent.samplingRate }}</div>
-          <!-- <div class="br-pill-subdued" v-if="this.mediaContent.medium">MEDIUM: {{ this.mediaContent.medium }}</div> -->
+          <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">{{ this.$t('audioChannelsColon')}} &nbsp; {{ this.mediaContent.audioChannels }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">{{ this.$t('bitRateColon') }} &nbsp; {{ this.mediaContent.bitRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.duration">{{ this.$t('durationColon') }} &nbsp; {{ this.mediaContent.duration }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.expression">{{ this.$t('expressionColon') }} &nbsp; {{ this.mediaContent.expression }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.fileSize">{{ this.$t('fileSizeColon') }} &nbsp; {{ this.mediaContent.fileSize }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.frameRate">{{ this.$t('frameRateColon') }} &nbsp; {{ this.mediaContent.frameRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.height">{{ this.$t('heightColon') }} &nbsp; {{ this.mediaContent.height }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.width">{{ this.$t('widthColon') }} &nbsp; {{ this.mediaContent.width }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.language">{{ this.$t('languageColon') }} &nbsp; {{ this.mediaContent.language }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">{{ this.$t('samplingRateColon') }} &nbsp; {{ this.mediaContent.samplingRate }}</div>
         </div>
       </div>
       <img v-if="isImage() && this.showContents"
         :src="this.mediaContent.reference.uri"
         class="post-media-content-image" 
         tabindex="0" 
-        alt="Post media content image" 
+        :alt="this.$t('postMediaContentImage')" 
         loading="lazy" />
       <div v-else-if="isVideo() && this.showContents" class="post-media-content-video">
         <vue-plyr ref="player">
@@ -57,7 +56,7 @@ export default {
     PostMediaMetadata,
   },
   mounted() {
-    if (this.isAudio() || this.isVideo()) {
+    if (this.isVideo()) {
       this.$refs.player.player.on('playing', () => this.$emit('playing'));
     }
   },
@@ -120,11 +119,6 @@ export default {
   padding: .44rem;
   user-select: none;
   margin-bottom: .44rem;
-}
-
-.post-media-content-image-wrapper {
-  background: unset;
-  border: unset;
 }
 
 .post-media-content-image {

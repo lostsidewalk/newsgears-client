@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div class="thanks-for-verifying">Thanks for verifying!  Your account status has been updated.</div>
+    <div class="thanks-for-verifying">
+      {{ this.$t('thanksForVerifying') }}
+    </div>
     <!-- "go back" link -->
     <GoBack :disabled="false" :theme="theme" />
   </div>

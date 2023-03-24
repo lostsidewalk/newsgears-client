@@ -1,39 +1,46 @@
 <template>
   <div class="article-queue">
     <!-- feed filter label -->
-    <label>ARTICLE QUEUE {{ '(' + this.queueLength + ')' }}</label>
+    <label>{{ this.$t('articleQueue') }} &nbsp; {{ '(' + this.queueLength + ')' }}</label>
     <div class="feed-filter">
       <!-- feed filter input -->
       <input id="feed-filter" 
         type="text" 
-        placeholder="Filter" 
+        :placeholder="this.$t('filter')" 
         @input="$emit('update:modelValue', $event.target.value)" 
         :value="inboundQueueFilter" 
         :disabled="disabled" />
       <div class="feed-filter-buttons">
         <!-- sort direction button -->
-        <button class="feed-filter-button" @click="this.$emit('toggleSortOrder')" :disabled="disabled" aria-label="Toggle sort order">
+        <button class="feed-filter-button" 
+          @click="this.$emit('toggleSortOrder')" 
+          :disabled="disabled"
+          :title="this.$t('toggleSortOrder')" 
+          :aria-label="this.$t('toggleSortOrder')">
           <span :class="'fa fa-arrow-' + (this.inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
         </button>
         <!-- refresh feed button -->
         <button class="feed-filter-button" 
           @click="this.$emit('refreshFeeds')"
           :disabled="disabled" 
-          aria-label="Refresh feeds">
+          :title="this.$t('refreshQueues')"
+          :aria-label="this.$t('refreshQueues')">
           <span class="fa fa-refresh"/>
         </button>
         <!-- mark as read button -->
         <button class="feed-filter-button"
           @click.stop="this.$emit('markAsRead')"
           :disabled="disabled"
-          title="Mark this queue as read">
+          :title="this.$t('markQueueAsRead')"
+          :aria-label="this.$t('markQueueAsRead')">
           <span class="fa fa-eye"></span>
         </button>
         <!-- show feed filter pills button -->
         <button class="feed-filter-button" 
           @click="this.$emit('toggleFeedFilterPills')"
           :disabled="disabled" 
-          aria-label="Show filter options">
+          :title="this.$t('showFilterOptions')"
+          :aria-label="this.$t('showFilterOptions')">
           <span class="fa fa-expand"/>
         </button>
       </div>
@@ -59,9 +66,6 @@ export default {
     "markAsRead", 
     "toggleFeedFilterPills",
   ],
-  components: {
-
-  },
 }
 </script>
 

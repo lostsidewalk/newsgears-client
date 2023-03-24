@@ -15,7 +15,9 @@
         </div>
     </div>
       <div class="modal-actions">
-        <button class="modal-button" ref="dismissButton" @click.stop="this.$emit('dismiss')">Dismiss</button>
+        <button class="modal-button" ref="dismissButton" @click.stop="this.$emit('dismiss')">
+          {{ this.$t('dismiss') }}
+        </button>
       </div>
     </div>
   </div>
@@ -41,91 +43,87 @@ export default {
     return {
       helpModel: [
           {
-            label: "Switch to light or dark mode",
+            label: this.$t('switchModeAriaLabel'),
             key: "ALT + L",
           },
           {
-            label: "Logout",
+            label: this.$t('logout'),
             key: "ALT + O",
           },
           {
-            label: "Go to account settings",
+            label: this.$t('goToSettingsAriaLabel'),
             key: "ALT + T",
           },
           {
-            label: "Create a new queue",
-            key: "ALT + N",
-          },
-          {
-            label: "Import an OPML file",
+            label: this.$t('uploadOPML'),
             key: "ALT + M",
           },
           {
-            label: "Select the previous article in queue",
+            label: this.$t('goToPreviousPost'),
             icon: "fa-arrow-up",
           },
           {
-            label: "Select the next article in queue",
+            label: this.$t('goToNextPost'),
             icon: "fa-arrow-down",
           },
           {
-            label: "Select the first article in the queue",
+            label: this.$t('goToFirstPost'),
             key: "HOME",
           },
           {
-            label: "Select the last loaded article in the queue",
+            label: this.$t('goToLastPost'),
             key: "END",
           },
           {
-            label: "Edit selected queue",
+            label: this.$t('configureSelectedQueue'),
             key: "SHIFT + E"
           },
           {
-            label: "Mark queue as read",
+            label: this.$t('markSelectedQueueAsRead'),
             key: "SHIFT + A"
           },
           {
-            label: "Refresh queue",
+            label: this.$t('refreshQueues'),
             key: "SHIFT + R"
           },
           {
-            label: "Add queue",
+            label: this.$t('createNewQueue'),
             key: "SHIFT + Q"
           },
           {
-            label: "Add subscription to queue",
+            label: this.$t('addSubscriptionToSelectedQueue'),
             key: "SHIFT + S"
           },
           {
-            label: "Star selected post",
+            label: this.$t('starSelectedPost'),
             key: "S",
           },
           {
-            label: "Toggle read/unread",
+            label: this.$t('toggleReadStatusSelectedPost'),
             key: "M",
           },
           {
-            label: "Open post URL in a new tab",
+            label: this.$t('openOriginalArticleSelectedPost'),
             key: "V",
           },
           {
-            label: "Show/hide unread",
+            label: this.$t('showHideUnread'),
             key: "SHIFT + U",
           },
           {
-            label: "Show/hide starred",
+            label: this.$t('showHideStarred'),
             key: "SHIFT + T",
           },
           {
-            label: "Show/hide read-later",
+            label: this.$t('showHideReadLater'),
             key: "SHIFT + L",
           },
           {
-            label: "Show/hide read",
+            label: this.$t('showHideRead'),
             key: "SHIFT + H",
           },
           {
-            label: "Search",
+            label: this.$t('search'),
             key: "/",
           }
       ],
@@ -152,10 +150,6 @@ export default {
   border: 1px solid transparent;
   border-radius: 4px;
   font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-header {
-  text-align: left;
 }
 
 .modal-body {
@@ -198,13 +192,6 @@ export default {
   background-color: v-bind('theme.buttonhighlight') !important;
 }
 
-.modal-close {
-  cursor: auto;
-  position: relative;
-  align-self: end;
-  right: -12px;
-  top: -17px;
-}
 
 .keyboard-shortcut-container {
   overflow-y: auto; 
@@ -214,13 +201,6 @@ export default {
   gap: 1rem;
   align-items: start;
   place-items: start stretch;
-}
-
-.keyboard-category {
-  font-weight: bolder;
-  font-size: larger;
-  margin: .56rem;
-  padding: .125rem;
 }
 
 .keyboard-shortcut-desc {

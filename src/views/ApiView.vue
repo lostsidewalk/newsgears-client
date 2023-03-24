@@ -22,11 +22,11 @@
       <!-- API header-->
       <ViewHeader :disabled="false" :inTransit="false" :theme="theme">
         <template v-slot:count>
-          FEEDGEARS API
+          {{ this.$t('feedGearsApi') }}
         </template>
         <template v-slot:body>
           <p>
-            Sorry, this section of FeedGears isn't quite ready yet.  Check back in a few days!  
+            {{ this.$t('inDevelopment') }}
           </p>
         </template>
       </ViewHeader>
@@ -79,13 +79,5 @@ export default {
   border-right: 1px solid v-bind('theme.sectionbordercolor');
   color: v-bind('theme.normalmessage');
   margin-bottom: .75rem;
-}
-
-.view-header {
-  margin-left: .75rem;
-  margin-right: .75rem;
-  padding: .75rem;
-  text-align: left;
-  border-radius: 4px 4px 4px 4px;
 }
 </style>

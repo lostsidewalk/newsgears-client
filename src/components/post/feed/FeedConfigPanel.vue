@@ -15,29 +15,29 @@
             <!-- feed ident -->
             <FeedConfigTextField 
               ref="feedIdent"
-              :label="'QUEUE IDENTIFIER'"
+              :label="this.$t('queueIdentifier')"
               :required="true"
-              :placeholder="'Queue identifier'" 
+              :placeholder="this.$t('queueIdentifier')" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedIdent.$model" 
               :errorValue="v$.feedIdent.$errors"
-              :helpText="'The queue identifier is a short textual description of this queue.  It is case insensitive, and must container only numbers, letters, dashes, or underscores.  This identifier can used to locate the starred feed for this queue.  Click for more information.'"
+              :helpText="this.$t('queueIdentifierHelpText')"
               @update:modelValue="v$.feedIdent.$model = $event" />
             <!-- feed title -->
             <FeedConfigTextField 
-              :label="'QUEUE TITLE'"
+              :label="this.$t('queueTitle')"
               :required="true"
-              :placeholder="'Queue title'" 
+              :placeholder="this.$t('queueTitle')" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedTitle.$model" 
               :errorValue="v$.feedTitle.$errors"
-              :helpText="'The queue title is a textual description of this queue that appears on the queue dashboard.'"
+              :helpText="this.$t('queueTitleHelpText')"
               @update:modelValue="v$.feedTitle.$model = $event" />
             <!-- feed image -->
             <FeedConfigImageField 
-              :label="'QUEUE IMAGE'"
+              :label="this.$t('queueImage')"
               :required="false"
               :baseUrl="baseUrl"
               :disabled="disabled || inTransit" 
@@ -47,47 +47,47 @@
               @update:modelValue="this.feedImgSrc = $event" />
             <!-- feed description -->
             <FeedConfigTextField 
-              :label="'QUEUE DESCRIPTION'"
+              :label="this.$t('queueDescription')"
               :required="false"
-              :placeholder="'Queues description'" 
+              :placeholder="this.$t('queueDescription')"
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedDescription.$model" 
               :errorValue="v$.feedDescription.$errors" 
-              :helpText="'This value is a more verbose textual description of this queue.  It appears in the published RSS/ATOM feed for this queue.'"
+              :helpText="this.$t('queueDescriptionHelpText')"
               @update:modelValue="v$.feedDescription.$model = $event" />
             <!-- feed generator -->
             <FeedConfigTextField 
-              :label="'QUEUE FEED GENERATOR'"
+              :label="this.$t('queueFeedGenerator')"
               :required="false"
-              :placeholder="'Feed generator'" 
+              :placeholder="this.$t('queueFeedGenerator')"
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedGenerator.$model" 
               :errorValue="v$.feedGenerator.$errors"
-              :helpText="'This value appears as the \'feed generator\' in the published RSS/ATOM feed for this queue.'"
+              :helpText="this.$t('queueFeedGeneratorHelpText')"
               @update:modelValue="v$.feedGenerator.$model = $event" />
             <!-- feed copyright -->
             <FeedConfigTextField 
-              :label="'QUEUE FEED COPYRIGHT'"
+              :label="this.$t('queueFeedCopyright')"
               :required="false"
-              :placeholder="'Feed copyright'" 
+              :placeholder="this.$t('queueFeedCopyright')"
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedCopyright.$model" 
               :errorValue="v$.feedCopyright.$errors" 
-              :helpText="'This value appears as the \'feed copyright\' in the published RSS/ATOM feed for this queue.'"
+              :helpText="this.$t('queueFeedCopyrightHelpText')"
               @update:modelValue="v$.feedCopyright.$model = $event" />
             <!-- feed language -->
             <FeedConfigTextField 
-              :label="'STARRED FEED LANGUAGE'"
+              :label="this.$t('queueFeedLanguage')"
               :required="false"
-              :placeholder="'Feed language'" 
+              :placeholder="this.$t('queueFeedLanguage')"
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :modelValue="v$.feedLanguage.$model" 
               :errorValue="v$.feedLanguage.$errors" 
-              :helpText="'This value appears as the value for the \'language\' field in the published RSS/ATOM feed for this queue.'"
+              :helpText="this.$t('queueFeedLanguageHelpText')"
               @update:modelValue="v$.feedLanguage.$model = $event" />
           </div>
           <!-- tab 3: RSS/ATOM Feed Discovery -->
@@ -112,14 +112,14 @@
         <button class="feed-config-button" 
           @click="saveFeedConfig" 
           :disabled="disabled || inTransit || v$.$invalid"
-          :title="v$.$invalid ? 'Fill out all required fields' : (this.feed.id ? 'Update this feed' : 'Save this feed')"> 
-          {{ this.feed.id ? 'Update' : 'Save' }}
+          :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : (this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue'))"> 
+          {{ this.feed.id ? this.$t('update') : this.$t('save') }}
         </button>
         <!-- cancel button -->
         <button class="feed-config-button" 
           @click="cancelFeedConfig" 
           :disabled="disabled || inTransit">
-          Cancel
+          {{ this.$t('cancel') }}
         </button>
       </div>
     </div>
@@ -188,18 +188,17 @@ export default {
       tabModel: [
         {
           "name": "BASIC_PROPERTIES",
-          "description": "Feed Properties",
+          "description": this.$t('queueProperties'),
           "icon": "list",
         },
         {
           "name": "RSS_ATOM_DISCOVERY",
-          "description": "RSS Feed Discovery",
+          "description": this.$t('rssFeedDiscovery'),
           "icon": "feed",
         }
       ],
       // 
       inTransit: false, 
-
       // basic properties 
       feed: null,
       feedId: null,
@@ -363,10 +362,6 @@ export default {
   height: fill-available;
   overflow-y: auto;
   font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-header {
-  text-align: left;
 }
 
 .modal-body {

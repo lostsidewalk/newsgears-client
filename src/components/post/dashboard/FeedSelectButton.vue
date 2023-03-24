@@ -10,12 +10,16 @@
       </label>
       <!-- card -->
       <div class="feed-image-wrapper">
-        <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" alt="Queue logo image">
-        <img v-else class="feed-image" src="feedgears.png" alt="Queue logo image">
+        <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" :alt="this.$t('queueLogoImage')">
+        <img v-else class="feed-image" src="feedgears.png" :alt="this.$t('queueLogoImage')">
         <div class="feed-info-wrapper">
           <!-- inbound / published count -->
-          <label class="feed-info-label"><span class="fa fa-eye" /> {{ this.inboundCount }}</label>
-          <label class="feed-info-label"><span class="fa fa-star" /> {{ this.publishedCount }}</label>
+          <label class="feed-info-label">
+            <span class="fa fa-eye" /> {{ this.inboundCount }}
+          </label>
+          <label class="feed-info-label">
+            <span class="fa fa-star" /> {{ this.publishedCount }}
+          </label>
         </div>
       </div>
       <!-- show more/less information (also selects the feed) -->
@@ -24,19 +28,25 @@
         @click.stop="toggleMoreInformation()" 
         @keypress.enter.prevent="toggleMoreInformation()" 
         tabindex="0">
-        {{ this.showMoreInformation ? 'Hide subscriptions' : 'Show subscriptions' }}
+        {{ this.showMoreInformation ? this.$t('hideSubscriptions') : this.$t('showSubscriptions') }}
       </a>
-      <span v-if="feed.rssAtomFeedUrls.length === 0">0 subscriptions</span>
+      <span v-if="feed.rssAtomFeedUrls.length === 0">
+        {{ this.$t('zeroSubscriptions') }}
+      </span>
       <!-- more information -->
       <div v-if="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
-        <label class="feed-info-label-small">SUBSCRIPTIONS</label>
+        <label class="feed-info-label-small">
+          {{ this.$t('subscriptions') }}
+        </label>
         <!-- RSS/ATOM feeds -->
-        <label class="feed-info-label subscription-label" v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
+        <label class="feed-info-label subscription-label" 
+          v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
+          :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
           <!-- feed logo image -->
-          <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" alt="Feed logo image" loading="lazy" /> 
+          <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" :alt="this.$t('feedLogoImage')" loading="lazy" /> 
           <!-- RSS logo -->
-          <img v-else src="rss_logo.svg" alt="RSS logo" /> 
+          <img v-else src="rss_logo.svg" :alt="this.$t('rssLogo')" /> 
           <!-- last http status -->
           <span v-if="hasFeedMetrics(rssAtomFeedUrl)" :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
             {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
@@ -61,8 +71,10 @@ export default {
     buildMetricStatusMessage(feedMetrics) {
       let m = this.getMostRecentMetric(feedMetrics);
       if (m.persistCt > 0) {
+        // TODO: interpolated string 
         return m.persistCt + ' new articles imported at ' + m.importTimestamp;
       } else {
+        // TODO: interpolated string 
         // HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
         let message = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
         if (m.queryExceptionTypeMessage) {

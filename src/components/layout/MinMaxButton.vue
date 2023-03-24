@@ -1,9 +1,11 @@
 <template>
-    <div class="hide-button">
-      <button @click="this.$emit('toggle')" :title="(this.show ? 'Collapse' : 'Restore') + ' this panel'" :disabled="disabled">
-        <i class="fa" :class="this.show ? 'fa-window-minimize' : 'fa-window-restore'"></i>
-      </button>
-    </div>
+  <div class="hide-button">
+    <button @click="this.$emit('toggle')" 
+      :title="this.show ? this.$t('collapseThisPanel') : this.$t('restoreThisPanel')"
+      :disabled="disabled">
+      <i class="fa" :class="this.show ? 'fa-window-minimize' : 'fa-window-restore'"></i>
+    </button>
+  </div>
 </template>
 
 <script>

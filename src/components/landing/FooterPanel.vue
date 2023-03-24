@@ -1,25 +1,49 @@
 <template>
   <div>
     <div class="links-view">
-      <button class="footer-link" aria-label="Visit the Lost Sidewalk dev blog in a new tab" @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')"><span class="fa fa-code-fork" /> Dev Blog</button>
+      <button class="footer-link" 
+        :aria-label="this.$t('visitLSDevBlogAriaLabel')" 
+        @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')">
+        <span class="fa fa-code-fork" /> &nbsp; {{ this.$t('devBlog') }}
+      </button>
       <button class="footer-link" @click.prevent="this.$router.push('/docs');">
-        <span class="fa fa-question-circle" /> Docs
+        <span class="fa fa-question-circle" /> &nbsp; {{ this.$t('docs') }}
       </button>
       <button class="footer-link" @click.prevent="this.$router.push('/privacy');">
-        <span class="fa fa-file-text" /> Privacy Policy
+        <span class="fa fa-file-text" /> &nbsp; {{ this.$t('privacyPolicy') }}
       </button>
       <button class="footer-link" @click.prevent="this.$router.push('/api');">
-        <span class="fa fa-plug" /> API
+        <span class="fa fa-plug" /> &nbsp; {{ this.$t('api') }}
       </button>
-      <button class="footer-link" aria-label="Open your email client to send email to support@feedgears.com" @click.prevent="window.open('mailto:support@feedgears.com', '_blank')"><span class="fa fa-envelope" /> Email</button>
-      <button class="footer-link" aria-label="Visit the Lost Sidewalk Twitter in a new tab" @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')"><span class="fa fa-twitter" /> Twitter</button>
-      <button class="footer-link" aria-label="Visit the Lost Sidewalk Github in a new tab" @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')"><span class="fa fa-github" /> Github</button>
-      <button class="footer-link" aria-label="Visit Lost Sidewalk on Twitch in a new tab " @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')"><span class="fa fa-twitch" /> Twitch</button>
-      <button class="footer-link" aria-label="Visit the Lost Sidewalk Discord in a new tab" @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')"><span class="fa fa-comments-o" /> Discord</button>
+      <button class="footer-link" 
+        :aria-label="this.$t('emailSupportArialLabel')" 
+        @click.prevent="window.open('mailto:support@feedgears.com', '_blank')">
+        <span class="fa fa-envelope" /> &nbsp; {{ this.$t('email') }}
+      </button>
+      <button class="footer-link" 
+        :aria-label="this.$t('visitLSTwitterAriaLabel')" 
+        @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')">
+        <span class="fa fa-twitter" /> &nbsp; {{ this.$t('twitter') }}
+      </button>
+      <button class="footer-link" 
+        :aria-label="this.$t('visitLSGithubArialLabel')" 
+        @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')">
+        <span class="fa fa-github" /> &nbsp; {{ this.$t('github') }}
+      </button>
+      <button class="footer-link" 
+        :aria-label="this.$t('visitLSTwitchAriaLabel')" 
+        @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')">
+        <span class="fa fa-twitch" /> &nbsp; {{ this.$t('twitch') }}
+      </button>
+      <button class="footer-link" 
+        :aria-label="this.$t('visitLSDiscordAriaLabel')" 
+        @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')">
+        <span class="fa fa-comments-o" /> &nbsp; {{ this.$t('discord') }}
+      </button>
     </div>
     <div class="footer-divider"/>
     <div class="copyright-view">
-      <div>COPYRIGHT <span class="fa fa-copyright" /> 2023 <a class="footer-link" aria-label="Visit the Lost Sidewalk homepage" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
+      <div>{{ this.$t('copyright') }} <span class="fa fa-copyright" /> 2023 <a class="footer-link" :aria-label="this.$t('visitLSHomepage')" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
       <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
     </div>
   </div>

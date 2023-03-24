@@ -7,14 +7,14 @@
       :theme="theme"
       @confirm="performFeedDelete" 
       @cancel="cancelFeedDelete"
-      prompt="Please confirm that you want to delete this feed. This action is irreversible." />
+      :prompt="this.$t('confirmDeleteQueue')" />
     <!-- feed mark as read confirmation modal (hidden) -->
     <ConfirmationDialog ref="feedMarkAsReadConfirmationModal"
       :disabled="disabled || inTransit"
       :theme="theme"
       @confirm="performFeedMarkAsRead" 
       @cancel="cancelFeedMarkAsRead"
-      prompt="Mark all items in this queue as read?" />
+      :prompt="this.$t('confirmMarkQueueAsRead')" />
     <HelpPanel 
       ref="helpPanel"
       :theme="theme"
@@ -42,7 +42,7 @@
             @toggle="this.showQueueDashboard = !this.showQueueDashboard">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
-                QUEUE DASHBOARD
+                {{ this.$t('queueDashboard') }}
               </template>
               <template v-slot:body>
                 <div v-if="this.showQueueDashboard" class="grid-container" v-auto-animate>
@@ -144,10 +144,10 @@
                 @goToNextPost="selectNextPost" 
                 @goToPreviousPost="selectPreviousPost" />
               <div v-if="this.totalPages === 0" class="queue-message">
-                There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.
+                {{ this.$t('noArticlesInQueue') }}
               </div>  
               <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">
-                You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.
+                {{ this.$t('endOfQueueReached') }}
               </div>
             </div>
           </div>
@@ -160,7 +160,7 @@
               :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
-                QUEUE SETTINGS
+                {{ this.$t('queueSettings') }}
               </template>
               <template v-slot:body>
                 <FeedConfigPanel ref="feedConfigPanel"
@@ -181,7 +181,7 @@
               :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
-                OPML UPLOAD
+                {{ this.$t('opmlUpload') }}
               </template>
               <template v-slot:body>
                 <OpmlUploadPanel ref="opmlUploadPanel"
@@ -205,7 +205,7 @@
 
 <script>
 // confirmation modal dialog 
-import ConfirmationDialog from '../layout/ConfirmationDialog.vue';
+import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 // feed configuration panel 
 import FeedConfigPanel from "./feed/FeedConfigPanel.vue";
 // OPML upload panel 
@@ -511,7 +511,7 @@ export default {
     handleServerError(error) {
       console.error(error);
       if (error.name === 'TypeError') {
-        this.setLastServerMessage('Something went wrong.  Please try again later.');
+        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -531,7 +531,7 @@ export default {
       // when sorted 'descending': 
       // 
       // articles w/published timestamp go to the top 
-      // article w/more recent publsihed timestamp goes before article w/older timestamp 
+      // article w/more recent published timestamp goes before article w/older timestamp 
       //
       queue.sort((l, r) => {
         let r1, l1;
@@ -686,7 +686,12 @@ export default {
             if (response.status === 200) {
               return response.json();
             } else {
-              throw Error("Refresh failed due to: HTTP " + response.status + ": " + (response.statusText ? response.statusText : "(no message)"));
+              throw Error(this.$t('refreshFailedDueTo') + 
+                " HTTP " + response.status + ": " + 
+                  (response.statusText ? 
+                    response.statusText : ("(" + this.$t('noMessage') + ")")
+                  )
+                );
             }
           })
           .then((data) => {
@@ -719,7 +724,12 @@ export default {
               if (response.status === 200) {
                 return response.json();
               } else {
-                throw Error("Fetch failed due to: HTTP " + response.status + ": " + (response.statusText ? response.statusText : "(no message)"));
+                throw Error(this.$t('refreshFailedDueTo') + 
+                  " HTTP " + response.status + ": " + 
+                    (response.statusText ? 
+                      response.statusText : ("(" + this.$t('noMessage') + ")")
+                    )
+                  );
               }
             })
             .then((data) => {
@@ -765,9 +775,6 @@ export default {
             this.inboundQueuesByFeed[post.feedId].push(post);
           }
           this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
-          if (!hideStatus) {
-            // this.setLastServerMessage("Refreshed " + this.feeds.length + " feeds.");
-          }
           this.inTransit = false; // end of refreshFeeds 
         });
       }).catch((error) => {
@@ -987,24 +994,19 @@ export default {
     },
     validateFeed(feed) {
       if (this.len(feed.ident) > 2048) {
-        throw Error("Feed identifier is too long (max 2048 characters).");
+        throw Error(this.$t('queueIdentifierTooLong'));
       }
       if (this.len(feed.title) > 2048) {
-        throw Error("Feed title is too long (max 2048 characters).");
+        throw Error(this.$t('queueTitleTooLong'));
       }
       if (this.len(feed.generator) > 2048) {
-        throw Error("Feed generator is too long (max 2048 characters).");
+        throw Error(this.$t('feedGeneratorTooLong'));
       }
       if (feed.rssAtomFeedUrls) {
         for (let i = 0; i < feed.rssAtomFeedUrls.length; i++) {
           if (this.len(feed.rssAtomFeedUrls[i].feedUrl) > 2048) {
-            throw Error("RSS/ATOM feed URL is too long (max 2048 characters).");
+            throw Error(this.$t('feedURLTooLong'));
           }
-        }
-      }
-      if (feed.exportConfig) {
-        if (this.len(feed.exportConfig.mdTemplate) > 2048) {
-          throw Error('');
         }
       }
     },
@@ -1047,7 +1049,7 @@ export default {
             this.feeds.push(f);
             feedIds.push(f.id);
           }
-          this.setLastServerMessage("Created " + feeds.length + " feeds");
+          this.setLastServerMessage(feeds.length + " " + this.$t('nQueuesCreated'));
           this.$refs.opmlUploadPanel.hide();
           this.showOpmlUploadPanel = false;
           this.refreshFeeds(true, feedIds, false);
@@ -1122,7 +1124,7 @@ export default {
                 this.decorateFeedWithQueryDefinitions(this.feeds[i], data.queryDefinitions, data.queryMetrics);
                 this.$refs.feedConfigPanel.tearDown();
                 this.showFeedConfigPanel = false;
-                this.setLastServerMessage("Updated feed '" + feed.ident + "'");
+                this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
                 break;
               }
             }
@@ -1134,21 +1136,17 @@ export default {
             this.inboundQueuesByFeed[f.ident] = [];
             this.$refs.feedConfigPanel.tearDown();
             this.showFeedConfigPanel = false;
-            this.setLastServerMessage("Created feed '" + f.ident + "'");
+            this.setLastServerMessage(this.$t('queueCreated') + ' (' + f.ident + ")'");
             this.setSelectedFeedId(f.id);
             this.refreshFeeds(true, [f.id], false); // TODO: this is wrong, the refresh should be returned from the create call 
           }
         })
         .catch((error) => {
-          // push the error to the modal since this method is only called by an emission from the modal, and we don't close the modal in this path 
-          // this.$refs.feedConfigPanel.error(error);
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
         });
       }).catch((error) => {
-        // push the error to the modal since this method is only called by an emission from the modal, and we don't close the modal in this path 
-        // this.$refs.feedConfigPanel.error(error);
         this.handleServerError(error); 
         this.inTransit = false;
       });
@@ -1160,7 +1158,7 @@ export default {
       }
     },
     // 
-    // RSS/ATOM URL quick add (to currently selected feed) 
+    // RSS/ATOM URL quick add (to currently selected queue) 
     // 
     rssAtomUrlQuickAdd() {
       if (this.selectedFeedId) {

@@ -8,10 +8,10 @@
         {{ this.community.postMediaStarRating.average }}
       </span>
       <span v-if="this.community.postMediaStatistics.views">
-        ({{ this.community.postMediaStatistics.views }} VIEWS)
+        ({{ this.community.postMediaStatistics.views }} {{ this.$t('nViews') }})
       </span>
       <span v-if="this.community.postMediaTags">
-        TAGS
+        {{ this.$t('tags') }}
       </span>
     </div>
   </div>

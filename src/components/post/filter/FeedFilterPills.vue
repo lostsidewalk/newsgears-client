@@ -2,15 +2,18 @@
   <div class="feed-filter-pills pill-container">
     <!-- expression -->
     <div class="filter-expression-container">
+      <!-- TODO: interpolated string -->
       <div class="filter-expression" v-auto-animate>
-        Viewing: <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
+        {{ this.$t('viewingColon')}} &nbsp; <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
         <span class="filter-subscriptions-expression">{{ this.filterSubscriptionsExpression }}</span>
         <span v-if="this.selectedFeedFilterCategories.length > 0"> with categories in: <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.toString() }}</span></span>
       </div>
     </div>
     <!-- clear button -->
     <div class="reset-container">
-      <button class="reset-button" @click="this.$emit('resetFilterDefaults')"><i class="fa fa-undo" /> &nbsp; Reset to default.</button>
+      <button class="reset-button" @click="this.$emit('resetFilterDefaults')">
+        <i class="fa fa-undo" /> &nbsp; {{ this.$t('resetToDefault') }}
+      </button>
     </div>
     <!-- pills -->
     <div class="filter-pills-buttons">
@@ -75,22 +78,22 @@ export default {
         {
           isSelected: this.lcSetContainsStr('UNREAD', this.feedFilterModes),
           invoke: () => this.$emit('unread'), 
-          label: 'UNREAD',
+          label: this.$t('unread'),
         },
         {
           isSelected: this.lcSetContainsStr('READ_LATER', this.feedFilterModes),
           invoke: () => this.$emit('readLater'), 
-          label: 'READ-LATER',
+          label: this.$t('readLater'),
         },
         {
           isSelected: this.lcSetContainsStr('READ', this.feedFilterModes),
           invoke: () => this.$emit('read'), 
-          label: 'READ',
+          label: this.$t('read'),
         },
         {
           isSelected: this.lcSetContainsStr('PUBLISHED', this.feedFilterModes),
           invoke: () => this.$emit('published'), 
-          label: 'STARRED',
+          label: this.$t('starred'),
         },
       ];
       for (let i = 0; i < this.allPostSubscriptions.length; i++) {

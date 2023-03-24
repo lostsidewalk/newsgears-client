@@ -1,5 +1,9 @@
 <template>
-  <button class="mode-switch-button" @click="switchMode" accesskey="l" :disabled="disabled || inTransit" aria-label="Switch to light or dark mode">
+  <button class="mode-switch-button" 
+    @click="switchMode" 
+    accesskey="l" 
+    :disabled="disabled || inTransit" 
+    :aria-label="this.$t('switchModeAriaLabel')">
     <span class="fa fa-lightbulb-o" /> <!-- use fa-moon-o for dark mode -->
   </button>
 </template>
@@ -27,7 +31,7 @@ export default {
     handleServerError(error) {
       console.error(error);
       if (error.name === 'TypeError') {
-        this.setLastServerMessage('Something went wrong.  Please try again later.');
+        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -106,7 +110,7 @@ export default {
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong saving your display mode.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }

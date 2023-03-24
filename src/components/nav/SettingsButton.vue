@@ -1,6 +1,10 @@
 <template>
-  <button class="settings-button" @click="this.$emit('showSettings')" accesskey="t" :disabled="disabled" aria-label="Go to settings">
-    Se<i class="underline">t</i>tings &nbsp; <span class="fa fa-expand" />
+  <button class="settings-button" 
+    @click="this.$emit('showSettings')" 
+    accesskey="t" 
+    :disabled="disabled" 
+    :aria-label="this.$t('goToSettingsAriaLabel')">
+    {{ this.$t('settings') }} &nbsp; <span class="fa fa-expand" />
   </button>
 </template>
 
@@ -38,9 +42,5 @@ export default {
 
 .settings-button:hover:disabled {
   background-color: unset;
-}
-
-.underline {
-  text-decoration: underline;
 }
 </style>

@@ -15,8 +15,6 @@
     <FeaturesPanel :theme="theme" class="features" /> 
 
     <FooterPanel :theme="theme" class="footer" />
-
-    <!-- <SystemStatusPanel :theme="theme" class="system-status panel" /> -->
 </div>
 </template>
   

@@ -5,10 +5,10 @@
       <div class="modal-actions">
         <div class="opml-upload-field">
           <input type="file" ref="fileInput" multiple @change="eventHandler" style="display: none;" />
-          <label>OPML FILES:</label>
+          <label>{{ this.$t('opmlFilesColon') }}</label>
           <div class="opml-file-wrapper" v-for="file of this.files" :key="file.id">
             <div class="opml-file-row">
-              FILENAME: <a :href="file.url" :target="file.id" title="Preview this file in a new window.">{{ file.file.name }}</a>
+              {{ this.$t('filenameColon') }} <a :href="file.url" :target="file.id" :title="this.$t('previewThisFile')">{{ file.file.name }}</a>
               <button v-if="!atStep2" 
                 class="opml-file-action-button" 
                 @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" 
@@ -19,13 +19,13 @@
             </div>
           </div>
           <div class="opml-upload-errors" v-if="this.errors.length > 0">
-            Your files contain the following problems.  Please resolve these issues and re-attempt your upload.
+            {{ this.$t('opmlFileContainsErrors') }}
             <div class="error opml-upload-error" v-for="error in this.errors" :key="error">
               {{ error }}
             </div>
           </div>
           <div class="opml-upload-summary" v-if="this.feedConfigRequests.length > 0">
-            <div class="opml-upload-summary-header">We will create the following feeds from your OPML file(s):</div>
+            <div class="opml-upload-summary-header">{{ this.$t('weWillCreateTheFollowingSubscriptions') }}</div>
             <div class="opml-upload-summary-wrapper" v-for="f in this.feedConfigRequests" :key="f.ident">
               <div class="opml-upload-summary-message">{{ f.title + (f.description ? (' (' + f.description + ')'): '') }}</div>
               <div class="opml-upload-summary-message-url" v-for="r in f.rssAtomFeedUrls" :key="r">
@@ -38,8 +38,8 @@
               @click="this.errors = []; this.$refs.fileInput.click()"   
               class="opml-upload-button" 
               :disabled="disabled || inTransit" 
-              title="Select an OPML file containing data about this feed.">
-              Add OPML file
+              :title="this.$t('selectAnOpmlFile')">
+              {{ this.$t('addAnOpmlFile') }}
             </button>
           </div>
         </div>
@@ -50,20 +50,20 @@
         <button class="opml-upload-button" 
           @click="this.feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()" 
           :disabled="disabled || inTransit || (!this.files.length)" 
-          :title="this.feedConfigRequests.length > 0 ? 'Finalize upload' : (this.files.length ? 'Continue' : 'Add at least one OPML file to continue.')"
+          :title="this.feedConfigRequests.length > 0 ? this.$t('finalizeUpload') : (this.files.length ? this.$t('continue') : this.$t('addAtLeastOneFile'))"
           ref="continueOrFinalizeButton">
-          {{ this.feedConfigRequests.length > 0 ? 'Finalize upload' : 'Continue to step (2)' }}
+          {{ this.feedConfigRequests.length > 0 ? this.$t('finalizeUpload') : this.$t('continueToStep2') }}
         </button>
         <button v-if="atStep2" 
           @click="returnToStep1"   
           class="opml-upload-button" 
           :disabled="disabled || inTransit">
-          Go back
+          {{ this.$t('goBack') }}
         </button>
         <button @click="cancelOpmlUpload" 
           class="opml-upload-button" 
           :disabled="disabled || inTransit">
-          Cancel
+          {{ this.$t('cancel') }}
         </button>
       </div>
     </div>
@@ -173,7 +173,7 @@ export default {
           if (response.status === 200) {
             return response.json();
           } else {
-            throw new Error('Something horrible happened, please try to upload again later.  Please note that the maximum permissible size for OPML files is 1M.');
+            throw new Error(this.$t('somethingHorribleHappened'));
           }
         }).then((data) => {
           this.errors = data.errors;
@@ -184,7 +184,7 @@ export default {
         }).catch((error) => {
           console.error(error);
           if (error.name === 'TypeError') {
-            this.errors.push('Something went wrong.  Please try again later.');
+            this.errors.push(this.$t('somethingHorribleHappened'));
           } else {
             this.errors.push(error.message);
           }
@@ -221,10 +221,6 @@ export default {
   height: 96svh;
   overflow-y: auto;
   font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-header {
-  text-align: left;
 }
 
 .modal-body {

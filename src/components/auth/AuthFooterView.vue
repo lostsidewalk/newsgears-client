@@ -1,7 +1,7 @@
 <template>
   <div class="footer-view">
     <button class="footer-link" @click.prevent="this.$router.push('/privacy');">
-      <span class="fa fa-file-text" /> Privacy Policy
+      <span class="fa fa-file-text" /> {{ this.$t('privacyPolicy') }}
     </button>
   </div>
 </template>

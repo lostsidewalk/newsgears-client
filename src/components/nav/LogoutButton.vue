@@ -1,6 +1,10 @@
 <template>
-  <button id="logout" class="logout-button" @click="logout" accesskey="o" :disabled="disabled">
-    Log<i class="underline">o</i>ut
+  <button id="logout" 
+    class="logout-button" 
+    @click="logout" 
+    accesskey="o" 
+    :disabled="disabled">
+    {{ this.$t('logout') }} 
   </button>
 </template>
 
@@ -12,7 +16,7 @@ export default {
     logout() {
       this.$auth.logout()
       .catch((error) => {
-        console.log("unable to logout due to: " + error);
+        console.error("unable to logout due to: " + error);
       }).finally(() => {
         console.log("logout complete");
       });
@@ -47,9 +51,5 @@ export default {
 
 .logout-button:hover:disabled {
   background-color: unset;
-}
-
-.underline {
-  text-decoration: underline;
 }
 </style>

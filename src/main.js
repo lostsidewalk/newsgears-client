@@ -6,6 +6,7 @@ import router from './router';
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import VuePlyr from 'vue-plyr';
 import VueAnnouncer from '@vue-a11y/announcer'
+import { createI18n } from 'vue-i18n'
 
 import '@vue-a11y/announcer/dist/style.css'
 import 'vue-plyr/dist/vue-plyr.css'
@@ -13,21 +14,348 @@ import 'font-awesome/scss/font-awesome.scss'
 import 'flag-icons/css/flag-icons.min.css';
 import './registerServiceWorker'
 
-// import { loadStripe } from '@stripe/stripe-js'
-// import { defineComponent, ref, onBeforeMount } from 'vue'
-
-// export default defineComponent({
-//   // ...
-//   setup() {
-//     onBeforeMount(() => {
-//       const stripeLoaded = ref(false)
-//       const stripePromise = loadStripe('your_key')
-//       stripePromise.then(() => {
-//         stripeLoaded.value = true
-//       })
-//     })
-//   },
-// })
+const i18n = createI18n({
+  locale: 'en',
+  allowComposition: true, 
+  messages: {
+    en: {
+      // generic 
+      somethingHorribleHappened: 'Something horrible happened.  Please try again in a few moments.',
+      privacyPolicy: 'Privacy Policy',
+      cancel: 'Cancel',
+      filter: 'Filter',
+      first: 'First',
+      previous: 'Previous',
+      next: 'Next',
+      last: 'Last',
+      username: 'Username',
+      password: 'Password',
+      submit: 'Submit',
+      emailAddress: 'Email address',
+      inDevelopment: 'Sorry, this section of FeedGears isn\'t quite ready yet.  Check back in a few days!',
+      // auth 
+      accountRecovery: 'Account recovery',
+      registerHere: 'FeedGears is free.  Create an account here.',
+      unableToCompleteYourRequest: 'We weren\'t able to complete your request.  Please try to login using another method.',
+      usernameAndPasswordAreRequired: 'Username and password are required.',
+      passwordIsRequired: 'Password is required.',
+      usernameIsRequired: 'Username is required.',
+      signinWithGoogle: 'Sign in with Google',
+      pwResetRequestMessage: 'Enter your username and email address.  We\'ll send a password reset link to your verified email address."',
+      checkEmailForFurther: 'Check your email to further instructions.',
+      newPassword: 'New password',
+      confirmNewPassword: 'Confirm new password',
+      enterAndConfirmNewPw: 'Enter and confirm your new password.',
+      pwUpdated: 'Password updated.',
+      registrationRequirements: 'Username, email address, and password are required in order to register.',
+      youHaveBeenLoggedOut: 'You\'ve been logged out.',
+      clickHereToStartOver: 'Click here to start over.',
+      // landing 
+      createAnAccount: 'Create an account',
+      whatIsFeedGears: 'A secure, private, accessible feed reader.',
+      whyIsFeedGearsFree: 'FeedGears is free because we believe in RSS',
+      howYouCanSupportUs: '(You can still pay for it if you want to support our mission.)',
+      rssAtomFeeds: 'RSS/ATOM Feeds',
+      iTunesPodcasts: 'iTunes Podcasts',
+      youtube: 'YouTube',
+      reddit: 'Reddit',
+      devBlog: 'Dev Blog',
+      docs: 'Docs',
+      api: 'API',
+      email: 'Email',
+      twitter: 'Twitter',
+      github: 'Github',
+      twitch: 'Twitch',
+      discord: 'Discord',
+      copyright: 'COPYRIGHT',
+      contactUsWithQuestionsViaEmail: 'Contact Lost Sidewalk Software with questions via email.', 
+      // confirmation dialog 
+      confirm: 'Confirm',
+      // go back
+      goBack: 'Go back.',
+      // min-max
+      collapseThisPanel: 'Collapse this panel',
+      restoreThisPanel: 'Restore this panel',
+      // navbar button components 
+      login: 'Login', 
+      logout: 'Logout',
+      settings: 'Settings', 
+      // queue dashboard buttons 
+      addSubscription: 'Add a new subscription',
+      configureThisQueue: 'Configure this queue',
+      createNewQueue: 'Create a new queue',
+      uploadOPML: 'Upload OPML',
+      deleteThisQueue: 'Delete this queue',
+      weWillNotSellOrDiscloseYourInformation: 'Please note that we will neve sell or disclose your personal information to anyone.',
+      // queue select button 
+      showSubscriptions: 'Show subscriptions',
+      hideSubscriptions: 'Hide subscriptions',
+      subscriptions: 'SUBSCRIPTIONS',
+      zeroSubscriptions: '0 subscriptions',
+      // queue config image field 
+      clickToChangeQueueImage: 'Click here to change the queue image.',
+      clickToAddQueueImage: 'Click here to add a queue image.', 
+      unableToFetchAnImage: 'We weren\'t able to fetch an image.  Please try again later.',
+      unableToUseThisImage: 'We weren\'t able to use this image.  Please try another, and note that the maximum size for image files is 1M.',
+      // queue config panel 
+      queueIdentifier: 'Queue identifier', 
+      queueIdentifierHelpText: 'The queue identifier is a short textual description of this queue.  It is case insensitive, and must container only numbers, letters, dashes, or underscores.  This identifier can used to locate the starred feed for this queue.  Click for more information.',
+      queueTitle: 'Queue title', 
+      queueTitleHelpText: 'The queue title is a textual description of this queue that appears on the queue dashboard.',
+      queueImage: 'Queue image', 
+      queueDescription: 'Queue description', 
+      queueDescriptionHelpText: 'This value is a more verbose textual description of this queue.  It appears in the published RSS/ATOM feed for this queue.',
+      queueFeedGenerator: 'Feed generator', 
+      queueFeedGeneratorHelpText: 'This value appears as the \'feed generator\' in the published RSS/ATOM feed for this queue.',
+      queueFeedCopyright: 'Feed copyright', 
+      queueFeedCopyrightHelpText: 'This value appears as the \'feed copyright\' in the published RSS/ATOM feed for this queue.',
+      queueFeedLanguage: 'Feed language', 
+      queueFeedLanguageHelpText: 'This value appears as the value for the \'language\' field in the published RSS/ATOM feed for this queue.',
+      fillOutAllRequiredFields: 'Fill out all required fields',
+      updateThisQueue: 'Update this queue',
+      saveThisQueue: 'Save this queue',
+      update: 'Update',
+      save: 'Save',
+      queueProperties: 'Queue Properties',
+      rssFeedDiscovery: 'RSS Feed Discovery',
+      // rss feed info 
+      toggleAuthorFilter: 'Toggle filtering on this author',
+      authorColon: 'Author:',
+      lastPublishedColon: 'Last published:',
+      toggleCategoryFilter: 'Toggle filtering on this category', 
+      toggleLanguageFilter: 'Toggle filtering on this language',
+      toggleDocStringFilter: 'Toggle filtering on this doc string',
+      toggleEncodingFilter: 'Toggle filtering on this encoding',
+      toggleManagingEditorFilter: 'Toggle filter by this managing editor',
+      managingEditorColon: 'Managing editor:', 
+      toggleWebmasterFilter: 'Toggle filtering on this webmaster', 
+      webmasterColon: 'Webmaster:', 
+      httpStatusCode: 'HTTP status code',
+      redirectHttpStatusCode: 'Redirect HTTP status code', 
+      feedAlsoAvailableInHttps: 'This feed is also available in HTTPS', 
+      // feed catalog 
+      feedCatalog: 'FEED CATALOG',
+      nFeedsMatchOnPageM: 'FEEDS MATCH, SHOWING PAGE',
+      categoryColon: 'Category:',
+      languageColon: 'Language:',
+      docsColon: 'Docs:',
+      encodingColon: 'Encoding:',
+      feedTypeColon: 'Feed Type:',
+      generatorColon: 'Generator:',
+      removeThisFilter: 'Remove this filter',
+      subscribeToThisFeed: 'Subscribe to this feed',
+      youAreSubscribed: 'Subscribed!',
+      // subscription config 
+      upstreamRssAtomSources: 'SUBSCRIPTIONS',
+      showingPageN: 'SHowing page',
+      addFeedFromURL: 'Add subscription from a URL',
+      browseFeedCatalog: 'Browse feed catalog',
+      subscriptionNofM: 'SUBSCRIPTION',
+      feedUrl: 'FEED URL',
+      credentialsUseMessage: '* The following credentials will be supplied if this feed requests authentication.',
+      unableToFetchCatalog: 'We weren\'t able to fetch our feed catalog.  Please try again later.',
+      // post feed filter  
+      articleQueue: 'ARTICLE QUEUE',
+      refreshQueues: 'Refresh queues', 
+      markQueueAsRead: 'Mark this queue as read',
+      toggleSortOrder: 'Toggle sort order',
+      showFilterOptions: 'Show filter options', 
+      // post feed filter pills 
+      viewingColon: 'Viewing:',
+      resetToDefault: 'Reset to default',
+      unread: 'UNREAD', 
+      readLater: 'READ-LATER',
+      read: 'READ',
+      starred: 'STARRED',
+      // help panel 
+      dismiss: 'Dismiss',
+      configureSelectedQueue: 'Configure the selected queue',
+      markSelectedQueueAsRead: 'Mark the selected queue as read',
+      addSubscriptionToSelectedQueue: 'Add a subscription to selected queue',
+      starSelectedPost: 'Star the selected post',
+      toggleReadStatusSelectedPost: 'Toggle the selected post read/unread',
+      openOriginalArticleSelectedPost: 'Open selected post URL in a new tab',
+      showHideUnread: 'Show/hide unread', 
+      showHideStarred: 'Show/hide starred',
+      showHideReadLater: 'Show/hide read-later',
+      showHideRead: 'Show/hide read',
+      search: 'Search',
+      // iTunes
+      explicit: 'EXPLICIT',
+      closeCaptioned: 'Close Captioned',
+      // post media 
+      media: 'MEDIA', 
+      // community 
+      nViews: 'VIEWS',
+      tags: 'TAGS', 
+      // post media content 
+      audioChannelsColon: 'AUDIO CHANNELS:',
+      bitRateColon: 'BIT RATE:',
+      durationColon: 'DURATION:',
+      expressionColon: 'EXPRESSION:',
+      fileSizeColon: 'FILE SIZE:',
+      frameRateColon: 'FRAME RATE:',
+      heightColon: 'HEIGHT:',
+      widthColon: 'WIDTH:',
+      samplingRateColon: 'SAMPLING RATE:',
+      // opml 
+      opmlFilesColon: 'OPML FILES:',
+      filenameColon: 'FILENAME:',
+      previewThisFile: 'Preview this file in a new window.', 
+      opmlFilesContainErrors: 'Your files contain the following problems.  Please resolve these issues and re-attempt your upload.',
+      weWillCreateTheFollowingSubscriptions: 'We will create the following feeds from your OPML file(s):',
+      selectAnOpmlFile: 'Select an OPML file',
+      addAnOpmlFile: 'Add an OPML file', 
+      finalizeUpload: 'Finalize upload',
+      continue: 'Continue',
+      addAtLeastOneFile: 'Add at least one OPML file to continue.',
+      continueToStep2: 'Continue to step 2', 
+      // post feed 
+      confirmDeleteQueue: 'Please confirm that you want to delete this queue. This action is irreversible.', 
+      confirmMarkQueueAsRead: 'Please confirm that you want to mark all items in this queue as read.', 
+      queueDashboard: 'QUEUE DASHBOARD', 
+      noArticlesInQueue: 'There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.', 
+      endOfQueueReached: 'You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.', 
+      queueSettings: 'QUEUE SETTINGS', 
+      opmlUpload: 'OPML UPLOAD', 
+      queueIdentifierTooLong: 'Queue identifier is too long (max 2048 characters).',
+      queueTitleTooLong: 'Queue title is too long (max 2048 characters).',
+      feedGeneratorTooLong: 'Feed generator is too long (max 2048 characters).',
+      feedURLTooLong: 'Feed URL is too long (max 2048 characters).',
+      refreshFailedDueToColon: 'Refresh failed due to:',
+      noMessage: 'no message',
+      queueUpdated: 'Queue updated',
+      queueCreated: 'Queue created',
+      nQueuesCreated: ' queues created',
+      // post item 
+      showPostDetails: 'Show post details', 
+      goToNextPost: 'Go to next post',
+      goToPreviousPost: 'Go to previous post',
+      goToFirstPost: 'Go to first post',
+      goToLastPost: 'Go to last post',
+      markPostAsUnread: 'Mark as unread',
+      markPostAsRead: 'Mark as read',
+      markPostAsReadLater: 'Mark as read-later',
+      unmarkPostAsReadLater: 'Unmark as read-later', 
+      starThisPost: 'Star this post',
+      unstarThisPost: 'Un-star this post',
+      openOriginalArticle: 'Open original article',
+      description: 'DESCRIPTION',
+      links: 'LINKS', 
+      postComments: 'COMMENTS', 
+      author: 'AUTHOR',
+      authors: 'AUTHORS', 
+      updated: 'UPDATED',
+      published: 'PUBLISHED',
+      contributors: 'CONTRIBUTORS', 
+      // settings 
+      accountSettings: 'ACCOUNT SETTINGS', 
+      usernameColon: 'USERNAME:', 
+      emailAddressColon: 'EMAIL ADDRESS:', 
+      applyChanges: 'Apply Changes',
+      deactivateYourAccount: 'Deactivate Your Account',
+      downloadYourData: 'Download Your Data', 
+      permanentlyDeleteYourAccount: 'Permanently Delete Your Account',
+      sendPasswordResetEmail: 'Send Password Reset Email', 
+      resetPassword: 'Reset Password',
+      updateNotificationPreferences: 'Update Notification Preferences', 
+      emailNotificationsAreDisabled: 'Email notifications are currently disabled.',
+      emailNotificationsAreEnabled: 'Email notifications are currently enabld.',
+      enableAccountAlertsNotifications: 'Enable this option to receive account alerts and maintenance notifications.',
+      enableProductNotifications: 'Enable this option to receive occasional emails about production notifications and new features.',
+      enableSelectedNotifications: 'Enable Selected Notifications',
+      disableSelectedNotifications: 'Disable All Notifications', 
+      yourSubscriptionWasCanceled: 'Your subscription was canceled, and will not renew.',
+      currentPeriod: 'CURRENT PERIOD',
+      endedAt: 'ENDED AT',
+      willEndAt: 'WILL END AT',
+      statusColon: 'STATUS:',
+      amountDueColon: 'AMOUNT DUE:',
+      amountPaidColon: 'AMOUNT PAID:',
+      amountRemainingColon: 'AMOUNT REMAINING:',
+      customerEmailAddressColon: 'CUSTOMER EMAIL ADDRESS:',
+      customerNameColon: 'CUSTOMER NAME:',
+      invoiceUrlColon: 'INVOICE URL:',
+      productColon: 'PRODUCT:',
+      mostRecentInvoice: 'MOST RECENT INVOICE',
+      clickHere: 'Click here', 
+      cancelSubscription: 'Cancel subscription',
+      resumeSubscription: 'Resume subscription',
+      pleaseConsiderSubscribing: 'Please consider subscribing to FeedGears.  We are supported 100% by the user community.',
+      checkout: 'Checkout',
+      settingsUpdated: 'Settings updated', 
+      updateLightTheme: 'Click here to save your changes to the light theme',
+      updateDarkTheme: 'Click here to save your changes to the dark theme',
+      themeSettingsUpdated: 'Theme settings updated', 
+      opmlExportDownloaded: 'OPML export downloaded',
+      yourSubscriptionWasCanceledClickToResume: 'Your subscription was canceled.  To resume, click \'Resume Subscription\' on this page.', 
+      yourSubscriptionWasResumed: 'Your subscription was resumed',
+      // docs 
+      feedGearsDocumentation: 'FEEDGEARS DOCUMENTATION', 
+      // api 
+      feedGearsApi: 'FEEDGEARS API',
+      // order confirmation
+      thankYouForYourOrder: 'THANK YOU FOR YOUR ORDER',
+      yourOrderIsConfirmed: 'Your order is confirmed.',
+      clickHereToReturnToTheApp: 'Click here to return to the app.', 
+      // verification callback 
+      thanksForVerifying: 'Thanks for verifying!  Your account status has been updated.',
+      // privacy policy 
+      feedGearsPrivacyPolicy: 'FEEDGEARS PRIVACY POLICY', 
+      whatInformationDoWeCollect: 'What information do we collect?',
+      whatWeCollectSummary: 'We collect personal information that you provide to us.',
+      whatWeCollectDetails: 'We collect personal information that you voluntarily provide to use when you register on FeedGears, express an interest in obtaining information about us or FeedGears, when you participate in activities on FeedGears, or otherwise when you contact us.',
+      whatWeCollectImportantDetails: 'We do not process sensitive information.', 
+      whatWeCollectFurtherDetails: 'All personal information that you provide to us must be true, complete, and accurate, and you must notify us of any changes to such personal information.', 
+      someCollectionIsAutomatic: 'Some information is automatically collected',
+      automaticCollectionDetails: 'Some information--such as your Internet Protocol (IP) address and/or browser and device characteristics--is collected automatically when you visit FeedGears.  This information (operating system, language preferences, referring URLs, device name, country, location, information about how and when you use FeedGears, and other technical information) does not reveal your specific identity (like your name or contact information) but may include device and usage information.  This information is primarily needed to maintain the security and operation of FeedGears, and for our internal analytics and reporting purposes.', 
+      howDoWeProcess: 'How do we process your information?',
+      howDoWeProcessSummary: 'We process your information to provide, improve, and administer FeedGears, communicate with you, for security and fraud prevention, and to comply with law.  We may also process your information for other purposes with your consent.',
+      socialLogins: 'Social logins',
+      socialLoginsSummary: 'FeedGears offers you the ability to register and login using your third-party social media account details (like Google or Github logins).  Where you choose to do this, we will receive certain profile information about you from your social media provider.  The profile information we receive may vary depending on the social media provider concerned, but will often include your name, email address, and profile picture, as well as other information you choose to make public on such a social media platform.',
+      socialLoginsDetails: 'We will use the information we receive only for the purposes that are described in this privacy notice or that are othrerwise made clear to you on FeedGears.  Please note that we do not control, and are not responsible for, other uses of your personal information by your third-party social media provider.  We recommend that you review their privacy notice to understand how they collect, use, and share your personal infromation, and how you can set your privacy preferences on their sites and apps.',
+      internationalInformationTransfers: 'International information transfers',
+      internationalInformationTransfersSummary: 'We may transfer, store, and process your information in countries other than your own.',
+      internationalInformationTransfersDetails: 'Our servers are located in the United States.  If you are acessing FeedGears from outside the United States, please be aware that your information may be transferred to, stored, and processed by us in our facilities and by those of third-parties with whom we may share your personal information, in the United States and other countries.',
+      internationalInformationTransfersDetailsFurther: 'If you are a resident in the European Economic Area (EAA) or United Kingdom (UK), then these countries may not necessarily have data protection laws or other simliar laws as comprehensive as those in your country.  We will take all necessary measures to protected your personal information in accordance with this privacy notice and applicable law. ',
+      whatAreYourPrivacyRights: 'What are your privacy rights?',
+      yourPrivacyRightsSummary: 'You may review, change, or terminate your account at any time.', 
+      yourPrivacyRightsDetails: 'We will not distribute your personal information to outside parties without your consent.',
+      yourConsent: 'Your consent',
+      yourConsentSummary: 'By using our site or apps, you consent to our privacy policy.',
+      doWeMakeUpdates: 'Do we make updates to this notice?',
+      doWeMakeUpdatesSummary: 'Yes, we will update this notice as necessary to stay compliant with relevant laws.',
+      howCanYouContactUs: 'How can you contact us about this notice?',
+      // aria labels 
+      visitLSDevBlogAriaLabel: 'Visit the Lost Sidewalk dev blog in a new tab',
+      emailSupportArialLabel: 'Open your email client to send email to FeedGears support',
+      visitLSTwitterAriaLabel: 'Visit the Lost Sidewalk Twitter in a new tab',
+      visitLSGithubArialLabel: 'Visit the Lost Sidewalk Github in a new tab',
+      visitLSTwitchAriaLabel: 'Visit Lost Sidewalk on Twitch in a new tab',
+      visitLSDiscordAriaLabel: 'Visit the Lost Sidewalk Discord in a new tab',
+      visitLSHomepage: 'Visit the Lost Sidewalk homepage',
+      goToQueueDashboardAriaLabel: 'Go to queue dashboard',
+      switchModeAriaLabel: 'Switch to light or dark theme',
+      logoutArialLabel: 'Logout',
+      goToSettingsAriaLabel: 'Go to account settings',
+      // image alts 
+      queuePageScreenshot: 'FeedGears queue page screenshot',
+      queueLogoImage: 'Queue logo image',
+      feedLogoImage: 'Feed logo image',
+      rssLogo: 'RSS logo',
+      postThumbnailImage: 'Post thumbnail image',
+      postEnclosureImage: 'Post enclosure image',
+      postITunesImage: 'Post iTunes image',
+      postMediaContentImage: 'Post media content image', 
+      postMediaThumbnail: 'Post media thumbnail',
+      oAuth2ProfileImage: 'OAuth2 profile image',
+      defaultOAuth2ProfileImage: 'Default OAuth2 profile image',
+    },
+    ja: {
+      hello: 'こんにちは！'
+    }
+  }
+});
 
 createApp(App, {})
     .use(NewsGearsWebPlugin, {})
@@ -38,4 +366,5 @@ createApp(App, {})
       plyr: {}
     })
     .use(VueAnnouncer)
+    .use(i18n)
     .mount('#app');

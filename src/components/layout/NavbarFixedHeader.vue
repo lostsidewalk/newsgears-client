@@ -2,10 +2,10 @@
   <div class="navbar fixed-header">
     <slot name="buttons"></slot>
     <div class="loader" v-if="this.inTransit">
-        <div class="loading_1"></div>
+      <div class="loading_1"></div>
     </div>
     <div v-else>
-        <div class="not-loading"></div>
+      <div class="not-loading"></div>
     </div>
   </div>
 </template>

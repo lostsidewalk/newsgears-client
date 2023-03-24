@@ -1,6 +1,9 @@
 <template>
-  <button id="login" class="login-button" @click="this.$router.push('/app')" :disabled="disabled">
-    Login
+  <button id="login" 
+    class="login-button" 
+    @click="this.$router.push('/app')" 
+    :disabled="disabled">
+    {{ this.$t('login') }}
   </button>
 </template>
 

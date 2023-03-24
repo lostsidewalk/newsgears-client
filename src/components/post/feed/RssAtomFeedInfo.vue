@@ -5,17 +5,17 @@
       <div class="left">
         <!-- icon -->
         <div class="rss-atom-feed-info-image">
-          <a v-if="this.info.icon" :href="this.info.icon.link" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)" tabindex="0">
+          <a v-if="this.info.icon" :href="this.info.icon.link" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank" tabindex="0">
             <img :src="'data:image/png;base64,' + this.info.icon.imgSrc" 
               :title="this.info.icon.title" 
-              alt="RSS feed logo image" />
+              :alt="this.$t('feedLogoImage')" />
           </a>
-          <a v-if="this.info.image && !this.info.icon" :href="this.info.image.link" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)" tabindex="0">
+          <a v-if="this.info.image && !this.info.icon" :href="this.info.image.link" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank" tabindex="0">
             <img :src="'data:image/png;base64,' + this.info.image.imgSrc" 
               :title="this.info.image.title" 
-              alt="RSS feed logo image" />
+              :alt="this.$t('feedLogoImage')" />
           </a>
-          <a v-if="!this.info.image && !this.info.icon" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
+          <a v-if="!this.info.image && !this.info.icon" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
             <img src="feedgears.png" />
           </a>
         </div>
@@ -24,7 +24,7 @@
       <div class="right">
         <!-- title -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-title">
-          <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
+          <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
             {{ this.info.title.value ? this.info.title.value : this.info.feedUrl }}
           </a>
         </div>
@@ -32,16 +32,16 @@
         <div v-if="this.info.author" class="rss-atom-feed-info-field pill-container">
           <button 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this author (' + this.info.author + ') to the current filter' : this.info.author"
+            :title="filterSupport ? this.$t('toggleAuthorFilter') : this.info.author"
             @click="updateFeedFilter('author', this.info.author)"
             :disabled="!filterSupport">
-            Author: {{ this.info.author }}
+            {{ this.$t('authorColon') }} &nbsp; {{ this.info.author }}
           </button>
         </div>
         <!-- copyright -->
         <div v-if="this.info.copyright" class="rss-atom-feed-info-field">{{ this.info.copyright }}</div>
         <!-- published date -->
-        <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field">Last published: {{ this.info.publishedDate }}</div>
+        <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field">{{ this.$t('lastPublishedColon') }} &nbsp; {{ this.info.publishedDate }}</div>
         <!-- description -->
         <div class="rss-atom-feed-info-field">{{ this.info.description ? this.info.description.value : '' }}</div>
         <!-- sample entries -->
@@ -49,7 +49,7 @@
           <a class="link"
             :href="sampleEntry.postUrl" 
             :style="this.disabled ? 'pointer-events: none' : ''" 
-            :target="'window_' + (Math.random() + 1).toString(36).substring(7)">
+            target="_blank">
             {{ sampleEntry.postTitle.value }}
           </a>
         </div>
@@ -57,7 +57,7 @@
         <div v-if="this.info.categories.length > 0" class="rss-atom-feed-info-field pill-container">
           <button v-for="category of this.info.categories" :key="category" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this category (' + category + ') to the current filter' : category"
+            :title="filterSupport ? this.$t('toggleCategoryFilter') : category"
             @click="updateFeedFilter('category', category)"
             :disabled="!filterSupport">
             {{ category }}
@@ -67,7 +67,7 @@
           <!-- language -->
           <button v-if="this.info.language" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this language (' + this.info.language + ') to the current filter' : this.info.language"
+            :title="filterSupport ? this.$t('toggleLanguageFilter') : this.info.language"
             @click="updateFeedFilter('language', this.info.language)"
             :disabled="!filterSupport">
             {{ this.info.language }}
@@ -75,7 +75,7 @@
           <!-- docs -->
           <button v-if="this.info.docs" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this doc string (' + this.info.docs + ') to the current filter' : this.info.docs"
+            :title="filterSupport ? this.$t('toggleDocStringFilter') : this.info.docs"
             @click="updateFeedFilter('docs', this.info.docs)"
             :disabled="!filterSupport">
             {{ this.info.docs }}
@@ -83,60 +83,45 @@
           <!-- encoding -->
           <button v-if="this.info.encoding" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this encoding (' + this.info.encoding + ') to the current filter' : this.info.encoding"
+            :title="filterSupport ? this.$t('toggleEncodingFilter') : this.info.encoding"
             @click="updateFeedFilter('encoding', this.info.encoding)"
             :disabled="!filterSupport">
             {{ this.info.encoding }}
           </button>
-          <!-- feed type -->
-          <!-- <button v-if="this.info.feedType" 
-            :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this feed type (' + this.info.feedType + ') to the current filter' : this.info.feedType"
-            @click="updateFeedFilter('feedType', this.info.feedType)"
-            :disabled="!filterSupport">
-            {{ this.info.feedType }}
-          </button> -->
-          <!-- generator -->
-          <!-- <button v-if="this.info.generator" 
-            :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this generator (' + this.info.generator + ') to the current filter' : this.info.generator"
-            @click="updateFeedFilter('generator', this.info.generator)"
-            :disabled="!filterSupport">
-            Generator: {{ this.info.generator }}
-          </button> -->
           <!-- managing editor -->
           <button v-if="this.info.managingEditor" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this managing editor (' + this.info.managingEditor + ') to the current filter' : this.info.managingEditor"
+            :title="filterSupport ? this.$t('toggleManagingEditorFilter') : this.info.managingEditor"
             @click="updateFeedFilter('managingEditor', this.info.managingEditor)"
             :disabled="!filterSupport">
-            Managing editor: {{ this.info.managingEditor }}
+            {{ this.$t('managingEditorColon') }} &nbsp; {{ this.info.managingEditor }}
           </button>
           <!-- web master -->
           <button v-if="this.info.webMaster" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
-            :title="filterSupport ? 'Add/remove this web master (' + this.info.webMaster + ') to the current filter' : this.info.webMaster"
+            :title="filterSupport ? this.$t('toggleWebmasterFilter') : this.info.webMaster"
             @click="updateFeedFilter('webMaster', this.info.webMaster)"
             :disabled="!filterSupport">
-            Webmaster: {{ this.info.webMaster }}
+            {{ this.$t('webmasterColon') }} &nbsp; {{ this.info.webMaster }}
           </button>
         </div>
         <div class="rss-atom-feed-info-field pill-container">
           <!-- http satus code + status message -->
+          <!-- TOOD: interpolated string -->
           <span v-if="this.info.httpStatusCode && this.info.httpStatusCode !== 200" 
-            :title="'HTTP status code ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')'">
+            :title="this.$t('httpStatusCode') + ' ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')'">
             {{ 'HTTP ' + this.info.httpStatusCode }}
           </span>
           <!-- redirect status code + redirect status message -->
           <span v-if="this.info.redirectHttpStatusCode" 
             class="br-pill-subdued" 
-            :title="'Redirect HTTP status code ' + this.info.redirectHttpStatusCode + ' (' + this.info.redirectHttpStatusMessage + ')'">
+            :title="this.$t('redirectHttpStatusCode') + ' ' + this.info.redirectHttpStatusCode + ' (' + this.info.redirectHttpStatusMessage + ')'">
             {{ this.info.redirectHttpStatusCode }}
           </span>
           <!-- is url upgradable -->
           <span v-if="this.info.isUrlUpgradable === true" 
             class="br-pill-subdued" 
-            title="This feed is also available in HTTPS">
+            :title="this.$t('feedAlsoAvailableInHttps')">
             <span class="fa fa-lock-o fa-1x">SSL</span>
           </span>
         </div>
@@ -148,7 +133,7 @@
         <!-- http satus code + status message -->
         <span v-if="this.info.httpStatusCode" 
           class="br-pill-subdued" 
-          :title="'HTTP ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')' + (this.info.redirectFeedUrl ? (', redirected to ' + this.info.redirectFeedUrl) : '')">
+          :title="'HTTP ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')' + (this.info.redirectFeedUrl ? ('=> ' + this.info.redirectFeedUrl) : '')">
           {{ 'HTTP ' + this.info.httpStatusCode + ' ' + this.info.httpStatusMessage }} &nbsp;
           <span v-if="this.info.redirectFeedUrl">
             <span class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectFeedUrl }}

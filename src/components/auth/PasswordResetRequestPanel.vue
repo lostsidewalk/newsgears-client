@@ -4,14 +4,14 @@
     <!-- password reset panel -->
     <div class="password-reset-container-inner" v-auto-animate>
       <!-- username -->
-      <AuthTextField :placeholder="'Username'" 
+      <AuthTextField :placeholder="this.$t('username')" 
         :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.username" 
         @update:modelValue="this.username = $event" 
         :disabled="disabled || inTransit" />
       <!-- email address -->
-      <AuthTextField :placeholder="'Email address'" 
+      <AuthTextField :placeholder="this.$t('emailAddress')" 
         :inTransit="inTransit" 
         :theme="theme" 
         :modelValue="this.email" 
@@ -38,8 +38,6 @@ import AuthTextField from './AuthTextField.vue';
 import AuthServerResponse from './AuthServerResponse.vue';
 import AuthFooterView from './AuthFooterView.vue';
 
-const DEFAULT_SERVER_MESSAGE = "Enter your username and email address.  We'll send a password reset link to your verified email address.";
-
 export default {
   components: {
     NavbarFixedHeader,
@@ -55,7 +53,7 @@ export default {
       username: null,
       email: null,
       // server response/initiating action 
-      serverMessage: DEFAULT_SERVER_MESSAGE,
+      serverMessage: this.$t('pwResetRequestMessage'),
       // 
       inTransit: false,
     }
@@ -67,7 +65,7 @@ export default {
       submitPwReset() {
         this.clearServerResponse();
         if (!this.username || !this.email) {
-          this.serverMessage = DEFAULT_SERVER_MESSAGE;
+          this.serverMessage = this.$t('pwResetRequestMessage');
           return;
         }
 
@@ -76,7 +74,7 @@ export default {
             .pwResetWithSupplied(this.username, this.email)
             .then(() => {
               this.clearData();
-              this.serverMessage = "Check your email to further instructions.";
+              this.serverMessage = this.$t('checkEmailForFurther');
             })
             .catch((error) => {
               this.serverMessage = error;

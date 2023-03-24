@@ -1,58 +1,94 @@
 <template>
   <div class="feed-config-field" v-auto-animate>
     <!-- feed catalog filter label -->
-    <label>FEED CATALOG {{ '(' + this.filteredFeedCatalog.length + ' FEEDS MATCH, SHOWING PAGE ' + (this.currentPage + 1) + ' OF ' + (this.totalPages > 0 ? this.totalPages : 1 ) + ')' }}</label>
+    <label>{{ this.$t('feedCatalog') }} &nbsp; {{ '(' + this.filteredFeedCatalog.length + ' ' + this.$t('nFeedsMatchOnPageM') + ' ' + (this.currentPage + 1) + '/' + (this.totalPages > 0 ? this.totalPages : 1 ) + ')' }}</label>
     <!-- feed catalog filter input w/pagination buttons -->
     <div class="feed-catalog-filter">
       <!-- feed catalog filter input -->
-      <input type="text" v-model="feedCatalogFilter" :disabled="disabled" placeholder="Filter">
+      <input type="text" v-model="feedCatalogFilter" :disabled="disabled" :placeholder="this.$t('filter')">
       <div class="feed-catalog-filter-buttons">
         <!-- first page button-->
-        <button v-if="needsPagination()" title="first" class="feed-catalog-filter-button" @click="firstPage">
+        <button v-if="needsPagination()" :title="this.$t('first')" class="feed-catalog-filter-button" @click="firstPage">
           <span class="fa fa-angle-double-left"/>
         </button>
         <!-- previous page button -->
-        <button v-if="needsPagination()" title="previous" class="feed-catalog-filter-button" @click="previousPage">
+        <button v-if="needsPagination()" :title="this.$t('previous')" class="feed-catalog-filter-button" @click="previousPage">
           <span class="fa fa-angle-left"/>
         </button>
         <!-- next page button -->
-        <button v-if="needsPagination()" title="next" class="feed-catalog-filter-button" @click="nextPage">
+        <button v-if="needsPagination()" :title="this.$t('next')" class="feed-catalog-filter-button" @click="nextPage">
           <span class="fa fa-angle-right"/>
         </button>
         <!-- last page button-->
-        <button v-if="needsPagination()" title="last" class="feed-catalog-filter-button" @click="lastPage">
+        <button v-if="needsPagination()" :title="this.$t('last')" class="feed-catalog-filter-button" @click="lastPage">
           <span class="fa fa-angle-double-right"/>
         </button>
       </div>
     </div>
     <!-- feed catalog filter pills -->
     <div v-if="hasFeedCatalogFilters()" class="feed-catalog-filter-pills pill-container">
-      <button v-for="authorFilter in this.feedCatalogFilterAuthors" :key="authorFilter" @click="removeFilter('author', authorFilter)" class="br-pill" title="Remove this filter">
-        Author: {{ this.trimToLength(authorFilter, 64) }}
+      <button v-for="authorFilter in this.feedCatalogFilterAuthors" 
+        :key="authorFilter" 
+        @click="removeFilter('author', authorFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('authorColon') }} &nbsp; {{ this.trimToLength(authorFilter, 64) }}
       </button>
-      <button v-for="categoryFilter in this.feedCatalogFilterCategories" :key="categoryFilter" @click="removeFilter('category', categoryFilter)" class="br-pill" title="Remove this filter">
-        Category: {{ this.trimToLength(categoryFilter, 64) }}
+      <button v-for="categoryFilter in this.feedCatalogFilterCategories" 
+        :key="categoryFilter" 
+        @click="removeFilter('category', categoryFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('categoryColon') }} &nbsp; {{ this.trimToLength(categoryFilter, 64) }}
       </button>
-      <button v-for="languageFilter in this.feedCatalogFilterLanguages" :key="languageFilter" @click="removeFilter('language', languageFilter)" class="br-pill" title="Remove this filter">
-        Language: {{ this.trimToLength(languageFilter, 64) }}
+      <button v-for="languageFilter in this.feedCatalogFilterLanguages" 
+        :key="languageFilter" 
+        @click="removeFilter('language', languageFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('languageColon') }} &nbsp; {{ this.trimToLength(languageFilter, 64) }}
       </button>
-      <button v-for="docsFilter in this.feedCatalogFilterDocs" :key="docsFilter" @click="removeFilter('docs', docsFilter)" class="br-pill" title="Remove this filter">
-        Docs: {{ this.trimToLength(docsFilter, 64) }}
+      <button v-for="docsFilter in this.feedCatalogFilterDocs" 
+        :key="docsFilter" 
+        @click="removeFilter('docs', docsFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('docsColon') }} &nbsp; {{ this.trimToLength(docsFilter, 64) }}
       </button>
-      <button v-for="encodingFilter in this.feedCatalogFilterEncodings" :key="encodingFilter" @click="removeFilter('encoding', encodingFilter)" class="br-pill" title="Remove this filter">
-        Encoding: {{ this.trimToLength(encodingFilter, 64) }}
+      <button v-for="encodingFilter in this.feedCatalogFilterEncodings" 
+        :key="encodingFilter" 
+        @click="removeFilter('encoding', encodingFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('encodingColon') }} &nbsp; {{ this.trimToLength(encodingFilter, 64) }}
       </button>
-      <button v-for="feedTypeFilter in this.feedCatalogFilterFeedTypes" :key="feedTypeFilter" @click="removeFilter('feedType', feedTypeFilter)" class="br-pill" title="Remove this filter">
-        Feed type: {{ this.trimToLength(feedTypeFilter, 64) }}
+      <button v-for="feedTypeFilter in this.feedCatalogFilterFeedTypes" 
+        :key="feedTypeFilter" 
+        @click="removeFilter('feedType', feedTypeFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('feedTypeColon') }} &nbsp; {{ this.trimToLength(feedTypeFilter, 64) }}
       </button>
-      <button v-for="generatorFilter in this.feedCatalogFilterGenerators" :key="generatorFilter" @click="removeFilter('generator', generatorFilter)" class="br-pill" title="Remove this filter">
-        Generator: {{ this.trimToLength(generatorFilter, 64) }}
+      <button v-for="generatorFilter in this.feedCatalogFilterGenerators" 
+        :key="generatorFilter" 
+        @click="removeFilter('generator', generatorFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('generatorColon') }} &nbsp; {{ this.trimToLength(generatorFilter, 64) }}
       </button>
-      <button v-for="managingEditorFilter in this.feedCatalogFilterManagingEditors" :key="managingEditorFilter" @click="removeFilter('managingEditor', managingEditorFilter)" class="br-pill" title="Remove this filter">
-        Managing Editor: {{ this.trimToLength(managingEditorFilter, 64) }}
+      <button v-for="managingEditorFilter in this.feedCatalogFilterManagingEditors" 
+        :key="managingEditorFilter" 
+        @click="removeFilter('managingEditor', managingEditorFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('managingEditorColon') }} &nbsp; {{ this.trimToLength(managingEditorFilter, 64) }}
       </button>
-      <button v-for="webMasterFilter in this.feedCatalogFilterWebMasters" :key="webMasterFilter" @click="removeFilter('webMaster', webMasterFilter)" class="br-pill" title="Remove this filter">
-        Webmaster: {{ this.trimToLength(webMasterFilter, 64) }}
+      <button v-for="webMasterFilter in this.feedCatalogFilterWebMasters" 
+        :key="webMasterFilter" 
+        @click="removeFilter('webMaster', webMasterFilter)" 
+        class="br-pill" 
+        :title="this.$t('removeThisFilter')">
+        {{ this.$t('webmasterColon') }} &nbsp; {{ this.trimToLength(webMasterFilter, 64) }}
       </button>
     </div>
     <!-- feed catalog -->
@@ -64,12 +100,12 @@
             class="add-catalog-feed-button" 
             :disabled="disabled"
             @click="this.$emit('addCatalogFeed', source)">
-            Subscribe to this feed
+            {{ this.$t('subscribeToThisFeed') }}
           </button>
           <button v-else
             class="add-catalog-feed-button" 
             :disabled="true">
-            Subscribed!
+            {{ this.$t('youAreSubscribed') }}
           </button>
         </div>
         <RssAtomFeedInfo 

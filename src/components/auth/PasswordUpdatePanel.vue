@@ -4,14 +4,14 @@
     <!-- password reset panel -->
     <div class="password-update-container-inner" v-auto-animate>
       <!-- new password -->
-      <AuthTextField :placeholder="'New password'" 
+      <AuthTextField :placeholder="this.$t('newPassword')" 
         :theme="theme" 
         :modelValue="this.newPassword" 
         @update:modelValue="this.username = $event"
         :type="'password'" 
         :disabled="disabled || inTransit" />
       <!-- new password (confirm) -->
-      <AuthTextField :placeholder="'Confirm new password'" 
+      <AuthTextField :placeholder="this.$t('confirmNewPassword')" 
         :theme="theme" 
         :modelValue="this.newPasswordConfirmed" 
         @update:modelValue="this.username = $event"
@@ -19,7 +19,7 @@
         :disabled="disabled || inTransit" />
       <!-- submit button -->
       <AuthButton
-        label="Submit"
+        :label="this.$t('submit')"
         :theme="theme"
         @clicked="submitPwUpdate()"
         :disabled="disabled || inTransit" />
@@ -53,7 +53,7 @@ export default {
       newPassword: null,
       newPasswordConfirmed: null,
       // server response/initiating action 
-      serverMessage: "Enter and confirm your new password.",
+      serverMessage: this.$t('enterAndConfirmNewPw'),
       // 
       inTransit : false,
     }
@@ -74,7 +74,7 @@ export default {
           .pwUpdateWithSupplied(this.newPassword, this.newPasswordConfirmed)
           .then(() => {
             this.clearData();
-            this.serverMessage = "Password updated.";
+            this.serverMessage = this.$t('pwUpdated');
           })
           .catch((error) => {
             this.lastAction = "PW_UPDATE";

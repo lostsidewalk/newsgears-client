@@ -22,11 +22,12 @@
       <!-- order confirmed header-->
       <ViewHeader :disabled="false" :inTransit="false" :theme="theme">
         <template v-slot:count>
-          THANK YOU FOR YOUR ORDER
+          {{ this.$t('thankYouForYourOrder') }}
         </template>
         <template v-slot:body>
           <p>
-            Your order is confirmed.  Click <router-link style="text-decoration: none; color: inherit;" to="/app">here</router-link> to return to the app.
+            {{ this.$t('yourOrderIsConfirmed') }} &nbsp; 
+            <router-link style="text-decoration: none; color: inherit;" to="/app">{{ this.$t('clickHereToReturnToTheApp') }}</router-link>
           </p>
         </template>
       </ViewHeader>

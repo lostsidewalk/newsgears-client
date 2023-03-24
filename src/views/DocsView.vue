@@ -22,11 +22,11 @@
       <!-- docs header-->
       <ViewHeader :disabled="false" :inTransit="false" :theme="theme">
         <template v-slot:count>
-          FEEDGEARS DOCUMENTATION
+          {{ this.$t('feedGearsDocumentation') }}
         </template>
         <template v-slot:body>
           <p>
-            Sorry, this section of FeedGears isn't quite ready yet.  Check back in a few days!  
+            {{ this.$t('inDevelopment') }}
           </p>
         </template>
       </ViewHeader>

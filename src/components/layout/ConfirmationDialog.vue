@@ -3,8 +3,12 @@
     <div class="modal-body">
       <h3>{{ prompt }}</h3>
       <div class="modal-actions">
-        <button class="modal-button" ref="confirmButton" @click="confirm" accesskey="c" :disabled="disabled"><i class="underline">C</i>onfirm</button>
-        <button class="modal-button" @click.stop="this.$emit('cancel')" :disabled="disabled">Cancel</button>
+        <button class="modal-button" ref="confirmButton" @click="confirm" accesskey="c" :disabled="disabled">
+          {{ this.$t('confirm') }}
+        </button>
+        <button class="modal-button" @click.stop="this.$emit('cancel')" :disabled="disabled">
+          {{ this.$t('cancel') }} 
+        </button>
       </div>
     </div>
   </div>
@@ -93,17 +97,5 @@ export default {
 
 .modal-button:hover, .modal-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight') !important;
-}
-
-.modal-close {
-  cursor: auto;
-  position: relative;
-  align-self: end;
-  right: -12px;
-  top: -17px;
-}
-
-.underline {
-  text-decoration: underline;
 }
 </style>

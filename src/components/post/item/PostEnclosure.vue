@@ -6,7 +6,7 @@
       :src="this.enclosure.uri"
       class="post-enclosure-image" 
       tabindex="0" 
-      alt="Post enclosure image" 
+      :alt="this.$t('postEnclosureImage')" 
       loading="lazy" />
     <div v-else-if="isVideo()" class="post-enclosure-image">
       <vue-plyr ref="player">
@@ -84,11 +84,6 @@ export default {
 .post-enclosure > span:hover, .post-enclosure > span:focus-visible {
   /* cursor: pointer; */
   text-decoration: underline;
-}
-
-.post-enclosure-image-wrapper {
-  background: unset;
-  border: unset;
 }
 
 .post-enclosure-image {

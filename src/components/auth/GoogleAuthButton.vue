@@ -1,6 +1,6 @@
 <template>
   <button type="button" class="login-with-google-btn" @click="googleOauth2()" :disabled="disabled">
-    Sign in with Google
+    {{ this.$t('signinWithGoogle') }}
   </button>
 </template>
 

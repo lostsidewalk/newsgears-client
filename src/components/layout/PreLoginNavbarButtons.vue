@@ -3,15 +3,15 @@
     <!-- dashboard button -->
     <FeedGearsLogo :theme="theme" />
     <div style="display: flex;flex-direction: row-reverse;">
-      <!-- login button -->
-      <LoginButton :disabled="false" :theme="theme" />
-      <!-- sign-up button -->
-      <SignUpButton :disabled="false" :theme="theme" style="float: right;"/>
       <!-- display mode switch -->
       <DisplayModeButton :baseUrl="baseUrl" :disabled="false" :theme="theme" />
-      </div>
+      <!-- sign-up button -->
+      <SignUpButton :disabled="false" :theme="theme" style="float: right;"/>
+      <!-- login button -->
+      <LoginButton :disabled="false" :theme="theme" />
+    </div>
   </div>
-</template>>
+</template>
 
 <script>
 import FeedGearsLogo from '@/components/nav/FeedGearsLogo.vue';

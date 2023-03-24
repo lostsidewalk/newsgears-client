@@ -3,22 +3,22 @@
     <div class="demo-view">
       <div class="background" />
       <div class="tabs">
-        <button class="tab-label" @click="this.activeTab=1">RSS/ATOM Feeds</button>
-        <button class="tab-label" @click="this.activeTab=2">iTunes Podcasts</button>
-        <button class="tab-label" @click="this.activeTab=3">YouTube</button>
-        <button class="tab-label" @click="this.activeTab=4">Reddit</button>
+        <button class="tab-label" @click="this.activeTab=1">{{ this.$t('rssAtomFeeds') }}</button>
+        <button class="tab-label" @click="this.activeTab=2">{{ this.$t('iTunesPodcasts') }}</button>
+        <button class="tab-label" @click="this.activeTab=3">{{ this.$t('youtube') }}</button>
+        <button class="tab-label" @click="this.activeTab=4">{{ this.$t('reddit') }}</button>
       </div>
       <div v-show="this.activeTab === 1" class="tab-panel">
-        <img src="demo1.png" alt="FeedGears queue page screenshot">
+        <img src="demo1.png" :alt="this.$t('queuePageScreenshot')">
       </div>
       <div v-show="this.activeTab === 2" class="tab-panel">
-        <!-- <img src="demo2.png" alt="FeedGears queue page screenshot"> -->
+        <!-- <img src="demo2.png" :alt="this.$t('queuePageScreenshot')"> -->
       </div>
       <div v-show="this.activeTab === 3" class="tab-panel">
-        <!-- <img src="demo3.png" alt="FeedGears queue page screenshot"> -->
+        <!-- <img src="demo3.png" :alt="this.$t('queuePageScreenshot')"> -->
       </div>
       <div v-show="this.activeTab === 4" class="tab-panel">
-        <!-- <img src="demo4.png" alt="FeedGears queue page screenshot"> -->
+        <!-- <img src="demo4.png" :alt="this.$t('queuePageScreenshot')"> -->
       </div>
     </div>
   </div>

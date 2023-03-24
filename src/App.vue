@@ -1,6 +1,5 @@
 <template>
   <div id="apphome">
-    <AppBanner :theme="theme" />
     <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -10,12 +9,7 @@
 </template>
 
 <script>
-import AppBanner from './components/layout/AppBanner.vue';
-
 export default {
-  components: { 
-    AppBanner,
-  },
   methods: {
     isLoading() {
       return false;

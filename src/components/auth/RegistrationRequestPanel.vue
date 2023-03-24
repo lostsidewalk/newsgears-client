@@ -4,21 +4,21 @@
     <!-- registration panel -->
     <div class="registration-request-container-inner" v-auto-animate>
       <!-- email address -->
-      <AuthTextField :placeholder="'Email address'" 
+      <AuthTextField :placeholder="this.$t('emailAddress')" 
         :disabled="disabled || inTransit" 
         :theme="theme" 
         :modelValue="v$.email.$model" 
         :errorValue="v$.email.$errors"
         @update:modelValue="v$.email.$model = $event" />
       <!-- username -->
-      <AuthTextField :placeholder="'Username'" 
+      <AuthTextField :placeholder="this.$t('username')" 
         :disabled="disabled || inTransit" 
         :theme="theme" 
         :modelValue="v$.username.$model" 
         :errorValue="v$.username.$errors"
         @update:modelValue="v$.username.$model = $event" />
       <!-- password -->
-      <AuthTextField :placeholder="'Password'" 
+      <AuthTextField :placeholder="this.$t('password')" 
         :disabled="disabled || inTransit" 
         :theme="theme" 
         :modelValue="v$.password.$model" 
@@ -27,7 +27,7 @@
         :type="'password'" />
       <!-- submit button -->
       <AuthButton
-        label="Submit"
+        :label="this.$t('submit')"
         :theme="theme"
         @clicked="submitRegistration()"
         :button="'s'"
@@ -98,7 +98,7 @@ export default {
       this.clearServerResponse();
 
       if (!this.username || !this.email || !this.password) {
-        this.serverMessage = "Username, email address, and password are required in order to register.";
+        this.serverMessage = this.$t('registrationRequirements');
         return;
       }
 

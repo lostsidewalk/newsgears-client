@@ -1,7 +1,7 @@
 <template>
   <div class="not-authenticated">
-    <p>Looks like you've been logged out.</p>
-    <p>Click <router-link to="/app">here</router-link> to start over.</p>
+    <p>{{ this.$t('youHaveBeenLoggedOut') }}</p>
+    <p><router-link to="/app">{{ this.$t('clickHereToStartOver') }}</router-link></p>
   </div>
 </template>
 

@@ -3,13 +3,13 @@
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <div class="auth-container-inner" v-auto-animate>
       <!-- username -->
-      <AuthTextField :placeholder="'Username'" 
+      <AuthTextField :placeholder="this.$t('username')" 
         :theme="theme" 
         :modelValue="this.username" 
         @update:modelValue="this.username = $event" 
         :disabled="disabled || inTransit" />
       <!-- password -->
-      <AuthTextField :placeholder="'Password'" 
+      <AuthTextField :placeholder="this.$t('password')" 
         :theme="theme" 
         :modelValue="this.password" 
         @update:modelValue="this.password = $event" 
@@ -17,16 +17,16 @@
         :disabled="disabled || inTransit" />
       <!-- sign-in button -->
       <AuthButton
-        label="Submit"
+        :label="this.$t('submit')"
         :theme="theme"
         @clicked="login()"
         :disabled="disabled || inTransit" />
       <!-- Google OAuth2 sign-in button -->
       <GoogleAuthButton :theme="theme" :disabled="disabled || inTransit" />
       <!-- account recovery link -->
-      <AuthPanelLink :to="'/pw_reset'" :message="'Account recovery.'" :theme="theme" />
+      <AuthPanelLink :to="'/pw_reset'" :message="this.$t('accountRecovery')" :theme="theme" />
       <!-- registration link -->
-      <AuthPanelLink :to="'/register'" :message="'FeedGears is free.  Create an account here.'" :theme="theme" />
+      <AuthPanelLink :to="'/register'" :message="this.$t('registerHere')" :theme="theme" />
       <!-- server response -->
       <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
       <!-- footer -->
@@ -58,7 +58,7 @@ export default {
   props: [ "disabled", "theme" ],
   mounted() {
     if (this.$route.query.error) {
-      this.serverMessage = "We're unable to complete your request.  Please try to login using another method.";
+      this.serverMessage = this.$t('unableToCompleteYourRequest');
     }
   },
   data() {
@@ -74,15 +74,15 @@ export default {
   methods: {
       login() {
         if (!this.username && !this.password) {
-          this.serverMessage = "Username and password are required.";
+          this.serverMessage = this.t$('usernameAndPasswordAreRequired');
           return;
         }
         if (this.username && !this.password) {
-          this.serverMessage = "Password is required.";
+          this.serverMessage = this.$t('usernameIsRequired');
           return;
         }
         if (!this.username && this.password) {
-          this.serverMessage = "Username is required.";
+          this.serverMessage = this.$t('passwordIsRequired');
           return;
         }
 
@@ -94,7 +94,7 @@ export default {
             }).catch((error) => {
               this.serverMessage = error;
               if (!this.serverMessage) {
-                this.serverMessage = "Something horrible happened, not sure what.  Please try again in a few moments.";
+                this.serverMessage = this.$t('somethingHorribleHappened');
               }
             }).finally(() => {
               this.inTransit = false;

@@ -1,7 +1,7 @@
 <template>
-    <div class="navbar fixed-sub-header">
-      <slot name="message"></slot>
-    </div>
+  <div class="navbar fixed-sub-header">
+    <slot name="message"></slot>
+  </div>
 </template>
 
 <script>

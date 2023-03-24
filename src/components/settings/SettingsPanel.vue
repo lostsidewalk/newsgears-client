@@ -4,7 +4,7 @@
       <div class="modal-header">
         <h3 class="view-header-no-count">
           <span class="fa fa-feed fa-1x" />
-          ACCOUNT SETTINGS
+          {{ this.$t('accountSettings') }}
           <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
         </h3>
       </div>
@@ -21,8 +21,15 @@
             <!-- oauth2 profile (remote) -->
             <div class="settings-field" style="flex-direction: row;" v-if="authProvider !== 'LOCAL'">
               <!-- profile image -->
-              <img v-if="authProviderProfileImgUrl" :src="authProviderProfileImgUrl" referrerpolicy="no-referrer" class="oauth2-profile-img" alt="OAuth2 profile image" />
-              <img v-else src="feedgears.png" referrerpolicy="no-referrer" class="oauth2-profile-img" alt="Default OAuth2 profile image" />
+              <img v-if="authProviderProfileImgUrl" 
+                :src="authProviderProfileImgUrl" 
+                referrerpolicy="no-referrer" 
+                class="oauth2-profile-img" 
+                :alt="this.$t('oAuth2ProfileImage')" />
+              <img v-else src="feedgears.png" 
+                referrerpolicy="no-referrer" 
+                class="oauth2-profile-img" 
+                :alt="this.$t('defaultOAuth2ProfileImage')" />
               <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
                 <!-- auth provider username (auth provider user Id) -->
                 <span style="padding: .125rem;">{{ authProviderUsername }}</span>
@@ -35,12 +42,12 @@
 
             <!-- username (local) -->
             <div class="settings-field" v-if="authProvider === 'LOCAL'">
-              <label for="username">USERNAME:</label>
+              <label for="username">{{ this.$t('usernameColon') }}</label>
               <input name="username" type="text" v-model="username" :disabled="true"/>
             </div>
             <!-- email address (local) -->
             <div class="settings-field" :class="{ error: v$.emailAddress.$errors.length }" v-if="authProvider === 'LOCAL'">
-              <label for="email">EMAIL ADDRESS:</label>
+              <label for="email">{{ this.$t('emailAddressColon') }}</label>
               <input name="email" type="text" v-model="v$.emailAddress.$model" :disabled="inTransit"/>
               <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
                 <div class="settings-error-message">{{ error.$message }}</div>
@@ -49,114 +56,143 @@
 
             <div class="account-management-buttons">
               <!-- apply changes button (local) -->
-              <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" id="updateAccount" class="header-button" @click="updateAccount()" :disabled="inTransit || v$.$invalid">
-                Apply Changes
+              <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
+                id="updateAccount" 
+                class="header-button" 
+                @click="updateAccount()" 
+                :disabled="inTransit || v$.$invalid">
+                {{ this.$t('applyChanges') }}
               </button>
               <!-- deactivate account button -->
-              <button v-if="!this.showDeactivateUser && !this.showResetPassword" class="header-button" @click="this.showDeactivateUser = true" :disabled="inTransit">
-                Deactivate Account
+              <button v-if="!this.showDeactivateUser && !this.showResetPassword" 
+                class="header-button" 
+                @click="this.showDeactivateUser = true" 
+                :disabled="inTransit">
+                {{ this.$t('deactivateYourAccount') }}
               </button>
               <!-- download your data button-->
-              <button v-if="this.showDeactivateUser" class="header-button" @click="exportOpml()">
-                Download Your Data
+              <button v-if="this.showDeactivateUser" 
+                class="header-button" 
+                @click="exportOpml()"
+                :disabled="inTransit">
+                {{ this.$t('downloadYourData') }}
               </button>
               <!-- permanently delete your account button -->
-              <button v-if="this.showDeactivateUser" class="header-button" @click="finalizeDeactivation()">
-                Permanently Delete Your Account
+              <button v-if="this.showDeactivateUser" 
+                class="header-button" 
+                @click="finalizeDeactivation()"
+                :disabled="inTransit">
+                {{ this.$t('permanentlyDeleteYourAccount') }}
               </button>
               <!-- cancel (deactivate account) button -->
-              <button v-if="this.showDeactivateUser" id="cancelDeactivateAccount" class="header-button" @click="this.showDeactivateUser = false" :disabled="inTransit">
-                Cancel
+              <button v-if="this.showDeactivateUser" id="cancelDeactivateAccount" 
+                class="header-button" 
+                @click="this.showDeactivateUser = false" 
+                :disabled="inTransit">
+                {{ this.$t('cancel') }}
               </button>
-              <button v-if="this.showResetPassword" class="header-button" @click="initPasswordReset()">
-                Send Password Reset Email
+              <button v-if="this.showResetPassword" 
+                class="header-button" 
+                @click="initPasswordReset()"
+                :disabled="inTransit">
+                {{ this.$t('sendPasswordResetEmail') }}
               </button>
               <!-- reset password button (local) -->
-              <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" id="resetPassword" class="header-button" @click="resetPassword()" :disabled="inTransit">
-                Reset Password
+              <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
+                id="resetPassword" 
+                class="header-button" 
+                @click="resetPassword()" 
+                :disabled="inTransit">
+                {{ this.$t('resetPassword') }}
               </button>
               <!-- cancel (reset password) -->
-              <button v-if="this.showResetPassword" id="cancelResetPassword" class="header-button" @click="this.showResetPassword = false" :disabled="inTransit">
-                Cancel
+              <button v-if="this.showResetPassword" 
+                id="cancelResetPassword" 
+                class="header-button" 
+                @click="this.showResetPassword = false" 
+                :disabled="inTransit">
+                {{ this.$t('cancel') }}
               </button>
             </div>
 
             <p>
-              Email notifications are currently {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 'disabled' : 'enabled' }}.  Please note that we will neve sell or disclose your personal information to anyone.
+              {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? this.$t('emailNotificationsAreDisabled') : this.$t('emailNotificationsAreEnabled') }} &nbsp; {{ this.$t('weWillNotSellOrDiscloseYourInformation') }} 
             </p>
 
             <div class="settings-field settings-inline-field">
               <input type="checkbox" id="enableAccountAlerts" name="enableAccountAlerts" v-model="enableAccountAlerts" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
               <label class="notification-checkbox" for="enableAccountAlerts">
-                Enable this option to receive <b>account alerts and maintenance notifications</b>.
+                {{ this.$t('enableAccountAlertsNotifications') }}
               </label>
             </div>
 
             <div class="settings-field settings-inline-field">
               <input type="checkbox" id="enableProductNotifications" name="enableProductNotifications" v-model="enableProductNotifications" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>
               <label class="notification-checkbox" for="enableProductNotifications">
-                Enable this option to receive occasional emails about <b>production notifications and new features</b>.
+                {{ this.$t('enableProductNotifications') }}
               </label>
             </div>
 
             <div class="account-management-buttons">
               <!-- update notification preferences button -->
-              <button id="updateNotificationPreferences" class="header-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
-                Update Notification Preferences
+              <button id="updateNotificationPreferences" 
+                class="header-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
+                {{ this.$t('updateNotificationPreferences') }}
               </button>
               <!-- toggle (all) notifications button -->
               <button class="header-button" @click="toggleNotifications()" :disabled="inTransit">
-                {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? 'Enable Selected Notifications' : 'Disable All Notifications' }} 
+                {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? this.$t('enableSelectedNotifications') : this.$t('disableSelectedNotifications') }} 
               </button>
             </div>
 
             <div v-if="this.subscription">
+              <!-- TODO: fix interpolated strings -->
               <p>Your subscription is currently {{ getSubscriptionStatus() }}.  It began at {{ getSubscriptionStarted() }}.</p>
 
-              <p v-if="isCanceled()">Your subscription was canceled, and will not renew.</p>
+              <p v-if="isCanceled()">{{ this.$t('yourSubscriptionWasCanceled') }}</p>
 
               <div class="settings-field" v-if="isActive()">
-                <label for="subscription-current-period">CURRENT PERIOD</label>
+                <label for="subscription-current-period">{{ this.$t('currentPeriod') }}</label>
                 <input name="subscription-current-period" type="text" :placeholder="getSubscriptionCurrentPeriod()" :disabled="inTransit" />
               </div>
 
               <div class="settings-field" v-if="hasEnded()">
-                <label for="subscription-ended-at">ENDED AT</label>
+                <label for="subscription-ended-at">{{ this.$t('endedAt') }}</label>
                 <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionEndedAt()" :disabled="inTransit" />
               </div>
 
               <div class="settings-field" v-if="isCanceled()">
-                <label for="subscription-ended-at">WILL END AT</label>
+                <label for="subscription-ended-at">{{ this.$t('willEndAt') }}</label>
                 <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionCurrentPeriodEnd()" :disabled="inTransit" />
               </div>
 
               <div class="settings-field" v-if="hasLastInvoice()">
-                <label>MOST RECENT INVOICE ({{ getLastInvoiceCreated() }})</label>
-                <label>STATUS: {{ getLastInvoiceStatus() }}</label> 
-                <label>AMOUNT DUE: {{ getAmountDue() }}</label>
-                <label>AMOUNT PAID: {{ getAmountPaid() }}</label>
-                <label>AMOUNT REMAINING: {{ getAmountRemaining() }}</label>
-                <label>CUSTOMER EMAIL ADDRESS: {{ getCustomerEmailAddress() }}</label>
-                <label>CUSTOMER NAME: {{ getCustomerName() }}</label>
-                <label>URL: <a :href="getHostedInvoiceUrl()" target="_blank">Click here.</a></label>
-                <label>PRODUCT: {{ getProductDescription() }}</label>
+                <label>{{ this.$t('mostRecentInvoice') }} ({{ getLastInvoiceCreated() }})</label>
+                <label>{{ this.$t('statusColon') }} &nbsp; {{ getLastInvoiceStatus() }}</label> 
+                <label>{{ this.$t('amountDueColon') }} &nbsp; {{ getAmountDue() }}</label>
+                <label>{{ this.$t('amountPaidColon') }} &nbsp; {{ getAmountPaid() }}</label>
+                <label>{{ this.$t('amountRemainingColon') }} &nbsp; {{ getAmountRemaining() }}</label>
+                <label>{{ this.$t('customerEmailAddressColon') }} &nbsp; {{ getCustomerEmailAddress() }}</label>
+                <label>{{ this.$t('customerNameColon') }} &nbsp; {{ getCustomerName() }}</label>
+                <label>{{ this.$t('invoiceUrlColon') }} <a :href="getHostedInvoiceUrl()" target="_blank">{{ this.$t('clckHere') }}</a></label>
+                <label>{{ this.$t('productColon') }} &nbsp; {{ getProductDescription() }}</label>
               </div>
 
               <div class="account-management-buttons">
                 <button id="cancelSubscription" class="header-button" @click="cancelSubscription()" :disabled="inTransit" v-if="this.subscription && !isCanceled()">
-                  Cancel Subscription
+                  {{ this.$t('cancelSubscription') }}
                 </button>
                 <button id="resumeSubscription" class="header-button" @click="resumeSubscription()" :disabled="inTransit" v-if="this.subscription && isCanceled()">
-                  Resume Subscription
+                  {{ this.$t('resumeSubscription') }}
                 </button>
               </div>
             </div>
             <div v-else>
-              <p>Please consider subscribing to FeedGears.  We are supported 100% by the user community.</p>
+              <p>{{ this.$t('pleaseConsiderSubscribing') }}</p>
 
               <div class="account-management-buttons">
                 <button id="checkout" class="header-button" @click="submitOrder" :disabled="inTransit">
-                  Checkout
+                  {{ this.$t('checkout') }}
                 </button>
               </div>
             </div>
@@ -164,7 +200,13 @@
           <div class="tab" v-if="isLoaded && this.selectedTab === 'THEME'">
             <div class="color-field-buttons">
               <button class="header-button" @click="updateDisplaySettings">
-                Click here to save your changes to the {{ this.$theme.currentTheme.ident }} theme &nbsp; <span class="fa fa-save" />
+                <span v-if="this.$theme.currentTheme.ident === 'light'">
+                  {{ this.$t('updateLightTheme') }}
+                </span>
+                <span v-if="this.$theme.currentTheme.ident === 'dark'">
+                  {{ this.$t('updateDarkTheme') }}
+                </span>
+                 &nbsp; <span class="fa fa-save" />
               </button>
             </div>
             <div class="color-field-container">
@@ -271,7 +313,7 @@ export default {
     handleServerError(error) {
       console.error(error);
       if (error.name === 'TypeError') {
-        this.setLastServerMessage('Something went wrong.  Please try again later.');
+        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -485,10 +527,10 @@ export default {
           if (newSettings.frameworkConfig) {
             this.frameworkConfig = newSettings.frameworkConfig;
           }
-          this.setLastServerMessage("Settings updated.");
+          this.setLastServerMessage(this.$t('settingsUpdated'));
         }).catch((error) => {
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -528,10 +570,10 @@ export default {
             return response.json().then(j => {throw new Error(j.message)})
           }
         }).then(() => {
-          this.setLastServerMessage("Theme settings updated.");
+          this.setLastServerMessage(this.$t('themeSettingsUpdated'));
         }).catch((error) => {
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -567,11 +609,11 @@ export default {
           document.body.appendChild(anchor);
           anchor.click();
           anchor.remove();
-          this.setLastServerMessage("OPML export downloaded.");
+          this.setLastServerMessage(this.$t('opmlExportDownloaded'));
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -602,7 +644,7 @@ export default {
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -622,7 +664,7 @@ export default {
       this.$auth
         .pwResetWithSupplied(this.account.username, this.account.emailAddress)
         .then(() => {
-          this.setLastServerMessage("Check your email to further instructions.");
+          this.setLastServerMessage(this.$t('checkEmailForFurther'));
         })
         .catch((error) => {
           this.setLastServerMessage(error);
@@ -657,7 +699,7 @@ export default {
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -686,14 +728,14 @@ export default {
           if (response.status === 200) {
             this.$auth.unsubscribe();
             this.subscription.cancelAtPeriodEnd = true;
-            this.setLastServerMessage("Your subscription was canceled.  To resume, click 'Resume Subscription' on this page.");
+            this.setLastServerMessage(this.$t('yourSubscriptionWasCanceledClickToResume'));
           } else {
             response.json().then(j => {throw new Error(j.message)})
           }
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -721,14 +763,14 @@ export default {
           if (response.status === 200) {
             this.$auth.subscribe();
             this.subscription.cancelAtPeriodEnd = false;
-            this.setLastServerMessage("Your subscription was resumed.");
+            this.setLastServerMessage(this.$t('yourSubscriptionWasResumed'));
           } else {
             response.json().then(j => {throw new Error(j.message)})
           }
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage('Something went wrong.  Please try again later.');
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
           } else {
             this.setLastServerMessage(error.message);
           }

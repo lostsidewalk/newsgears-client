@@ -1,6 +1,8 @@
 <template>
-  <button class="signup-button" @click="this.$router.push('/register')" :disabled="disabled">
-    Create an account
+  <button class="signup-button" 
+    @click="this.$router.push('/register')" 
+    :disabled="disabled">
+    {{ this.$t('createAnAccount') }}
   </button>
 </template>
 

@@ -2,21 +2,21 @@
   <div class="feed-config-field" v-auto-animate>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- label -->
-    <label>UPSTREAM RSS/ATOM SOURCES {{ needsPagination() ? ('Showing page ' + this.currentPage + '/' + this.totalPages) : '' }}:</label>
+    <label>{{ this.$t('upstreamRssAtomSources') }} &nbsp; {{ needsPagination() ? (this.$t('showingPageN') + ' ' + this.currentPage + '/' + this.totalPages) : '' }}</label>
     <div class="feed-config-button-wrapper">
       <!-- add RSS/ATOM feed URL button -->
       <button 
         class="feed-config-button" 
         @click="this.$emit('addRssAtomUrl')" 
         :disabled="disabled || inTransit">
-        Add feed from a URL 
+        {{ this.$t('addFeedFromURL') }}
       </button>
       <!-- browse feed catalog button -->
       <button  
         class="feed-config-button" 
         @click="toggleRssAtomUrlBrowser" 
         :disabled="disabled || inTransit">
-        Feed catalog &nbsp; <span class="fa fa-expand" />
+        {{ this.$t('browseFeedCatalog') }} &nbsp; <span class="fa fa-expand" />
       </button>
     </div>
     <div v-if="this.showFeedCatalog && this.feedCatalogErrors.length > 0">
@@ -33,30 +33,30 @@
     <div v-else>
       <div class="feed-config-filter-buttons">
         <!-- first page button-->
-        <button v-if="needsPagination()" title="first" class="feed-config-filter-button" @click="firstPage">
+        <button v-if="needsPagination()" :title="this.$t('first')" class="feed-config-filter-button" @click="firstPage">
           <span class="fa fa-angle-double-left"/>
         </button>
         <!-- previous page button -->
-        <button v-if="needsPagination()" title="previous" class="feed-config-filter-button" @click="previousPage">
+        <button v-if="needsPagination()" :title="this.$t('previous')" class="feed-config-filter-button" @click="previousPage">
           <span class="fa fa-angle-left"/>
         </button>
         <!-- next page button -->
-        <button v-if="needsPagination()" title="next" class="feed-config-filter-button" @click="nextPage">
+        <button v-if="needsPagination()" :title="this.$t('next')" class="feed-config-filter-button" @click="nextPage">
           <span class="fa fa-angle-right"/>
         </button>
         <!-- last page button-->
-        <button v-if="needsPagination()" title="last" class="feed-config-filter-button" @click="lastPage">
+        <button v-if="needsPagination()" :title="this.$t('last')" class="feed-config-filter-button" @click="lastPage">
           <span class="fa fa-angle-double-right"/>
         </button>
       </div>
       <div class="feed-config">
         <!-- feed config items -->
         <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx" v-auto-animate>
-          SUBSCRIPTION {{ idx + 1 }}/{{ this.rssAtomFeedUrls.length }}
+          {{ this.$t('subscriptionNofM') }} &nbsp; {{ idx + 1 }}/{{ this.rssAtomFeedUrls.length }}
           <!-- url input field w/refresh and delete buttons -->
           <div class="rss-atom-url-row">
             <label>
-              FEED URL
+              {{ this.$t('feedUrl') }}
             </label>
             <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl" 
               :disabled="disabled || inTransit"
@@ -82,16 +82,16 @@
               </button>
             </div>
           </div>
-          <label v-if="rssAtomUrl.showDetails">* The following credentials will be supplied if this feed requests authentication.</label>
+          <label v-if="rssAtomUrl.showDetails">{{ this.$t('credentialsUseMessage') }}</label>
           <div class="rss-atom-url-row" v-if="rssAtomUrl.showDetails">
-            <label>USERNAME</label>
+            <label>{{ this.$t('username') }}</label>
             <input type="text" v-model="rssAtomUrl.username" 
               :disabled="disabled || inTransit"
-              placeholder="Username" style="margin-bottom: .75rem" />
-            <label>PASSWORD</label>
+              :placeholder="this.$t('username')" style="margin-bottom: .75rem" />
+            <label>{{ this.$t('password') }}</label>
             <input type="password" v-model="rssAtomUrl.password" 
               :disabled="disabled || inTransit"
-              placeholder="Password" />
+              :placeholder="this.$t('password')" />
           </div>
           <RssAtomFeedInfo 
             v-if="rssAtomUrl.discoveryUrl || rssAtomUrl.error"
@@ -194,6 +194,7 @@ export default {
     doDiscovery(r) {
       if (r.feedUrl && r.feedUrl !== r.discoveryUrl) {
         if (this.len(r.feedUrl) > 2048) {
+          // TODO: fix this 
           console.log("RSS/ATOM feed URL is too long (max 2048 characters).");
         }
         this.inTransit = true;
@@ -228,7 +229,7 @@ export default {
           }).catch((error) => {
             console.error(error);
             if (error.name === 'TypeError') {
-              r.error = 'Something went wrong.  Please try again later.';
+              r.error = this.$t('somethingHorribleHappened');
             } else {
               let cause = error.cause;
               let data = {};
@@ -280,7 +281,7 @@ export default {
               if (response.status === 200) {
                 return response.json();
               } else { // framework is rejecting the request 
-                throw Error('We weren\'t able to fetch our feed catalog.  Please try again later.');
+                throw Error(this.$t('unableToFetchCatalog'));
               }
             }).then((data) => {
               this.feedCatalog = data;
@@ -291,7 +292,7 @@ export default {
             }).catch((error) => {
               console.error(error);
               if (error.name === 'TypeError') {
-                this.feedCatalogErrors.push('Something went wrong.  Please try again later.');
+                this.feedCatalogErrors.push(this.$t('somethingHorribleHappened'));
               } else {
                 this.feedCatalogErrors.push(error.message);
               }

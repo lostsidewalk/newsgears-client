@@ -1,5 +1,9 @@
 <template>
-  <button class="dashboard-button" @click="this.$router.push('/app')" accesskey="q" :disabled="disabled" aria-label="Go to dashboard">
+  <button class="dashboard-button" 
+    @click="this.$router.push('/app')" 
+    accesskey="q" 
+    :disabled="disabled" 
+    :aria-label="this.$t('goToQueueDashboardAriaLabel')">
     <span class="fa fa-dashboard" />
   </button>
 </template>

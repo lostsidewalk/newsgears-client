@@ -1,6 +1,6 @@
 <template>
   <div style="display: block; overflow: auto;">
-    <label class="post-info-label-small">MEDIA</label>
+    <label class="post-info-label-small">{{ this.$t('media') }}</label>
     <div>
       <!-- top-level metadata -->
       <PostMediaMetadata v-if="isUseableMetadata(this.media.postMediaMetadata)" 

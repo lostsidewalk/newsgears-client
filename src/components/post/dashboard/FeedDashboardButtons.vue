@@ -5,32 +5,40 @@
       class="header-button" 
       @click.stop="this.$emit('rssAtomUrlQuickAdd')" 
       :disabled="disabled" 
-      title="Add a new subscription to this feed">
-      Add <i class="underline">s</i>subscription &nbsp; <span class="fa fa-rss" />
+      :title="this.$t('addSubscription')">
+      {{ this.$t('addSubscription') }} &nbsp; <span class="fa fa-rss" />
     </button>
     <!-- queue config button -->
     <button v-if="this.selectedFeedId"
       class="header-button" 
       @click.stop="this.$emit('configureFeed')" 
       :disabled="disabled" 
-      title="Configure this feed">
-      Configur<i class="underline">e</i> this queue &nbsp; <span class="fa fa-wrench" />
+      :title="this.$t('configureThisQueue')">
+      {{ this.$t('configureThisQueue') }} &nbsp; <span class="fa fa-wrench" />
     </button>
     <!-- new queue button -->
-    <button class="header-button" @click.stop="this.$emit('newFeed')" accesskey="n" :disabled="disabled">
-      <i class="underline">N</i>ew queue &nbsp; <span class="fa fa-plus" />
+    <button class="header-button" 
+      @click.stop="this.$emit('newFeed')" 
+      accesskey="n" 
+      :disabled="disabled"
+      :title="this.$t('createNewQueue')">
+      {{ this.$t('createNewQueue') }} &nbsp; <span class="fa fa-plus" />
     </button>
     <!-- upload OPML button -->
-    <button class="header-button" @click.stop="this.$emit('uploadOpml')" accesskey="m" :disabled="disabled">
-      Upload OP<i class="underline">M</i>L &nbsp; <span class="fa fa-file" />
+    <button class="header-button" 
+      @click.stop="this.$emit('uploadOpml')" 
+      accesskey="m" 
+      :disabled="disabled"
+      :title="this.$t('uploadOPML')">
+      {{ this.$t('uploadOPML') }} &nbsp; <span class="fa fa-file" />
     </button>
     <!-- delete queue button -->
     <button v-if="this.selectedFeedId"
       class="header-button" 
       @click.stop="this.$emit('deleteFeed')" 
       :disabled="disabled" 
-      title="Delete this feed">
-      Delete this queue &nbsp; <span class="fa fa-trash" />
+      :title="this.$t('deleteThisQueue')">
+      {{ this.$t('deleteThisQueue') }} &nbsp; <span class="fa fa-trash" />
     </button>
   </div>
 
@@ -72,9 +80,5 @@ export default {
 
 .header-button:disabled:hover {
   background-color: unset;
-}
-
-.underline {
-  text-decoration: underline;
 }
 </style>

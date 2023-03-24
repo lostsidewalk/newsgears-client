@@ -16,19 +16,23 @@
       <img v-if="modelValue" 
         class="feed-image" 
         :src="'data:image/png;base64,' + modelValue" 
-        title="Click here to change the feed image."
-        alt="Queue logo image" />
+        :title="this.$t('clickToChangeQueueImage')"
+        :alt="this.$t('queueLogoImage')" />
       <img v-else 
         class="feed-image"
         src="feedgears.png"
-        title="Click here to add a feed image."
-        alt="Queue logo image" />
+        :title="this.$t('clickToAddQueueImage')"
+        :alt="this.$t('queueLogoImage')" />
     </label>
     <div class="feed-image-buttons">
-      <button :disabled="disabled || inTransit || !modelValue" class="feed-image-clear" @click="removeFeedImage">
+      <button :disabled="disabled || inTransit || !modelValue" 
+        class="feed-image-clear" 
+        click="removeFeedImage">
         <span class="fa fa-trash-o" />
       </button>
-      <button :disabled="disabled || inTransit" class="feed-image-randomize" @click="randomizeFeedImage">
+      <button :disabled="disabled || inTransit" 
+        class="feed-image-randomize" 
+        @click="randomizeFeedImage">
         <span class="fa fa-paw" />
       </button>
     </div>
@@ -59,7 +63,7 @@ export default {
     handleFeedImageUploadError(error) {
       console.error(error);
       if (error.name === 'TypeError') {
-        this.feedImageUploadErrors.push('Something went wrong.  Please try again later.');
+        this.feedImageUploadErrors.push(this.$t('somethingHorribleHappened'));
       } else {
         this.feedImageUploadErrors.push(error.message);
       }
@@ -85,7 +89,7 @@ export default {
           if (response.status === 200) {
             return response.json();
           } else { // framework is rejecting the request 
-            throw Error('We weren\'t able to use this image.  Please try another, and note that the maximum size for image files is 1M.');
+            throw Error(this.$t('unableToUseThisImage'));
           }
         }).then((data) => {
           this.feedImageUploadErrors = data.errors;
@@ -124,7 +128,7 @@ export default {
           if (response.status === 200) {
             return response.json();
           } else { // framework is rejecting the request 
-            throw Error('We weren\'t able to fetch an image.  Please try again later.');
+            throw Error(this.$t('unableToFetchAnImage'));
           }
         }).then((data) => {
           this.$emit('update:modelValue', data.imgSrc);

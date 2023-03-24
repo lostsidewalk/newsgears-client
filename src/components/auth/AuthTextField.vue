@@ -7,9 +7,6 @@
       :disabled="disabled"
       @input="$emit('update:modelValue', $event.target.value)"
     />
-    <!-- <div class="auth-error-message" v-for="(error, index) of errorValue" :key="index">
-      {{ error.$message }}
-    </div> -->
   </div>
 </template>
 
@@ -44,9 +41,5 @@ export default {
   background-color: v-bind('theme.fieldbackgroundhighlight');
   color: v-bind('theme.fieldcolorhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.auth-error-message {
-  color: v-bind('theme.normalmessage');
 }
 </style>

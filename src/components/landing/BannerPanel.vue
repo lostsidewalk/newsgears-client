@@ -6,13 +6,13 @@
         <i class="logo fa fa-rss fa-5x"></i>
       </div>
       <h2 class="logosubtext fancy">
-        A secure, private, accessible feed reader.
+        {{ this.$t('whatIsFeedGears') }}
       </h2>
       <h2 class="logosubtext fancy">
-        FeedGears is free because we believe in RSS <span class="fa fa-rss" />
+        {{ this.$t('whyIsFeedGearsFree') }} &nbsp; <span class="fa fa-rss" />
       </h2>
       <h3 class="logosubduedtext fancy">
-        (You can still pay for it if you want to support our mission.)
+        {{ this.$t('howYouCanSupportUs') }}
       </h3>
       <div class="flex" style="padding-top: 2svh;padding-bottom: 2svh;">
         <GoogleAuthButton :theme="theme" :disabled="false" />
