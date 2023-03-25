@@ -58,41 +58,41 @@
               <!-- apply changes button (local) -->
               <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
                 id="updateAccount" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="updateAccount()" 
                 :disabled="inTransit || v$.$invalid">
                 {{ this.$t('applyChanges') }}
               </button>
               <!-- deactivate account button -->
               <button v-if="!this.showDeactivateUser && !this.showResetPassword" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="this.showDeactivateUser = true" 
                 :disabled="inTransit">
                 {{ this.$t('deactivateYourAccount') }}
               </button>
               <!-- download your data button-->
               <button v-if="this.showDeactivateUser" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="exportOpml()"
                 :disabled="inTransit">
                 {{ this.$t('downloadYourData') }}
               </button>
               <!-- permanently delete your account button -->
               <button v-if="this.showDeactivateUser" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="finalizeDeactivation()"
                 :disabled="inTransit">
                 {{ this.$t('permanentlyDeleteYourAccount') }}
               </button>
               <!-- cancel (deactivate account) button -->
               <button v-if="this.showDeactivateUser" id="cancelDeactivateAccount" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="this.showDeactivateUser = false" 
                 :disabled="inTransit">
                 {{ this.$t('cancel') }}
               </button>
               <button v-if="this.showResetPassword" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="initPasswordReset()"
                 :disabled="inTransit">
                 {{ this.$t('sendPasswordResetEmail') }}
@@ -100,7 +100,7 @@
               <!-- reset password button (local) -->
               <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
                 id="resetPassword" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="resetPassword()" 
                 :disabled="inTransit">
                 {{ this.$t('resetPassword') }}
@@ -108,7 +108,7 @@
               <!-- cancel (reset password) -->
               <button v-if="this.showResetPassword" 
                 id="cancelResetPassword" 
-                class="header-button" 
+                class="header-button accessible-button" 
                 @click="this.showResetPassword = false" 
                 :disabled="inTransit">
                 {{ this.$t('cancel') }}
@@ -136,11 +136,11 @@
             <div class="account-management-buttons">
               <!-- update notification preferences button -->
               <button id="updateNotificationPreferences" 
-                class="header-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
+                class="header-button accessible-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
                 {{ this.$t('updateNotificationPreferences') }}
               </button>
               <!-- toggle (all) notifications button -->
-              <button class="header-button" @click="toggleNotifications()" :disabled="inTransit">
+              <button class="header-button accessible-button" @click="toggleNotifications()" :disabled="inTransit">
                 {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? this.$t('enableSelectedNotifications') : this.$t('disableSelectedNotifications') }} 
               </button>
             </div>
@@ -179,10 +179,10 @@
               </div>
 
               <div class="account-management-buttons">
-                <button id="cancelSubscription" class="header-button" @click="cancelSubscription()" :disabled="inTransit" v-if="this.subscription && !isCanceled()">
+                <button id="cancelSubscription" class="header-button accessible-button" @click="cancelSubscription()" :disabled="inTransit" v-if="this.subscription && !isCanceled()">
                   {{ this.$t('cancelSubscription') }}
                 </button>
-                <button id="resumeSubscription" class="header-button" @click="resumeSubscription()" :disabled="inTransit" v-if="this.subscription && isCanceled()">
+                <button id="resumeSubscription" class="header-button accessible-button" @click="resumeSubscription()" :disabled="inTransit" v-if="this.subscription && isCanceled()">
                   {{ this.$t('resumeSubscription') }}
                 </button>
               </div>
@@ -191,7 +191,7 @@
               <p>{{ this.$t('pleaseConsiderSubscribing') }}</p>
 
               <div class="account-management-buttons">
-                <button id="checkout" class="header-button" @click="submitOrder" :disabled="inTransit">
+                <button id="checkout" class="header-button accessible-button" @click="submitOrder" :disabled="inTransit">
                   {{ this.$t('checkout') }}
                 </button>
               </div>
@@ -199,7 +199,7 @@
           </div>
           <div class="tab" v-if="isLoaded && this.selectedTab === 'THEME'">
             <div class="color-field-buttons">
-              <button class="header-button" @click="updateDisplaySettings">
+              <button class="header-button accessible-button" @click="updateDisplaySettings">
                 <span v-if="this.$theme.currentTheme.ident === 'light'">
                   {{ this.$t('updateLightTheme') }}
                 </span>
@@ -837,8 +837,6 @@ export default {
   float: left;
   border-radius: 4px;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .header-button:disabled {

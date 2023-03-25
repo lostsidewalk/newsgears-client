@@ -1,6 +1,6 @@
 <template>
   <button id="login" 
-    class="login-button" 
+    class="login-button accessible-button" 
     @click="this.$router.push('/app')" 
     :disabled="disabled">
     {{ this.$t('login') }}
@@ -26,8 +26,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .login-button:disabled {

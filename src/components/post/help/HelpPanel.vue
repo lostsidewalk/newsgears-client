@@ -15,7 +15,7 @@
         </div>
     </div>
       <div class="modal-actions">
-        <button class="modal-button" ref="dismissButton" @click.stop="this.$emit('dismiss')">
+        <button class="modal-button accessible-button" ref="dismissButton" @click.stop="this.$emit('dismiss')">
           {{ this.$t('dismiss') }}
         </button>
       </div>
@@ -184,8 +184,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .modal-button:hover, .modal-button:focus-visible {

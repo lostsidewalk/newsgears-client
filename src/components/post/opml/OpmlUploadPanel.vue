@@ -10,7 +10,7 @@
             <div class="opml-file-row">
               {{ this.$t('filenameColon') }} <a :href="file.url" :target="file.id" :title="this.$t('previewThisFile')">{{ file.file.name }}</a>
               <button v-if="!atStep2" 
-                class="opml-file-action-button" 
+                class="opml-file-action-button accessible-button" 
                 @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" 
                 style="margin-left: .125rem;" 
                 :disabled="disabled || inTransit">
@@ -36,7 +36,7 @@
           <div>
             <button ref="addOpmlFileButton" v-if="!atStep2"
               @click="this.errors = []; this.$refs.fileInput.click()"   
-              class="opml-upload-button" 
+              class="opml-upload-button accessible-button" 
               :disabled="disabled || inTransit" 
               :title="this.$t('selectAnOpmlFile')">
               {{ this.$t('addAnOpmlFile') }}
@@ -271,8 +271,6 @@ export default {
   float: left;
   border-radius: 4px;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .opml-upload-button:disabled {
@@ -299,8 +297,6 @@ export default {
   margin-top: .125rem;
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
   float: right;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .opml-file-action-button:disabled {

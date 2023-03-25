@@ -2,7 +2,7 @@
   <div>
     <!-- add subscription button -->
     <button v-if="this.selectedFeedId"
-      class="header-button" 
+      class="header-button accessible-button" 
       @click.stop="this.$emit('rssAtomUrlQuickAdd')" 
       :disabled="disabled" 
       :title="this.$t('addSubscription')">
@@ -10,14 +10,14 @@
     </button>
     <!-- queue config button -->
     <button v-if="this.selectedFeedId"
-      class="header-button" 
+      class="header-button accessible-button" 
       @click.stop="this.$emit('configureFeed')" 
       :disabled="disabled" 
       :title="this.$t('configureThisQueue')">
       {{ this.$t('configureThisQueue') }} &nbsp; <span class="fa fa-wrench" />
     </button>
     <!-- new queue button -->
-    <button class="header-button" 
+    <button class="header-button accessible-button" 
       @click.stop="this.$emit('newFeed')" 
       accesskey="n" 
       :disabled="disabled"
@@ -25,7 +25,7 @@
       {{ this.$t('createNewQueue') }} &nbsp; <span class="fa fa-plus" />
     </button>
     <!-- upload OPML button -->
-    <button class="header-button" 
+    <button class="header-button accessible-button" 
       @click.stop="this.$emit('uploadOpml')" 
       accesskey="m" 
       :disabled="disabled"
@@ -34,7 +34,7 @@
     </button>
     <!-- delete queue button -->
     <button v-if="this.selectedFeedId"
-      class="header-button" 
+      class="header-button accessible-button" 
       @click.stop="this.$emit('deleteFeed')" 
       :disabled="disabled" 
       :title="this.$t('deleteThisQueue')">
@@ -66,8 +66,6 @@ export default {
   margin-right: .75rem;
   text-align: center;
   user-select: none;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .header-button:hover, .header-button:focus-visible {

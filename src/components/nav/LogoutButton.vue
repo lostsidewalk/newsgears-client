@@ -1,6 +1,6 @@
 <template>
   <button id="logout" 
-    class="logout-button" 
+    class="logout-button accessible-button" 
     @click="logout" 
     accesskey="o" 
     :disabled="disabled">
@@ -37,8 +37,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .logout-button:disabled {

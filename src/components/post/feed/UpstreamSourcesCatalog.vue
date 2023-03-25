@@ -8,19 +8,19 @@
       <input type="text" v-model="feedCatalogFilter" :disabled="disabled" :placeholder="this.$t('filter')">
       <div class="feed-catalog-filter-buttons">
         <!-- first page button-->
-        <button v-if="needsPagination()" :title="this.$t('first')" class="feed-catalog-filter-button" @click="firstPage">
+        <button v-if="needsPagination()" :title="this.$t('first')" class="feed-catalog-filter-button accessible-button" @click="firstPage">
           <span class="fa fa-angle-double-left"/>
         </button>
         <!-- previous page button -->
-        <button v-if="needsPagination()" :title="this.$t('previous')" class="feed-catalog-filter-button" @click="previousPage">
+        <button v-if="needsPagination()" :title="this.$t('previous')" class="feed-catalog-filter-button accessible-button" @click="previousPage">
           <span class="fa fa-angle-left"/>
         </button>
         <!-- next page button -->
-        <button v-if="needsPagination()" :title="this.$t('next')" class="feed-catalog-filter-button" @click="nextPage">
+        <button v-if="needsPagination()" :title="this.$t('next')" class="feed-catalog-filter-button accessible-button" @click="nextPage">
           <span class="fa fa-angle-right"/>
         </button>
         <!-- last page button-->
-        <button v-if="needsPagination()" :title="this.$t('last')" class="feed-catalog-filter-button" @click="lastPage">
+        <button v-if="needsPagination()" :title="this.$t('last')" class="feed-catalog-filter-button accessible-button" @click="lastPage">
           <span class="fa fa-angle-double-right"/>
         </button>
       </div>
@@ -30,63 +30,63 @@
       <button v-for="authorFilter in this.feedCatalogFilterAuthors" 
         :key="authorFilter" 
         @click="removeFilter('author', authorFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('authorColon') }} &nbsp; {{ this.trimToLength(authorFilter, 64) }}
       </button>
       <button v-for="categoryFilter in this.feedCatalogFilterCategories" 
         :key="categoryFilter" 
         @click="removeFilter('category', categoryFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('categoryColon') }} &nbsp; {{ this.trimToLength(categoryFilter, 64) }}
       </button>
       <button v-for="languageFilter in this.feedCatalogFilterLanguages" 
         :key="languageFilter" 
         @click="removeFilter('language', languageFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('languageColon') }} &nbsp; {{ this.trimToLength(languageFilter, 64) }}
       </button>
       <button v-for="docsFilter in this.feedCatalogFilterDocs" 
         :key="docsFilter" 
         @click="removeFilter('docs', docsFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('docsColon') }} &nbsp; {{ this.trimToLength(docsFilter, 64) }}
       </button>
       <button v-for="encodingFilter in this.feedCatalogFilterEncodings" 
         :key="encodingFilter" 
         @click="removeFilter('encoding', encodingFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('encodingColon') }} &nbsp; {{ this.trimToLength(encodingFilter, 64) }}
       </button>
       <button v-for="feedTypeFilter in this.feedCatalogFilterFeedTypes" 
         :key="feedTypeFilter" 
         @click="removeFilter('feedType', feedTypeFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('feedTypeColon') }} &nbsp; {{ this.trimToLength(feedTypeFilter, 64) }}
       </button>
       <button v-for="generatorFilter in this.feedCatalogFilterGenerators" 
         :key="generatorFilter" 
         @click="removeFilter('generator', generatorFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('generatorColon') }} &nbsp; {{ this.trimToLength(generatorFilter, 64) }}
       </button>
       <button v-for="managingEditorFilter in this.feedCatalogFilterManagingEditors" 
         :key="managingEditorFilter" 
         @click="removeFilter('managingEditor', managingEditorFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('managingEditorColon') }} &nbsp; {{ this.trimToLength(managingEditorFilter, 64) }}
       </button>
       <button v-for="webMasterFilter in this.feedCatalogFilterWebMasters" 
         :key="webMasterFilter" 
         @click="removeFilter('webMaster', webMasterFilter)" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
         {{ this.$t('webmasterColon') }} &nbsp; {{ this.trimToLength(webMasterFilter, 64) }}
       </button>
@@ -97,13 +97,13 @@
       <div class="rss-atom-url-wrapper" v-for="source in this.getCurrentPage(filteredFeedCatalog)" :key="source">
         <div class="rss-atom-url-row">
           <button v-if="this.disabledRssAtomFeedUrls.indexOf(source.feedUrl) < 0"
-            class="add-catalog-feed-button" 
+            class="add-catalog-feed-button accessible-button" 
             :disabled="disabled"
             @click="this.$emit('addCatalogFeed', source)">
             {{ this.$t('subscribeToThisFeed') }}
           </button>
           <button v-else
-            class="add-catalog-feed-button" 
+            class="add-catalog-feed-button accessible-button" 
             :disabled="true">
             {{ this.$t('youAreSubscribed') }}
           </button>
@@ -494,8 +494,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus-visible {
@@ -513,8 +511,6 @@ export default {
   float: left;
   border-radius: 4px;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .add-catalog-feed-button:disabled {
@@ -577,8 +573,6 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .feed-catalog-filter-button:hover, .feed-catalog-filter-button:focus-visible {

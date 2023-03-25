@@ -30,7 +30,7 @@
         </div>
         <!-- author -->
         <div v-if="this.info.author" class="rss-atom-feed-info-field pill-container">
-          <button 
+          <button class="accessible-button"
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleAuthorFilter') : this.info.author"
             @click="updateFeedFilter('author', this.info.author)"
@@ -55,7 +55,8 @@
         </div>
         <!-- categories -->
         <div v-if="this.info.categories.length > 0" class="rss-atom-feed-info-field pill-container">
-          <button v-for="category of this.info.categories" :key="category" 
+          <button v-for="category of this.info.categories" :key="category"
+            class="accessible-button" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleCategoryFilter') : category"
             @click="updateFeedFilter('category', category)"
@@ -65,7 +66,8 @@
         </div>
         <div class="rss-atom-feed-info-field pill-container">
           <!-- language -->
-          <button v-if="this.info.language" 
+          <button v-if="this.info.language"
+            class="accessible-button" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleLanguageFilter') : this.info.language"
             @click="updateFeedFilter('language', this.info.language)"
@@ -74,6 +76,7 @@
           </button>
           <!-- docs -->
           <button v-if="this.info.docs" 
+            class="accessible-button"
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleDocStringFilter') : this.info.docs"
             @click="updateFeedFilter('docs', this.info.docs)"
@@ -82,6 +85,7 @@
           </button>
           <!-- encoding -->
           <button v-if="this.info.encoding" 
+            class="accessible-button"
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleEncodingFilter') : this.info.encoding"
             @click="updateFeedFilter('encoding', this.info.encoding)"
@@ -90,6 +94,7 @@
           </button>
           <!-- managing editor -->
           <button v-if="this.info.managingEditor" 
+            class="accessible-button"
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleManagingEditorFilter') : this.info.managingEditor"
             @click="updateFeedFilter('managingEditor', this.info.managingEditor)"
@@ -98,6 +103,7 @@
           </button>
           <!-- web master -->
           <button v-if="this.info.webMaster" 
+            class="accessible-button"
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleWebmasterFilter') : this.info.webMaster"
             @click="updateFeedFilter('webMaster', this.info.webMaster)"
@@ -114,13 +120,13 @@
           </span>
           <!-- redirect status code + redirect status message -->
           <span v-if="this.info.redirectHttpStatusCode" 
-            class="br-pill-subdued" 
+            class="br-pill-subdued accessible-button" 
             :title="this.$t('redirectHttpStatusCode') + ' ' + this.info.redirectHttpStatusCode + ' (' + this.info.redirectHttpStatusMessage + ')'">
             {{ this.info.redirectHttpStatusCode }}
           </span>
           <!-- is url upgradable -->
           <span v-if="this.info.isUrlUpgradable === true" 
-            class="br-pill-subdued" 
+            class="br-pill-subdued accessible-button" 
             :title="this.$t('feedAlsoAvailableInHttps')">
             <span class="fa fa-lock-o fa-1x">SSL</span>
           </span>
@@ -132,7 +138,7 @@
       <div class="rss-atom-feed-info-field pill-container">
         <!-- http satus code + status message -->
         <span v-if="this.info.httpStatusCode" 
-          class="br-pill-subdued" 
+          class="br-pill-subdued accessible-button" 
           :title="'HTTP ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')' + (this.info.redirectFeedUrl ? ('=> ' + this.info.redirectFeedUrl) : '')">
           {{ 'HTTP ' + this.info.httpStatusCode + ' ' + this.info.httpStatusMessage }} &nbsp;
           <span v-if="this.info.redirectFeedUrl">
@@ -255,8 +261,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 /** has references */
@@ -273,8 +277,6 @@ export default {
   color: v-bind('theme.buttonfg');
   padding: .44rem 1.25rem;
   user-select: none;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .br-pill-subdued:hover, .br-pill-subdued:focus-visible {

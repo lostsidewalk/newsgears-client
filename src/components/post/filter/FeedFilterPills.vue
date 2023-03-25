@@ -11,14 +11,14 @@
     </div>
     <!-- clear button -->
     <div class="reset-container">
-      <button class="reset-button" @click="this.$emit('resetFilterDefaults')">
+      <button class="reset-button accessible-button" @click="this.$emit('resetFilterDefaults')">
         <i class="fa fa-undo" /> &nbsp; {{ this.$t('resetToDefault') }}
       </button>
     </div>
     <!-- pills -->
     <div class="filter-pills-buttons">
       <button v-for="filterPill in this.allFilterPills" :key="filterPill" 
-        class="br-pill" 
+        class="br-pill accessible-button" 
         :class="{ selectedMode: filterPill.isSelected }" 
         :title="filterPill.label"
         @click="filterPill.invoke"
@@ -178,8 +178,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus-visible {
@@ -254,8 +252,6 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .reset-button:hover, .reset-button:focus-visible {

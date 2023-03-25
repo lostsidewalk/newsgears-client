@@ -1,5 +1,5 @@
 <template>
-  <button class="mode-switch-button" 
+  <button class="mode-switch-button accessible-button" 
     @click="switchMode" 
     accesskey="l" 
     :disabled="disabled || inTransit" 
@@ -143,8 +143,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .mode-switch-button:disabled {

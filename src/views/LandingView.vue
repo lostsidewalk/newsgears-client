@@ -86,3 +86,24 @@ export default {
   background-image: linear-gradient(180deg, v-bind('theme.darkshadow'), v-bind('theme.lightshadow'));
 }
 </style>
+
+<style>
+.accessible-button {
+  min-height: 3rem;
+  min-width: 3rem;
+}
+
+@media (max-width: 640px) {
+  .accessible-button {
+    min-height: 1.5rem;
+    min-width: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .accessible-button {
+    min-height: unset;
+    min-width: unset;
+  }
+}
+</style>

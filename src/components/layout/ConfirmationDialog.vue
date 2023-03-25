@@ -3,10 +3,10 @@
     <div class="modal-body">
       <h3>{{ prompt }}</h3>
       <div class="modal-actions">
-        <button class="modal-button" ref="confirmButton" @click="confirm" accesskey="c" :disabled="disabled">
+        <button class="modal-button accessible-button" ref="confirmButton" @click="confirm" accesskey="c" :disabled="disabled">
           {{ this.$t('confirm') }}
         </button>
-        <button class="modal-button" @click.stop="this.$emit('cancel')" :disabled="disabled">
+        <button class="modal-button accessible-button" @click.stop="this.$emit('cancel')" :disabled="disabled">
           {{ this.$t('cancel') }} 
         </button>
       </div>
@@ -91,8 +91,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .modal-button:hover, .modal-button:focus-visible {

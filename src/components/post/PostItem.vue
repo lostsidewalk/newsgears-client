@@ -8,7 +8,7 @@
           <!-- show details button -->
           <button 
             ref="postHandle"
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="togglePostDetails"
             :disabled="disabled"
             :title="this.$t('showPostDetails')">
@@ -16,7 +16,7 @@
           </button>
           <!-- go to next post button -->
           <button
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="goToNextPost"
             :disabled="disabled"
             :title="this.$t('goToNextPost')">
@@ -24,7 +24,7 @@
           </button>
           <!-- go to previous post button -->
           <button
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="goToPreviousPost"
             :disabled="disabled"
             :title="this.$t('goToPreviousPost')">
@@ -32,7 +32,7 @@
           </button>
           <!-- toggle read status button -->
           <button
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="togglePostReadStatus"
             :disabled="disabled"
             :title="post.isRead ? this.$t('markPostAsUnread') : this.$t('markPostAsRead')">
@@ -40,7 +40,7 @@
           </button>
           <!-- toggle read-later status button -->
           <button
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="togglePostReadLaterStatus"
             :disabled="disabled"
             :title="post.isReadLater ? this.$t('unmarkPostAsReadLater') : this.$t('markPostAsReadLater')">
@@ -48,7 +48,7 @@
           </button>
           <!-- star button -->
           <button v-if="!post.isPublished"
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="stagePost"
             :disabled="disabled"
             :title="this.$t('starThisPost')"
@@ -57,7 +57,7 @@
           </button>
           <!-- un-star button -->
           <button v-if="post.isPublished"
-            class="post-admin-button star-colored"
+            class="post-admin-button accessible-button star-colored"
             @click.stop="unstagePost"
             :disabled="disabled"
             :title="this.$t('unstarThisPost')"
@@ -66,7 +66,7 @@
           </button>
           <!-- link button -->
           <button
-            class="post-admin-button"
+            class="post-admin-button accessible-button"
             @click.stop="this.$emit('openPostUrl')"
             :disabled="disabled"
             :title="this.$t('openOriginalArticle')"
@@ -78,7 +78,7 @@
         <span class="post-item-header-pills pill-container">
           <!-- post categories -->
           <button v-for="postCategory in post.postCategories" :key="postCategory"
-            class="br-pill"
+            class="br-pill accessible-button"
             @click.stop="updateFeedFilter('category', postCategory)"
             :title="'Add this category (' + postCategory + ') to the filter'">
             {{  postCategory }}
@@ -468,8 +468,6 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   padding-top: .125rem;
-  min-height: 3rem;
-  min-width: 3rem;
 }
 
 .post-admin-button:disabled {
@@ -581,8 +579,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .br-pill:hover, .br-pill:focus-visible {

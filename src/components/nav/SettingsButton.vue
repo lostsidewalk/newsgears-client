@@ -1,5 +1,5 @@
 <template>
-  <button class="settings-button" 
+  <button class="settings-button accessible-button" 
     @click="this.$emit('showSettings')" 
     accesskey="t" 
     :disabled="disabled" 
@@ -28,8 +28,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .settings-button:disabled {

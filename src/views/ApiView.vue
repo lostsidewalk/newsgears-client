@@ -81,3 +81,24 @@ export default {
   margin-bottom: .75rem;
 }
 </style>
+
+<style>
+.accessible-button {
+  min-height: 3rem;
+  min-width: 3rem;
+}
+
+@media (max-width: 640px) {
+  .accessible-button {
+    min-height: 1.5rem;
+    min-width: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .accessible-button {
+    min-height: unset;
+    min-width: unset;
+  }
+}
+</style>

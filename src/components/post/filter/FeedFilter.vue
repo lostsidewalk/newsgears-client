@@ -12,7 +12,7 @@
         :disabled="disabled" />
       <div class="feed-filter-buttons">
         <!-- sort direction button -->
-        <button class="feed-filter-button" 
+        <button class="feed-filter-button accessible-button" 
           @click="this.$emit('toggleSortOrder')" 
           :disabled="disabled"
           :title="this.$t('toggleSortOrder')" 
@@ -20,7 +20,7 @@
           <span :class="'fa fa-arrow-' + (this.inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
         </button>
         <!-- refresh feed button -->
-        <button class="feed-filter-button" 
+        <button class="feed-filter-button accessible-button" 
           @click="this.$emit('refreshFeeds')"
           :disabled="disabled" 
           :title="this.$t('refreshQueues')"
@@ -28,7 +28,7 @@
           <span class="fa fa-refresh"/>
         </button>
         <!-- mark as read button -->
-        <button class="feed-filter-button"
+        <button class="feed-filter-button accessible-button"
           @click.stop="this.$emit('markAsRead')"
           :disabled="disabled"
           :title="this.$t('markQueueAsRead')"
@@ -36,7 +36,7 @@
           <span class="fa fa-eye"></span>
         </button>
         <!-- show feed filter pills button -->
-        <button class="feed-filter-button" 
+        <button class="feed-filter-button accessible-button" 
           @click="this.$emit('toggleFeedFilterPills')"
           :disabled="disabled" 
           :title="this.$t('showFilterOptions')"
@@ -130,8 +130,6 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .feed-filter-button:hover, .feed-filter-button:focus-visible {

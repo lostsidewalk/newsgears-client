@@ -1,5 +1,5 @@
 <template>
-  <button class="dashboard-button" 
+  <button class="dashboard-button accessible-button" 
     @click="this.$router.push('/app')" 
     accesskey="q" 
     :disabled="disabled" 
@@ -27,8 +27,6 @@ export default {
   border-radius: 4px;
   margin: .56rem;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .dashboard-button:disabled {

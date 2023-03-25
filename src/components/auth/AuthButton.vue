@@ -4,7 +4,7 @@
       :disabled="disabled"
       type="button"
       @click="onClick()"
-      class="auth-button">
+      class="auth-button accessible-button">
       {{ label }}<br />
       {{ subLabel }}
     </button>
@@ -36,8 +36,6 @@ export default {
   border-radius: 4px;
   text-align: center;
   user-select: none;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 /** has-references */

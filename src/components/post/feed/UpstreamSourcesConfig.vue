@@ -6,14 +6,14 @@
     <div class="feed-config-button-wrapper">
       <!-- add RSS/ATOM feed URL button -->
       <button 
-        class="feed-config-button" 
+        class="feed-config-button accessible-button" 
         @click="this.$emit('addRssAtomUrl')" 
         :disabled="disabled || inTransit">
         {{ this.$t('addFeedFromURL') }}
       </button>
       <!-- browse feed catalog button -->
       <button  
-        class="feed-config-button" 
+        class="feed-config-button accessible-button" 
         @click="toggleRssAtomUrlBrowser" 
         :disabled="disabled || inTransit">
         {{ this.$t('browseFeedCatalog') }} &nbsp; <span class="fa fa-expand" />
@@ -33,19 +33,19 @@
     <div v-else>
       <div class="feed-config-filter-buttons">
         <!-- first page button-->
-        <button v-if="needsPagination()" :title="this.$t('first')" class="feed-config-filter-button" @click="firstPage">
+        <button v-if="needsPagination()" :title="this.$t('first')" class="feed-config-filter-button accessible-button" @click="firstPage">
           <span class="fa fa-angle-double-left"/>
         </button>
         <!-- previous page button -->
-        <button v-if="needsPagination()" :title="this.$t('previous')" class="feed-config-filter-button" @click="previousPage">
+        <button v-if="needsPagination()" :title="this.$t('previous')" class="feed-config-filter-button accessible-button" @click="previousPage">
           <span class="fa fa-angle-left"/>
         </button>
         <!-- next page button -->
-        <button v-if="needsPagination()" :title="this.$t('next')" class="feed-config-filter-button" @click="nextPage">
+        <button v-if="needsPagination()" :title="this.$t('next')" class="feed-config-filter-button accessible-button" @click="nextPage">
           <span class="fa fa-angle-right"/>
         </button>
         <!-- last page button-->
-        <button v-if="needsPagination()" :title="this.$t('last')" class="feed-config-filter-button" @click="lastPage">
+        <button v-if="needsPagination()" :title="this.$t('last')" class="feed-config-filter-button accessible-button" @click="lastPage">
           <span class="fa fa-angle-double-right"/>
         </button>
       </div>
@@ -63,19 +63,19 @@
               placeholder="Feed URL" />
             <div class="rss-atom-url-row-buttons">
               <button 
-                class="rss-atom-url-row-button"
+                class="rss-atom-url-row-button accessible-button"
                 @click="this.refreshRssAtomUrlInfo(rssAtomUrl.id)" 
                 :disabled="disabled || inTransit">
                 <span class="fa fa-refresh"/>
               </button>
               <button 
-                class="rss-atom-url-row-button" 
+                class="rss-atom-url-row-button accessible-button" 
                 @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)" 
                 :disabled="disabled || inTransit">
                 <span class="fa fa-trash"/>
               </button>
               <button 
-                class="rss-atom-url-row-button" 
+                class="rss-atom-url-row-button accessible-button" 
                 @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails" 
                 :disabled="disabled || inTransit">
                 <span class="fa fa-expand"/>
@@ -453,8 +453,6 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus-visible {
@@ -491,8 +489,6 @@ export default {
   float: left;
   border-radius: 4px;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .feed-config-button:disabled {
@@ -532,8 +528,6 @@ export default {
   cursor: pointer;
   float: right;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .feed-config-filter-button:hover, .feed-config-filter-button:focus-visible {

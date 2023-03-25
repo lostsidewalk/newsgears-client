@@ -109,14 +109,14 @@
       <!-- button panel -->
       <div class="feed-config-button-wrapper">
         <!-- save/update button -->
-        <button class="feed-config-button" 
+        <button class="feed-config-button accessible-button" 
           @click="saveFeedConfig" 
           :disabled="disabled || inTransit || v$.$invalid"
           :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : (this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue'))"> 
           {{ this.feed.id ? this.$t('update') : this.$t('save') }}
         </button>
         <!-- cancel button -->
-        <button class="feed-config-button" 
+        <button class="feed-config-button accessible-button" 
           @click="cancelFeedConfig" 
           :disabled="disabled || inTransit">
           {{ this.$t('cancel') }}
@@ -397,8 +397,6 @@ export default {
   float: left;
   border-radius: 4px;
   text-align: center;
-  min-width: 3rem;
-  min-height: 3rem;
 }
 
 .feed-config-button:disabled {
