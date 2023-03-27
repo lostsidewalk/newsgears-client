@@ -1,28 +1,13 @@
 <template>
   <div>
-    <!-- add subscription button -->
-    <button v-if="this.selectedFeedId"
-      class="header-button accessible-button" 
-      @click.stop="this.$emit('rssAtomUrlQuickAdd')" 
-      :disabled="disabled" 
-      :title="this.$t('addSubscription')">
-      {{ this.$t('addSubscription') }} &nbsp; <span class="fa fa-rss" />
-    </button>
+    <!-- TODO: component -->
     <!-- queue config button -->
     <button v-if="this.selectedFeedId"
       class="header-button accessible-button" 
       @click.stop="this.$emit('configureFeed')" 
       :disabled="disabled" 
-      :title="this.$t('configureThisQueue')">
-      {{ this.$t('configureThisQueue') }} &nbsp; <span class="fa fa-wrench" />
-    </button>
-    <!-- new queue button -->
-    <button class="header-button accessible-button" 
-      @click.stop="this.$emit('newFeed')" 
-      accesskey="n" 
-      :disabled="disabled"
-      :title="this.$t('createNewQueue')">
-      {{ this.$t('createNewQueue') }} &nbsp; <span class="fa fa-plus" />
+      :title="this.$t('manageSubscriptions')">
+      {{ this.$t('manageSubscriptions') }} &nbsp; <span class="fa fa-wrench" />
     </button>
     <!-- upload OPML button -->
     <button class="header-button accessible-button" 
@@ -39,6 +24,14 @@
       :disabled="disabled" 
       :title="this.$t('deleteThisQueue')">
       {{ this.$t('deleteThisQueue') }} &nbsp; <span class="fa fa-trash" />
+    </button>
+    <!-- new queue button -->
+    <button class="header-button accessible-button" 
+      @click.stop="this.$emit('newFeed')" 
+      accesskey="n" 
+      :disabled="disabled"
+      :title="this.$t('createNewQueue')">
+      {{ this.$t('createNewQueue') }} &nbsp; <span class="fa fa-plus" />
     </button>
   </div>
 

@@ -93,7 +93,7 @@ const i18n = createI18n({
       settings: 'Ajustes', 
       // queue dashboard buttons 
       addSubscription: 'Agregar una nueva suscripción',
-      configureThisQueue: 'Configurar esta cola',
+      manageSubscriptions: 'Administrar suscripciones',
       createNewQueue: 'Crear una nueva cola',
       uploadOPML: 'Subir OPML',
       deleteThisQueue: 'Eliminar esta cola',
@@ -180,7 +180,7 @@ const i18n = createI18n({
       starred: 'SEMBRADO DE ESTRELLAS',
       // help panel 
       dismiss: 'Despedir',
-      configureSelectedQueue: 'Configurar la cola seleccionada',
+      configureSelectedQueue: 'Administrar suscripciones en la cola seleccionada',
       markSelectedQueueAsRead: 'Marcar la cola seleccionada como leída',
       addSubscriptionToSelectedQueue: 'Agregar una suscripción a la cola seleccionada',
       starSelectedPost: 'Destacar la publicación seleccionada',
@@ -426,7 +426,7 @@ const i18n = createI18n({
       settings: 'Settings', 
       // queue dashboard buttons 
       addSubscription: 'Add a new subscription',
-      configureThisQueue: 'Configure this queue',
+      manageSubscriptions: 'Manage subscriptions',
       createNewQueue: 'Create a new queue',
       uploadOPML: 'Upload OPML',
       deleteThisQueue: 'Delete this queue',
@@ -513,7 +513,7 @@ const i18n = createI18n({
       starred: 'STARRED',
       // help panel 
       dismiss: 'Dismiss',
-      configureSelectedQueue: 'Configure the selected queue',
+      configureSelectedQueue: 'Manage subscriptions in the selected queue',
       markSelectedQueueAsRead: 'Mark the selected queue as read',
       addSubscriptionToSelectedQueue: 'Add a subscription to selected queue',
       starSelectedPost: 'Star the selected post',
