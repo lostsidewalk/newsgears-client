@@ -9,6 +9,7 @@
         {{ feed.label }}
       </label>
       <!-- card -->
+      <!-- TODO: component -->
       <div class="feed-image-wrapper">
         <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" :alt="this.$t('queueLogoImage')">
         <img v-else class="feed-image" src="feedgears.png" :alt="this.$t('queueLogoImage')">
@@ -34,6 +35,7 @@
         {{ this.$t('zeroSubscriptions') }}
       </span>
       <!-- more information -->
+      <!-- TODO: component -->
       <div v-if="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
         <label class="feed-info-label-small">
@@ -74,19 +76,21 @@ export default {
         // TODO: interpolated string 
         return m.persistCt + ' new articles imported at ' + m.importTimestamp;
       } else {
-        // TODO: interpolated string 
-        // HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
-        let message = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
-        if (m.queryExceptionTypeMessage) {
-          message = message + '\n' + m.queryExceptionTypeMessage;
+        if (m.httpStatusCode) {
+          // TODO: interpolated string 
+          // e.g.: HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
+          let message = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
+          if (m.queryExceptionTypeMessage) {
+            message = message + '\n' + m.queryExceptionTypeMessage;
+          }
+          return message;
         }
-        return message;
       }
     },
     // shown next to the RSS/ATOM icon 
     buildImportCtMessage(feedMetrics) {
       let m = this.getMostRecentMetric(feedMetrics);
-      return m.persistCt > 0 ? '+' + m.persistCt : ('HTTP ' + m.httpStatusCode);
+      return '+' + (m.persistCt > 0 ? m.persistCt : 0);
     },
     getMostRecentMetric(feedMetrics) {
       if (feedMetrics) {
@@ -179,6 +183,7 @@ export default {
 .feed-info-label > span {
   padding-right: .44rem;
   word-wrap: break-word;
+  word-break: keep-all;
 }
 
 .feed-info-label-small {
