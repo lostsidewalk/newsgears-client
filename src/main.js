@@ -7,6 +7,7 @@ import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import VuePlyr from 'vue-plyr';
 import VueAnnouncer from '@vue-a11y/announcer';
 import { createI18n } from 'vue-i18n';
+import Vue3NativeNotification from 'vue3-native-notification'
 
 import '@vue-a11y/announcer/dist/style.css';
 import 'vue-plyr/dist/vue-plyr.css';
@@ -708,4 +709,7 @@ createApp(App, {})
     })
     .use(VueAnnouncer)
     .use(i18n)
+    .use(Vue3NativeNotification, {
+      requestOnNotify: true
+    })
     .mount('#app');

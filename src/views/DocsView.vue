@@ -6,7 +6,7 @@
         <ControlPanel :baseUrl="baseUrl" 
           :disabled="false" 
           :theme="theme" 
-          @updateServerMessage="this.serverMessages.push($event)" />
+          @updateServerMessage="setLastServerMessage" />
       </template>
     </NavbarFixedHeader>
     <!-- fixed subheader -->
@@ -55,6 +55,46 @@ export default {
     GoBack,
 },
   props: ["baseUrl"],
+  methods: {
+    setLastServerMessage(messageObj) {
+      this.$notification.requestPermission().then(p => {
+        if (p !== "granted") {
+          this.clearLastServerMessage();
+          let serverMessageId = Math.random();
+          this.serverMessages.push({
+            timestamp: new Date(),
+            id: serverMessageId,
+            text: messageObj.message
+          });
+          this.$announcer.polite(messageObj.message);
+          setTimeout(() => {
+            let idxToSplice = -1;
+            for(let i = 0; i < this.serverMessages.length; i++) {
+              if (this.serverMessages[i].id == serverMessageId) {
+                idxToSplice = i;
+                break;
+              }
+            }
+            if (idxToSplice >= 0) {
+              this.serverMessages.splice(idxToSplice, 1);
+            }
+          }, 4000);
+        } else {
+          this.$notification.show('FeedGears message', {
+           body: messageObj.message
+          }, {
+            onerror: function() {
+              console.error("unable to show notification, message=" + messageObj.message);
+            }
+          });
+        }
+      });
+      this.$announcer.polite(messageObj.message);
+    },
+    clearLastServerMessage() {
+      this.serverMessages.pop();
+    },
+  },
   data() {
     return {
       theme: this.$theme.currentTheme,
