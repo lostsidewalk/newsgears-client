@@ -452,6 +452,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
+  border-radius: 4px;
   text-align: center;
 }
 
@@ -527,6 +528,7 @@ export default {
   padding: .44rem 1.25rem;
   cursor: pointer;
   float: right;
+  border-radius: 4px;
   text-align: center;
 }
 
