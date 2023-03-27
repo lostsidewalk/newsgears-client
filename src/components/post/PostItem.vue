@@ -5,7 +5,7 @@
       <div class="post-item-header">
         <!-- post header buttons -->
         <span class="post-admin-buttons">
-          <!-- TODO: component -->
+          <!-- TODO: extract post-item-button component -->
           <!-- show details button -->
           <button 
             ref="postHandle"
@@ -84,8 +84,8 @@
             class="post-admin-button accessible-button"
             @click.stop="togglePostCategories"
             :disabled="disabled"
-            :title="this.$t('togglePostCategories')"
-            :aria-label="this.$t('togglePostCategories')">
+            :title="this.$t('showPostCategories')"
+            :aria-label="this.$t('showPostCategories')">
             <span class="fa fa-list"></span>
           </button>
         </span>

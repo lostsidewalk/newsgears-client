@@ -229,6 +229,7 @@ const i18n = createI18n({
       nQueuesCreated: ' queues created',
       // post item 
       showPostDetails: 'Show post details', 
+      showPostCategories: 'Show post categories',
       goToNextPost: 'Go to next post',
       goToPreviousPost: 'Go to previous post',
       goToFirstPost: 'Go to first post',
