@@ -5,13 +5,15 @@
       <div class="post-item-header">
         <!-- post header buttons -->
         <span class="post-admin-buttons">
+          <!-- TODO: component -->
           <!-- show details button -->
           <button 
             ref="postHandle"
             class="post-admin-button accessible-button"
             @click.stop="togglePostDetails"
             :disabled="disabled"
-            :title="this.$t('showPostDetails')">
+            :title="this.$t('showPostDetails')"
+            :aria-label="this.$t('showPostDetails')">
             <span :class="this.showPostDetails ? 'fa fa-minus' : 'fa fa-plus'"></span>
           </button>
           <!-- go to next post button -->
@@ -19,7 +21,8 @@
             class="post-admin-button accessible-button"
             @click.stop="goToNextPost"
             :disabled="disabled"
-            :title="this.$t('goToNextPost')">
+            :title="this.$t('goToNextPost')"
+            :aria-label="this.$t('goToNextPost')">
             <span class="fa fa-arrow-down"></span>
           </button>
           <!-- go to previous post button -->
@@ -27,7 +30,8 @@
             class="post-admin-button accessible-button"
             @click.stop="goToPreviousPost"
             :disabled="disabled"
-            :title="this.$t('goToPreviousPost')">
+            :title="this.$t('goToPreviousPost')"
+            :aria-lable="this.$t('goToPreviousPost')">
             <span class="fa fa-arrow-up"></span>
           </button>
           <!-- toggle read status button -->
@@ -35,7 +39,8 @@
             class="post-admin-button accessible-button"
             @click.stop="togglePostReadStatus"
             :disabled="disabled"
-            :title="post.isRead ? this.$t('markPostAsUnread') : this.$t('markPostAsRead')">
+            :title="post.isRead ? this.$t('markPostAsUnread') : this.$t('markPostAsRead')"
+            :aria-label="this.$t('markPostAsUnread')">
             <span class="fa" :class="post.isRead ? 'fa-eye' : 'fa-eye-slash'"></span>
           </button>
           <!-- toggle read-later status button -->
@@ -43,7 +48,8 @@
             class="post-admin-button accessible-button"
             @click.stop="togglePostReadLaterStatus"
             :disabled="disabled"
-            :title="post.isReadLater ? this.$t('unmarkPostAsReadLater') : this.$t('markPostAsReadLater')">
+            :title="post.isReadLater ? this.$t('unmarkPostAsReadLater') : this.$t('markPostAsReadLater')"
+            :aria-label="this.$t('markPostAsReadLater')">
             <span :class="'fa ' + (post.isReadLater ? 'fa-bullseye' : 'fa-circle-o')"></span>
           </button>
           <!-- star button -->
@@ -73,15 +79,25 @@
             :aria-label="this.$t('openOriginalArticle')">
             <span class="fa fa-link"></span>
           </button>
+          <!-- toggle post categories -->
+          <button v-if="this.post.postCategories && this.post.postCategories.length > 0"
+            class="post-admin-button accessible-button"
+            @click.stop="togglePostCategories"
+            :disabled="disabled"
+            :title="this.$t('togglePostCategories')"
+            :aria-label="this.$t('togglePostCategories')">
+            <span class="fa fa-list"></span>
+          </button>
         </span>
         <!-- post header pills -->
-        <span class="post-item-header-pills pill-container">
+        <span class="post-item-header-pills pill-container" v-if="this.showPostCategories">
           <!-- post categories -->
           <button v-for="postCategory in post.postCategories" :key="postCategory"
             class="br-pill accessible-button"
             @click.stop="updateFeedFilter('category', postCategory)"
-            :title="'Add this category (' + postCategory + ') to the filter'">
-            {{  postCategory }}
+            :title="'Add this category (' + postCategory + ') to the filter'"
+            :aria-label="'Add this category (' + postCategory + ') to the filter'">
+            {{ postCategory }}
           </button>
         </span>
       </div>
@@ -254,6 +270,7 @@ export default {
   data() {
     return {
       showPostDetails: false,
+      showPostCategories: false,
     };
   },
   methods: {
@@ -323,6 +340,9 @@ export default {
     },
     togglePostDetails() {
       this.showPostDetails = !this.showPostDetails;
+    },
+    togglePostCategories() {
+      this.showPostCategories = !this.showPostCategories;
     },
     stagePost() {
       console.log("post-item: publishing post id=" + this.post.id);
