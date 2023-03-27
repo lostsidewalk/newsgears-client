@@ -61,9 +61,9 @@
                 </div>
               </template>
               <template v-slot:toolbar>
-                <FeedDashboardButtons v-if="this.showQueueDashboard"
+                <FeedDashboardButtons v-if="this.showQueueDashboard && !this.showFeedConfigPanel && !this.showOpmlUploadPanel"
                   :selectedFeedId="this.selectedFeedId" 
-                  :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
+                  :disabled="disabled || inTransit || isModalShowing"
                   :theme="theme" 
                   @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
                   @configureFeed="this.configureFeed(this.selectedFeedId)" 
