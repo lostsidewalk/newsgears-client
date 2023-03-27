@@ -36,7 +36,7 @@
             :sticky="true" 
             :collapsible="true" 
             :show="this.showQueueDashboard" 
-            :disabled="disabled || inTransit || isModalShowing" 
+            :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
             :inTransit="inTransit" 
             :theme="theme"
             @toggle="this.showQueueDashboard = !this.showQueueDashboard">
@@ -53,7 +53,7 @@
                         :inboundCount="this.countInboundQueue(feed.id)" 
                         :publishedCount="this.countOutboundQueue(feed.id)" 
                         :class="this.selectedFeedId === feed.id ? 'selected-feed' : ''"
-                        :disabled="disabled || inTransit || isModalShowing" 
+                        :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                         :theme="theme" 
                         @click.stop="this.setSelectedFeedId(feed.id)" />
                     </div>
@@ -63,7 +63,7 @@
               <template v-slot:toolbar>
                 <FeedDashboardButtons v-if="this.showQueueDashboard"
                   :selectedFeedId="this.selectedFeedId" 
-                  :disabled="disabled || inTransit || isModalShowing"
+                  :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
                   :theme="theme" 
                   @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
                   @configureFeed="this.configureFeed(this.selectedFeedId)" 
@@ -81,7 +81,7 @@
             <ViewHeader :collapsible="true" 
               @toggle="this.showFullInboundQueueHeader = !this.showFullInboundQueueHeader" 
               :show="this.showFullInboundQueueHeader" 
-              :disabled="disabled || inTransit || isModalShowing" 
+              :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
               :inTransit="false" 
               :theme="theme">
               <template v-slot:count>
@@ -98,7 +98,7 @@
                   @update:modelValue="this.inboundQueueFilter = $event"
                   :inboundQueueFilter="this.inboundQueueFilter"
                   :queueLength="this.filteredInboundQueue.length"
-                  :disabled="disabled || inTransit || isModalShowing" 
+                  :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                   :theme="theme" />
                 <!-- feed filter pills -->
                 <FeedFilterPills v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
@@ -114,7 +114,7 @@
                   :selectedFeedFilterSubscriptions="selectedFeedFilterSubscriptions"
                   :allPostCategories="allPostCategories"
                   :selectedFeedFilterCategories="selectedFeedFilterCategories"
-                  :disabled="disabled || inTransit || isModalShowing"
+                  :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
                   :theme="theme" />
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
@@ -127,7 +127,7 @@
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" :post="post"
                 :id="'post_' + post.id"
                 :ref="'post_' + post.id"
-                :disabled="disabled || inTransit || isModalShowing"
+                :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
                 :theme="theme" 
                 :baseUrl="baseUrl"
                 :isSelected="this.selectedPostId === post.id"
@@ -369,7 +369,7 @@ export default {
       return this.getSelectedFeed().rssAtomFeedUrls;
     },
     isModalShowing: function() {
-      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showHelpPanel);
+      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
     }
   },
   data() {
@@ -1408,7 +1408,7 @@ export default {
       }
       // esc key handling 
       if (event.key === 'Escape') {
-        if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel) {
+        if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel && !this.showFeedConfigPanel && !this.showOpmlUploadPanel) {
           document.activeElement.blur();
         } else {
           // TODO: extract to cancelFeedDelete' 
@@ -1426,7 +1426,7 @@ export default {
         return;
       }
       // bail if a modal is showing
-      if (this.isModalShowing || this.$refs.controlPanel.showSettingsPanel) {
+      if (this.isModalShowing || this.$refs.controlPanel.showSettingsPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel) {
         return;
       }
       // handle post-related key events 
