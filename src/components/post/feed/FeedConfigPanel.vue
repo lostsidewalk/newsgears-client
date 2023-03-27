@@ -10,8 +10,22 @@
           @selectTab="this.selectedTab = $event" />
         <!-- tab panel -->
         <div class="tabbed-panel">
-          <!-- tab 1: basic properties -->
-          <div class="tab" v-show="this.selectedTab === 'BASIC_PROPERTIES'">
+          <!-- tab 1: RSS/ATOM Feed Discovery -->
+          <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
+            <!-- Upstream RSS/ATOM URLs -->
+            <UpstreamSourcesConfig 
+              ref="upstreamSourcesConfig"
+              :disabled="disabled || inTransit" 
+              :theme="theme" 
+              :baseUrl="baseUrl"
+              :rssAtomFeedUrls="this.rssAtomFeedUrls" 
+              @addRssAtomUrl="this.addRssAtomUrl" 
+              @deleteRssAtomUrl="this.deleteRssAtomUrl"
+              @update:rssAtomFeedUrl="updateRssAtomFeedUrl" 
+              @authError="handleAuthError" />
+          </div>
+          <!-- tab 2: queue properties -->
+          <div class="tab" v-show="this.selectedTab === 'QUEUE_PROPERTIES'">
             <!-- feed ident -->
             <FeedConfigTextField 
               ref="feedIdent"
@@ -89,20 +103,6 @@
               :errorValue="v$.feedLanguage.$errors" 
               :helpText="this.$t('queueFeedLanguageHelpText')"
               @update:modelValue="v$.feedLanguage.$model = $event" />
-          </div>
-          <!-- tab 3: RSS/ATOM Feed Discovery -->
-          <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
-            <!-- Upstream RSS/ATOM URLs -->
-            <UpstreamSourcesConfig 
-              ref="upstreamSourcesConfig"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :baseUrl="baseUrl"
-              :rssAtomFeedUrls="this.rssAtomFeedUrls" 
-              @addRssAtomUrl="this.addRssAtomUrl" 
-              @deleteRssAtomUrl="this.deleteRssAtomUrl"
-              @update:rssAtomFeedUrl="updateRssAtomFeedUrl" 
-              @authError="handleAuthError" />
           </div>
         </div>
       </div>
@@ -186,19 +186,19 @@ export default {
       showModal: false,
       tabModel: [
         {
-          "name": "BASIC_PROPERTIES",
-          "description": this.$t('queueProperties'),
-          "icon": "list",
-        },
-        {
           "name": "RSS_ATOM_DISCOVERY",
           "description": this.$t('rssFeedDiscovery'),
           "icon": "feed",
-        }
+        },
+        {
+          "name": "QUEUE_PROPERTIES",
+          "description": this.$t('queueProperties'),
+          "icon": "list",
+        },
       ],
       // 
       inTransit: false, 
-      // basic properties 
+      // queue properties 
       feed: null,
       feedId: null,
       feedIdent: '',
@@ -211,7 +211,7 @@ export default {
       // RSS/ATOM feed query properties 
       rssAtomFeedUrls: [],
       // currently selected tab 
-      selectedTab: 'BASIC_PROPERTIES',
+      selectedTab: 'RSS_ATOM_DISCOVERY',
     };
   },
   methods: {
@@ -347,7 +347,7 @@ export default {
     },
     // 
     clearModel() {
-      this.selectedTab = 'BASIC_PROPERTIES';  
+      this.selectedTab = 'RSS_ATOM_DISCOVERY';  
     }
   }
 }
