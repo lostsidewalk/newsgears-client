@@ -47,7 +47,7 @@
       <!-- save | cancel | back buttons -->
       <div class="opml-upload-button-wrapper">
         <!-- continue/finalize button -->
-        <button class="opml-upload-button" 
+        <button class="opml-upload-button accessible-button" 
           @click="this.feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()" 
           :disabled="disabled || inTransit || (!this.files.length)" 
           :title="this.feedConfigRequests.length > 0 ? this.$t('finalizeUpload') : (this.files.length ? this.$t('continue') : this.$t('addAtLeastOneFile'))"
@@ -56,12 +56,12 @@
         </button>
         <button v-if="atStep2" 
           @click="returnToStep1"   
-          class="opml-upload-button" 
+          class="opml-upload-button accessible-button" 
           :disabled="disabled || inTransit">
           {{ this.$t('goBack') }}
         </button>
         <button @click="cancelOpmlUpload" 
-          class="opml-upload-button" 
+          class="opml-upload-button accessible-button" 
           :disabled="disabled || inTransit">
           {{ this.$t('cancel') }}
         </button>
