@@ -22,6 +22,7 @@ export default {
   float: left;
   border-radius: 4px;
   margin: .56rem;
+  place-self: center;
 }
 
 .feedgears-logo:hover, .feedgears-focus {

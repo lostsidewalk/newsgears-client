@@ -774,7 +774,11 @@ export default {
             let post = rawPosts[i];
             this.inboundQueuesByFeed[post.feedId].push(post);
           }
-          this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+          if (this.feeds.length === 1) {
+            this.setSelectedFeedId(this.feeds[0].id);
+          } else {
+            this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+          }
           this.inTransit = false; // end of refreshFeeds 
         });
       }).catch((error) => {

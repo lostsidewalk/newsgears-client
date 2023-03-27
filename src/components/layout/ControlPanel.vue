@@ -1,13 +1,15 @@
 <template>
   <div v-auto-animate>
-    <div>
+    <div class="control-panel-wrapper">
       <FeedGearsLogo :theme="theme" />
-      <!-- logout button, don't disable -->
-      <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="false" :theme="theme" />
-      <!-- settings button -->
-      <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
-      <!-- display mode switch, don't disable -->
-      <DisplayModeButton :baseUrl="baseUrl" :disabled="false" :theme="theme" />
+      <div class="control-panel-buttons">
+        <!-- logout button, don't disable -->
+        <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="false" :theme="theme" />
+        <!-- settings button -->
+        <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
+        <!-- display mode switch, don't disable -->
+        <DisplayModeButton :baseUrl="baseUrl" :disabled="false" :theme="theme" />
+      </div>
     </div>
     <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
       :theme="theme" 
@@ -55,5 +57,18 @@ export default {
 <style scoped>
 * {
   user-select: none;
+}
+
+.control-panel-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-panel-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 </style>
