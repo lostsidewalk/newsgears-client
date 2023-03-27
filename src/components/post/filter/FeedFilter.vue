@@ -126,7 +126,7 @@ export default {
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
+  padding-top: .125rem;
   cursor: pointer;
   float: right;
   border-radius: 4px;
