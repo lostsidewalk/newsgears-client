@@ -211,7 +211,6 @@ const i18n = createI18n({
       samplingRateColon: 'TASA DE MUESTREO:',
       // opml 
       opmlFilesColon: 'ARCHIVOS OPML:',
-      filenameColon: 'NOMBRE DEL ARCHIVO:',
       previewThisFile: 'Obtenga una vista previa de este archivo en una nueva ventana.', 
       opmlFilesContainErrors: 'Sus archivos contienen los siguientes problemas. Resuelva estos problemas y vuelva a intentar la carga.',
       weWillCreateTheFollowingSubscriptions: 'Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:',
@@ -545,7 +544,6 @@ const i18n = createI18n({
       samplingRateColon: 'SAMPLING RATE:',
       // opml 
       opmlFilesColon: 'OPML FILES:',
-      filenameColon: 'FILENAME:',
       previewThisFile: 'Preview this file in a new window.', 
       opmlFilesContainErrors: 'Your files contain the following problems.  Please resolve these issues and re-attempt your upload.',
       weWillCreateTheFollowingSubscriptions: 'We will create the following queues from your OPML file(s):',

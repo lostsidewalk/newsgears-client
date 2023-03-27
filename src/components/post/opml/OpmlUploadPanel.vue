@@ -8,7 +8,7 @@
           <label>{{ this.$t('opmlFilesColon') }}</label>
           <div class="opml-file-wrapper" v-for="file of this.files" :key="file.id">
             <div class="opml-file-row">
-              {{ this.$t('filenameColon') }} <a :href="file.url" :target="file.id" :title="this.$t('previewThisFile')">{{ file.file.name }}</a>
+              <a :href="file.url" :target="file.id" :title="this.$t('previewThisFile')">{{ file.file.name }}</a>
               <button v-if="!atStep2" 
                 class="opml-file-action-button accessible-button" 
                 @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" 
@@ -323,8 +323,10 @@ export default {
 }
 
 .opml-file-row {
-  display: inline;
-  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .opml-file-row > a {
