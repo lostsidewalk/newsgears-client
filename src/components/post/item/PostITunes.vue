@@ -19,7 +19,7 @@
       <div class="br-pill-subdued" v-if="this.iTunes.epiosodeType"> {{ this.iTunes.epiosodeType + ' episode' }}</div>
       <!-- <div class="br-pill-subdued" v-if="this.iTunes.duration"> {{ this.iTunes.duration.milliseconds + ' ms' }}</div> -->
       <div class="br-pill-subdued" v-for="keyword of this.iTunes.keywords" :key="keyword">{{ keyword }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.closeCaptioned === true">{{ this.$t('closeCaptioned') }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.closeCaptioned === true">{{ this.$t('closedCaptioned') }}</div>
       <div class="br-pill-subdued" v-if="this.iTunes.summary">{{ this.iTunes.summary }}</div>
     </div>
   </div>
