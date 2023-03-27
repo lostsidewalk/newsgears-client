@@ -27,7 +27,7 @@
             <!-- feed title -->
             <FeedConfigTextField 
               :label="this.$t('queueTitle')"
-              :required="true"
+              :required="false"
               :placeholder="this.$t('queueTitle')" 
               :disabled="disabled || inTransit" 
               :theme="theme" 
@@ -164,7 +164,6 @@ export default {
         maxLength: maxLength(256),
       },
       feedTitle: { 
-        required,
         maxLength: maxLength(512),
       },
       feedDescription: {

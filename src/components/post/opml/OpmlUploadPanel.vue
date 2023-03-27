@@ -19,7 +19,7 @@
             </div>
           </div>
           <div class="opml-upload-errors" v-if="this.errors.length > 0">
-            {{ this.$t('opmlFileContainsErrors') }}
+            {{ this.$t('opmlFilesContainErrors') }}
             <div class="error opml-upload-error" v-for="error in this.errors" :key="error">
               {{ error }}
             </div>
