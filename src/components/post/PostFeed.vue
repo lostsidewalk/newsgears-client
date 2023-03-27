@@ -774,7 +774,7 @@ export default {
             let post = rawPosts[i];
             this.inboundQueuesByFeed[post.feedId].push(post);
           }
-          if (this.feeds.length === 1) {
+          if (this.feeds.length === 1 && !this.selectedFeedId) {
             this.setSelectedFeedId(this.feeds[0].id);
           } else {
             this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
