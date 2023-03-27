@@ -203,7 +203,7 @@ const i18n = createI18n({
       filenameColon: 'FILENAME:',
       previewThisFile: 'Preview this file in a new window.', 
       opmlFilesContainErrors: 'Your files contain the following problems.  Please resolve these issues and re-attempt your upload.',
-      weWillCreateTheFollowingSubscriptions: 'We will create the following feeds from your OPML file(s):',
+      weWillCreateTheFollowingSubscriptions: 'We will create the following queues from your OPML file(s):',
       selectAnOpmlFile: 'Select an OPML file',
       addAnOpmlFile: 'Add an OPML file', 
       finalizeUpload: 'Finalize upload',

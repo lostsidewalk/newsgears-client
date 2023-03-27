@@ -20,13 +20,7 @@
           <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">{{ this.$t('samplingRateColon') }} &nbsp; {{ this.mediaContent.samplingRate }}</div>
         </div>
       </div>
-      <img v-if="isImage() && this.showContents"
-        :src="this.mediaContent.reference.uri"
-        class="post-media-content-image" 
-        tabindex="0" 
-        :alt="this.$t('postMediaContentImage')" 
-        loading="lazy" />
-      <div v-else-if="isVideo() && this.showContents" class="post-media-content-video">
+      <div v-if="isVideo() && this.showContents" class="post-media-content-video">
         <vue-plyr ref="player">
           <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
             <iframe style="border: 0px; width:100%;"
@@ -37,6 +31,12 @@
           </div>
         </vue-plyr>
       </div>
+      <img v-else-if="this.showContents"
+        :src="this.mediaContent.reference.uri"
+        class="post-media-content-image" 
+        tabindex="0" 
+        :alt="this.$t('postMediaContentImage')" 
+        loading="lazy" />
         <!-- PLAY BUTTON PLACEHOLDER -->
       <!-- <div v-else-if="isAudio() && this.showContents" class="post-media-content-audio">
         <button class="fa fa-play audio-player-control" @click="this.$emit('audioPlay', { url: this.mediaContent.reference.uri })" />
@@ -56,19 +56,19 @@ export default {
     PostMediaMetadata,
   },
   mounted() {
+    console.log("this.mediaContent=" + JSON.stringify(this.mediaContent));
     if (this.isVideo()) {
       this.$refs.player.player.on('playing', () => this.$emit('playing'));
     }
   },
   methods: {
     pause() {
-      this.$refs.player.player.pause();
+      if (this.isVideo()) {
+        this.$refs.player.player.pause();
+      }
     },
     hasUseableMetadata() {
       return this.mediaContent.metadata.thumbnail && this.mediaContent.metadata.thumbnail.length > 0;
-    },
-    isImage() {
-      return this.mediaContent.medium === "image" || this.mediaContent.type.indexOf("image") === 0;
     },
     isVideo() {
       return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("video/mp4") >= 0);
