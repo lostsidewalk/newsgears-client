@@ -34,7 +34,7 @@
         }">
           <ViewHeader 
             :sticky="true" 
-            :collapsible="true" 
+            :collapsible="windowWidth < 1024 || this.selectedFeedId === null" 
             :show="this.showQueueDashboard" 
             :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
             :inTransit="inTransit" 
@@ -265,6 +265,9 @@ export default {
         this.refreshFeeds(true, null, true); // need staging posts for all feeds and feed definitions 
     }
     window.onwheel = this.wheelHandler;
+    window.addEventListener('resize', () => {
+      this.windowWidth = window.innerWidth;
+    });
   },
   beforeUnmount() {
     window.removeEventListener("keydown", this.eventHandler);
@@ -374,6 +377,8 @@ export default {
   },
   data() {
     return {
+      // reactive window (inner) width 
+      windowWidth: window.innerWidth,
       // operating mode 
       feedIdToDelete: null, 
       feedIdToMarkAsRead: null,
