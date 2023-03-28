@@ -25,7 +25,8 @@ const routes = [
     title: 'FeedGears RSS',
 		component: HomeView,
 		props: {
-			baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
+			baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      feedUrl: process.env.VUE_APP_FEEDGEARS_FEED_URL,
 		}
 	},
 	{

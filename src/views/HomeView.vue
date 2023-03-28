@@ -14,6 +14,7 @@
       :theme="theme" />
     <PostFeed ref="postFeed" 
       :baseUrl="this.baseUrl" 
+      :feedUrl="this.feedUrl"
       :theme="theme" 
       :disabled="inTransit" 
       @updateServerMessage="setLastServerMessage" />
@@ -35,7 +36,7 @@ export default {
     AuthPanel,
     PostFeed,
   },
-  props: ["baseUrl"],
+  props: ["baseUrl", "feedUrl"],
   mounted() {
     this.$auth.getTokenSilently()
       .catch(() => {})

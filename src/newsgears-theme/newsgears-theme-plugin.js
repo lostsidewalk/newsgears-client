@@ -22,7 +22,6 @@ const DEFAULT_LIGHT_THEME = {
   lightshadow: '#101010',
   darkshadow: '#202020',
   accentshadow: '#00ffff',
-  sectionbg: '#dddddd', 
   sectionsubdued: '#484848',
   sectionhighlight: '#eeeeee',
   sectionbrighthighlight: '#dddddd', 
@@ -60,7 +59,6 @@ const DEFAULT_DARK_THEME = {
   lightshadow: '#202020',
   darkshadow: '#000000',
   accentshadow: '#ff0000',
-  sectionbg: '#171717',
   sectionsubdued: '#484848',
   sectionhighlight: '#212121',
   sectionbrighthighlight: '#171717',
@@ -102,7 +100,6 @@ export default {
       app.config.globalProperties.$theme.currentTheme.accentshadow = theme.accentshadow;
       app.config.globalProperties.$theme.currentTheme.logoshadowcolor = theme.logoshadowcolor;
       app.config.globalProperties.$theme.currentTheme.navbarshadow = theme.navbarshadow;
-      app.config.globalProperties.$theme.currentTheme.sectionbg = theme.sectionbg;
       app.config.globalProperties.$theme.currentTheme.sectionbrighterhighlight = theme.sectionbrighterhighlight;
       app.config.globalProperties.$theme.currentTheme.sectionbordercolor = theme.sectionbordercolor;
       app.config.globalProperties.$theme.currentTheme.sectionsubdued = theme.sectionsubdued;
@@ -205,7 +202,6 @@ export default {
         { name: 'accentshadow', shortDescription: 'Headers and label shadow', longDescription: 'Shadow color applied to headers and labels.' },
         { name: 'logoshadowcolor', shortDescription: 'Logo shadow', longDescription: 'Shadow color of the logo, visible behind the queue dashboard.' },
         { name: 'navbarshadow', shortDescription: 'Loading animation', longDescription: 'Loading animation color.' },
-        { name: 'sectionbg', shortDescription: 'Article header', longDescription: 'Article header background color.' },
         { name: 'sectionbrighterhighlight', shortDescription: 'Article section background color', longDescription: 'Article body background color.' },
         { name: 'sectionbordercolor', shortDescription: 'Article section inner border color', longDescription: 'Border color around sections of the article.' },
         { name: 'sectionsubdued', shortDescription: 'Article text (read)', longDescription: 'Body color for articles marked as read.' },

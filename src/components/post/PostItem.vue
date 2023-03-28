@@ -421,6 +421,7 @@ export default {
 .post-item-body {
   margin-top: 0rem;
   text-align: initial;
+  background-color: v-bind('theme.sectionhighlight');
 }
 
 .post-item-row {
@@ -457,7 +458,7 @@ export default {
   padding-right: .44rem;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: v-bind('theme.sectionbg');
+  background-color: v-bind('theme.sectionhighlight');
   cursor: pointer;
   user-select: none;
   display: flex;
@@ -533,7 +534,6 @@ export default {
   margin-left: .75rem;
   margin-right: .75rem;
   border-radius: 4px;
-  background-color: v-bind('theme.sectionbrighterhighlight');
 }
 
 .post-wrapper:hover, .post-wrapper:focus-visible {

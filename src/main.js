@@ -100,10 +100,12 @@ const i18n = createI18n({
       deleteThisQueue: 'Eliminar esta cola',
       weWillNotSellOrDiscloseYourInformation: 'Tenga en cuenta que nunca venderemos ni divulgaremos su información personal a nadie.',
       // queue select button 
-      showSubscriptions: 'Mostrar suscripciones',
-      hideSubscriptions: 'Ocultar suscripciones',
+      showMoreInfo: 'Mostrar suscripciones',
+      hideMoreInfo: 'Ocultar suscripciones',
       subscriptions: 'SUSCRIPCIONES',
+      publications: 'PUBLICACIONES',
       zeroSubscriptions: '0 suscripciones',
+      starredArticlesAvailableHere: 'Los artículos destacados en esta cola están disponibles en los siguientes feeds.',
       // queue config image field 
       clickToChangeQueueImage: 'Haga clic aquí para cambiar la imagen de la cola.',
       clickToAddQueueImage: 'Haga clic aquí para agregar una imagen de cola.', 
@@ -433,10 +435,12 @@ const i18n = createI18n({
       deleteThisQueue: 'Delete this queue',
       weWillNotSellOrDiscloseYourInformation: 'Please note that we will neve sell or disclose your personal information to anyone.',
       // queue select button 
-      showSubscriptions: 'Show subscriptions',
-      hideSubscriptions: 'Hide subscriptions',
+      showMoreInfo: 'Show details',
+      hideMoreInfo: 'Hide details',
       subscriptions: 'SUBSCRIPTIONS',
+      publications: 'PUBLICATIONS',
       zeroSubscriptions: '0 subscriptions',
+      starredArticlesAvailableHere: 'The starred articles in this queue are available in the following feeds.',
       // queue config image field 
       clickToChangeQueueImage: 'Click here to change the queue image.',
       clickToAddQueueImage: 'Click here to add a queue image.', 

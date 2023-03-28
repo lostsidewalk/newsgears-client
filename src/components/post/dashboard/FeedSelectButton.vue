@@ -29,7 +29,7 @@
         @click.stop="toggleMoreInformation()" 
         @keypress.enter.prevent="toggleMoreInformation()" 
         tabindex="0">
-        {{ this.showMoreInformation ? this.$t('hideSubscriptions') : this.$t('showSubscriptions') }}
+        {{ this.showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
       </a>
       <span v-if="feed.rssAtomFeedUrls.length === 0">
         {{ this.$t('zeroSubscriptions') }}
@@ -56,6 +56,38 @@
           <!-- feed title w/direct link -->
           {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
         </label>
+        <!-- publications -->
+        <label class="feed-info-label-small">
+          {{ this.$t('publications') }}
+        </label>
+        <button class="helptext fa fa-question" :title="this.$t('starredArticlesAvailableHere')"/>
+        <label class="feed-info-label subscription-label">
+          <a class="link" 
+            :href="this.feedUrl + '/feed/json/' + this.feed.transportIdent" 
+            target="_blank"
+            :disabled="disabled">
+            <span class="fa fa-link fa-1x" />
+          </a>
+          JSON
+        </label>
+        <label class="feed-info-label subscription-label">
+          <a class="link" 
+            :href="this.feedUrl + '/feed/rss/' + this.feed.transportIdent" 
+            target="_blank"
+            :disabled="disabled">
+            <span class="fa fa-link fa-1x" />
+          </a>
+          RSS
+        </label>
+        <label class="feed-info-label subscription-label">
+          <a class="link" 
+            :href="this.feedUrl + '/feed/atom/' + this.feed.transportIdent" 
+            target="_blank"
+            :disabled="disabled">
+            <span class="fa fa-link fa-1x" />
+          </a>
+          ATOM
+        </label>
       </div>
     </div>
   </button>
@@ -64,7 +96,7 @@
 <script>
 export default {
   name: "FeedSelectButton",
-  props: ["feed", "inboundCount", "publishedCount", "disabled", "theme"],
+  props: ["feed", "feedUrl", "inboundCount", "publishedCount", "disabled", "theme"],
   methods: {
     hasFeedMetrics(rssAtomFeedUrl) {
       return rssAtomFeedUrl.feedMetrics && rssAtomFeedUrl.feedMetrics.length > 0;
@@ -227,5 +259,16 @@ export default {
   padding-top: .44rem;
   overflow: auto;
   max-height: 25svh;
+}
+
+.helptext {
+  background-color: unset;
+  border: 1px solid v-bind('theme.buttonborder');
+  color: v-bind('theme.buttonfg');;
+  cursor: help;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: .125rem;
+  margin-left: .44rem;
 }
 </style>

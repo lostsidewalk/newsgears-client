@@ -50,6 +50,7 @@
                     <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
                       <FeedSelectButton 
                         :feed="feed" 
+                        :feedUrl="this.feedUrl"
                         :inboundCount="this.countInboundQueue(feed.id)" 
                         :publishedCount="this.countOutboundQueue(feed.id)" 
                         :class="this.selectedFeedId === feed.id ? 'selected-feed' : ''"
@@ -250,7 +251,7 @@ export default {
     FeedDashboardButtons,
   },
   name: "PostFeed",
-  props: [ "baseUrl", "disabled", "theme" ],
+  props: [ "baseUrl", "feedUrl", "disabled", "theme" ],
   emits: [ "updateServerMessage" ],
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {
@@ -346,6 +347,7 @@ export default {
           "feedStatus": t[i].feedStatus,
           "lastDeployed": t[i].lastDeployed,
           "rssAtomFeedUrls": t[i].rssAtomFeedUrls,
+          "transportIdent": t[i].transportIdent,
         });
       }
       feedIdentOptions.sort((a, b) => {

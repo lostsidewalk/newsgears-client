@@ -255,6 +255,7 @@ export default {
   border-radius: 4px;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   border: 1px solid v-bind('theme.sectionbordercolor');
+  background-color: v-bind('theme.sectionhighlight');
 }
 
 .opml-upload-field label {
@@ -312,7 +313,6 @@ export default {
 }
 
 .opml-file-wrapper {
-  background-color: v-bind('theme.sectionbrighterhighlight');
   padding: .75rem;
   border-radius: 4px;
 }
@@ -369,6 +369,7 @@ export default {
   overflow-y: auto;
   border: 1px solid;
   border-radius: 4px;
+  background-color: v-bind('theme.sectionbrighterhighlight');
 }
 
 .opml-upload-summary-wrapper:last-of-type {

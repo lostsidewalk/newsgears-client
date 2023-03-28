@@ -814,7 +814,6 @@ export default {
 }
 
 .modal-body {
-  background: v-bind('theme.modalbodybg');
   color: v-bind('theme.normalmessage');
   text-align: left;
   width: 100%;
@@ -860,6 +859,7 @@ export default {
   border-radius: 0px 0px 3px 3px;
   margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
+  background-color: v-bind('theme.sectionhighlight');
 }
 
 .tab {
