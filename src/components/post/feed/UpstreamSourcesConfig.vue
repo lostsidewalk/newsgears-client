@@ -2,7 +2,7 @@
   <div class="feed-config-field" v-auto-animate>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <!-- label -->
-    <label>{{ this.$t('upstreamRssAtomSources') }} &nbsp; {{ needsPagination() ? (this.$t('showingPageN') + ' ' + this.currentPage + '/' + this.totalPages) : '' }}</label>
+    <label>{{ this.$t('upstreamRssAtomSources') }} {{ needsPagination() ? (this.$t('showingPageN') + ' ' + this.currentPage + '/' + this.totalPages) : '' }}</label>
     <div class="feed-config-button-wrapper">
       <!-- add RSS/ATOM feed URL button -->
       <button 
@@ -52,7 +52,7 @@
       <div class="feed-config">
         <!-- feed config items -->
         <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx">
-          {{ this.$t('subscriptionNofM') }} &nbsp; {{ idx + 1 }}/{{ this.rssAtomFeedUrls.length }}
+          {{ this.$t('subscriptionNofM') }} {{ idx + 1 }}/{{ this.rssAtomFeedUrls.length }}
           <!-- url input field w/refresh and delete buttons -->
           <div class="rss-atom-url-row">
             <label>

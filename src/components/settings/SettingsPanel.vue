@@ -116,7 +116,7 @@
             </div>
 
             <p>
-              {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? this.$t('emailNotificationsAreDisabled') : this.$t('emailNotificationsAreEnabled') }} &nbsp; {{ this.$t('weWillNotSellOrDiscloseYourInformation') }} 
+              {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? this.$t('emailNotificationsAreDisabled') : this.$t('emailNotificationsAreEnabled') }} {{ this.$t('weWillNotSellOrDiscloseYourInformation') }} 
             </p>
 
             <div class="settings-field settings-inline-field">
@@ -146,7 +146,7 @@
             </div>
 
             <div v-if="this.subscription">
-              <!-- TODO: fix interpolated strings -->
+              <!-- TODO: interpolated string -->
               <p>Your subscription is currently {{ getSubscriptionStatus() }}.  It began at {{ getSubscriptionStarted() }}.</p>
 
               <p v-if="isCanceled()">{{ this.$t('yourSubscriptionWasCanceled') }}</p>
@@ -168,14 +168,14 @@
 
               <div class="settings-field" v-if="hasLastInvoice()">
                 <label>{{ this.$t('mostRecentInvoice') }} ({{ getLastInvoiceCreated() }})</label>
-                <label>{{ this.$t('statusColon') }} &nbsp; {{ getLastInvoiceStatus() }}</label> 
-                <label>{{ this.$t('amountDueColon') }} &nbsp; {{ getAmountDue() }}</label>
-                <label>{{ this.$t('amountPaidColon') }} &nbsp; {{ getAmountPaid() }}</label>
-                <label>{{ this.$t('amountRemainingColon') }} &nbsp; {{ getAmountRemaining() }}</label>
-                <label>{{ this.$t('customerEmailAddressColon') }} &nbsp; {{ getCustomerEmailAddress() }}</label>
-                <label>{{ this.$t('customerNameColon') }} &nbsp; {{ getCustomerName() }}</label>
+                <label>{{ this.$t('statusColon') }} {{ getLastInvoiceStatus() }}</label> 
+                <label>{{ this.$t('amountDueColon') }} {{ getAmountDue() }}</label>
+                <label>{{ this.$t('amountPaidColon') }} {{ getAmountPaid() }}</label>
+                <label>{{ this.$t('amountRemainingColon') }} {{ getAmountRemaining() }}</label>
+                <label>{{ this.$t('customerEmailAddressColon') }} {{ getCustomerEmailAddress() }}</label>
+                <label>{{ this.$t('customerNameColon') }} {{ getCustomerName() }}</label>
                 <label>{{ this.$t('invoiceUrlColon') }} <a :href="getHostedInvoiceUrl()" target="_blank">{{ this.$t('clckHere') }}</a></label>
-                <label>{{ this.$t('productColon') }} &nbsp; {{ getProductDescription() }}</label>
+                <label>{{ this.$t('productColon') }} {{ getProductDescription() }}</label>
               </div>
 
               <div class="account-management-buttons">

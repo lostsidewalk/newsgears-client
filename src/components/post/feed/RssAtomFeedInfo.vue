@@ -4,6 +4,7 @@
       <!-- left chunk (image) -->
       <div class="left">
         <!-- icon -->
+        <!-- TODO: component -->
         <div class="rss-atom-feed-info-image">
           <a v-if="this.info.icon" :href="this.info.icon.link" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank" tabindex="0">
             <img :src="'data:image/png;base64,' + this.info.icon.imgSrc" 
@@ -23,6 +24,7 @@
       <!-- right chunk (text) -->
       <div class="right">
         <!-- title -->
+        <!-- TODO: component -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-title">
           <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
             {{ this.info.title.value ? this.info.title.value : this.info.feedUrl }}
@@ -35,13 +37,13 @@
             :title="filterSupport ? this.$t('toggleAuthorFilter') : this.info.author"
             @click="updateFeedFilter('author', this.info.author)"
             :disabled="!filterSupport">
-            {{ this.$t('authorColon') }} &nbsp; {{ this.info.author }}
+            {{ this.$t('authorColon') }} {{ this.info.author }}
           </button>
         </div>
         <!-- copyright -->
         <div v-if="this.info.copyright" class="rss-atom-feed-info-field">{{ this.info.copyright }}</div>
         <!-- published date -->
-        <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field">{{ this.$t('lastPublishedColon') }} &nbsp; {{ this.info.publishedDate }}</div>
+        <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field">{{ this.$t('lastPublishedColon') }} {{ this.info.publishedDate }}</div>
         <!-- description -->
         <div class="rss-atom-feed-info-field">{{ this.info.description ? this.info.description.value : '' }}</div>
         <!-- sample entries -->
@@ -99,7 +101,7 @@
             :title="filterSupport ? this.$t('toggleManagingEditorFilter') : this.info.managingEditor"
             @click="updateFeedFilter('managingEditor', this.info.managingEditor)"
             :disabled="!filterSupport">
-            {{ this.$t('managingEditorColon') }} &nbsp; {{ this.info.managingEditor }}
+            {{ this.$t('managingEditorColon') }} {{ this.info.managingEditor }}
           </button>
           <!-- web master -->
           <button v-if="this.info.webMaster" 
@@ -108,7 +110,7 @@
             :title="filterSupport ? this.$t('toggleWebmasterFilter') : this.info.webMaster"
             @click="updateFeedFilter('webMaster', this.info.webMaster)"
             :disabled="!filterSupport">
-            {{ this.$t('webmasterColon') }} &nbsp; {{ this.info.webMaster }}
+            {{ this.$t('webmasterColon') }} {{ this.info.webMaster }}
           </button>
         </div>
         <div class="rss-atom-feed-info-field pill-container">

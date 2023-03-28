@@ -8,16 +8,16 @@
     <div>
       <div class="pill-container">
         <div class="inner-pill-container">
-          <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">{{ this.$t('audioChannelsColon')}} &nbsp; {{ this.mediaContent.audioChannels }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">{{ this.$t('bitRateColon') }} &nbsp; {{ this.mediaContent.bitRate }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.duration">{{ this.$t('durationColon') }} &nbsp; {{ this.mediaContent.duration }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.expression">{{ this.$t('expressionColon') }} &nbsp; {{ this.mediaContent.expression }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.fileSize">{{ this.$t('fileSizeColon') }} &nbsp; {{ this.mediaContent.fileSize }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.frameRate">{{ this.$t('frameRateColon') }} &nbsp; {{ this.mediaContent.frameRate }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.height">{{ this.$t('heightColon') }} &nbsp; {{ this.mediaContent.height }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.width">{{ this.$t('widthColon') }} &nbsp; {{ this.mediaContent.width }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.language">{{ this.$t('languageColon') }} &nbsp; {{ this.mediaContent.language }}</div>
-          <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">{{ this.$t('samplingRateColon') }} &nbsp; {{ this.mediaContent.samplingRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.audioChannels">{{ this.$t('audioChannelsColon')}} {{ this.mediaContent.audioChannels }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.bitRate">{{ this.$t('bitRateColon') }} {{ this.mediaContent.bitRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.duration">{{ this.$t('durationColon') }} {{ this.mediaContent.duration }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.expression">{{ this.$t('expressionColon') }} {{ this.mediaContent.expression }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.fileSize">{{ this.$t('fileSizeColon') }} {{ this.mediaContent.fileSize }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.frameRate">{{ this.$t('frameRateColon') }} {{ this.mediaContent.frameRate }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.height">{{ this.$t('heightColon') }} {{ this.mediaContent.height }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.width">{{ this.$t('widthColon') }} {{ this.mediaContent.width }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.language">{{ this.$t('languageColon') }} {{ this.mediaContent.language }}</div>
+          <div class="br-pill-subdued" v-if="this.mediaContent.samplingRate">{{ this.$t('samplingRateColon') }} {{ this.mediaContent.samplingRate }}</div>
         </div>
       </div>
       <div v-if="isVideo() && this.showContents" class="post-media-content-video">

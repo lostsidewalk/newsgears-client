@@ -1,7 +1,7 @@
 <template>
   <div class="article-queue">
     <!-- feed filter label -->
-    <label>{{ this.$t('articleQueue') }} &nbsp; {{ '(' + this.queueLength + ')' }}</label>
+    <label>{{ this.$t('articleQueue') }} {{ '(' + this.queueLength + ')' }}</label>
     <div class="feed-filter">
       <!-- feed filter input -->
       <input id="feed-filter" 

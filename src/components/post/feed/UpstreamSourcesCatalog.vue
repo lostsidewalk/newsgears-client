@@ -1,7 +1,7 @@
 <template>
   <div class="feed-config-field" v-auto-animate>
     <!-- feed catalog filter label -->
-    <label>{{ this.$t('feedCatalog') }} &nbsp; {{ '(' + this.filteredFeedCatalog.length + ' ' + this.$t('nFeedsMatchOnPageM') + ' ' + (this.currentPage + 1) + '/' + (this.totalPages > 0 ? this.totalPages : 1 ) + ')' }}</label>
+    <label>{{ this.$t('feedCatalog') }} {{ '(' + this.filteredFeedCatalog.length + ' ' + this.$t('nFeedsMatchOnPageM') + ' ' + (this.currentPage + 1) + '/' + (this.totalPages > 0 ? this.totalPages : 1 ) + ')' }}</label>
     <!-- feed catalog filter input w/pagination buttons -->
     <div class="feed-catalog-filter">
       <!-- feed catalog filter input -->
@@ -32,63 +32,63 @@
         @click="removeFilter('author', authorFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('authorColon') }} &nbsp; {{ this.trimToLength(authorFilter, 64) }}
+        {{ this.$t('authorColon') }} {{ this.trimToLength(authorFilter, 64) }}
       </button>
       <button v-for="categoryFilter in this.feedCatalogFilterCategories" 
         :key="categoryFilter" 
         @click="removeFilter('category', categoryFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('categoryColon') }} &nbsp; {{ this.trimToLength(categoryFilter, 64) }}
+        {{ this.$t('categoryColon') }} {{ this.trimToLength(categoryFilter, 64) }}
       </button>
       <button v-for="languageFilter in this.feedCatalogFilterLanguages" 
         :key="languageFilter" 
         @click="removeFilter('language', languageFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('languageColon') }} &nbsp; {{ this.trimToLength(languageFilter, 64) }}
+        {{ this.$t('languageColon') }} {{ this.trimToLength(languageFilter, 64) }}
       </button>
       <button v-for="docsFilter in this.feedCatalogFilterDocs" 
         :key="docsFilter" 
         @click="removeFilter('docs', docsFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('docsColon') }} &nbsp; {{ this.trimToLength(docsFilter, 64) }}
+        {{ this.$t('docsColon') }} {{ this.trimToLength(docsFilter, 64) }}
       </button>
       <button v-for="encodingFilter in this.feedCatalogFilterEncodings" 
         :key="encodingFilter" 
         @click="removeFilter('encoding', encodingFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('encodingColon') }} &nbsp; {{ this.trimToLength(encodingFilter, 64) }}
+        {{ this.$t('encodingColon') }} {{ this.trimToLength(encodingFilter, 64) }}
       </button>
       <button v-for="feedTypeFilter in this.feedCatalogFilterFeedTypes" 
         :key="feedTypeFilter" 
         @click="removeFilter('feedType', feedTypeFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('feedTypeColon') }} &nbsp; {{ this.trimToLength(feedTypeFilter, 64) }}
+        {{ this.$t('feedTypeColon') }} {{ this.trimToLength(feedTypeFilter, 64) }}
       </button>
       <button v-for="generatorFilter in this.feedCatalogFilterGenerators" 
         :key="generatorFilter" 
         @click="removeFilter('generator', generatorFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('generatorColon') }} &nbsp; {{ this.trimToLength(generatorFilter, 64) }}
+        {{ this.$t('generatorColon') }} {{ this.trimToLength(generatorFilter, 64) }}
       </button>
       <button v-for="managingEditorFilter in this.feedCatalogFilterManagingEditors" 
         :key="managingEditorFilter" 
         @click="removeFilter('managingEditor', managingEditorFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('managingEditorColon') }} &nbsp; {{ this.trimToLength(managingEditorFilter, 64) }}
+        {{ this.$t('managingEditorColon') }} {{ this.trimToLength(managingEditorFilter, 64) }}
       </button>
       <button v-for="webMasterFilter in this.feedCatalogFilterWebMasters" 
         :key="webMasterFilter" 
         @click="removeFilter('webMaster', webMasterFilter)" 
         class="br-pill accessible-button" 
         :title="this.$t('removeThisFilter')">
-        {{ this.$t('webmasterColon') }} &nbsp; {{ this.trimToLength(webMasterFilter, 64) }}
+        {{ this.$t('webmasterColon') }} {{ this.trimToLength(webMasterFilter, 64) }}
       </button>
     </div>
     <!-- feed catalog -->
