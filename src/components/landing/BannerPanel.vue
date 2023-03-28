@@ -9,7 +9,7 @@
         {{ this.$t('whatIsFeedGears') }}
       </h2>
       <h2 class="logosubtext fancy">
-        {{ this.$t('whyIsFeedGearsFree') }} &nbsp; <span class="fa fa-rss" />
+        {{ this.$t('whyIsFeedGearsFree') }} <span class="fa fa-rss" />
       </h2>
       <h3 class="logosubduedtext fancy">
         {{ this.$t('howYouCanSupportUs') }}

@@ -4,9 +4,11 @@
     <div class="filter-expression-container">
       <!-- TODO: interpolated string -->
       <div class="filter-expression" v-auto-animate>
-        {{ this.$t('viewingColon')}} &nbsp; <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
+        {{ this.$t('viewingColon')}} <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
         <span class="filter-subscriptions-expression">{{ this.filterSubscriptionsExpression }}</span>
-        <span v-if="this.selectedFeedFilterCategories.length > 0"> with categories in: <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.toString() }}</span></span>
+        <span v-if="this.selectedFeedFilterCategories.length > 0"> with categories in: 
+          <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.join(', ') }}</span>
+        </span>.
       </div>
     </div>
     <!-- clear button -->
@@ -66,12 +68,14 @@ export default {
       let subscriptionNames = [];
       if (this.allPostSubscriptions.length === 1) {
         subscriptionNames.push(this.allPostSubscriptions[0].feedTitle);
-      } else {
+      } else if (this.selectedFeedFilterSubscriptions.length > 0) {
         for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
           subscriptionNames.push(this.selectedFeedFilterSubscriptions[i]);
         }
+      } else {
+        subscriptionNames.push('all subscriptions');
       }
-       return (subscriptionNames.length > 0 ? (subscriptionNames.toString()) : '');
+      return (subscriptionNames.length > 0 ? (subscriptionNames.join(', ')) : '');
     },
     allFilterPills: function() {
       let filterPills = [
@@ -232,7 +236,7 @@ export default {
 }
 
 .filter-subscriptions-expression {
-  color: v-bind('theme.normalmessage');
+  color: v-bind('theme.highlightedmessage');
 }
 
 .filter-categories-expression {
