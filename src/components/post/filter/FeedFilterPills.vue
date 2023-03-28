@@ -23,7 +23,7 @@
         :title="filterPill.label"
         @click="filterPill.invoke"
         :disabled="disabled">
-        <img v-if="filterPill.image" :src="filterPill.image" loading="lazy" />
+        <img v-if="filterPill.image" :src="filterPill.image" />
         {{ filterPill.label }}
       </button>
     </div>

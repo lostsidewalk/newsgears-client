@@ -46,7 +46,7 @@
           v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
           :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
           <!-- feed logo image -->
-          <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" :alt="this.$t('feedLogoImage')" loading="lazy" /> 
+          <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" :alt="this.$t('feedLogoImage')" /> 
           <!-- RSS logo -->
           <img v-else src="rss_logo.svg" :alt="this.$t('rssLogo')" /> 
           <!-- last http status -->
