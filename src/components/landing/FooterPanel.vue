@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="links-view">
+      <!-- TODO: component -->
       <button class="footer-link" 
         :aria-label="this.$t('visitLSDevBlogAriaLabel')" 
         @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')">

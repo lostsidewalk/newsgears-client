@@ -202,7 +202,7 @@ export default {
 
 .filter-pills-buttons {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: .75rem;
   max-height: 25svh;
   overflow: auto;
@@ -210,7 +210,7 @@ export default {
 
 @media (max-width: 639px) {
   .filter-pills-buttons {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

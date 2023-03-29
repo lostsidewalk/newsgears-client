@@ -338,7 +338,7 @@ export default {
       let t = Array.from(this.feeds);
       for (let i = 0; i < Math.min(128, t.length); i++) {
         feedIdentOptions.push({
-          "label": t[i].title,
+          "label": t[i].title ? t[i].title : t[i].ident,
           "value": t[i].ident,
           "description": t[i].description,
           "title": t[i].title,
