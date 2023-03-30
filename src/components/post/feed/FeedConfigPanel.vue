@@ -3,6 +3,12 @@
     <div class="modal-body">
       <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
       <div class="modal-actions">
+        <!-- 'dismiss' button -->
+        <button class="feed-config-button accessible-button dismiss-button"
+          @click="cancelFeedConfig"
+          :disabled="disabled || inTransit">
+          {{ this.$t('dismiss') }}
+        </button>
         <TabHeader :tabModel="tabModel" 
           :selectedTab="selectedTab" 
           :disabled="disabled || inTransit" 
@@ -10,22 +16,42 @@
           @selectTab="this.selectedTab = $event" />
         <!-- tab panel -->
         <div class="tabbed-panel">
-          <!-- tab 1: RSS/ATOM Feed Discovery -->
-          <div class="tab" v-show="this.selectedTab === 'RSS_ATOM_DISCOVERY'">
-            <!-- Upstream RSS/ATOM URLs -->
-            <UpstreamSourcesConfig 
-              ref="upstreamSourcesConfig"
+          <!-- tab 1: subscription config, collection browser, catalog search -->
+          <div class="tab" v-show="this.selectedTab === 'SUBSCRIPTIONS_CONFIG'">
+            <!-- subscriptions config -->
+            <SubscriptionsConfig
+              ref="subscriptionsConfig"
+              :baseUrl="baseUrl"
               :disabled="disabled || inTransit" 
               :theme="theme" 
-              :baseUrl="baseUrl"
               :rssAtomFeedUrls="this.rssAtomFeedUrls" 
-              @addRssAtomUrl="this.addRssAtomUrl" 
-              @deleteRssAtomUrl="this.deleteRssAtomUrl"
-              @update:rssAtomFeedUrl="updateRssAtomFeedUrl" 
-              @authError="handleAuthError" />
+              @addRssAtomUrl="addRssAtomUrl" 
+              @deleteRssAtomUrl="deleteRssAtomUrl" 
+              @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
+              @authError="handleAuthError"
+              />
+          </div>
+          <div class="tab" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
+            <!-- collections browser -->
+            <FeedCollectionsBrowser
+              :disabled="disabled || inTransit"
+              :theme="theme"
+              :rssAtomFeedUrl="this.rssAtomFeedUrls"
+              @addRssAtomUrls="addRssAtomUrls" 
+              @deleteRssAtomUrl="deleteRssAtomUrl" />
+          </div>
+          <div class="tab" v-show="this.selectedTab === 'SEARCH_CATALOG'">
+            <!-- catalog search -->
+            <FeedCatalogSearch
+              :disabled="disabled || inTransit"
+              :theme="theme"
+              :rssAtomFeedUrls="this.rssAtomFeedUrls"
+              @addCatalogFeed="addCatalogFeed"
+              @deleteRssAtomUrl="deleteRssAtomUrl" />
           </div>
           <!-- tab 2: queue properties -->
           <div class="tab" v-show="this.selectedTab === 'QUEUE_PROPERTIES'">
+            <!-- TODO: component -->
             <!-- feed ident -->
             <FeedConfigTextField 
               ref="feedIdent"
@@ -103,24 +129,18 @@
               :errorValue="v$.feedLanguage.$errors" 
               :helpText="this.$t('queueFeedLanguageHelpText')"
               @update:modelValue="v$.feedLanguage.$model = $event" />
+            <!-- button panel -->
+            <div class="feed-config-button-wrapper">
+              <!-- save/update button -->
+              <button class="feed-config-button accessible-button"
+                @click="saveFeedConfig"
+                :disabled="disabled || inTransit || v$.$invalid"
+                :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue')">
+                {{ this.feed.id ? this.$t("update") : this.$t("save") }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- button panel -->
-      <div class="feed-config-button-wrapper">
-        <!-- save/update button -->
-        <button class="feed-config-button accessible-button" 
-          @click="saveFeedConfig" 
-          :disabled="disabled || inTransit || v$.$invalid"
-          :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : (this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue'))"> 
-          {{ this.feed.id ? this.$t('update') : this.$t('save') }}
-        </button>
-        <!-- cancel button -->
-        <button class="feed-config-button accessible-button" 
-          @click="cancelFeedConfig" 
-          :disabled="disabled || inTransit">
-          {{ this.$t('cancel') }}
-        </button>
       </div>
     </div>
   </div>
@@ -133,7 +153,9 @@ import FeedConfigTextField from './FeedConfigTextField.vue';
 import FeedConfigImageField from './FeedConfigImageField.vue';
 import { required, maxLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
-import UpstreamSourcesConfig from './UpstreamSourcesConfig.vue';
+import SubscriptionsConfig from './SubscriptionsConfig.vue';
+import FeedCollectionsBrowser from './FeedCollectionsBrowser.vue';
+import FeedCatalogSearch from './FeedCatalogSearch.vue';
 
 
 export default {
@@ -148,8 +170,10 @@ export default {
     TabHeader,
     FeedConfigTextField,
     FeedConfigImageField,
-    UpstreamSourcesConfig,
-},
+    SubscriptionsConfig,
+    FeedCollectionsBrowser,
+    FeedCatalogSearch,
+  },
   props: [
     "baseUrl", 
     "disabled", 
@@ -186,14 +210,24 @@ export default {
       showModal: false,
       tabModel: [
         {
-          "name": "RSS_ATOM_DISCOVERY",
-          "description": this.$t('rssFeedDiscovery'),
-          "icon": "feed",
+          name: "SUBSCRIPTIONS_CONFIG",
+          description: this.$t('rssFeedDiscovery'),
+          icon: "feed",
         },
+        // {
+        //   name: "BROWSE_COLLECTIONS",
+        //   description: this.$t('browseFeedCollections'),
+        //   icon: "list",
+        // },
+        // {
+        //   name: "CATALOG_SEARCH",
+        //   description: this.$t('searchFeedCatalog'),
+        //   icon: "search",
+        // },
         {
-          "name": "QUEUE_PROPERTIES",
-          "description": this.$t('queueProperties'),
-          "icon": "list",
+          name: "QUEUE_PROPERTIES",
+          description: this.$t('queueProperties'),
+          icon: "list",
         },
       ],
       // 
@@ -211,48 +245,10 @@ export default {
       // RSS/ATOM feed query properties 
       rssAtomFeedUrls: [],
       // currently selected tab 
-      selectedTab: 'RSS_ATOM_DISCOVERY',
+      selectedTab: 'SUBSCRIPTIONS_CONFIG',
     };
   },
   methods: {
-    // 
-    updateRssAtomFeedUrl(data) {
-      let r = this.getRssAtomFeedUrlById(data.id);
-      if (!r) {
-        return;
-      }
-      if (data.error) {
-        r.error = data.error;
-      }
-      r.feedUrl = data.feedUrl; // updated the feed URL to the resolved URL 
-      r.username = data.username;
-      r.password = data.password;
-      r.title = data.title;
-      r.description = data.description;
-      r.author = data.author;
-      r.categories = data.categories;
-      r.copyright = data.copyright;
-      r.docs = data.docs;
-      r.encoding = data.encoding;
-      r.feedType = data.feedType;
-      r.generator = data.generator;
-      r.icon = data.icon;
-      r.image = data.image;
-      r.language = data.language;
-      r.link = data.link;
-      r.managingEditor = data.managingEditor;
-      r.publishedDate = data.publishedDate;
-      r.styleSheet = data.styleSheet;
-      r.supportedTypes = data.supportedTypes;
-      r.webMaster = data.webMaster;
-      r.sampleEntries = data.sampleEntries;
-      r.discoveryUrl = data.feedUrl;
-      r.httpStatusCode = data.httpStatusCode;
-      r.httpStatusMessage = data.httpStatusMessage;
-      r.redirectFeedUrl = data.redirectFeedUrl;
-      r.redirectHttpStatusCode = data.redirectHttpStatusCode;
-      r.redirectHttpStatusMessage = data.redirectHttpStatusMessage;
-    },
     // modal control methods 
     setup(feed) {
       this.feed = feed;
@@ -269,11 +265,10 @@ export default {
       this.feedId = feed.id;
       this.feedIdent = feed.ident;
       this.setupFeed();
-      this.selectedTab = 'RSS_ATOM_DISCOVERY';
-      this.addRssAtomUrl();
+      this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
       this.showModal = true;
       this.$nextTick(() => {
-        this.$refs.upstreamSourcesConfig.focus();
+        this.$refs.subscriptionsConfig.focus();
       })
     },
     tearDown() {
@@ -296,8 +291,8 @@ export default {
       this.feedGenerator = this.feed.generator;
       this.feedCopyright = this.feed.copyright;
       this.feedLanguage = this.feed.language;
-      this.feedImgSrc = this.feed.feedImgSrc; // TODO: annoyingly redundant use of 'feed' here; fix on the backend 
-      this.rssAtomFeedUrls = JSON.parse(JSON.stringify(this.feed.rssAtomFeedUrls));
+      this.feedImgSrc = this.feed.feedImgSrc; 
+      this.rssAtomFeedUrls = this.feed.rssAtomFeedUrls;
     },
     saveFeedConfig() {
       let saveObj = {
@@ -316,15 +311,26 @@ export default {
     cancelFeedConfig() {
       this.$emit('cancel'); 
     },
+    // TODO: not yet implemented 
+    addCatalogFeed(source) {
+      console.log("add catalog feed, source=" + JSON.stringify(source));
+    },
     addRssAtomUrl(source) {
       if (!this.rssAtomFeedUrls) {
         this.rssAtomFeedUrls = [];
       }
       if (source === undefined) {
         source = {};
+      } else {
+        source = JSON.parse(JSON.stringify(source));
       }
       source.id = Math.floor(Math.random() * 1000000000);
       this.rssAtomFeedUrls.unshift(source);
+      this.saveFeedConfig();
+    },
+    // TODO: not yet implemented 
+    addRssAtomUrls(source) {
+      console.log("adding collection from source: " + JSON.stringify(source));
     },
     deleteRssAtomUrl(id) {
       let deleteIdx = -1;
@@ -336,18 +342,25 @@ export default {
       }
       if (deleteIdx > -1) {
         this.rssAtomFeedUrls.splice(deleteIdx, 1);
+        this.saveFeedConfig();
       }
     },
-    getRssAtomFeedUrlById(id) {
+    updateRssAtomUrlAuth(source) {
+      let updateIdx = -1;
       for (let i = 0; i < this.rssAtomFeedUrls.length; i++) {
-        if (this.rssAtomFeedUrls[i].id === id) {
-          return this.rssAtomFeedUrls[i];
+        if (this.rssAtomFeedUrls[i].id === source.id) {
+          updateIdx = i;
+          break;
         }
+      }
+      if (updateIdx > -1) {
+        this.rssAtomFeedUrls[updateIdx].queryConfig = source.queryConfig;
+        this.saveFeedConfig();
       }
     },
     // 
     clearModel() {
-      this.selectedTab = 'RSS_ATOM_DISCOVERY';  
+      this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
     }
   }
 }
@@ -356,6 +369,7 @@ export default {
 <style scoped>
 .modal-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   width: 100%;
   height: fill-available;
@@ -370,10 +384,6 @@ export default {
   height: fit-content;
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
-}
-
-.modal-actions {
-  padding-top: .75rem;
 }
 
 .feed-config-button-wrapper {
@@ -427,7 +437,7 @@ export default {
 .tab {
   display: grid;
   contain: content;
-  max-height: 50svh;
+  max-height: 100svh;
   overflow: auto;
 }
 
@@ -467,5 +477,9 @@ export default {
     12.5% {
         top: 30px;
     }
+}
+
+.dismiss-button {
+  margin-bottom: 1rem;
 }
 </style>

@@ -1,23 +1,23 @@
 <template>
   <div :disabled="disabled" v-auto-animate>
-    <div class="rss-atom-feed-info" v-if="this.info.discoveryUrl">
+    <div class="rss-atom-feed-info">
       <!-- left chunk (image) -->
       <div class="left">
         <!-- icon -->
         <!-- TODO: component -->
         <div class="rss-atom-feed-info-image">
           <a v-if="this.info.icon" :href="this.info.icon.link" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank" tabindex="0">
-            <img :src="'data:image/png;base64,' + this.info.icon.imgSrc" 
+            <img :src="this.info.icon.url" 
               :title="this.info.icon.title" 
               :alt="this.$t('feedLogoImage')" />
           </a>
           <a v-if="this.info.image && !this.info.icon" :href="this.info.image.link" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank" tabindex="0">
-            <img :src="'data:image/png;base64,' + this.info.image.imgSrc" 
+            <img :src="this.info.image.url" 
               :title="this.info.image.title" 
               :alt="this.$t('feedLogoImage')" />
           </a>
           <a v-if="!this.info.image && !this.info.icon" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
-            <img src="feedgears.png" />
+            <img src="rss_logo.svg" />
           </a>
         </div>
       </div>
@@ -27,7 +27,7 @@
         <!-- TODO: component -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-title">
           <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
-            {{ this.info.title.value ? this.info.title.value : this.info.feedUrl }}
+            {{ this.info.title ? this.info.title.value : this.info.feedUrl }}
           </a>
         </div>
         <!-- author -->
@@ -47,7 +47,7 @@
         <!-- description -->
         <div class="rss-atom-feed-info-field">{{ this.info.description ? this.info.description.value : '' }}</div>
         <!-- sample entries -->
-        <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.info.sampleEntries.slice(0, 10)" :key="sampleEntry.title">
+        <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.title">
           <a class="link"
             :href="sampleEntry.postUrl" 
             :style="this.disabled ? 'pointer-events: none' : ''" 
@@ -55,8 +55,12 @@
             {{ sampleEntry.postTitle.value }}
           </a>
         </div>
+        <div v-if="!this.sampleEntries || this.sampleEntries.length === 0">
+          <!-- TODO: interpolated string -->
+          Click <span class="link fa fa-refresh" @click="this.$emit('refreshFeed')" /> to refresh this feed.
+        </div>
         <!-- categories -->
-        <div v-if="this.info.categories.length > 0" class="rss-atom-feed-info-field pill-container">
+        <div v-if="this.info.categories" class="rss-atom-feed-info-field pill-container">
           <button v-for="category of this.info.categories" :key="category"
             class="accessible-button" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
@@ -68,14 +72,14 @@
         </div>
         <div class="rss-atom-feed-info-field pill-container">
           <!-- language -->
-          <button v-if="this.info.language"
+          <!-- <button v-if="this.info.language"
             class="accessible-button" 
             :class="filterSupport ? 'br-pill' : 'br-pill-subdued'"
             :title="filterSupport ? this.$t('toggleLanguageFilter') : this.info.language"
             @click="updateFeedFilter('language', this.info.language)"
             :disabled="!filterSupport">
             {{ this.info.language }}
-          </button>
+          </button> -->
           <!-- docs -->
           <button v-if="this.info.docs" 
             class="accessible-button"
@@ -159,7 +163,12 @@
 export default {
   name: "RssAtomFeedInfo",
   props: [ "filterSupport", "info", "theme", "disabled" ],
-  emits: [ "updateFilter" ],
+  computed: {
+    sampleEntries: function() {
+      return this.info.sampleEntries ? this.info.sampleEntries.slice(0, 10) : null;
+    }
+  },
+  emits: [ "updateFilter", "refreshFeed" ],
   methods: {
     updateFeedFilter(filterName, filterValue) {
       this.$emit("updateFilter", { name: filterName, value: filterValue });
@@ -218,7 +227,6 @@ export default {
 }
 
 .rss-atom-feed-info-image {
-  border: 1px solid v-bind('theme.fieldborder');
   border-radius: 4px;
   max-height: 32px;
   max-width: 32px;
@@ -227,7 +235,7 @@ export default {
 }
 
 .rss-atom-feed-info-image > a > img {
-  height: 32px;
+  height: auto;
   width: 32px;
 }
 

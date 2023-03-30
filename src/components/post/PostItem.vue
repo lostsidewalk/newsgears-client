@@ -79,6 +79,14 @@
             :aria-label="this.$t('openOriginalArticle')">
             <span class="fa fa-link"></span>
           </button>
+          <!-- toggle post subscription -->
+          <button class="post-admin-button accessible-button"
+            @click.stop="updateFeedFilter('subscription', this.post.importerDesc)"
+            :disabled="disabled"
+            :title="this.post.importerDesc"
+            :aria-label="this.post.importerDesc">
+            <img :src="this.post.sourceImgUrl" />
+          </button>
           <!-- toggle post categories -->
           <button v-if="this.post.postCategories && this.post.postCategories.length > 0"
             class="post-admin-button accessible-button"
@@ -92,6 +100,7 @@
         <!-- post header pills -->
         <span class="post-item-header-pills pill-container" v-if="this.showPostCategories">
           <!-- post categories -->
+          <!-- TODO: interpolated string -->
           <button v-for="postCategory in post.postCategories" :key="postCategory"
             class="br-pill accessible-button"
             @click.stop="updateFeedFilter('category', postCategory)"
@@ -498,6 +507,12 @@ export default {
   background-color: v-bind('theme.buttonhighlight');
 }
 
+.post-admin-button img {
+  height: auto;
+  max-height: 2rem;
+  width: 2rem;
+}
+
 .post-field-wrapper {
   cursor: auto;
   overflow-wrap: anywhere;
@@ -536,7 +551,7 @@ export default {
   border-radius: 4px;
 }
 
-.post-wrapper:hover, .post-wrapper:focus-visible {
+.post-wrapper:focus-visible {
   color: v-bind('theme.normalmessage');
   border: 1px solid v-bind('theme.fieldborderhighlight') !important;
 }

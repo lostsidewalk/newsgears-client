@@ -93,7 +93,7 @@
                 <!-- feed filter field -->
                 <FeedFilter v-if="this.showFullInboundQueueHeader" 
                   @toggleSortOrder="toggleInboundQueueSortOrder"
-                  @refreshFeeds="this.refreshFeeds(false, null, true)"
+                  @refreshFeeds="this.refreshFeeds(null, true)"
                   @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
                   @toggleFeedFilterPills="this.showFeedFilterPills = !this.showFeedFilterPills"
                   @update:modelValue="this.inboundQueueFilter = $event"
@@ -102,7 +102,7 @@
                   :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                   :theme="theme" />
                 <!-- feed filter pills -->
-                <FeedFilterPills v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
+                <FeedFilterPills v-show="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
                   @unread="toggleFeedFilterMode('UNREAD')"
                   @readLater="toggleFeedFilterMode('READ_LATER')"
                   @read="toggleFeedFilterMode('READ')"
@@ -125,7 +125,8 @@
           <!-- inbound queue -- hide when modal is showing -->
           <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
             <div v-auto-animate>
-              <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" :post="post"
+              <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" 
+                :post="post"
                 :id="'post_' + post.id"
                 :ref="'post_' + post.id"
                 :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
@@ -149,6 +150,11 @@
               </div>  
               <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">
                 {{ this.$t('endOfQueueReached') }}
+              </div>
+              <div v-if="this.currentPage + 1 < this.totalPages" class="queue-message">
+                <button class="click-for-more-button" @click.stop="this.nextPage(false)">
+                  {{ this.$t('clickToLoadMore') }}
+                </button>
               </div>
             </div>
           </div>
@@ -256,16 +262,16 @@ export default {
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {
       if (isAuthenticated) {
-        this.refreshFeeds(true, null, true); // need staging posts for all feeds and feed definitions 
+        this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
       }
     }
   },
   mounted() {
     window.addEventListener("keydown", this.eventHandler);
     if (this.$auth.$isAuthenticated) {
-        this.refreshFeeds(true, null, true); // need staging posts for all feeds and feed definitions 
+        this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
     }
-    window.onwheel = this.wheelHandler;
+    // window.onwheel = this.wheelHandler;
     window.addEventListener('resize', () => {
       this.windowWidth = window.innerWidth;
     });
@@ -405,13 +411,14 @@ export default {
 
       // feed material 
       feeds: [], // all feeds 
+      queryDefinitionImagesById: {}, // all query definition images (by Id)
       selectedFeedId: null, // currently selected feed 
       selectedPostId: null, // currently selected post 
       // queue material 
       inboundQueuesByFeed: {}, // all queues 
       inboundQueue: [], // inbound queue for the currently selected feed  
       // queue pagination material 
-      itemsPerPage: 15,
+      itemsPerPage: 100,
       currentPage: 0,
       itemCount: 0,
       // queue filter material 
@@ -673,10 +680,9 @@ export default {
     // 
     // feed refresh 
     // 
-    // hideStatus = t/f -> update/do not update the server message display upon refresh 
     // feedsToFetch = fetch staging posts for the feed Ids in this array, empty -> all feeds 
     // fetchFeedDefinitions = t/f -> include/exclude feed definition updates 
-    refreshFeeds(hideStatus, feedsToFetch, fetchFeedDefinitions) {
+    refreshFeeds(feedsToFetch, fetchFeedDefinitions) {
       console.log("post-feed: refreshing feeds");
       let rawPosts = [];
       this.inTransit = true;
@@ -742,14 +748,24 @@ export default {
             .then((data) => {
               // empty feeds
               this.feeds.splice(0, this.feeds.length);
-              // populate feeds
-              let feedDefinitionData = data.feedDefinitions;
-              let queryDefinitionData = data.queryDefinitions;
+              // clear queryDefinitionImagesById 
+              this.queryDefinitionImagesById = {};
+              // populate feeds and queryDefinitionImagesById
+              let feedDefinitionData = data.feedDefinitions; // all feed definition data objects 
+              let queryDefinitionData = data.queryDefinitions; // all query definition data objects 
               for (let i = 0; i < feedDefinitionData.length; i++) {
-                let fd = feedDefinitionData[i];
-                // 
-                let qd = queryDefinitionData[fd.id];
+                let fd = feedDefinitionData[i]; // feed definition data for this feed 
+                let qd = queryDefinitionData[fd.id]; // query definitions for this feed 
+                // merge query definition and metrics data into feed definition 
                 this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
+                // marshall up all query definitions by Id for later reference 
+                if (qd) {
+                  for (let j = 0; j < qd.length; j++) {
+                    let wrapper = qd[j];
+                    // console.log("queryDefinition id=" + wrapper.queryDefinition.id + ", queryTitle=" + wrapper.queryDefinition.queryTitle + ", queryDefinitionImageUrl=" + wrapper.queryDefinitionImageUrl);
+                    this.queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
+                  }
+                }
                 // parse feed definition export config (if present) 
                 fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
                 // add this feed definition to feeds
@@ -779,6 +795,11 @@ export default {
           }
           for (let i = 0; i < rawPosts.length; i++) {
             let post = rawPosts[i];
+            // set the post subscription image property 
+            post.sourceImgUrl = this.queryDefinitionImagesById[post.queryId];
+            if (!post.sourceImgUrl) {
+              post.sourceImgUrl =  'rss_logo.svg';
+            }
             this.inboundQueuesByFeed[post.feedId].push(post);
           }
           if (this.feeds.length === 1 && !this.selectedFeedId) {
@@ -798,18 +819,36 @@ export default {
       // 
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
-          let queryDefinition = qd[i].queryDefinition;
-          let queryDefinitionImageUrl = qd[i].queryDefinitionImageUrl;
+          let wrapper = qd[i];
+          let queryDefinition = wrapper.queryDefinition;
+          let r = {
+            id: queryDefinition.id,
+            feedMetrics: qm ? qm[queryDefinition.id] : null,
+            feedUrl: queryDefinition.queryText,
+          };
+          // title
+          let queryTitle = queryDefinition.queryTitle;
+          if (queryTitle) {
+            r.title = {
+              value: queryDefinition.queryTitle
+            }
+          }
+          // auth 
           let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : queryDefinition.queryConfig;
-          fd.rssAtomFeedUrls.push({
-            "id": queryDefinition.id,
-            "feedMetrics": qm ? qm[queryDefinition.id] : null,
-            "feedTitle": queryDefinition.queryTitle,
-            "feedImageUrl": queryDefinitionImageUrl,
-            "feedUrl": queryDefinition.queryText,
-            "username": queryConfig ? queryConfig.username : null,
-            "password": queryConfig ? queryConfig.password : null,
-          });
+          if (queryConfig) {
+            r.username = queryConfig.username;
+            r.password = queryConfig.password;
+          }
+          // image 
+          let queryDefinitionImageUrl = wrapper.queryDefinitionImageUrl;
+          if (queryDefinitionImageUrl) {
+            r.image = {
+              title: null,
+              url: queryDefinitionImageUrl,
+            }
+          }
+          // add to FD 
+          fd.rssAtomFeedUrls.push(r);
         }
       }
     },
@@ -1063,7 +1102,7 @@ export default {
           this.setLastServerMessage(feeds.length + " " + this.$t('nQueuesCreated'));
           this.$refs.opmlUploadPanel.hide();
           this.showOpmlUploadPanel = false;
-          this.refreshFeeds(true, feedIds, false);
+          this.refreshFeeds(feedIds, false);
         })
         .catch((error) => {
           this.handleServerError(error);
@@ -1133,13 +1172,11 @@ export default {
                 this.feeds[i].categoryValue = f.categoryValue;
                 this.feeds[i].categoryDomain = f.categoryDomain;
                 this.decorateFeedWithQueryDefinitions(this.feeds[i], data.queryDefinitions, data.queryMetrics);
-                this.$refs.feedConfigPanel.tearDown();
-                this.showFeedConfigPanel = false;
                 this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
                 break;
               }
             }
-            this.refreshFeeds(true, [f.id], false); // TODO: this is wrong, the refresh should be returned from the update call 
+            this.refreshFeeds([f.id], false); // TODO: this is wrong, the refresh should be returned from the update call 
           } else {
             let f = data[0].feedDefinition;
             this.decorateFeedWithQueryDefinitions(f, data[0].queryDefinitions, data[0].queryMetrics);
@@ -1149,7 +1186,7 @@ export default {
             this.showFeedConfigPanel = false;
             this.setLastServerMessage(this.$t('queueCreated') + ' (' + f.ident + ")'");
             this.setSelectedFeedId(f.id);
-            this.refreshFeeds(true, [f.id], false); // TODO: this is wrong, the refresh should be returned from the create call 
+            this.refreshFeeds([f.id], false); // TODO: this is wrong, the refresh should be returned from the create call 
           }
         })
         .catch((error) => {
@@ -1348,7 +1385,7 @@ export default {
       let r = this.$refs['post_' + postId];
       if (!r || r.length === 0) {
         // request article is not on this page, load the next page and select the next article 
-        this.nextPage(true); 
+        // this.nextPage(true); 
         return;
       }
       this.$refs['post_' + postId][0].showFullPost();
@@ -1533,7 +1570,7 @@ export default {
       }
       // handle others (global feed refresh, help, etc.)
       if (event.key === 'R' && event.shiftKey === true) {
-        this.refreshFeeds(false, null, true);
+        this.refreshFeeds(null, true);
         event.stopPropagation();
         event.preventDefault();
       } else if (event.key === 'Q') {
@@ -1546,29 +1583,29 @@ export default {
         event.preventDefault();
       }
     },
-    wheelHandler(wheelEvent) {
-      if (!this.selectedFeedId) {
-        return;
-      }
-      if (wheelEvent.deltaY <= 0) {
-        return true;
-      }
-      let c = document.getElementById('post-feed-container');
-      if (c) {
-        let w = (window.innerHeight + window.scrollY);
-        if (w >= c.offsetHeight) {
-          if (this.atBottomOfPage) {
-            this.atBottomOfPage = false;
-            this.nextPage(false);
-            wheelEvent.stopPropagation();
-          } else {
-            this.atBottomOfPage = true;
-          }
-        } else {
-          this.atBottomOfPage = false;
-        }
-      }
-    }
+    // wheelHandler(wheelEvent) {
+    //   if (!this.selectedFeedId) {
+    //     return;
+    //   }
+    //   if (wheelEvent.deltaY <= 0) {
+    //     return true;
+    //   }
+    //   let c = document.getElementById('post-feed-container');
+    //   if (c) {
+    //     let w = (window.innerHeight + window.scrollY);
+    //     if (w >= c.offsetHeight) {
+    //       if (this.atBottomOfPage) {
+    //         this.atBottomOfPage = false;
+    //         this.nextPage(false);
+    //         wheelEvent.stopPropagation();
+    //       } else {
+    //         this.atBottomOfPage = true;
+    //       }
+    //     } else {
+    //       this.atBottomOfPage = false;
+    //     }
+    //   }
+    // }
   }
 };
 </script>
@@ -1720,6 +1757,29 @@ footer {
   padding-bottom: 1.25rem;
   margin: .56rem;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.click-for-more-button {
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
+  color: v-bind('theme.buttonfg');
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  padding: .44rem 1.25rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.click-for-more-button:disabled {
+  cursor: auto;
+}
+
+.click-for-more-button:hover, .click-for-more-button:focus-visible {
+  background-color: v-bind('theme.buttonhighlight');
+}
+
+.click-for-more-button:disabled:hover {
+  background-color: unset;
 }
 
 @media (max-width: 1023px) {

@@ -67,13 +67,16 @@ export default {
     filterSubscriptionsExpression() {
       let subscriptionNames = [];
       if (this.allPostSubscriptions.length === 1) {
-        subscriptionNames.push(this.allPostSubscriptions[0].feedTitle);
+        let t = this.allPostSubscriptions[0].title;
+        if (t) {
+          subscriptionNames.push(t.value);
+        }
       } else if (this.selectedFeedFilterSubscriptions.length > 0) {
         for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
           subscriptionNames.push(this.selectedFeedFilterSubscriptions[i]);
         }
       } else {
-        subscriptionNames.push('all subscriptions');
+        subscriptionNames.push(this.$t('allSubscriptions'));
       }
       return (subscriptionNames.length > 0 ? (subscriptionNames.join(', ')) : '');
     },
@@ -100,22 +103,33 @@ export default {
           label: this.$t('starred'),
         },
       ];
-      for (let i = 0; i < this.allPostSubscriptions.length; i++) {
-        let subscription = this.allPostSubscriptions[i];
-        filterPills.push({
-          isSelected: this.lcSetContainsStr(subscription.feedTitle, this.selectedFeedFilterSubscriptions),
-          invoke: () => this.$emit('subscription', subscription.feedTitle),
-          label: subscription.feedTitle,
-          image: subscription.feedImageUrl, 
-        });
+      if (this.allPostSubscriptions.length > 1) {
+        for (let i = 0; i < this.allPostSubscriptions.length; i++) {
+          let subscription = this.allPostSubscriptions[i];
+          let filterValue = null;
+          let t = subscription.title;
+          if (t) {
+            filterValue = t.value;
+          } else {
+            filterValue = subscription.feedUrl;
+          }
+          filterPills.push({
+            isSelected: this.lcSetContainsStr(filterValue, this.selectedFeedFilterSubscriptions),
+            invoke: () => this.$emit('subscription', filterValue),
+            label: filterValue,
+            image: subscription.feedImageUrl, 
+          });
+        }
       }
-      for (let i = 0; i < this.allPostCategories.length; i++) {
-        let category = this.allPostCategories[i];
-        filterPills.push({
-          isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterCategories),
-          invoke: () => this.$emit('category', category),
-          label: category 
-        });
+      if (this.allPostCategories.length > 1) {
+        for (let i = 0; i < this.allPostCategories.length; i++) {
+          let category = this.allPostCategories[i];
+          filterPills.push({
+            isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterCategories),
+            invoke: () => this.$emit('category', category),
+            label: category 
+          });
+        }
       }
 
       return filterPills;

@@ -93,7 +93,6 @@ const i18n = createI18n({
       logout: 'Cerrar sesión',
       settings: 'Ajustes', 
       // queue dashboard buttons 
-      addSubscription: 'Agregar una nueva suscripción',
       manageSubscriptions: 'Administrar suscripciones',
       createNewQueue: 'Crear una nueva cola',
       uploadOPML: 'Subir OPML',
@@ -105,7 +104,8 @@ const i18n = createI18n({
       subscriptions: 'SUSCRIPCIONES',
       publications: 'PUBLICACIONES',
       zeroSubscriptions: '0 suscripciones',
-      starredArticlesAvailableHere: 'Los artículos destacados en esta cola están disponibles en los siguientes feeds.',
+      starredArticlesAvailableHere: 'Los artículos destacados en esta cola están disponibles en las siguientes fuentes RSS.',
+      metricsNotYetAvailable: 'Las métricas aún no están disponibles para esta fuente RSS.',
       // queue config image field 
       clickToChangeQueueImage: 'Haga clic aquí para cambiar la imagen de la cola.',
       clickToAddQueueImage: 'Haga clic aquí para agregar una imagen de cola.', 
@@ -160,14 +160,19 @@ const i18n = createI18n({
       subscribeToThisFeed: 'Suscríbete a esta fuente RSS',
       youAreSubscribed: '¡Suscrito!',
       // subscription config 
-      upstreamRssAtomSources: 'SUSCRIPCIONES',
+      yourSubscriptions: 'SUS SUSCRIPCIONES',
       showingPageN: 'Mostrando la página',
-      addFeedFromURL: 'Agregar suscripción desde una URL',
-      browseFeedCatalog: 'Examinar el catálogo de fuentes RSS',
+      addFeedFromURL: 'Agregar fuente RSS desde una URL',
+      searchFeedCatalog: 'Buscar en el catálogo de fuentes RSS',
+      browseFeedCollections: 'Explorar colecciones de fuentes RSS',
       subscriptionNofM: 'SUSCRIPCIÓN',
+      addANewSubscription: 'AGREGAR UNA NEUVA SUSCRIPCIÓN',
       feedUrl: 'URL de fuente RSS',
       credentialsUseMessage: '* Se proporcionarán las siguientes credenciales si esta fuente RSS solicita autenticación.',
       unableToFetchCatalog: 'No pudimos obtener su catálogo de fuentes RSS. Por favor, inténtelo de nuevo más tarde.',
+      discovery: 'Descubrimiento', 
+      auth: 'Autorización',
+      unnsubscribe: 'Darse de baja',
       // post feed filter 
       articleQueue: 'COLA DE ARTÍCULOS',
       refreshQueues: 'Actualizar colas', 
@@ -175,6 +180,7 @@ const i18n = createI18n({
       toggleSortOrder: 'Alternar dirección de clasificación',
       showFilterOptions: 'Mostrar opciones de filtro', 
       // post feed filter pills 
+      allSubscriptions: 'todas las suscripciones',
       viewingColon: 'Visita:',
       resetToDefault: 'Restablecen a los predeterminados',
       unread: 'NO LEÍDO', 
@@ -240,6 +246,7 @@ const i18n = createI18n({
       queueUpdated: 'Cola actualizada',
       queueCreated: 'Cola creada',
       nQueuesCreated: ' colas creadas',
+      clickToLoadMore: 'Haga clic aquí para cargar más', 
       // post item 
       showPostDetails: 'Mostrar detalles de la publicación', 
       showPostCategories: 'Mostrar categorías de publicaciones',
@@ -428,7 +435,6 @@ const i18n = createI18n({
       logout: 'Logout',
       settings: 'Settings', 
       // queue dashboard buttons 
-      addSubscription: 'Add a new subscription',
       manageSubscriptions: 'Manage subscriptions',
       createNewQueue: 'Create a new queue',
       uploadOPML: 'Upload OPML',
@@ -441,6 +447,7 @@ const i18n = createI18n({
       publications: 'PUBLICATIONS',
       zeroSubscriptions: '0 subscriptions',
       starredArticlesAvailableHere: 'The starred articles in this queue are available in the following feeds.',
+      metricsNotYetAvailable: 'Metrics are not yet available for this feed.',
       // queue config image field 
       clickToChangeQueueImage: 'Click here to change the queue image.',
       clickToAddQueueImage: 'Click here to add a queue image.', 
@@ -495,14 +502,19 @@ const i18n = createI18n({
       subscribeToThisFeed: 'Subscribe to this feed',
       youAreSubscribed: 'Subscribed!',
       // subscription config 
-      upstreamRssAtomSources: 'SUBSCRIPTIONS',
+      yourSubscriptions: 'YOUR SUBSCRIPTIONS',
       showingPageN: 'Showing page',
-      addFeedFromURL: 'Add subscription from a URL',
-      browseFeedCatalog: 'Browse feed catalog',
+      addFeedFromURL: 'Add feed from a URL',
+      searchFeedCatalog: 'Search our feed catalog',
+      browseFeedCollections: 'Browse feed collections',
       subscriptionNofM: 'SUBSCRIPTION',
+      addANewSubscription: 'ADD A NEW SUBSCRIPTION',
       feedUrl: 'FEED URL',
       credentialsUseMessage: '* The following credentials will be supplied if this feed requests authentication.',
       unableToFetchCatalog: 'We weren\'t able to fetch our feed catalog.  Please try again later.',
+      discovery: 'Discovery', 
+      auth: 'Auth',
+      unnsubscribe: 'Unsubscribe',
       // post feed filter  
       articleQueue: 'ARTICLE QUEUE',
       refreshQueues: 'Refresh queues', 
@@ -510,6 +522,7 @@ const i18n = createI18n({
       toggleSortOrder: 'Toggle sort direction',
       showFilterOptions: 'Show filter options', 
       // post feed filter pills 
+      allSubscriptions: 'all subscriptions',
       viewingColon: 'Viewing:',
       resetToDefault: 'Reset to default',
       unread: 'UNREAD', 
@@ -575,6 +588,7 @@ const i18n = createI18n({
       queueUpdated: 'Queue updated',
       queueCreated: 'Queue created',
       nQueuesCreated: ' queues created',
+      clickToLoadMore: 'Click here to load more', 
       // post item 
       showPostDetails: 'Show post details', 
       showPostCategories: 'Show post categories',

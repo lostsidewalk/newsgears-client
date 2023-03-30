@@ -36,7 +36,7 @@
       </span>
       <!-- more information -->
       <!-- TODO: component -->
-      <div v-if="this.showMoreInformation" class="feed-info-details">
+      <div v-show="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
         <label class="feed-info-label-small">
           {{ this.$t('subscriptions') }}
@@ -44,17 +44,17 @@
         <!-- RSS/ATOM feeds -->
         <label class="feed-info-label subscription-label" 
           v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
-          :title="rssAtomFeedUrl.feedUrl ? rssAtomFeedUrl.feedUrl : false">
+          :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
           <!-- feed logo image -->
-          <img v-if="rssAtomFeedUrl.feedImageUrl" :src="rssAtomFeedUrl.feedImageUrl" :alt="this.$t('feedLogoImage')" /> 
+          <img v-if="rssAtomFeedUrl.image" :src="rssAtomFeedUrl.image.url" :alt="this.$t('feedLogoImage')" /> 
           <!-- RSS logo -->
           <img v-else src="rss_logo.svg" :alt="this.$t('rssLogo')" /> 
           <!-- last http status -->
-          <span v-if="hasFeedMetrics(rssAtomFeedUrl)" :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
+          <span v-if="hasFeedMetrics(rssAtomFeedUrl)">
             {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
           </span>
           <!-- feed title w/direct link -->
-          {{ rssAtomFeedUrl.feedTitle ? rssAtomFeedUrl.feedTitle : rssAtomFeedUrl.feedUrl }}
+          {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title.value : rssAtomFeedUrl.feedUrl }}
         </label>
         <!-- publications -->
         <label class="feed-info-label-small">
@@ -103,20 +103,34 @@ export default {
     },
     // shown on hover 
     buildMetricStatusMessage(feedMetrics) {
-      let m = this.getMostRecentMetric(feedMetrics);
-      if (m.persistCt > 0) {
+      if (feedMetrics) {
+        let m = this.getMostRecentMetric(feedMetrics);
+
         // TODO: interpolated string 
-        return m.persistCt + ' new articles imported at ' + m.importTimestamp;
-      } else {
-        if (m.httpStatusCode) {
-          // TODO: interpolated string 
-          // e.g.: HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
-          let message = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
-          if (m.queryExceptionTypeMessage) {
-            message = message + '\n' + m.queryExceptionTypeMessage;
-          }
-          return message;
+        let metricStatusMessage = 'Importer ran at ' + m.importTimestamp;
+        // add the persist ct to the metric status message 
+        if (m.persistCt > 0) {
+          let persistMessage = m.persistCt + ' new articles saved';
+          metricStatusMessage = metricStatusMessage + '\n' + persistMessage;
         }
+        if (m.archiveCt > 0) {
+          let archiveMessage = m.archiveCt + ' articles archived';
+          metricStatusMessage = metricStatusMessage + '\n' + archiveMessage;
+        }
+        // add the http status code, http status message, redirect status code, redirect status message to the metric status message, if any 
+        if (m.httpStatusCode && m.httpStatusCode > 0) {
+          // e.g.: HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
+          let httpStatusMessage = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
+          metricStatusMessage = metricStatusMessage + '\n' + httpStatusMessage;
+        }
+        // add query exception message, if any 
+        if (m.queryExceptionTypeMessage) {
+          metricStatusMessage = metricStatusMessage + '\n' + m.queryExceptionTypeMessage;
+        }
+        return metricStatusMessage;
+      } else {
+        // default response 
+        return this.$t('metricsNotYetAvailable');
       }
     },
     // shown next to the RSS/ATOM icon 
