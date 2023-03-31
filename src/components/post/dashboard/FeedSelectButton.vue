@@ -14,7 +14,6 @@
         <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" :alt="this.$t('queueLogoImage')">
         <img v-else class="feed-image" src="feedgears.png" :alt="this.$t('queueLogoImage')">
         <div class="feed-info-wrapper">
-          <!-- inbound / published count -->
           <label class="feed-info-label">
             <span class="fa fa-eye" /> {{ this.inboundCount }}
           </label>
@@ -24,26 +23,26 @@
         </div>
       </div>
       <!-- show more/less information (also selects the feed) -->
-      <a v-if="this.showMoreInformation || feed.rssAtomFeedUrls.length > 0" 
+      <a v-if="this.showMoreInformation || (this.feed.rssAtomFeedUrls && this.feed.rssAtomFeedUrls.length > 0)" 
         class="feed-info-label-small link" 
         @click.stop="toggleMoreInformation()" 
         @keypress.enter.prevent="toggleMoreInformation()" 
         tabindex="0">
         {{ this.showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
       </a>
-      <span v-if="feed.rssAtomFeedUrls.length === 0">
+      <span v-if="(!this.feed.rssAtomFeedUrls || this.feed.rssAtomFeedUrls.length === 0)">
         {{ this.$t('zeroSubscriptions') }}
       </span>
       <!-- more information -->
       <!-- TODO: component -->
-      <div v-show="this.showMoreInformation" class="feed-info-details">
+      <div v-if="this.feed.rssAtomFeedUrls" v-show="this.showMoreInformation" class="feed-info-details">
         <!-- subscriptions -->
         <label class="feed-info-label-small">
           {{ this.$t('subscriptions') }}
         </label>
         <!-- RSS/ATOM feeds -->
         <label class="feed-info-label subscription-label" 
-          v-for="rssAtomFeedUrl of feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
+          v-for="rssAtomFeedUrl of this.feed.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
           :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
           <!-- feed logo image -->
           <img v-if="rssAtomFeedUrl.image" :src="rssAtomFeedUrl.image.url" :alt="this.$t('feedLogoImage')" /> 

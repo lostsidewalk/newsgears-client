@@ -172,7 +172,8 @@ const i18n = createI18n({
       unableToFetchCatalog: 'No pudimos obtener su catálogo de fuentes RSS. Por favor, inténtelo de nuevo más tarde.',
       discovery: 'Descubrimiento', 
       auth: 'Autorización',
-      unnsubscribe: 'Darse de baja',
+      subscribe: 'Suscribe!',
+      unsubscribe: 'Darse de baja',
       // post feed filter 
       articleQueue: 'COLA DE ARTÍCULOS',
       refreshQueues: 'Actualizar colas', 
@@ -514,7 +515,8 @@ const i18n = createI18n({
       unableToFetchCatalog: 'We weren\'t able to fetch our feed catalog.  Please try again later.',
       discovery: 'Discovery', 
       auth: 'Auth',
-      unnsubscribe: 'Unsubscribe',
+      subscribe: 'Subscribe',
+      unsubscribe: 'Unsubscribe',
       // post feed filter  
       articleQueue: 'ARTICLE QUEUE',
       refreshQueues: 'Refresh queues', 

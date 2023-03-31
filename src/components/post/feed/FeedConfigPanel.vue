@@ -17,7 +17,7 @@
         <!-- tab panel -->
         <div class="tabbed-panel">
           <!-- tab 1: subscription config, collection browser, catalog search -->
-          <div class="tab" v-show="this.selectedTab === 'SUBSCRIPTIONS_CONFIG'">
+          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SUBSCRIPTIONS_CONFIG'">
             <!-- subscriptions config -->
             <SubscriptionsConfig
               ref="subscriptionsConfig"
@@ -31,7 +31,7 @@
               @authError="handleAuthError"
               />
           </div>
-          <div class="tab" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
+          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
             <!-- collections browser -->
             <FeedCollectionsBrowser
               :disabled="disabled || inTransit"
@@ -40,7 +40,7 @@
               @addRssAtomUrls="addRssAtomUrls" 
               @deleteRssAtomUrl="deleteRssAtomUrl" />
           </div>
-          <div class="tab" v-show="this.selectedTab === 'SEARCH_CATALOG'">
+          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SEARCH_CATALOG'">
             <!-- catalog search -->
             <FeedCatalogSearch
               :disabled="disabled || inTransit"
@@ -178,8 +178,36 @@ export default {
     "baseUrl", 
     "disabled", 
     "theme", 
-    "rssAtomFeedCatalog"
+    "rssAtomFeedCatalog",
   ],
+  computed: {
+    tabModel: function() {
+      let arr = [];
+      arr.push({
+          name: "QUEUE_PROPERTIES",
+          description: this.$t('queueProperties'),
+          icon: "list",
+        });
+      if (this.feed.id) {
+        arr.push({
+          name: "SUBSCRIPTIONS_CONFIG",
+          description: this.$t('rssFeedDiscovery'),
+          icon: "feed",
+        });
+        // {
+        //   name: "BROWSE_COLLECTIONS",
+        //   description: this.$t('browseFeedCollections'),
+        //   icon: "list",
+        // },
+        // {
+        //   name: "CATALOG_SEARCH",
+        //   description: this.$t('searchFeedCatalog'),
+        //   icon: "search",
+        // },
+      }
+      return arr;
+    }
+  },
   emits: [ "saveOrUpdate", "cancel", "authError" ],
   validations() {
     return {
@@ -208,33 +236,10 @@ export default {
     return {
       // 
       showModal: false,
-      tabModel: [
-        {
-          name: "SUBSCRIPTIONS_CONFIG",
-          description: this.$t('rssFeedDiscovery'),
-          icon: "feed",
-        },
-        // {
-        //   name: "BROWSE_COLLECTIONS",
-        //   description: this.$t('browseFeedCollections'),
-        //   icon: "list",
-        // },
-        // {
-        //   name: "CATALOG_SEARCH",
-        //   description: this.$t('searchFeedCatalog'),
-        //   icon: "search",
-        // },
-        {
-          name: "QUEUE_PROPERTIES",
-          description: this.$t('queueProperties'),
-          icon: "list",
-        },
-      ],
       // 
       inTransit: false, 
       // queue properties 
       feed: null,
-      feedId: null,
       feedIdent: '',
       feedTitle: '',
       feedDescription: '',
@@ -245,14 +250,16 @@ export default {
       // RSS/ATOM feed query properties 
       rssAtomFeedUrls: [],
       // currently selected tab 
-      selectedTab: 'SUBSCRIPTIONS_CONFIG',
+      selectedTab: null,
     };
   },
   methods: {
     // modal control methods 
+
+    // setup is called to initialize the panel for either a create or update operation 
     setup(feed) {
       this.feed = feed;
-      this.feedId = feed.id;
+      this.clearModel();
       this.feedIdent = feed.ident;
       this.setupFeed();
       this.showModal = true;
@@ -260,16 +267,26 @@ export default {
         this.$refs.feedIdent.focus();
       });
     },
+    // this is called on callback when a feed is successfully created; 
+    // it enables the user to start adding subscriptions to newly created queue 
+    setupSubscriptionConfig(feedId) {
+      if (this.feed) {
+        this.feed.id = feedId;
+      }
+      this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
+      this.$nextTick(() => {
+        this.$refs.subscriptionsConfig.focus();
+      });
+    },
     setupQuickAdd(feed) {
       this.feed = feed;
-      this.feedId = feed.id;
       this.feedIdent = feed.ident;
       this.setupFeed();
       this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
       this.showModal = true;
       this.$nextTick(() => {
         this.$refs.subscriptionsConfig.focus();
-      })
+      });
     },
     tearDown() {
       this.clearModel();
@@ -284,7 +301,6 @@ export default {
     },
     setupFeed() {
       // setup feed 
-      this.feedId = this.feed.id;
       this.feedIdent = this.feed.ident;
       this.feedTitle = this.feed.title;
       this.feedDescription = this.feed.description;
@@ -296,7 +312,6 @@ export default {
     },
     saveFeedConfig() {
       let saveObj = {
-        id: this.feedId,
         ident: this.feedIdent,
         title: this.feedTitle,
         description: this.feedDescription,
@@ -360,7 +375,11 @@ export default {
     },
     // 
     clearModel() {
-      this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
+      if (this.feedId) {
+        this.selectedTab = 'SUBSCRIPTION_CONFIG';
+      } else {
+        this.selectedTab = 'QUEUE_PROPERTIES';
+      }
     }
   }
 }

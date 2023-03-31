@@ -4,7 +4,7 @@
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
 
     <!-- label -->
-    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls.length > 0">
+    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls">
       <label>{{ this.$t('addANewSubscription') }}</label>
     </div>
 

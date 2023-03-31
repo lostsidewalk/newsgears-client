@@ -368,16 +368,25 @@ export default {
     },
     allPostCategories: function () {
       let categories = new Set();
-      let f = this.inboundQueue;
-      for (let i = 0; i < f.length; i++) {
-        if (f[i].postCategories) {
-          f[i].postCategories.forEach((c) => categories.add(c));
+      if (this.inboundQueue) {
+        let f = this.inboundQueue;
+        for (let i = 0; i < f.length; i++) {
+          if (f[i].postCategories) {
+            f[i].postCategories.forEach((c) => categories.add(c));
+          }
         }
       }
       return Array.from(categories);
     },
     allPostSubscriptions: function() {
-      return this.getSelectedFeed().rssAtomFeedUrls;
+      let subscriptions = new Set();
+      let r = this.getSelectedFeed().rssAtomFeedUrls;
+      if (r) {
+        for (let i = 0; i < r.length; i++) {
+          subscriptions.add(r[i]);
+        }
+      }
+      return Array.from(subscriptions);
     },
     isModalShowing: function() {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
@@ -802,7 +811,8 @@ export default {
             }
             this.inboundQueuesByFeed[post.feedId].push(post);
           }
-          if (this.feeds.length === 1 && !this.selectedFeedId) {
+          if (this.feeds.length > 0 && !this.selectedFeedId) {
+            // TODO: should be a configurable 'default' feed 
             this.setSelectedFeedId(this.feeds[0].id);
           } else {
             this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
@@ -1034,7 +1044,7 @@ export default {
     newFeed() {
       document.activeElement.blur();
       this.showFeedConfigPanel = true;
-      this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [{ id: 1, }] }));
+      this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [] }));
       
     },
     uploadOpml() {
@@ -1179,14 +1189,11 @@ export default {
             this.refreshFeeds([f.id], false); // TODO: this is wrong, the refresh should be returned from the update call 
           } else {
             let f = data[0].feedDefinition;
-            this.decorateFeedWithQueryDefinitions(f, data[0].queryDefinitions, data[0].queryMetrics);
             this.feeds.push(f);
             this.inboundQueuesByFeed[f.ident] = [];
-            this.$refs.feedConfigPanel.tearDown();
-            this.showFeedConfigPanel = false;
+            this.$refs.feedConfigPanel.setupSubscriptionConfig(f.id);
             this.setLastServerMessage(this.$t('queueCreated') + ' (' + f.ident + ")'");
             this.setSelectedFeedId(f.id);
-            this.refreshFeeds([f.id], false); // TODO: this is wrong, the refresh should be returned from the create call 
           }
         })
         .catch((error) => {
@@ -1251,10 +1258,11 @@ export default {
             }
           }
           if (idxToSplice > -1) {
+            let nextFeedId = this.feeds.length > idxToSplice + 1 ? this.feeds[idxToSplice + 1].id : null;
             this.feeds.splice(idxToSplice, 1);
-          }
-          if (this.selectedFeedId === this.feedIdToDelete) {
-            this.setSelectedFeedId(null);
+            if (this.selectedFeedId === this.feedIdToDelete) {
+              this.setSelectedFeedId(nextFeedId); // TODO: should be a configurable 'default' feed 
+            }
           }
           this.setLastServerMessage(data.message);
         }).catch((error) => {
