@@ -62,7 +62,7 @@
         style="margin-top: .75rem" />
     </div>
 
-    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls.length > 0">
+    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
       <label>{{ this.$t('yourSubscriptions') }}</label>
     </div>
 
@@ -172,8 +172,12 @@ export default {
   props: [ "rssAtomFeedUrls", "disabled", "theme", "baseUrl" ],
   computed: {
     totalPages: function() {
-      let t = Math.ceil(this.rssAtomFeedUrls.length / this.itemsPerPage);
-      return t;
+      if (this.rssAtomFeedUrls) {
+        let t = Math.ceil(this.rssAtomFeedUrls.length / this.itemsPerPage);
+        return t;
+      }
+      
+      return 0;
     },
   },
   emits: [
@@ -190,6 +194,9 @@ export default {
       return this.itemCount > this.itemsPerPage;
     },
     getCurrentPage(items) {
+      if (!items) {
+        return [];
+      }
       if (items.length !== this.itemCount) {
         this.itemCount = items.length; 
         this.currentPage = 0;
