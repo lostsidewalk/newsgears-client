@@ -57,6 +57,22 @@
                         :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                         :theme="theme" 
                         @click.stop="this.setSelectedFeedId(feed.id)" />
+                      <!-- more information -->
+                      <a class="feed-info-label-small link" 
+                        @click.stop="this.toggleFeedShowMoreInformation(feed)" 
+                        @keypress.enter.prevent="feed.showMoreInformation = !feed.showMoreInformation" 
+                        tabindex="0">
+                        {{ feed.showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
+                      </a>
+                      <FeedDetails 
+                        v-if="this.getFeedById(feed.id).showMoreInformation"
+                        :rssAtomFeedUrls="feed.rssAtomFeedUrls" 
+                        :jsonPubUrl="this.feedUrl + '/feed/json/' + feed.transportIdent" 
+                        :rssPubUrl="this.feedUrl + '/feed/rss/' + feed.transportIdent" 
+                        :atomPubUrl="this.feedUrl + '/feed/atom/' + feed.transportIdent" 
+                        :disabled="disabled" 
+                        :theme="theme" />
+
                     </div>
                   </div>
                 </div>
@@ -74,7 +90,6 @@
               </template>
           </ViewHeader>
         </div>
-        <button v-if="this.selectedFeedId" class="toggle-feed-select-view" @click="this.showFeedSelectView = !this.showFeedSelectView" />
         <!-- right side -->
         <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
           <!-- inbound queue header -- hide when modal is showing -->
@@ -232,6 +247,7 @@ import PostFeedAudio from '@/components/post/PostFeedAudio.vue';
 import PostItem from "./PostItem.vue";
 // feed dashboard 
 import FeedSelectButton from './dashboard/FeedSelectButton.vue';
+import FeedDetails from './dashboard/FeedDetails.vue';
 import FeedDashboardButtons from './dashboard/FeedDashboardButtons.vue';
 
 export default {
@@ -254,6 +270,7 @@ export default {
     PostItem, 
     // dashboard 
     FeedSelectButton,
+    FeedDetails,
     FeedDashboardButtons,
   },
   name: "PostFeed",
@@ -442,6 +459,16 @@ export default {
     };
   },
   methods: {
+    toggleFeedShowMoreInformation(feed) {
+      // 
+      feed.showMoreInformation = !feed.showMoreInformation;
+      // 
+      let feedId = feed.id;
+      let f = this.getFeedById(feedId);
+      if (f) {
+        f.showMoreInformation = feed.showMoreInformation;
+      }
+    },
     modeMatches(post) {
       // check mode (extract to function) 
       let modeMatches = false;
@@ -1624,7 +1651,8 @@ export default {
 
 /** has references */
 .post-feed-container-inner-selected {
-  display: inline-flex;
+  display: flex;
+  align-items: flex-start;
 }
 
 .post-feed-container-inner {
@@ -1647,7 +1675,6 @@ export default {
 
 .feed-select-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  border-radius: 4px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -1656,7 +1683,6 @@ export default {
 
 .staging-header-view-selected {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  border-radius: 4px;
   min-width: 70svw;
   max-width: 70svw;
 }
@@ -1668,11 +1694,10 @@ export default {
 
 .staging-header-view {
   color: v-bind('theme.normalmessage');
-  /* border-top: 1px solid v-bind('theme.sectionbordercolor'); */
   background: v-bind('theme.sectionhighlight');
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
   position: sticky;
-  top: -1px;
+  top: 0px;
   z-index: 200;
   overflow: auto;
 }
@@ -1725,7 +1750,11 @@ footer {
 }
 
 .feed-select-wrapper {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 /** has references */
@@ -1790,6 +1819,27 @@ footer {
   background-color: unset;
 }
 
+.feed-info-label-small {
+  max-width: fit-content;
+  cursor: pointer;
+  color: v-bind('theme.subduedmessage');
+  font-family: Arial, Helvetica, sans-serif;
+  margin: .44rem;
+}
+
+.link {
+  text-decoration: none;
+  color: unset;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: v-bind('theme.normalmessage');
+}
+
+.link:hover, .link:focus-visible {
+  text-decoration: underline;
+  color: v-bind('theme.highlightedmessage');
+}
+
 @media (max-width: 1023px) {
   .staging-header-view-selected, .staging-header-view-collapsed {
     border-top: unset;
@@ -1801,15 +1851,19 @@ footer {
   .post-feed-container-inner-selected {
     display: unset;
   }
+}
 
-  .toggle-feed-select-view {
-    display: none;
-  }
+.feed-select-view-selected {
+  overflow: auto;
+  max-height: 75svh;
 }
 
 @media (min-width: 1023px) {
   .feed-select-view-selected {
+    top: -1px;
+    position: sticky;
     width: 30svw;
+    max-height: 100svh;
   }
 
   .feed-select-view-collapsed {

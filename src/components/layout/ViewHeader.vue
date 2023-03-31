@@ -33,14 +33,12 @@ export default {
 </script>
 
 <style scoped>
-@media (min-width: 1023px) {
-  /** has references */
-  .sticky-header {
-    position: sticky;
-    top: 0px;
-    z-index: 200;
-    overflow-y: auto;
-  }
+/** has references */
+.sticky-header {
+  position: sticky;
+  top: 0px;
+  z-index: 200;
+  overflow-y: auto;
 }
 
 /** has references */
