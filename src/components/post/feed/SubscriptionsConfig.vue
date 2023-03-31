@@ -15,7 +15,7 @@
       <div class="rss-atom-url-row">
         <label>{{ this.$t('feedUrl') }}</label>
         <input type="text"
-          ref="newFeedUrl"
+          autofocus
           v-model="newRssAtomUrl.feedUrl"
           :disabled="disabled || inTransit"
           placeholder="Feed URL" />
@@ -224,7 +224,9 @@ export default {
       this.inTransit = false;
     },
     focus() {
-      this.$refs.newFeedUrl.focus();
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
     },
     // 
     addNewRssAtomUrl() {
