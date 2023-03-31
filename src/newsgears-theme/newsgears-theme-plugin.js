@@ -21,7 +21,7 @@ const DEFAULT_LIGHT_THEME = {
   buttonhighlight: '#ffffff', 
   lightshadow: '#101010',
   darkshadow: '#202020',
-  accentshadow: '#00ffff',
+  accentshadow: '#ffffff',
   sectionsubdued: '#484848',
   sectionhighlight: '#eeeeee',
   sectionbrighthighlight: '#dddddd', 
@@ -50,7 +50,7 @@ const DEFAULT_DARK_THEME = {
   navbarshadow: '#6495ed', // cornflowerblue  
   navbarsubshadow: '#646464', 
   subduedmessage: '#888888',
-  normalmessage: '#87cefa', // lightskyblue
+  normalmessage: '#aaaaaa',
   highlightedmessage: '#90ee90',
   buttonbg: '#171717',
   buttonfg: '#87cefa', // lightskyblue 
