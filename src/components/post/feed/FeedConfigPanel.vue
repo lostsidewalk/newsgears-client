@@ -194,11 +194,11 @@ export default {
           description: this.$t('rssFeedDiscovery'),
           icon: "feed",
         });
-        // {
+        // arr.push({
         //   name: "BROWSE_COLLECTIONS",
         //   description: this.$t('browseFeedCollections'),
         //   icon: "list",
-        // },
+        // });
         // {
         //   name: "CATALOG_SEARCH",
         //   description: this.$t('searchFeedCatalog'),
@@ -240,6 +240,7 @@ export default {
       inTransit: false, 
       // queue properties 
       feed: null,
+      feedId: null,
       feedIdent: '',
       feedTitle: '',
       feedDescription: '',
@@ -260,7 +261,6 @@ export default {
     setup(feed) {
       this.feed = feed;
       this.clearModel();
-      this.feedIdent = feed.ident;
       this.setupFeed();
       this.showModal = true;
       this.$nextTick(() => {
@@ -280,7 +280,6 @@ export default {
     },
     setupQuickAdd(feed) {
       this.feed = feed;
-      this.feedIdent = feed.ident;
       this.setupFeed();
       this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
       this.showModal = true;
@@ -301,6 +300,7 @@ export default {
     },
     setupFeed() {
       // setup feed 
+      this.feedId = this.feed.id;
       this.feedIdent = this.feed.ident;
       this.feedTitle = this.feed.title;
       this.feedDescription = this.feed.description;
@@ -321,6 +321,9 @@ export default {
         imgSrc: this.feedImgSrc,
         rssAtomFeedUrls: this.rssAtomFeedUrls,
       };
+      if (this.feedId) {
+        saveObj.id = this.feedId;
+      }
       this.$emit('saveOrUpdate', saveObj);
     },
     cancelFeedConfig() {
