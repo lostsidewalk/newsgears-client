@@ -81,7 +81,7 @@
           </button>
           <!-- toggle post subscription -->
           <button class="post-admin-button accessible-button"
-            @click.stop="updateFeedFilter('subscription', this.post.importerDesc)"
+            @click.stop="updatePostFeedFilter('subscriptionId', this.post.queryId)"
             :disabled="disabled"
             :title="this.post.importerDesc"
             :aria-label="this.post.importerDesc">
@@ -103,7 +103,7 @@
           <!-- TODO: interpolated string -->
           <button v-for="postCategory in post.postCategories" :key="postCategory"
             class="br-pill accessible-button"
-            @click.stop="updateFeedFilter('category', postCategory)"
+            @click.stop="updatePostFeedFilter('category', postCategory)"
             :title="'Add this category (' + postCategory + ') to the filter'"
             :aria-label="'Add this category (' + postCategory + ') to the filter'">
             {{ postCategory }}
@@ -267,7 +267,7 @@ export default {
   emits: [
     "updatePostReadStatus",
     "updatePostPubStatus",
-    "updateFilter",
+    "updatePostFeedFilter",
     "setActive",
     "openPostUrl",
     "playing",
@@ -340,8 +340,8 @@ export default {
     isHtmlContent(contentObj) {
       return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;
     },
-    updateFeedFilter(filterName, filterValue) {
-      this.$emit("updateFilter", { name: filterName, value: filterValue });
+    updatePostFeedFilter(filterName, filterValue) {
+      this.$emit("updatePostFeedFilter", { name: filterName, value: filterValue });
     },
     showFullPost() {
       this.showPostDetails = true;

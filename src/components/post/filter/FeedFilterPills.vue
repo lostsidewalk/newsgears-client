@@ -49,8 +49,8 @@ export default {
     "unread",
     "readLater",
     "published",
-    "subscription",
-    "category",
+    "toggleSubscription",
+    "toggleCategory",
     "resetFilterDefaults",
   ],
   computed: {
@@ -73,7 +73,10 @@ export default {
         }
       } else if (this.selectedFeedFilterSubscriptions.length > 0) {
         for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
-          subscriptionNames.push(this.selectedFeedFilterSubscriptions[i]);
+          let t = this.selectedFeedFilterSubscriptions[i].title;
+          if (t) {
+            subscriptionNames.push(t.value);
+          }
         }
       } else {
         subscriptionNames.push(this.$t('allSubscriptions'));
@@ -106,17 +109,17 @@ export default {
       if (this.allPostSubscriptions.length > 1) {
         for (let i = 0; i < this.allPostSubscriptions.length; i++) {
           let subscription = this.allPostSubscriptions[i];
-          let filterValue = null;
-          let t = subscription.title;
-          if (t) {
-            filterValue = t.value;
+          let subscriptionLabel = null;
+          let title = subscription.title;
+          if (title) {
+            subscriptionLabel = title.value;
           } else {
-            filterValue = subscription.feedUrl;
+            subscriptionLabel = subscription.feedUrl;
           }
           filterPills.push({
-            isSelected: this.lcSetContainsStr(filterValue, this.selectedFeedFilterSubscriptions),
-            invoke: () => this.$emit('subscription', filterValue),
-            label: filterValue,
+            isSelected: this.setContains(subscription, this.selectedFeedFilterSubscriptions),
+            invoke: () => this.$emit('toggleSubscription', subscription),
+            label: subscriptionLabel,
             image: subscription.feedImageUrl, 
           });
         }
@@ -140,6 +143,17 @@ export default {
     },
   },
   methods: {
+    // setContains is true IFF obj1 is contained in objSet 
+    setContains(obj1, objSet) {
+      if (obj1 && objSet) {
+        for (let i = 0; i < objSet.length; i++) {
+          if (obj1 === objSet[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     // lcStrEq is true IFF str1 and str2 are LC-EQ 
     lcStrEq(str1, str2) {
       return str1 && str2 && str1.toLowerCase() === str2.toLowerCase();

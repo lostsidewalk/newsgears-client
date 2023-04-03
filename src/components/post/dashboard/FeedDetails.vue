@@ -1,10 +1,10 @@
 <template>
   <div class="feed-info-details">
-    <!-- subscriptions -->
+    <!-- subscriptions label -->
     <label class="feed-info-label-small" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
       {{ this.$t('subscriptions') }}
     </label>
-    <!-- RSS/ATOM feeds -->
+    <!-- subscriptions -->
     <label class="feed-info-label subscription-label" 
       v-for="rssAtomFeedUrl of this.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
       :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
@@ -16,8 +16,13 @@
       <span v-if="hasFeedMetrics(rssAtomFeedUrl)">
         {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
       </span>
-      <!-- feed title w/direct link -->
-      {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title.value : rssAtomFeedUrl.feedUrl }}
+      <!-- feed title/URL -->
+      <a class="link" href="#"
+        @click.stop="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
+        @keypress.enter.prevent="feed.showMoreInformation = !feed.showMoreInformation" 
+        tabindex="0">
+        {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title.value : rssAtomFeedUrl.feedUrl }}
+      </a>
     </label>
     <!-- publications -->
     <label class="feed-info-label-small">
@@ -58,6 +63,7 @@
 export default {
   name: "FeedDetails",
   props: ["rssAtomFeedUrls", "jsonPubUrl", "rssPubUrl", "atomPubUrl", "disabled", "theme"],
+  emits: ["updatePostFeedFilter"], 
   methods: {
     // shown on hover 
     buildMetricStatusMessage(feedMetrics) {

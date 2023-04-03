@@ -71,8 +71,8 @@
                         :rssPubUrl="this.feedUrl + '/feed/rss/' + feed.transportIdent" 
                         :atomPubUrl="this.feedUrl + '/feed/atom/' + feed.transportIdent" 
                         :disabled="disabled" 
-                        :theme="theme" />
-
+                        :theme="theme" 
+                        @updatePostFeedFilter="selectFeedAndUpdateFilter" />
                     </div>
                   </div>
                 </div>
@@ -122,8 +122,8 @@
                   @readLater="toggleFeedFilterMode('READ_LATER')"
                   @read="toggleFeedFilterMode('READ')"
                   @published="toggleFeedFilterMode('PUBLISHED')"
-                  @subscription="toggleFeedFilterSubscription"
-                  @category="toggleFeedFilterCategory"
+                  @toggleSubscription="toggleFeedFilterSubscription"
+                  @toggleCategory="toggleFeedFilterCategory"
                   @resetFilterDefaults="resetFilterDefaults"
                   :feedFilterModes="feedFilterModes"
                   :allPostSubscriptions="allPostSubscriptions"
@@ -155,7 +155,7 @@
                 @openPostUrl="openPostUrl(post.id)"
                 @updatePostReadStatus="setPostReadStatus"
                 @updatePostPubStatus="updatePostPubStatus" 
-                @updateFilter="updatePostFeedFilter" 
+                @updatePostFeedFilter="updatePostFeedFilter" 
                 @playing="onMediaPlaying" 
                 @audioPlay="onAudioPlay" 
                 @goToNextPost="selectNextPost" 
@@ -317,7 +317,17 @@ export default {
           if (this.selectedFeedFilterSubscriptions.length === 0) {
             subscriptionMatches = true;
           } else {
-            subscriptionMatches = this.lcSetContainsStr(post.importerDesc, this.selectedFeedFilterSubscriptions);
+            if (post.importerDesc && this.selectedFeedFilterSubscriptions) {
+              for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
+                let r = this.selectedFeedFilterSubscriptions[i];
+                if (r.title && this.lcStrEq(post.importerDesc, r.title.value)) {
+                  subscriptionMatches = true;
+                  break;
+                }
+              }
+            } else {
+              subscriptionMatches = false;
+            }
           }
           if (!subscriptionMatches) {
             return false;
@@ -652,7 +662,7 @@ export default {
       }
     },
     toggleFeedFilterSubscription(subscription) {
-      if (this.lcSetContainsStr(subscription, this.selectedFeedFilterSubscriptions)) {
+      if (this.setContains(subscription, this.selectedFeedFilterSubscriptions)) {
         let idxToSplice = -1;
         for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
           if (this.selectedFeedFilterSubscriptions[i] === subscription) {
@@ -667,13 +677,34 @@ export default {
         this.selectedFeedFilterSubscriptions.push(subscription);
       }
     },
+    selectFeedAndUpdateFilter(f) {
+      // 
+      if (f.feed.feedId !== this.selectedFeedId) {
+        this.setSelectedFeedId(f.feed.feedId);
+        this.$nextTick(() => {
+          this.updatePostFeedFilter(f);
+        })
+      } else {
+        this.updatePostFeedFilter(f);
+      }
+    },
     updatePostFeedFilter(f) {
-      if (f.name === "subscription") {
-        if (this.selectedFeedFilterSubscriptions.indexOf(f.value) < 0) {
-          this.selectedFeedFilterSubscriptions.push(f.value);
-          this.showFeedFilterPills = true;
-        } else {
-          this.removeFilterFromSet(this.selectedFeedFilterSubscriptions, f.value);
+      if (f.name === "subscriptionId") {
+        let subscriptionId = f.value;
+        let r = null;
+        for (let i = 0; i < this.allPostSubscriptions.length; i++) {
+          if (this.allPostSubscriptions[i].id === subscriptionId) {
+            r = this.allPostSubscriptions[i];
+            break;
+          }
+        }
+        if (r) {
+          if (this.selectedFeedFilterSubscriptions.indexOf(r) < 0) {
+            this.selectedFeedFilterSubscriptions.push(r);
+            this.showFeedFilterPills = true;
+          } else {
+            this.removeFilterFromSet(this.selectedFeedFilterSubscriptions, r);
+          } 
         }
       } else if (f.name === "category") {
         if (this.selectedFeedFilterCategories.indexOf(f.value) < 0) {
@@ -862,6 +893,7 @@ export default {
             id: queryDefinition.id,
             feedMetrics: qm ? qm[queryDefinition.id] : null,
             feedUrl: queryDefinition.queryText,
+            feedId: fd.id,
           };
           // title
           let queryTitle = queryDefinition.queryTitle;
@@ -1453,6 +1485,17 @@ export default {
     // 
     // utility methods 
     // 
+    // setContains is true IFF obj1 is contained in objSet 
+    setContains(obj1, objSet) {
+      if (obj1 && objSet) {
+        for (let i = 0; i < objSet.length; i++) {
+          if (obj1 === objSet[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     // lcStrEq is true IFF str1 and str2 are LC-EQ 
     lcStrEq(str1, str2) {
       return str1 && str2 && str1.toLowerCase() === str2.toLowerCase();
