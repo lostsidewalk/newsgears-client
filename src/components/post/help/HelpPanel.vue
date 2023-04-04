@@ -211,6 +211,10 @@ export default {
   border: 1px solid v-bind('theme.sectionbordercolor');
 }
 
+.keyboard-label-wrapper {
+  text-align: start;
+}
+
 .keyboard-key {
   padding: .75rem;
   border: 1px solid v-bind('theme.buttonborder');
