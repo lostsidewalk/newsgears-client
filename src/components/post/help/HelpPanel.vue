@@ -195,7 +195,7 @@ export default {
   overflow-y: auto; 
   max-height: 75svh;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: 1rem;
   align-items: start;
   place-items: start stretch;
@@ -203,13 +203,12 @@ export default {
 
 .keyboard-shortcut-desc {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   margin-left: .75rem;
   margin-right: .75rem;
   padding: .75rem;
   border: 1px solid v-bind('theme.sectionbordercolor');
-  flex-wrap: wrap;
 }
 
 .keyboard-key {
