@@ -46,15 +46,6 @@
         <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field">{{ this.$t('lastPublishedColon') }} {{ this.info.publishedDate }}</div>
         <!-- description -->
         <div class="rss-atom-feed-info-field">{{ this.info.description ? this.info.description.value : '' }}</div>
-        <!-- sample entries -->
-        <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.title">
-          <a class="link"
-            :href="sampleEntry.postUrl" 
-            :style="this.disabled ? 'pointer-events: none' : ''" 
-            target="_blank">
-            {{ sampleEntry.postTitle.value }}
-          </a>
-        </div>
         <div v-if="!this.sampleEntries || this.sampleEntries.length === 0">
           <!-- TODO: interpolated string -->
           Click <span class="link fa fa-refresh" @click="this.$emit('refreshFeed')" /> to refresh this feed.
@@ -138,6 +129,15 @@
           </span>
         </div>
       </div>
+    </div>
+    <!-- sample entries -->
+    <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.postTitle">
+      <a class="link"
+        :href="sampleEntry.postUrl" 
+        :style="this.disabled ? 'pointer-events: none' : ''" 
+        target="_blank">
+        {{ sampleEntry.postTitle.value }}
+      </a>
     </div>
     <div v-if="this.info.error" class="error">
       {{ this.info.error }}
@@ -228,15 +228,15 @@ export default {
 
 .rss-atom-feed-info-image {
   border-radius: 4px;
-  max-height: 32px;
-  max-width: 32px;
+  max-height: 128px;
+  max-width: 128px;
   min-height: 32px;
   min-width: 32px;
 }
 
 .rss-atom-feed-info-image > a > img {
   height: auto;
-  width: 32px;
+  width: 128px;
 }
 
 .link {
