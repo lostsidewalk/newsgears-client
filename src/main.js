@@ -587,9 +587,9 @@ const i18n = createI18n({
       feedURLTooLong: 'Feed URL is too long (max 2048 characters).',
       refreshFailedDueToColon: 'Refresh failed due to:',
       noMessage: 'no message',
-      queueUpdated: 'Queue updated',
-      queueCreated: 'Queue created',
-      nQueuesCreated: ' queues created',
+      queueUpdated: 'Queue updated.  We\'re sorting out your subscriptions in the background.  This process may take several minutes.',
+      queueCreated: 'Queue created.  We\'re sorting out your new subscriptions in the background.  This process may take several minutes.',
+      nQueuesCreated: ' queues created.  We\'re sorting out your new subscriptions in the background.  This process may take several minutes.',
       clickToLoadMore: 'Click here to load more', 
       // post item 
       showPostDetails: 'Show post details', 

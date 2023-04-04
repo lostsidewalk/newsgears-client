@@ -59,10 +59,11 @@
                         @click.stop="this.setSelectedFeedId(feed.id)" />
                       <!-- more information -->
                       <a class="feed-info-label-small link" 
+                        v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0"
                         @click.stop="this.toggleFeedShowMoreInformation(feed)" 
-                        @keypress.enter.prevent="feed.showMoreInformation = !feed.showMoreInformation" 
+                        @keypress.enter.prevent="this.toggleFeedShowMoreInformation(feed)" 
                         tabindex="0">
-                        {{ feed.showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
+                        {{ this.getSelectedFeed(feed.id).showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
                       </a>
                       <FeedDetails 
                         v-if="this.getFeedById(feed.id).showMoreInformation"
@@ -471,12 +472,11 @@ export default {
   methods: {
     toggleFeedShowMoreInformation(feed) {
       // 
-      feed.showMoreInformation = !feed.showMoreInformation;
-      // 
       let feedId = feed.id;
       let f = this.getFeedById(feedId);
       if (f) {
-        f.showMoreInformation = feed.showMoreInformation;
+        f.showMoreInformation = !f.showMoreInformation;
+        feed.showMoreInformation = f.showMoreInformation;
       }
     },
     modeMatches(post) {
@@ -813,8 +813,6 @@ export default {
               }
             })
             .then((data) => {
-              // empty feeds
-              this.feeds.splice(0, this.feeds.length);
               // clear queryDefinitionImagesById 
               this.queryDefinitionImagesById = {};
               // populate feeds and queryDefinitionImagesById
@@ -835,9 +833,19 @@ export default {
                 }
                 // parse feed definition export config (if present) 
                 fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
-                // add this feed definition to feeds
-                console.log("post-feed: adding fd=" + fd.ident);
-                this.feeds.push(fd);
+                // locate the feed to update by id 
+                let idxToUpdate = -1;
+                for (let i = 0; i < this.feeds.length; i++) {
+                  if (this.feeds[i].id === fd.id) {
+                    idxToUpdate = i;
+                  }
+                }
+                if (idxToUpdate >= 0) {
+                  this.feeds[idxToUpdate] = fd;
+                } else {
+                  fd.showMoreInformation = true;
+                  this.feeds.push(fd);
+                }
               }
               this.rssAtomFeedCatalog = data.rssAtomFeedCatalog;
             })

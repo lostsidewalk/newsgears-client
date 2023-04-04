@@ -19,13 +19,13 @@
       <!-- feed title/URL -->
       <a class="link" href="#"
         @click.stop="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
-        @keypress.enter.prevent="feed.showMoreInformation = !feed.showMoreInformation" 
+        @keypress.enter.prevent="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
         tabindex="0">
         {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title.value : rssAtomFeedUrl.feedUrl }}
       </a>
     </label>
     <!-- publications -->
-    <label class="feed-info-label-small">
+    <!-- <label class="feed-info-label-small">
       {{ this.$t('publications') }}
     </label>
     <button class="helptext fa fa-question" :title="this.$t('starredArticlesAvailableHere')"/>
@@ -55,7 +55,7 @@
         <span class="fa fa-link fa-1x" />
       </a>
       ATOM
-    </label>
+    </label> -->
   </div>
 </template>
 
