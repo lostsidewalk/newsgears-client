@@ -6,12 +6,12 @@
         {{ this.$t(c) }}
       </button>
     </div>
-    <div v-for="c in Object.keys(this.collections)" :key="c" class="collection-field">
+    <div v-for="c in Object.keys(this.collections)" :key="c" class="collection-field" v-show="this.selectedCollection === c && this.collections[c]">
       <!-- label -->
-      <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls">
+      <!-- <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls">
         <label>{{ this.$t(c + '.details') }}</label>
-      </div>
-      <div class="collection-wrapper" v-show="this.selectedCollection === c && this.collections[c]">
+      </div> -->
+      <div class="collection-wrapper">
         <div class="rss-atom-url-wrapper" v-for="rssAtomUrl in this.collections[c].feeds" :key="rssAtomUrl">
           <!-- buttons (discovery, auth, subscribe) -->
           <div class="rss-atom-url-row-buttons">
@@ -77,7 +77,6 @@ export default {
           }
         }
       }
-      console.log("isSubscribed, rssAtomUrl=" + rssAtomUrl + ", result=" + isSubscribed);
       return isSubscribed;
     },
     // 
