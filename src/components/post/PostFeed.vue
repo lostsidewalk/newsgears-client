@@ -60,10 +60,10 @@
                       <!-- more information -->
                       <a class="feed-info-label-small link" 
                         v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0"
-                        @click.stop="this.toggleFeedShowMoreInformation(feed)" 
-                        @keypress.enter.prevent="this.toggleFeedShowMoreInformation(feed)" 
+                        @click.stop="this.toggleFeedShowMoreInformation(feed.id)" 
+                        @keypress.enter.prevent="this.toggleFeedShowMoreInformation(feed.id)" 
                         tabindex="0">
-                        {{ this.getSelectedFeed(feed.id).showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
+                        {{ this.getFeedById(feed.id).showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
                       </a>
                       <FeedDetails 
                         v-if="this.getFeedById(feed.id).showMoreInformation"
@@ -193,7 +193,8 @@
                   :rssAtomFeedCatalog="rssAtomFeedCatalog"
                   @saveOrUpdate="createOrUpdateFeed"
                   @cancel="cancelCreateOrUpdateFeed"
-                  @authError="handleServerError" />
+                  @authError="handleServerError" 
+                  @updateServerMessage="setLastServerMessage" />
               </template>
             </ViewHeader>
             <ViewHeader v-if="this.showOpmlUploadPanel" 
@@ -470,13 +471,11 @@ export default {
     };
   },
   methods: {
-    toggleFeedShowMoreInformation(feed) {
+    toggleFeedShowMoreInformation(feedId) {
       // 
-      let feedId = feed.id;
       let f = this.getFeedById(feedId);
       if (f) {
         f.showMoreInformation = !f.showMoreInformation;
-        feed.showMoreInformation = f.showMoreInformation;
       }
     },
     modeMatches(post) {
@@ -1884,6 +1883,7 @@ footer {
   cursor: pointer;
   border: 1px solid transparent;
   color: v-bind('theme.normalmessage');
+  user-select: none;
 }
 
 .link:hover, .link:focus-visible {

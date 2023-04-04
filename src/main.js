@@ -43,6 +43,8 @@ const i18n = createI18n({
       username: 'Nombre de usuario',
       password: 'Contraseña',
       submit: 'Entregar',
+      subscribe: 'Suscribe',
+      subscribed: '¡Suscrito!',
       emailAddress: 'Dirección de correo electrónico',
       inDevelopment: 'Lo sentimos, esta sección de FeedGears aún no está lista. ¡Vuelve a consultar en unos días!',
       // auth 
@@ -147,6 +149,14 @@ const i18n = createI18n({
       httpStatusCode: 'Código de estado HTTP',
       redirectHttpStatusCode: 'Redirigir el código de estado HTTP', 
       feedAlsoAvailableInHttps: 'Este feed también está disponible en HTTPS', 
+      // feed collections browser 
+      topNews: 'Noticias',
+      investing: 'Invertir',
+      technology: 'Tecnología',
+      business: 'Negocio',
+      science: 'Ciencia',
+      creative: 'Creativo',
+      lifestyle: 'Estilo de vida',
       // feed catalog 
       feedCatalog: 'CATÁLOGO DE FUENTES RSS',
       nFeedsMatchOnPageM: 'COINCIDENCIA DE FEEDS RSS, MOSTRANDO LA PÁGINA',
@@ -172,7 +182,6 @@ const i18n = createI18n({
       unableToFetchCatalog: 'No pudimos obtener su catálogo de fuentes RSS. Por favor, inténtelo de nuevo más tarde.',
       discovery: 'Descubrimiento', 
       auth: 'Autorización',
-      subscribe: 'Suscribe!',
       unsubscribe: 'Darse de baja',
       // post feed filter 
       articleQueue: 'COLA DE ARTÍCULOS',
@@ -386,6 +395,8 @@ const i18n = createI18n({
       username: 'Username',
       password: 'Password',
       submit: 'Submit',
+      subscribe: 'Subscribe',
+      subscribed: 'Subscribed!',
       emailAddress: 'Email address',
       inDevelopment: 'Sorry, this section of FeedGears isn\'t quite ready yet.  Check back in a few days!',
       // auth 
@@ -490,6 +501,14 @@ const i18n = createI18n({
       httpStatusCode: 'HTTP status code',
       redirectHttpStatusCode: 'Redirect HTTP status code', 
       feedAlsoAvailableInHttps: 'This feed is also available in HTTPS', 
+      // feed collections browser 
+      topNews: 'News',
+      investing: 'Investing',
+      technology: 'Technology',
+      business: 'Business',
+      science: 'Science',
+      creative: 'Creative',
+      lifestyle: 'Lifestyle',
       // feed catalog 
       feedCatalog: 'FEED CATALOG',
       nFeedsMatchOnPageM: 'FEEDS MATCH, SHOWING PAGE',
@@ -515,7 +534,6 @@ const i18n = createI18n({
       unableToFetchCatalog: 'We weren\'t able to fetch our feed catalog.  Please try again later.',
       discovery: 'Discovery', 
       auth: 'Auth',
-      subscribe: 'Subscribe',
       unsubscribe: 'Unsubscribe',
       // post feed filter  
       articleQueue: 'ARTICLE QUEUE',

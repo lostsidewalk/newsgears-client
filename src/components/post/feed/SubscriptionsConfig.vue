@@ -13,12 +13,15 @@
     <div class="rss-atom-url-wrapper">
       <!-- url input field w/refresh and delete buttons -->
       <div class="rss-atom-url-row">
+        <!-- label -->
         <label>{{ this.$t('feedUrl') }}</label>
+        <!-- text field -->
         <input type="text"
           autofocus
           v-model="newRssAtomUrl.feedUrl"
           :disabled="disabled || inTransit"
           placeholder="Feed URL" />
+        <!-- buttons (discovery, auth, subscribe) -->
         <div class="rss-atom-url-row-buttons">
           <button class="rss-atom-url-row-button accessible-button"
             @click="this.refreshRssAtomUrlInfo(newRssAtomUrl)"
@@ -40,15 +43,20 @@
           </button>
         </div>
       </div>
+      <!-- credentials -->
       <label v-if="showNewFeedDetails">{{ this.$t("credentialsUseMessage") }}</label>
       <div class="rss-atom-url-row" v-if="showNewFeedDetails">
+        <!-- username label -->
         <label>{{ this.$t("username") }}</label>
+        <!-- username text field -->
         <input type="text"
           v-model="newRssAtomUrl.username"
           :disabled="disabled || inTransit"
           :placeholder="this.$t('username')"
           style="margin-bottom: .75rem" />
+        <!-- password label -->
         <label>{{ this.$t("password") }}</label>
+        <!-- password text field -->
         <input type="password"
           v-model="newRssAtomUrl.password"
           :disabled="disabled || inTransit"
@@ -67,32 +75,32 @@
     </div>
 
     <!-- all subscriptions pagination -->
-    <div class="feed-config-filter-buttons" v-if="needsPagination()">
+    <div class="subscription-filter-buttons" v-if="needsPagination()">
       <!-- first page button-->
       <button :title="this.$t('first')" 
         :aria-label="this.$t('first')"
-        class="feed-config-filter-button accessible-button" 
+        class="subscription-filter-button accessible-button" 
         @click="firstPage">
         <span class="fa fa-angle-double-left"/>
       </button>
       <!-- previous page button -->
       <button :title="this.$t('previous')" 
         :aria-label="this.$t('previous')" 
-        class="feed-config-filter-button accessible-button" 
+        class="subscription-filter-button accessible-button" 
         @click="previousPage">
         <span class="fa fa-angle-left"/>
       </button>
       <!-- next page button -->
       <button :title="this.$t('next')" 
         :aria-label="this.$t('next')" 
-        class="feed-config-filter-button accessible-button" 
+        class="subscription-filter-button accessible-button" 
         @click="nextPage">
         <span class="fa fa-angle-right"/>
       </button>
       <!-- last page button-->
       <button :title="this.$t('last')" 
         :aria-label="this.$t('last')" 
-        class="feed-config-filter-button accessible-button" 
+        class="subscription-filter-button accessible-button" 
         @click="lastPage">
         <span class="fa fa-angle-double-right"/>
       </button>
@@ -556,43 +564,7 @@ export default {
   border-radius: 0px 3px 3px 0px;
 }
 
-.feed-config-button-wrapper {
-  display: inline-grid;
-  grid-auto-flow: column;
-  grid-column-gap: .75rem;
-  margin-top: .75rem;
-  margin-bottom: .75rem;
-}
-
-.feed-config-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: left;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.feed-config-button:disabled {
-  cursor: auto;
-}
-
-.feed-config-button:hover, .feed-config-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.feed-config-button:hover:disabled {
-  background-color: unset;
-}
-
-.feed-catalog-error {
-  width: 100%;
-}
-
-.feed-config-filter-buttons {
+.subscription-filter-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: .5rem;
@@ -604,7 +576,7 @@ export default {
   resize: none;
 }
 
-.feed-config-filter-button {
+.subscription-filter-button {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
@@ -616,19 +588,19 @@ export default {
   text-align: center;
 }
 
-.feed-config-filter-button:hover, .feed-config-filter-button:focus-visible {
+.subscription-filter-button:hover, .subscription-filter-button:focus-visible {
   background: v-bind('theme.buttonhighlight');
 }
 
-.feed-config-filter-button:disabled {
+.subscription-filter-button:disabled {
   cursor: auto;
 }
 
-.feed-config-filter-button:hover:disabled {
+.subscription-filter-button:hover:disabled {
   background-color: unset;
 }
 
-.feed-config-filter-button:last-child {
+.subscription-filter-button:last-child {
   border-radius: 0px 3px 3px 0px;
 }
 </style>

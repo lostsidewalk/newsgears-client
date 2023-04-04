@@ -28,17 +28,20 @@
               @addRssAtomUrl="addRssAtomUrl" 
               @deleteRssAtomUrl="deleteRssAtomUrl" 
               @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
-              @authError="handleAuthError"
-              />
+              @authError="handleAuthError" /> <!-- missing updateServerMessage -->
           </div>
           <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
             <!-- collections browser -->
             <FeedCollectionsBrowser
+              :baseUrl="baseUrl" 
               :disabled="disabled || inTransit"
               :theme="theme"
-              :rssAtomFeedUrl="this.rssAtomFeedUrls"
+              :rssAtomFeedUrls="this.rssAtomFeedUrls"
               @addRssAtomUrls="addRssAtomUrls" 
-              @deleteRssAtomUrl="deleteRssAtomUrl" />
+              @addRssAtomUrl="addRssAtomUrl" 
+              @deleteRssAtomUrl="deleteRssAtomUrl" 
+              @authError="handleAuthError" 
+              @updateServerMessage="setLastServerMessage" />
           </div>
           <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SEARCH_CATALOG'">
             <!-- catalog search -->
@@ -194,11 +197,11 @@ export default {
           description: this.$t('rssFeedDiscovery'),
           icon: "feed",
         });
-        // arr.push({
-        //   name: "BROWSE_COLLECTIONS",
-        //   description: this.$t('browseFeedCollections'),
-        //   icon: "list",
-        // });
+        arr.push({
+          name: "BROWSE_COLLECTIONS",
+          description: this.$t('browseFeedCollections'),
+          icon: "list",
+        });
         // {
         //   name: "CATALOG_SEARCH",
         //   description: this.$t('searchFeedCatalog'),
@@ -208,7 +211,7 @@ export default {
       return arr;
     }
   },
-  emits: [ "saveOrUpdate", "cancel", "authError" ],
+  emits: [ "saveOrUpdate", "cancel", "authError", "updateServerMessage" ],
   validations() {
     return {
       feedIdent: { 
@@ -297,6 +300,11 @@ export default {
     // 
     handleAuthError(error) {
       this.$emit('authError', error);
+    },
+    setLastServerMessage(message) {
+      if (message) {
+        this.$emit('updateServerMessage', message);
+      }
     },
     setupFeed() {
       // setup feed 

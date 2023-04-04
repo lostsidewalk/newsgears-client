@@ -181,6 +181,7 @@ export default {
   color: unset;
   cursor: pointer;
   border: 1px solid transparent;
+  user-select: none;
 }
 
 .link:hover, .link:focus-visible {

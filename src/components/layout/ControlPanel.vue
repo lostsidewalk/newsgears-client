@@ -39,7 +39,9 @@ export default {
     emits: [ "updateServerMessage" ],
     methods: {
       setLastServerMessage(message) {
-        this.$emit("updateServerMessage", message);
+        if (message) {
+          this.$emit("updateServerMessage", message);
+        }
       },
       // 
       cancelSettings() {

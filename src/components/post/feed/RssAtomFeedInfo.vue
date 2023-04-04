@@ -244,6 +244,7 @@ export default {
   color: v-bind('theme.subduedmessage');
   cursor: pointer;
   border: 1px solid transparent;
+  user-select: none;
 }
 
 .link:hover, .link:focus-visible {
