@@ -3,7 +3,7 @@
     <div class="demo-view">
       <div class="background" />
       <div class="image-panel">
-        <img class="reader-image" :src="'reader_global_news_' + this.$theme.currentTheme.ident + '.webp'" :alt="this.$t('queuePageScreenshot')">
+        <img class="reader-image" :src="'reader_global_news_' + this.$theme.currentTheme.ident + '.png'" :alt="this.$t('queuePageScreenshot')">
       </div>
     </div>
   </div>
