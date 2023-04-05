@@ -129,7 +129,7 @@ export default {
           let category = this.allPostCategories[i];
           filterPills.push({
             isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterCategories),
-            invoke: () => this.$emit('category', category),
+            invoke: () => this.$emit('toggleCategory', category),
             label: category 
           });
         }

@@ -140,11 +140,11 @@ export default {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 2%;
-  left: 2%;
+  top: 0;
+  left: 0;
   right: 0;
-  width: 96%;
-  height: 96%;
+  width: 100%;
+  height: 100%;
   overflow-y: auto;
   z-index: 1000;
   border: 1px solid transparent;

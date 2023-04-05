@@ -103,7 +103,7 @@
               :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-gears fa-1x"/>
-                {{ this.getFeedById(this.selectedFeedId).ident }}
+                {{ this.getFeedById(this.selectedFeedId).title }}
               </template>
               <template v-slot:body>
                 <!-- feed filter field -->
