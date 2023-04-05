@@ -68,7 +68,6 @@ const i18n = createI18n({
       createAnAccount: 'Crear una cuenta',
       whatIsFeedGears: 'Un lector de feeds seguro, privado y accesible.',
       whyIsFeedGearsFree: 'FeedGears es gratis porque creemos en RSS',
-      howYouCanSupportUs: '(Todavía puedes pagarlo si quieres apoyar nuestra misión.)',
       devBlog: 'Blog de desarrollo',
       docs: 'Documentos',
       api: 'API',
@@ -415,8 +414,7 @@ const i18n = createI18n({
       // landing 
       createAnAccount: 'Create an account',
       whatIsFeedGears: 'A secure, private, accessible feed reader.',
-      whyIsFeedGearsFree: 'FeedGears is free because we believe in RSS',
-      howYouCanSupportUs: '(You can still pay for it if you want to support our mission.)',
+      whyIsFeedGearsFree: 'Free forever because we love RSS',
       devBlog: 'Dev Blog',
       docs: 'Docs',
       api: 'API',

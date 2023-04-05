@@ -8,12 +8,9 @@
       <h2 class="logosubtext fancy">
         {{ this.$t('whatIsFeedGears') }}
       </h2>
-      <h2 class="logosubtext fancy">
+      <h2 class="logosubduedtext fancy">
         {{ this.$t('whyIsFeedGearsFree') }} <span class="fa fa-rss" />
       </h2>
-      <h3 class="logosubduedtext fancy">
-        {{ this.$t('howYouCanSupportUs') }}
-      </h3>
       <div class="flex" style="padding-top: 2svh;padding-bottom: 2svh;">
         <GoogleAuthButton :theme="theme" :disabled="false" />
         <!-- sign-up button -->
