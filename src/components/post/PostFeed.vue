@@ -151,7 +151,7 @@
                 :isSelected="this.selectedPostId === post.id"
                 tabindex="0"
                 @keypress.self="isModalShowing ? false : setSelectedPost($event, post.id)"
-                @click.prevent="isModalShowing ? false : setSelectedPost($event, post.id)"
+                @click="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @setActive="setSelectedPost($event, post.id, false)" 
                 @openPostUrl="openPostUrl(post.id)"
                 @updatePostReadStatus="setPostReadStatus"
