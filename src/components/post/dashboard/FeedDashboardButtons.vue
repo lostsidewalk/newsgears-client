@@ -1,14 +1,6 @@
 <template>
-  <div>
+  <div class="feed-dashboard-buttons">
     <!-- TODO: component -->
-    <!-- queue config button -->
-    <button v-if="this.selectedFeedId"
-      class="header-button accessible-button" 
-      @click.stop="this.$emit('configureFeed')" 
-      :disabled="disabled" 
-      :title="this.$t('manageSubscriptions')">
-      {{ this.$t('manageSubscriptions') }} &nbsp; <span class="fa fa-wrench" />
-    </button>
     <!-- upload OPML button -->
     <button class="header-button accessible-button" 
       @click.stop="this.$emit('uploadOpml')" 
@@ -16,14 +8,6 @@
       :disabled="disabled"
       :title="this.$t('uploadOPML')">
       {{ this.$t('uploadOPML') }} &nbsp; <span class="fa fa-file" />
-    </button>
-    <!-- delete queue button -->
-    <button v-if="this.selectedFeedId"
-      class="header-button accessible-button" 
-      @click.stop="this.$emit('deleteFeed')" 
-      :disabled="disabled" 
-      :title="this.$t('deleteThisQueue')">
-      {{ this.$t('deleteThisQueue') }} &nbsp; <span class="fa fa-trash" />
     </button>
     <!-- new queue button -->
     <button class="header-button accessible-button" 
@@ -46,6 +30,11 @@ export default {
 </script>
 
 <style scoped> 
+.feed-dashboard-buttons {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .header-button {
   border: 1px solid v-bind('theme.buttonborder');
   background-color: v-bind('theme.buttonbg');
@@ -55,8 +44,7 @@ export default {
   cursor: pointer;
   float: left;
   border-radius: 4px;
-  margin-top: .75rem;
-  margin-right: .75rem;
+  margin: .56rem;
   text-align: center;
   user-select: none;
 }

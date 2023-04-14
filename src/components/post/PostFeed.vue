@@ -46,6 +46,13 @@
               </template>
               <template v-slot:body>
                 <div v-if="this.showQueueDashboard" class="grid-container" v-auto-animate>
+                  <FeedDashboardButtons v-if="this.showQueueDashboard && !this.showFeedConfigPanel && !this.showOpmlUploadPanel"
+                    :selectedFeedId="this.selectedFeedId" 
+                    :disabled="disabled || inTransit || isModalShowing"
+                    :theme="theme" 
+                    @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
+                    @newFeed="newFeed"
+                    @uploadOpml="uploadOpml" /> 
                   <div v-if="this.filteredFeedIdentOptions.length > 0" class="grid">
                     <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
                       <FeedSelectButton 
@@ -79,15 +86,6 @@
                 </div>
               </template>
               <template v-slot:toolbar>
-                <FeedDashboardButtons v-if="this.showQueueDashboard && !this.showFeedConfigPanel && !this.showOpmlUploadPanel"
-                  :selectedFeedId="this.selectedFeedId" 
-                  :disabled="disabled || inTransit || isModalShowing"
-                  :theme="theme" 
-                  @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
-                  @configureFeed="this.configureFeed(this.selectedFeedId)" 
-                  @newFeed="newFeed"
-                  @uploadOpml="uploadOpml"
-                  @deleteFeed="deleteFeed(this.selectedFeedId)" /> 
               </template>
           </ViewHeader>
         </div>
@@ -106,6 +104,24 @@
                 {{ this.getFeedById(this.selectedFeedId).title }}
               </template>
               <template v-slot:body>
+                <!-- feed management buttons -->
+                <div v-if="this.showFullInboundQueueHeader" class="queue-management-buttons">
+                  <button v-if="this.selectedFeedId"
+                    class="header-button accessible-button" 
+                    @click.stop="this.configureFeed(this.selectedFeedId)" 
+                    :disabled="disabled" 
+                    :title="this.$t('manageSubscriptions')">
+                    {{ this.$t('manageSubscriptions') }} &nbsp; <span class="fa fa-wrench" />
+                  </button>
+                  <!-- delete queue button -->
+                  <button v-if="this.selectedFeedId"
+                    class="header-button accessible-button" 
+                    @click.stop="this.deleteFeed(this.selectedFeedId)" 
+                    :disabled="disabled" 
+                    :title="this.$t('deleteThisQueue')">
+                    {{ this.$t('deleteThisQueue') }} &nbsp; <span class="fa fa-trash" />
+                  </button>
+                </div>
                 <!-- feed filter field -->
                 <FeedFilter v-if="this.showFullInboundQueueHeader" 
                   @toggleSortOrder="toggleInboundQueueSortOrder"
@@ -1939,5 +1955,36 @@ footer {
   .feed-select-view-collapsed {
     display: none;
   }
+}
+
+.queue-management-buttons {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.header-button {
+  border: 1px solid v-bind('theme.buttonborder');
+  background-color: v-bind('theme.buttonbg');
+  color: v-bind('theme.buttonfg');
+  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+  padding: .44rem 1.25rem;
+  cursor: pointer;
+  float: left;
+  border-radius: 4px;
+  margin: .56rem;
+  text-align: center;
+  user-select: none;
+}
+
+.header-button:hover, .header-button:focus-visible {
+  background-color: v-bind('theme.buttonhighlight');
+}
+
+.header-button:disabled {
+  cursor: auto;
+}
+
+.header-button:disabled:hover {
+  background-color: unset;
 }
 </style>
