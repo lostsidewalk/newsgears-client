@@ -3,12 +3,31 @@
     <div class="modal-body">
       <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
       <div class="modal-actions">
-        <!-- 'dismiss' button -->
-        <button class="feed-config-button accessible-button dismiss-button"
-          @click="cancelFeedConfig"
-          :disabled="disabled || inTransit">
-          {{ this.$t('dismiss') }}
-        </button>
+        <!-- button panel -->
+        <div class="feed-config-button-wrapper">
+          <!-- 'dismiss' button -->
+          <button class="feed-config-button accessible-button"
+            @click="dismissFeedConfig"
+            :disabled="disabled || inTransit">
+            {{ this.$t('dismiss') }}
+          </button>
+          <!-- save/update button -->
+          <button v-show="this.selectedTab === 'QUEUE_PROPERTIES'"
+            class="feed-config-button accessible-button"
+            @click="saveFeedConfig"
+            :disabled="disabled || inTransit || v$.$invalid"
+            :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue')">
+            {{ this.feed.id ? this.$t("update") : this.$t("save") }}
+          </button>
+          <!-- save/update and close button -->
+          <button v-show="this.selectedTab === 'QUEUE_PROPERTIES'"
+            class="feed-config-button accessible-button"
+            @click="saveFeedConfigAndDismiss"
+            :disabled="disabled || inTransit || v$.$invalid"
+            :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : this.feed.id ? this.$t('updateThisQueueAndClose') : this.$t('saveThisQueueAndClose')">
+            {{ this.feed.id ? this.$t("updateAndClose") : this.$t("saveAndClose") }}
+          </button>
+        </div>
         <TabHeader :tabModel="tabModel" 
           :selectedTab="selectedTab" 
           :disabled="disabled || inTransit" 
@@ -25,10 +44,12 @@
               :disabled="disabled || inTransit" 
               :theme="theme" 
               :rssAtomFeedUrls="this.rssAtomFeedUrls" 
+              :feedId="this.feed.id"
               @addRssAtomUrl="addRssAtomUrl" 
               @deleteRssAtomUrl="deleteRssAtomUrl" 
               @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
-              @authError="handleAuthError" /> <!-- missing updateServerMessage -->
+              @authError="handleAuthError" 
+              @updateServerMessage="setLastServerMessage" /> 
           </div>
           <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
             <!-- collections browser -->
@@ -132,16 +153,6 @@
               :errorValue="v$.feedLanguage.$errors" 
               :helpText="this.$t('queueFeedLanguageHelpText')"
               @update:modelValue="v$.feedLanguage.$model = $event" />
-            <!-- button panel -->
-            <div class="feed-config-button-wrapper">
-              <!-- save/update button -->
-              <button class="feed-config-button accessible-button"
-                @click="saveFeedConfig"
-                :disabled="disabled || inTransit || v$.$invalid"
-                :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue')">
-                {{ this.feed.id ? this.$t("update") : this.$t("save") }}
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -211,7 +222,7 @@ export default {
       return arr;
     }
   },
-  emits: [ "saveOrUpdate", "cancel", "authError", "updateServerMessage" ],
+  emits: [ "saveOrUpdate", "dismiss", "authError", "updateServerMessage", "refreshFeedDefinition" ],
   validations() {
     return {
       feedIdent: { 
@@ -334,8 +345,12 @@ export default {
       }
       this.$emit('saveOrUpdate', saveObj);
     },
-    cancelFeedConfig() {
-      this.$emit('cancel'); 
+    saveFeedConfigAndDismiss() {
+      this.saveFeedConfig();
+      this.$emit('dismiss');
+    },
+    dismissFeedConfig() {
+      this.$emit('dismiss'); 
     },
     // TODO: not yet implemented 
     addCatalogFeed(source) {
@@ -350,9 +365,37 @@ export default {
       } else {
         source = JSON.parse(JSON.stringify(source));
       }
-      source.id = Math.floor(Math.random() * 1000000000);
-      this.rssAtomFeedUrls.unshift(source);
-      this.saveFeedConfig();
+      let qd = source.queryDefinition;
+      let r = {
+        id: qd.id,
+        feedUrl: qd.queryText,
+        feedId: qd.feedId,
+      }
+      // title
+      let queryTitle = qd.queryTitle;
+      if (queryTitle) {
+        r.title = {
+          value: qd.queryTitle
+        }
+      }
+      // auth 
+      let queryConfig = qd.queryConfig ? JSON.parse(qd.queryConfig) : qd.queryConfig;
+      if (queryConfig) {
+        r.username = queryConfig.username;
+        r.password = queryConfig.password;
+      }
+      // image 
+      let queryDefinitionImageUrl = source.queryDefinitionImageUrl;
+      if (queryDefinitionImageUrl) {
+        r.image = {
+          title: null,
+          url: queryDefinitionImageUrl,
+        }
+      }
+
+      this.rssAtomFeedUrls.unshift(r);
+      
+      this.$emit('refreshFeedDefinition', this.feed.id);
     },
     // TODO: not yet implemented 
     addRssAtomUrls(source) {
@@ -368,20 +411,29 @@ export default {
       }
       if (deleteIdx > -1) {
         this.rssAtomFeedUrls.splice(deleteIdx, 1);
-        this.saveFeedConfig();
+        this.$emit('refreshFeedDefinition', this.feed.id);
       }
     },
     updateRssAtomUrlAuth(source) {
       let updateIdx = -1;
+      let qd = source.queryDefinition;
       for (let i = 0; i < this.rssAtomFeedUrls.length; i++) {
-        if (this.rssAtomFeedUrls[i].id === source.id) {
+        if (this.rssAtomFeedUrls[i].id === qd.id) {
           updateIdx = i;
           break;
         }
       }
       if (updateIdx > -1) {
-        this.rssAtomFeedUrls[updateIdx].queryConfig = source.queryConfig;
-        this.saveFeedConfig();
+        let queryConfigStr = qd.queryConfig;
+        if (queryConfigStr) {
+          let queryConfig = JSON.parse(queryConfigStr);
+          this.rssAtomFeedUrls[updateIdx].username = queryConfig.username;
+          this.rssAtomFeedUrls[updateIdx].password = queryConfig.password;
+        } else {
+          this.rssAtomFeedUrls[updateIdx].username = null;
+          this.rssAtomFeedUrls[updateIdx].password = null;
+        }
+        this.$emit('refreshFeedDefinition', this.feed.id);
       }
     },
     // 
@@ -421,9 +473,9 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   align-content: center;
-  justify-content: center;
   align-items: center;
   gap: .5rem;
+  margin-bottom: 1rem;
 }
 
 .feed-config-button {
@@ -467,8 +519,6 @@ export default {
 .tab {
   display: grid;
   contain: content;
-  max-height: 100svh;
-  overflow: auto;
 }
 
 @keyframes load {
@@ -507,9 +557,5 @@ export default {
     12.5% {
         top: 30px;
     }
-}
-
-.dismiss-button {
-  margin-bottom: 1rem;
 }
 </style>

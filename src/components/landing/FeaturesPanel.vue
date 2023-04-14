@@ -19,104 +19,65 @@
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">PRIVACY AND SECURITY <span class="fa fa-lock" role="presentation" /></div>
+        <div class="feature-title">MOBILE OPTIMIZATION <span class="fa fa-mobile" role="presentation" /></div>
         <div class="feature-body">
-          FeedGears is a tool built for users.  
+          FeedGears has a mobile-optimized interface that it makes it reasy to read and manage feeds on smartphones and tablets.
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">GPT-BASE RECOMMENDATION ENGINE <span class="fa fa-android" role="presentation" /></div>
+        <div class="feature-body">
+          FeedGears will used GPT to suggest RSS feeds that are similar to those in your library.  Use our discovery tool to find new and interesting feeds.
+        </div>
+      </div>
+      <div class="feature">
+        <div class="coming-soon">COMING SOON</div>
+        <div class="feature-title">SOCIAL MEDIA INTEGRATION <span class="fa fa-share-square" role="presentation" /></div>
+        <div class="feature-body">
+          FeedGears makes it easy to share and discover content by integrating with social media platforms such as Facebook and LinkedIn. 
+          Share articles and follow accounts directly from within the reader.
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">SMART SORTING AND FILTERING <span class="fa fa-filter" role="presentation" /></div>
+        <div class="feature-body">
+          FeedGears has advanced sorting and filtering capabilities that help you to quickly find and prioritize the most relevant articles.  
+        </div>
+      </div>
+      <div class="feature">
+        <div class="coming-soon">COMING SOON</div>
+        <div class="feature-title">TOOLS INTEGRATION <span class="fa fa-wrench" role="presentation" /></div>
+        <div class="feature-body">
+          To help you streamline your workflow, FeedGears integrates with productivity tools such as:
           <ul>
-            <li>We will never engage in any sort of tracking activity.</li>
-            <li>User data can be downloaded and fully purged upon request (an automated process built in the 'settings' page).</li>
-            <li>We will never disclose anything about you to anyone, without your permission.</li>
-            <li>FeedGears eploys a sensible content security policy, as well as a secure image proxy, to limit your exposure when rendering feed content in HTML.</li>
-            <li>On the server side, FeedGears will upgrade all feed connections to SSL where possible, and handle your credentials in a secure manner when dealing with authenticated feeds.</li>
-            <li>Privacy Policy</li>
-          </ul>
+            <li>Evernote</li>
+            <li>OneNote</li>
+            <li>Pocket</li>
+            <li>Instapaper</li>
+            <li>Many more!</li>
+          </ul> 
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">ACCESSIBILITY <span class="fa fa-universal-access" role="presentation" /></div>
+        <div class="feature-title">CUSTOMIZATION <span class="fa fa-sliders" role="presentation" /></div>
         <div class="feature-body">
-          We believe in building highly accessible software.  FeedGears is WCAG 2.1 compliant at the 'AA' level. 
-          <ul>
-            <li>Tab order and keyboard navigation makes sense throughout the application.</li>
-            <li>Hot-key support allows you to perform any function with the keyboard.</li>
-            <li>We use vue-announce to properly integrate asynchronous server responses with accessibility software for a seemless experience.</li>
-          </ul>
+          FeedGears offers built-in light and dark themes.  You may also create your own theme by customizing any color.  We will soon offer a wider range of customization options, 
+          including the ability to adjust font sizes and styles, keyboard shortcuts, and multiple layouts.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">QUEUE DASHBOARD <span class="fa fa-dashboard" role="presentation" /></div>
+        <div class="coming-soon">COMING SOON</div>
+        <div class="feature-title">ADVANCED SEARCH <span class="fa fa-search" role="presentation" /></div>
         <div class="feature-body">
-          Upstream feeds are organized into queues.
-          <ul>
-            <li>The FeedGears queue dashboard provides summary information for all of your feeds.</li>
-            <li>Select a queue to see the articles in those feeds, sorted and filtered according to your stored preferences, from anywhere.</li>
-          </ul>
+          FeedGears has advanced search funnctionality that allows you to search through feeds by keyword, date range, 
+          author, and other criteria.
         </div>
       </div>
       <div class="feature">
-        <div class="feature-title">FILTERING AND ALERTS <span class="fa fa-filter" role="presentation" /></div>
+        <div class="feature-title">READ-IT-LATER <span class="fa fa-archive" role="presentation" /></div>
         <div class="feature-body">
-          You can define multiple filters for each queue.  FeedGears will alert you in the queue dashboard when new articles match a filter you have defined.  
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">THEMEABLE <span class="fa fa-paint-brush" role="presentation" /></div>
-        <div class="feature-body">
-          FeedGears has built-in support for customizable light/dark themes.  Each theme is comprised of 31 colors; you may change them all.  
-        </div>
-      </div>
-      <!-- <div class="feature">
-        <div class="feature-title">THIRD-PARTY INTEGRATION</div>
-        <div class="feature-body">
-          FeedGears supports the following third-party integrations: 
-        </div>
-      </div> -->
-      <div class="feature">
-        <div class="feature-title">FEED PUBLISHING <span class="fa fa-bullhorn" role="presentation" /></div>
-        <div class="feature-body">
-          Posts that are 'starred' in FeedGears can be published on a public-facing, queue-specific feed.
-          <ul>
-            <li>One feed per queue, published in RSS, ATOM and JSON formats.</li>
-            <li>These links may be shared with others so that they may follow your 'starred' items in any given queue. </li>
-          </ul>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">RSS/ATOM <span class="fa fa-rss" role="presentation" /></div>
-        <div class="feature-body">
-          FeedGears was built on the open-source project ROME, and supports all versions of RSS/ATOM, with high-level support for modules such as: 
-          <ul>
-            <li>iTunes Podcasting</li>
-            <li>iPhoto Photocasting</li>
-            <li>MediaRSS (Youtube)</li>
-            <li>Creative Commons</li>
-          </ul>
-          We strive to give you access to all content in the RSS/ATOM envelope, organized in a sensible, accessible, and presentable way.  
-          We will soon offer support for GeoRSS, an RSS module which conveys location data to maps-capable readers.
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">FREE AND OPEN-SOURCE <span class="fa fa-code-fork" role="presentation" /></div>
-        <div class="feature-body">
-          FeedGears was built using free and open source tools.  
-          <ul>
-            <li>The back-end is built entirely in Java, mainly using Spring Boot.  </li>
-            <li>The front-end is a VueJs 3 application.  </li>
-            <li>All source code is available in our <span class="fa fa-github" role="presentation" /> GitHub repository, and is updated daily. </li>
-            <li>All source code is protected by the GPLV3 license.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">SELF HOSTING <span class="fa fa-cloud" role="presentation" /></div>
-        <div class="feature-body">
-          For those who would prefer to self-host FeedGears, *here* are the instructions.
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">DEV BLOG <span class="fa fa-laptop" role="presentation" /></div>
-        <div class="feature-body">
-          Follow along with the development of FeedGears via our dev blog, or the Lost Sidewalk coding live stream.  We push front-end builds daily, back-end builds weekly, or as needed.
+          Mark articles as 'read it later' to save articles to read a later time, either within FeedGears, or via a third-party service 
+          such as Pocket or Instapaper.
         </div>
       </div>
     </div>
@@ -134,9 +95,9 @@ export default {
 .features-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
   display: grid;
-  /* grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); */
   resize: none;
   gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   margin-left: 4%;
   margin-right: 4%;
   padding-top: 2%;
@@ -164,5 +125,20 @@ export default {
 
 .feature-body {
   text-align: left;
+}
+
+.coming-soon {
+  font-family: "Russo One", system-ui, sans-serif;
+  font-size: unset;
+  color: v-bind('theme.logocolor');
+  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
+  margin: .44rem;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  border-radius: 4px;
+  padding: .44rem .75rem;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

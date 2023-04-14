@@ -152,6 +152,7 @@ export default {
     continueOpmlUpload() {
       console.log("opml-upload-panel: continue upload of OPML files=" + JSON.stringify(this.files));
       this.inTransit = true;
+      this.errors.splice(0);
       this.$auth.getTokenSilently().then((token) => {
         // form data 
         let formData = new FormData();
@@ -170,14 +171,17 @@ export default {
             };
         fetch(this.baseUrl + "/feeds/opml", requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            throw new Error(this.$t('somethingHorribleHappened'));
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
-          this.errors = data.errors;
-          if (this.errors.length === 0) {
+          if (data.errors) {
+            this.errors = data.errors;
+          } else {
             this.feedConfigRequests = data.feedConfigRequests;
             this.atStep2 = true;
           }

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container" v-if="showModal" v-auto-animate>
+  <div class="modal-container" v-show="showModal" v-auto-animate>
     <div class="modal-body">
       <h3>{{ prompt }}</h3>
       <div class="modal-actions">

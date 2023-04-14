@@ -450,10 +450,12 @@ export default {
             };
         fetch(this.baseUrl + "/settings", requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           this.account = {
@@ -512,9 +514,11 @@ export default {
           };
         fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
-            return response.text(); // TODO: correct this; should be a JSON object 
+            return;
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
           // TODO: set the account obj properties from the JSON response object (above) 
@@ -565,9 +569,11 @@ export default {
         fetch(this.baseUrl + "/settings/display", requestOptions)
         .then((response) => {
           if (response.status === 200) {
-            return response.text();
+            return;
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
           this.setLastServerMessage(this.$t('themeSettingsUpdated'));
@@ -599,7 +605,9 @@ export default {
           if (response.status === 200) {
             return response.blob();
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((blob) => {
           let url = window.URL.createObjectURL(blob);
@@ -639,7 +647,9 @@ export default {
           if (response.status === 200) {
             return response.blob();
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);
@@ -686,16 +696,15 @@ export default {
             };
         fetch(this.baseUrl + "/order", requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
-          let sessionId = data.sessionId;
-          let sessionUrl = data.sessionUrl;
-          console.log("settings: redirecting to checkout url=" + sessionUrl + " for sessionId=" + sessionId);
-          window.location.href = sessionUrl;
+          window.location.href = data.sessionUrl;
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
@@ -730,7 +739,9 @@ export default {
             this.subscription.cancelAtPeriodEnd = true;
             this.setLastServerMessage(this.$t('yourSubscriptionWasCanceledClickToResume'));
           } else {
-            response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);
@@ -765,7 +776,9 @@ export default {
             this.subscription.cancelAtPeriodEnd = false;
             this.setLastServerMessage(this.$t('yourSubscriptionWasResumed'));
           } else {
-            response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);

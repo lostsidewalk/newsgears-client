@@ -69,6 +69,7 @@ export default {
 
 .logosubduedtext {
   font-size: 2.0rem;
+  color: v-bind('theme.logosubtextcolor');
   padding-top: 1svh;
   padding-bottom: 1svh;
 }

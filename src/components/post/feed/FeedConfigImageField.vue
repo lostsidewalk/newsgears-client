@@ -87,13 +87,15 @@ export default {
         fetch(this.baseUrl + "/feeds/thumbnail", requestOptions)
         .then((response) => {
           if (response.status === 200) {
-            return response.json();
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json() : {};
           } else { // framework is rejecting the request 
             throw Error(this.$t('unableToUseThisImage'));
           }
         }).then((data) => {
           this.feedImageUploadErrors = data.errors;
-          if (this.feedImageUploadErrors.length === 0) {
+          if (this.feedImageUploadErrors && this.feedImageUploadErrors.length === 0) {
             this.$emit('update:modelValue', data.imgSrc);
           }
         }).catch((error) => {
@@ -126,7 +128,9 @@ export default {
         fetch(this.baseUrl + "/feeds/thumbnail/random", requestOptions)
         .then((response) => {
           if (response.status === 200) {
-            return response.json();
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json() : {};
           } else { // framework is rejecting the request 
             throw Error(this.$t('unableToFetchAnImage'));
           }

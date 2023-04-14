@@ -14,6 +14,8 @@
 
     <FeaturesPanel :theme="theme" class="features" /> 
 
+    <FAQPanel :theme="theme" class="faq" />
+
     <FooterPanel :theme="theme" class="footer" />
 </div>
 </template>
@@ -24,6 +26,7 @@ import PreLoginNavbarButtons from '@/components/layout/PreLoginNavbarButtons.vue
 import BannerPanel from '@/components/landing/BannerPanel.vue';
 import DemoPanel from '@/components/landing/DemoPanel.vue';
 import FeaturesPanel from '@/components/landing/FeaturesPanel.vue';
+import FAQPanel from '@/components/landing/FAQPanel.vue';
 import FooterPanel from '@/components/landing/FooterPanel.vue';
 // import SystemStatusPanel from '@/components/landing/SystemStatusPanel.vue';
 
@@ -35,6 +38,7 @@ export default {
     BannerPanel, 
     DemoPanel, 
     FeaturesPanel, 
+    FAQPanel,
     FooterPanel, 
     // SystemStatusPanel, 
   },
@@ -75,15 +79,22 @@ export default {
 }
 
 .banner {
-  background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.appbg'));
+  background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.darkshadow'));
 }
 
 .demo {
-  background-image: linear-gradient(180deg, v-bind('theme.appbg'), v-bind('theme.darkshadow'));
+  background-image: linear-gradient(180deg, v-bind('theme.darkshadow'), v-bind('theme.appbg'));
 }
 
 .features {
-  background-image: linear-gradient(180deg, v-bind('theme.darkshadow'), v-bind('theme.lightshadow'));
+  background-image: linear-gradient(180deg, v-bind('theme.appbg'), v-bind('theme.bodybg'));
+}
+
+.faq {
+}
+
+.footer {
+
 }
 </style>
 

@@ -94,12 +94,12 @@ export default {
               credentials: 'include', 
             };
           fetch(this.baseUrl + "/discovery/collection/" + collection, requestOptions).then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
             if (response.status === 200) {
-              return response.json();
+              return isJson ? response.json() : {};
             } else {
-              return response.json().then(j => {
-                throw new Error(null, { cause: j });
-              })
+              return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
             }
           }).then((data) => {
             let feeds = [];
@@ -156,16 +156,17 @@ export default {
             body: JSON.stringify({
               url: r.feedUrl,
               username: r.username,
-              password: r.password
+              password: r.password,
+              isIncludeRecommendations: false,
             })
           };
           fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
             if (response.status === 200) {
-              return response.json();
+              return isJson ? response.json() : {};
             } else {
-              return response.json().then(j => {
-                throw new Error(null, { cause: j });
-              })
+              return isJson ? response.json().then(j => {throw new Error(null, {cause: j})}) : response.text().then(t => {throw new Error(t)});
             }
           }).then((data) => {
             if (data.error) {
@@ -202,12 +203,16 @@ export default {
               r.error = this.$t('somethingHorribleHappened');
             } else {
               let cause = error.cause;
-              r.error = cause.details;
-              r.httpStatusCode = cause.httpStatusCode;
-              r.httpStatusMessage = cause.httpStatusMessage;
-              r.redirectFeedUrl = cause.redirectFeedUrl;
-              r.redirectHttpStatusCode = cause.redirectHttpStatusCode;
-              r.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
+              if (cause) {
+                r.error = cause.details;
+                r.httpStatusCode = cause.httpStatusCode;
+                r.httpStatusMessage = cause.httpStatusMessage;
+                r.redirectFeedUrl = cause.redirectFeedUrl;
+                r.redirectHttpStatusCode = cause.redirectHttpStatusCode;
+                r.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
+              } else {
+                r.error = error.message;
+              }
             }
           }).finally(() => {
             this.inTransit = false;
@@ -343,9 +348,5 @@ export default {
 
 .rss-atom-url-row-button:hover:disabled {
   background-color: unset;
-}
-
-.rss-atom-url-row-button:last-child {
-  border-radius: 0px 3px 3px 0px;
 }
 </style>

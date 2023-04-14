@@ -143,7 +143,7 @@
           </span>
         </div>
         <!-- post contents -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postContents && post.postContents.length > 0)">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="(post.postContents && post.postContents.length > 0)">
           <div v-for="c of post.postContents" :key="c">
             <div v-if="isHtmlContent(c)"
               class='post-field-wrapper post-html-frame' 
@@ -155,7 +155,7 @@
           </div>
         </div>
         <!-- post media -->
-        <div class="post-item-media" v-if="(this.showPostDetails && post.postMedia)">
+        <div class="post-item-media" v-show="this.showPostDetails" v-if="(post.postMedia)">
           <PostMedia 
             ref="postMedia"
             :theme="theme" 
@@ -165,7 +165,7 @@
             @audioPlay="onAudioPlay" />
         </div>
         <!-- post itunes -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postITunes)">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="(post.postITunes)">
           <PostITunes 
             :theme="theme" 
             class="post-field-wrapper" 
@@ -173,7 +173,7 @@
             @playFirstEnclosure="onPlayFirstEnclosure" />
         </div>
         <!-- post enclosures -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.enclosures)">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="(post.enclosures)">
           <PostEnclosure v-for="(enclosure,idx) in post.enclosures" :key="enclosure"
             :ref="'postEnclosure_' + idx"
             :theme="theme"
@@ -182,7 +182,7 @@
             @audioPlay="onAudioPlay" />
         </div>
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postUrls && post.postUrls.length > 0)">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="(post.postUrls && post.postUrls.length > 0)">
           <span class="post-field-wrapper">
             <label class="post-info-label-small">{{ this.$t('links') }}</label>
             <div v-for="postUrl of post.postUrls" :key="postUrl" class="post-other-link">
@@ -201,14 +201,14 @@
           </span>
         </div>
         <!-- post comment (hidden w/no details) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postComment)">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="(post.postComment)">
           <span class="post-field-wrapper">
             <label class="post-info-label-small">{{ this.$t('postComments') }}</label>
             <div>{{ this.trimToLength(post.postComment, 128) }}</div>
           </span>
         </div>
         <!-- post authors -->
-        <div class="post-item-row" v-if="(this.showPostDetails && (post.postAuthors || post.publishTimestamp || post.lastUpdatedTimestamp))">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="(post.postAuthors || post.publishTimestamp || post.lastUpdatedTimestamp)">
           <span class="post-field-wrapper">
             <label class="post-info-label-small" v-if="post.postAuthors">
               {{ post.postAuthors.length > 1 ? this.$t('authors') : this.$t('author') }}
@@ -228,7 +228,7 @@
           </span>
         </div>
         <!-- post contributors -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postContributors)">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="post.postContributors">
           <span class="post-field-wrapper">
             <label class="post-info-label-small">{{ this.$t('contributors') }}</label>
             <div v-for="contributor of post.postContributors" :key="contributor">
@@ -240,9 +240,8 @@
           </span>
         </div>
         <!-- post rights (hidden w/no details) -->
-        <div class="post-item-row" v-if="(this.showPostDetails && post.postRights)">
-          <span v-if="post.postRights" 
-            class="post-field-wrapper">
+        <div class="post-item-row" v-show="this.showPostDetails" v-if="post.postRights">
+          <span class="post-field-wrapper">
             <div>{{ this.trimToLength(post.postRights, 128) }}</div>
           </span>
         </div>

@@ -62,10 +62,13 @@ export default {
             };
         fetch(this.baseUrl + "/settings/display", requestOptions)
         .then((response) => {
+          // server can return text or JSON object on success or error 
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           let displayConfig = data.displayConfig;
@@ -103,9 +106,11 @@ export default {
           };
         fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
-            return response.text(); 
+            return;
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);

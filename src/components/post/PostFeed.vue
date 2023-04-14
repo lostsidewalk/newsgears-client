@@ -192,9 +192,10 @@
                   :baseUrl="baseUrl" 
                   :rssAtomFeedCatalog="rssAtomFeedCatalog"
                   @saveOrUpdate="createOrUpdateFeed"
-                  @cancel="cancelCreateOrUpdateFeed"
+                  @dismiss="dismissCreateOrUpdateFeed"
                   @authError="handleServerError" 
-                  @updateServerMessage="setLastServerMessage" />
+                  @updateServerMessage="setLastServerMessage" 
+                  @refreshFeedDefinition="$event => this.refreshFeeds([$event], true)" />
               </template>
             </ViewHeader>
             <ViewHeader v-if="this.showOpmlUploadPanel" 
@@ -319,10 +320,10 @@ export default {
           if (this.selectedFeedFilterSubscriptions.length === 0) {
             subscriptionMatches = true;
           } else {
-            if (post.importerDesc && this.selectedFeedFilterSubscriptions) {
+            if (this.selectedFeedFilterSubscriptions) {
               for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
                 let r = this.selectedFeedFilterSubscriptions[i];
-                if (r.title && this.lcStrEq(post.importerDesc, r.title.value)) {
+                if (this.lcStrEq(new String(post.queryId), new String(r.id))) {
                   subscriptionMatches = true;
                   break;
                 }
@@ -762,8 +763,11 @@ export default {
             credentials: 'include' 
           })
           .then((response) => {
+            // server returns JSON or empty string on success 
             if (response.status === 200) {
-              return response.json();
+              let contentType = response.headers.get("content-type");
+              let isJson = contentType && contentType.indexOf("application/json") !== -1;
+              return isJson ? response.json() : {};
             } else {
               throw Error(this.$t('refreshFailedDueTo') + 
                 " HTTP " + response.status + ": " + 
@@ -800,8 +804,11 @@ export default {
               credentials: 'include' 
             })
             .then((response) => {
+              // server returns JSON or empty string on success 
               if (response.status === 200) {
-                return response.json();
+                let contentType = response.headers.get("content-type");
+                let isJson = contentType && contentType.indexOf("application/json") !== -1;
+                return isJson ? response.json() : {};
               } else {
                 throw Error(this.$t('refreshFailedDueTo') + 
                   " HTTP " + response.status + ": " + 
@@ -817,33 +824,35 @@ export default {
               // populate feeds and queryDefinitionImagesById
               let feedDefinitionData = data.feedDefinitions; // all feed definition data objects 
               let queryDefinitionData = data.queryDefinitions; // all query definition data objects 
-              for (let i = 0; i < feedDefinitionData.length; i++) {
-                let fd = feedDefinitionData[i]; // feed definition data for this feed 
-                let qd = queryDefinitionData[fd.id]; // query definitions for this feed 
-                // merge query definition and metrics data into feed definition 
-                this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
-                // marshall up all query definitions by Id for later reference 
-                if (qd) {
-                  for (let j = 0; j < qd.length; j++) {
-                    let wrapper = qd[j];
-                    // console.log("queryDefinition id=" + wrapper.queryDefinition.id + ", queryTitle=" + wrapper.queryDefinition.queryTitle + ", queryDefinitionImageUrl=" + wrapper.queryDefinitionImageUrl);
-                    this.queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
+              if (feedDefinitionData) {
+                for (let i = 0; i < feedDefinitionData.length; i++) {
+                  let fd = feedDefinitionData[i]; // feed definition data for this feed 
+                  let qd = queryDefinitionData[fd.id]; // query definitions for this feed 
+                  // merge query definition and metrics data into feed definition 
+                  this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
+                  // marshall up all query definitions by Id for later reference 
+                  if (qd) {
+                    for (let j = 0; j < qd.length; j++) {
+                      let wrapper = qd[j];
+                      // console.log("queryDefinition id=" + wrapper.queryDefinition.id + ", queryTitle=" + wrapper.queryDefinition.queryTitle + ", queryDefinitionImageUrl=" + wrapper.queryDefinitionImageUrl);
+                      this.queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
+                    }
                   }
-                }
-                // parse feed definition export config (if present) 
-                fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
-                // locate the feed to update by id 
-                let idxToUpdate = -1;
-                for (let i = 0; i < this.feeds.length; i++) {
-                  if (this.feeds[i].id === fd.id) {
-                    idxToUpdate = i;
+                  // parse feed definition export config (if present) 
+                  fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
+                  // locate the feed to update by id 
+                  let idxToUpdate = -1;
+                  for (let i = 0; i < this.feeds.length; i++) {
+                    if (this.feeds[i].id === fd.id) {
+                      idxToUpdate = i;
+                    }
                   }
-                }
-                if (idxToUpdate >= 0) {
-                  this.feeds[idxToUpdate] = fd;
-                } else {
-                  fd.showMoreInformation = true;
-                  this.feeds.push(fd);
+                  if (idxToUpdate >= 0) {
+                    this.feeds[idxToUpdate] = fd;
+                  } else {
+                    fd.showMoreInformation = true;
+                    this.feeds.push(fd);
+                  }
                 }
               }
               this.rssAtomFeedCatalog = data.rssAtomFeedCatalog;
@@ -891,7 +900,6 @@ export default {
     },
     decorateFeedWithQueryDefinitions(fd, qd, qm) {
       fd.rssAtomFeedUrls = [];
-      // 
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
           let wrapper = qd[i];
@@ -1006,9 +1014,11 @@ export default {
         fetch(this.baseUrl + "/staging/read-status/post/" + result.id, requestOptions)
         .then((response) => {
           if (response.status === 200) {
-            return response.json();
+            return;
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
           let originator = result.originator;
@@ -1043,10 +1053,12 @@ export default {
         };
         fetch(this.baseUrl + "/staging/pub-status/" + result.id, requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           // update the post 
@@ -1161,10 +1173,12 @@ export default {
         let url = this.baseUrl + "/feeds/";
         fetch(url, requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : [];
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         })
         .then((data) => {
@@ -1224,45 +1238,46 @@ export default {
         let url = this.baseUrl + "/feeds/" + (isUpdate ? feed.id : '');
         fetch(url, requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {
+              throw new Error(j.message, { cause: {} });
+            }) : response.text().then(t => {
+              throw new Error(t, { cause: {} })
+            });
           }
         })
         .then((data) => {
           if (isUpdate) {
-            let f = data.feedDefinition;
-            for (let i = 0; i < this.feeds.length; i++) {
-              if (this.feeds[i].id === f.id) {
-                this.feeds[i].ident = f.ident;
-                this.feeds[i].title = f.title;
-                this.feeds[i].description = f.description;
-                this.feeds[i].generator = f.generator;
-                this.feeds[i].copyright = f.copyright;
-                this.feeds[i].language = f.language;
-                this.feeds[i].feedImgSrc = f.feedImgSrc; // NOTE: limited on the backend to 16384 chars 
-                this.feeds[i].categoryTerm = f.categoryTerm;
-                this.feeds[i].categoryLabel = f.categoryLabel;
-                this.feeds[i].categoryScheme = f.categoryScheme;
-                this.feeds[i].categoryValue = f.categoryValue;
-                this.feeds[i].categoryDomain = f.categoryDomain;
-                this.decorateFeedWithQueryDefinitions(this.feeds[i], data.queryDefinitions, data.queryMetrics);
-                this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
-                break;
-              }
-            }
-            this.refreshFeeds([f.id], false); // TODO: this is wrong, the refresh should be returned from the update call 
+            let updated = data.feedDefinition;
+            let current = this.getFeedById(updated.id);
+            current.ident = updated.ident;
+            current.title = updated.title;
+            current.description = updated.description;
+            current.generator = updated.generator;
+            current.copyright = updated.copyright;
+            current.language = updated.language;
+            current.feedImgSrc = updated.feedImgSrc; // NOTE: limited on the backend to 16384 chars 
+            current.categoryTerm = updated.categoryTerm;
+            current.categoryLabel = updated.categoryLabel;
+            current.categoryScheme = updated.categoryScheme;
+            current.categoryValue = updated.categoryValue;
+            current.categoryDomain = updated.categoryDomain;
+            this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.queryMetrics);
+            this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
+            this.refreshFeeds([current.id], false); // TODO: this is wrong, the refresh should be returned from the update call 
           } else {
-            let f = data[0].feedDefinition;
-            this.feeds.push(f);
-            this.inboundQueuesByFeed[f.ident] = [];
-            this.$refs.feedConfigPanel.setupSubscriptionConfig(f.id);
-            this.setLastServerMessage(this.$t('queueCreated') + ' (' + f.ident + ")'");
-            this.setSelectedFeedId(f.id);
+            let created = data[0].feedDefinition;
+            this.feeds.push(created);
+            this.inboundQueuesByFeed[created.ident] = [];
+            this.$refs.feedConfigPanel.setupSubscriptionConfig(created.id);
+            this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
+            this.setSelectedFeedId(created.id);
           }
-        })
-        .catch((error) => {
+        }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
@@ -1272,7 +1287,7 @@ export default {
         this.inTransit = false;
       });
     },
-    cancelCreateOrUpdateFeed() {
+    dismissCreateOrUpdateFeed() {
       if (this.$refs.feedConfigPanel) {
         this.$refs.feedConfigPanel.tearDown();
         this.showFeedConfigPanel = false;
@@ -1308,10 +1323,12 @@ export default {
           method: 'DELETE',
           credentials: 'include'
         }).then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           console.log("post-feed: deleted feedId=" + this.feedIdToDelete);
@@ -1376,10 +1393,12 @@ export default {
         };
         fetch(this.baseUrl + "/staging/read-status/feed/" + this.feedIdToMarkAsRead, requestOptions)
         .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
           if (response.status === 200) {
-            return response.json();
+            return isJson ? response.json() : {};
           } else {
-            return response.json().then(j => {throw new Error(j.message)})
+            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           this.inboundQueuesByFeed[this.feedIdToMarkAsRead].forEach((p) => { 
@@ -1544,7 +1563,7 @@ export default {
         if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel && !this.showFeedConfigPanel && !this.showOpmlUploadPanel) {
           document.activeElement.blur();
         } else {
-          // TODO: extract to cancelFeedDelete' 
+          // TODO: extract to 'cancelFeedDelete' 
           this.feedIdToDelete = null;
           this.$refs.feedDeleteConfirmationModal.hide();
           // TODO: extract to 'cancelFeedMarkAsRead' 
@@ -1552,7 +1571,7 @@ export default {
           this.$refs.feedMarkAsReadConfirmationModal.hide();
           // 
           this.dismissHelpPanel();
-          this.cancelCreateOrUpdateFeed();
+          this.dismissCreateOrUpdateFeed();
           this.cancelOpmlUpload();
           this.$refs.controlPanel.showSettingsPanel = false;
         }

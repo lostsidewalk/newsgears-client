@@ -67,7 +67,8 @@
         :disabled="disabled || inTransit"
         :theme="theme"
         :filterSupport="false"
-        style="margin-top: .75rem" />
+        style="margin-top: .75rem" 
+        @followRecommendation="followRecommendation" />
     </div>
 
     <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
@@ -131,7 +132,7 @@
             <span class="fa fa-expand"/> &nbsp; {{ this.$t('auth') }}
           </button>
           <button class="rss-atom-url-row-button accessible-button"
-            @click="this.$emit('deleteRssAtomUrl', rssAtomUrl.id)"
+            @click="this.deleteRssAtomUrl(rssAtomUrl.id)"
             :disabled="disabled || inTransit"
             :title="this.$t('unsubscribe')">
             <span class="fa fa-trash" /> &nbsp; {{  this.$t('unsubscribe') }}
@@ -150,7 +151,7 @@
           :placeholder="this.$t('password')" />
         <div class="rss-atom-url-row-buttons">
           <button class="rss-atom-url-row-button accessible-button"
-            @click="this.$emit('updateRssAtomUrlAuth', rssAtomUrl)"
+            @click="this.updateRssAtomUrlAuth(rssAtomUrl)"
             :disabled="disabled || inTransit">
             <span class="fa fa-save" /> &nbsp; Update auth
           </button>
@@ -162,7 +163,8 @@
         :theme="theme"
         :filterSupport="false"
         style="margin-top: 0.75rem" 
-        @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" />
+        @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" 
+        @followRecommendation="followRecommendation" />
     </div>
   </div>
 </template>
@@ -177,7 +179,7 @@ export default {
     NavbarFixedHeader,
     RssAtomFeedInfo,
   },
-  props: [ "rssAtomFeedUrls", "disabled", "theme", "baseUrl" ],
+  props: [ "rssAtomFeedUrls", "feedId", "disabled", "theme", "baseUrl" ],
   computed: {
     totalPages: function() {
       if (this.rssAtomFeedUrls) {
@@ -190,11 +192,30 @@ export default {
   },
   emits: [
     "addRssAtomUrl",
-    "fdeleteRssAtomUrl", 
+    "deleteRssAtomUrl",
     "updateRssAtomUrlAuth",
     "authError",
+    "updateServerMessage",
   ],
   methods: {
+    // 
+    // server error 
+    // 
+    handleServerError(error) {
+      console.error(error);
+      if (error.name === 'TypeError') {
+        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+      } else if (error.message) {
+        this.setLastServerMessage(error.message); 
+      } else {
+        this.setLastServerMessage(error); // $auth plugin errors 
+      }
+    },
+    setLastServerMessage(message) {
+      if (message) {
+        this.$emit('updateServerMessage', message);
+      }
+    },
     // 
     // pagination 
     // 
@@ -233,21 +254,154 @@ export default {
     lastPage() {
       this.currentPage = this.totalPages - 1;
     },
-    //
-    handleAuthError(error) {
-      this.$emit('authError', error);
-      this.inTransit = false;
-    },
-    focus() {
-      if (document.activeElement) {
-        document.activeElement.blur();
+    // make POST call to feed controller/query definitions endpoint 
+    addNewRssAtomUrl() {
+      try {
+        this.validateRssAtomUrl(this.newRssAtomUrl);
+      } catch (error) {
+        console.error(error);
+        return;
       }
+      this.inTransit = true;
+      console.log("subscription-config: pushing new subscription to remote..");
+      this.$auth.getTokenSilently().then((token) => {
+        const requestOptions = {
+          method: 'POST',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify([this.newRssAtomUrl])
+        };
+        let url = this.baseUrl + "/feeds/" + this.feedId + '/queries/';
+        fetch(url, requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? response.json().then(j => {
+              throw new Error(j.message, { cause: {} });
+            }) : response.text().then(t => {
+              throw new Error(t, { cause: {} })
+            });
+          }
+        }).then((data) => {
+          let queryDefinitions = data.queryDefinitions;
+          if (queryDefinitions && queryDefinitions.length > 0) {
+            let qd = queryDefinitions[0];
+            this.$emit('addRssAtomUrl', qd);
+            this.newRssAtomUrl = {};
+            this.setLastServerMessage(this.$t('subscriptionAdded'));
+          }
+        }).catch((error) => {
+          this.handleServerError(error); 
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error); 
+        this.inTransit = false;
+      });
+    },
+    // make DELETE call to feed controller/query definitions endpoint 
+    deleteRssAtomUrl(id) {
+      this.inTransit = true;
+      console.log("subscription-config: deleteing subscription..");
+      this.$auth.getTokenSilently().then((token) => {
+        const requestOptions = {
+          method: 'DELETE',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+        };
+        let url = this.baseUrl + "/feeds/" + this.feedId + '/queries/' + id;
+        fetch(url, requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? response.json().then(j => {
+              throw new Error(j.message, { cause: {} });
+            }) : response.text().then(t => {
+              throw new Error(t, { cause: {} })
+            });
+          }
+        }).then(() => {
+          this.$emit('deleteRssAtomUrl', id);
+          this.setLastServerMessage(this.$t('subscriptionDeleted'));
+        }).catch((error) => {
+          this.handleServerError(error); 
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error); 
+        this.inTransit = false;
+      });
+    },
+    // make PUT call to feed controller/query definitions endpoint 
+    updateRssAtomUrlAuth(rssAtomUrl) {
+      try {
+        this.validateRssAtomUrl(rssAtomUrl);
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+      this.inTransit = true;
+      console.log("subscription-config: pushing updated subscription to remote..");
+      this.$auth.getTokenSilently().then((token) => {
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(rssAtomUrl),
+        };
+        let url = this.baseUrl + "/feeds/" + this.feedId + '/queries/' + rssAtomUrl.id;
+        fetch(url, requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? response.json().then(j => {
+              throw new Error(j.message, { cause: {} });
+            }) : response.text().then(t => {
+              throw new Error(t, { cause: {} })
+            });
+          }
+        }).then((data) => {
+          let queryDefinitions = data.queryDefinitions;
+          if (queryDefinitions && queryDefinitions.length > 0) {
+            let qd = queryDefinitions[0];
+            this.$emit('updateRssAtomUrlAuth', qd);
+            this.setLastServerMessage(this.$t('subscriptionUpdated'));
+          }
+        }).catch((error) => {
+          this.handleServerError(error); 
+        }).finally(() => {
+          this.inTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error); 
+        this.inTransit = false;
+      });
     },
     // 
-    addNewRssAtomUrl() {
-      this.$emit('addRssAtomUrl', this.newRssAtomUrl);
-      this.newRssAtomUrl = {};
+    // validation 
+    // 
+    validateRssAtomUrl(rssAtomUrl) {
+      console.log("validating subscription: " + JSON.stringify(rssAtomUrl));
     },
+    // 
+    // discovery 
     // 
     refreshRssAtomUrlInfo(rssAtomUrl) {
       rssAtomUrl.error = null;
@@ -274,16 +428,17 @@ export default {
             body: JSON.stringify({
               url: r.feedUrl,
               username: r.username,
-              password: r.password
+              password: r.password,
+              includeRecommendations: true,
             })
           };
           fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
             if (response.status === 200) {
-              return response.json();
+              return isJson ? response.json() : {};
             } else {
-              return response.json().then(j => {
-                throw new Error(null, { cause: j });
-              })
+              return isJson ? response.json().then(j => {throw new Error(null, {cause: j})}) : response.text().then(t => {throw new Error(t)});
             }
           }).then((data) => {
             if (data.error) {
@@ -310,6 +465,7 @@ export default {
               r.supportedTypes = data.supportedTypes;
               r.webMaster = data.webMaster;
               r.sampleEntries = data.sampleEntries;
+              r.feedRecommendationInfo = data.feedRecommendationInfo;
               r.discoveryUrl = data.feedUrl;
               r.httpStatusCode = data.httpStatusCode;
               r.httpStatusMessage = data.httpStatusMessage;
@@ -318,20 +474,20 @@ export default {
               r.redirectHttpStatusMessage = data.redirectHttpStatusMessage;
             }
           }).catch((error) => {
-            console.error(error);
             if (error.name === 'TypeError') {
               r.error = this.$t('somethingHorribleHappened');
             } else {
               let cause = error.cause;
-              let data = {};
-              data.id = r.id;
-              data.discoveryUrl = null;
-              data.error = cause.details;
-              data.httpStatusCode = cause.httpStatusCode;
-              data.httpStatusMessage = cause.httpStatusMessage;
-              data.redirectFeedUrl = cause.redirectFeedUrl;
-              data.redirectHttpStatusCode = cause.redirectHttpStatusCode;
-              data.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
+              if (cause) {
+                r.error = cause.details;
+                r.httpStatusCode = cause.httpStatusCode;
+                r.httpStatusMessage = cause.httpStatusMessage;
+                r.redirectFeedUrl = cause.redirectFeedUrl;
+                r.redirectHttpStatusCode = cause.redirectHttpStatusCode;
+                r.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
+              } else {
+                r.error = error.message;
+              }
             }
           })
           .finally(() => {
@@ -346,6 +502,13 @@ export default {
       return (str !== null && str !== undefined) ? str.length : 0;
     },
     // 
+    // recommendation 
+    // 
+    followRecommendation(url) {
+      this.newRssAtomUrl.feedUrl = url;
+      this.refreshRssAtomUrlInfo(this.newRssAtomUrl);
+    },
+    // 
     toggleBrowseCollections() {
       if (this.showBrowseCollections) {
         this.cancelBrowseCollections();
@@ -353,52 +516,18 @@ export default {
         this.showBrowseCollections();
       }
     },
-    // doCatalogSearch() {
-    //   this.showFeedCatalog = true;
-    //   if (!this.feedCatalog) {
-    //     console.log("feed-config-panel: loading feed catalog...');
-    //     this.inTransit = true;
-    //     this.$auth.getTokenSilently().then((token) => {
-    //       const requestOptions = {
-    //           method: 'GET',
-    //           headers: {
-    //             "Authorization": `Bearer ${token}`
-    //           },
-    //           credentials: 'include',
-    //         };
-    //         fetch(this.baseUrl + "/catalog", requestOptions)
-    //         .then((response) => {
-    //           if (response.status === 200) {
-    //             return response.json();
-    //           } else { // framework is rejecting the request
-    //             throw Error(this.$t('unableToFetchCatalog'));
-    //           }
-    //         }).then((data) => {
-    //           this.feedCatalog = data;
-    //           for (let i = 0; i < this.feedCatalog.length; i++) {
-    //             let c = this.feedCatalog[i];
-    //             c.discoveryUrl = c.feedUrl;
-    //           }
-    //         }).catch((error) => {
-    //           console.error(error);
-    //           if (error.name === 'TypeError') {
-    //             this.feedCatalogErrors.push(this.$t('somethingHorribleHappened'));
-    //           } else {
-    //             this.feedCatalogErrors.push(error.message);
-    //           }
-    //         }).finally(() => {
-    //           this.inTransit = false;
-    //         });
-    //     }).catch((error) => {
-    //       this.handleAuthError(error);
-    //       this.inTransit = false;
-    //     })
-    //     this.feedCatalog = [];
-    //   }
-    // },
-    // cancelCatalogSearch() {
-    //   this.showFeedCatalog = false;
-    // },
+    // 
+    // misc 
+    //
+    handleAuthError(error) {
+      this.$emit('authError', error);
+      this.inTransit = false;
+    },
+    focus() {
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+    },
   },
   data() {
     return {
@@ -558,10 +687,6 @@ export default {
 
 .rss-atom-url-row-button:hover:disabled {
   background-color: unset;
-}
-
-.rss-atom-url-row-button:last-child {
-  border-radius: 0px 3px 3px 0px;
 }
 
 .subscription-filter-buttons {

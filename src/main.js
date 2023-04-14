@@ -123,10 +123,19 @@ const i18n = createI18n({
       queueFeedLanguage: 'Idioma', 
       queueFeedLanguageHelpText: 'Este valor aparece como el valor del campo \'idioma\' en la fuente RSS/ATOM publicada para esta cola.',
       fillOutAllRequiredFields: 'Rellene todos los campos obligatorios',
+      // tooltips 
       updateThisQueue: 'Actualizar esta cola',
-      saveThisQueue: 'Guardar esta cola',
+      updateThisQueueAndClose: 'Actualizar esta cola y cerrar',
+      // buttons 
       update: 'Actualizar',
-      save: 'Ahorrar',
+      updateAndClose: 'Actualizar y cerrar',
+      // tooltips 
+      saveThisQueue: 'Guardar esta cola',
+      saveThisQueueAndClose: 'Guardar esta cola y cerrar',
+      // buttons 
+      save: 'Guardar',
+      saveAndClose: 'Guardar y cerrar',
+      // 
       queueProperties: 'Propiedades de la cola',
       rssFeedDiscovery: 'Descubrimiento de fuentes RSS',
       // rss feed info 
@@ -143,7 +152,9 @@ const i18n = createI18n({
       webmasterColon: 'Administrador de página web:', 
       httpStatusCode: 'Código de estado HTTP',
       redirectHttpStatusCode: 'Redirigir el código de estado HTTP', 
-      feedAlsoAvailableInHttps: 'Este feed también está disponible en HTTPS', 
+      feedAlsoAvailableInHttps: 'Este feed también está disponible en HTTPS.', 
+      sampleEntries: 'Artículos recientes',
+      recommendedFeeds: 'Fuentes RSS similares',
       // feed collections browser 
       topNews: 'Noticias',
       investing: 'Invertir',
@@ -178,6 +189,9 @@ const i18n = createI18n({
       discovery: 'Descubrimiento', 
       auth: 'Autorización',
       unsubscribe: 'Darse de baja',
+      subscriptionAdded: 'Suscripción añadida',
+      subscriptionUpdated: 'Suscripción actualizada',
+      subscriptionDeleted: 'Suscripción eliminada',
       // post feed filter 
       articleQueue: 'COLA DE ARTÍCULOS',
       refreshQueues: 'Actualizar colas', 
@@ -470,10 +484,19 @@ const i18n = createI18n({
       queueFeedLanguage: 'Language', 
       queueFeedLanguageHelpText: 'This value appears as the value for the \'language\' field in the published RSS/ATOM feed for this queue.',
       fillOutAllRequiredFields: 'Fill out all required fields',
+      // tooltips 
       updateThisQueue: 'Update this queue',
-      saveThisQueue: 'Save this queue',
+      updateThisQueueAndClose: 'Update this queue and close',
+      // buttons 
       update: 'Update',
+      updateAndClose: 'Update and close',
+      // tooltips 
+      saveThisQueue: 'Save this queue',
+      saveThisQueueAndClose: 'Save this queue and close',
+      // buttons 
       save: 'Save',
+      saveAndClose: 'Save and close',
+      // 
       queueProperties: 'Queue Properties',
       rssFeedDiscovery: 'RSS Feed Discovery',
       // rss feed info 
@@ -490,7 +513,9 @@ const i18n = createI18n({
       webmasterColon: 'Webmaster:', 
       httpStatusCode: 'HTTP status code',
       redirectHttpStatusCode: 'Redirect HTTP status code', 
-      feedAlsoAvailableInHttps: 'This feed is also available in HTTPS', 
+      feedAlsoAvailableInHttps: 'This feed is also available in HTTPS.', 
+      sampleEntries: 'Recent articles',
+      recommendedFeeds: 'Similar feeds',
       // feed collections browser 
       topNews: 'News',
       investing: 'Investing',
@@ -525,6 +550,9 @@ const i18n = createI18n({
       discovery: 'Discovery', 
       auth: 'Auth',
       unsubscribe: 'Unsubscribe',
+      subscriptionAdded: 'Subscription added',
+      subscriptionUpdated: 'Subscription updated',
+      subscriptionDeleted: 'Subscription deleted',
       // post feed filter  
       articleQueue: 'ARTICLE QUEUE',
       refreshQueues: 'Refresh queues', 
