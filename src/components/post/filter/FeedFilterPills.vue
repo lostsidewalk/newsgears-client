@@ -84,7 +84,7 @@ export default {
 
 .filter-pills-buttons {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: .75rem;
   max-height: 25svh;
   overflow: auto;
