@@ -37,6 +37,7 @@ export default {
 
 <style scoped>
 .feed-filter-pills {
+  margin-top: .56rem;
   margin-left: .56rem;
   margin-right: .56rem;
   justify-content: flex-start;

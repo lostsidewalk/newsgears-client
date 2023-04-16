@@ -74,7 +74,6 @@ export default {
   margin-left: .56rem;
   margin-right: .56rem;
   border-radius: 0px 0px 4px 4px;
-  padding-bottom: .56rem;
   border-top: 0px;
 
   text-align: left;

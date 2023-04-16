@@ -1853,6 +1853,7 @@ export default {
   flex-direction: column;
   width: 100%;
   background: v-bind('theme.sectionhighlight');
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
 .staging-header-view-selected {
