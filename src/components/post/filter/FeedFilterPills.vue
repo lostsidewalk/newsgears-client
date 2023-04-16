@@ -39,7 +39,6 @@ export default {
 .feed-filter-pills {
   margin-left: .56rem;
   margin-right: .56rem;
-  margin-bottom: .56rem;
   justify-content: flex-start;
   align-items: center;
 }
@@ -64,6 +63,7 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  width: max-content;
 }
 
 .br-pill:hover, .br-pill:focus-visible {
@@ -83,11 +83,11 @@ export default {
 }
 
 .filter-pills-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: .75rem;
   max-height: 25svh;
-  overflow: auto;
 }
 
 @media (max-width: 639px) {
