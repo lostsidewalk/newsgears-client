@@ -80,7 +80,8 @@
             <span class="fa fa-link"></span>
           </button>
           <!-- toggle post subscription -->
-          <button class="post-admin-button accessible-button"
+          <button v-if="enableFilterBySubscription" 
+            class="post-admin-button accessible-button"
             @click.stop="updatePostFeedFilter('subscriptionId', this.post.queryId)"
             :disabled="disabled"
             :title="this.post.importerDesc"
@@ -262,7 +263,7 @@ export default {
     PostMedia, 
     PostITunes
   },
-  props: [ "post", "idx", "baseUrl", "isSelected", "disabled", "theme" ],
+  props: [ "post", "idx", "baseUrl", "isSelected", "enableFilterBySubscription", "disabled", "theme" ],
   emits: [
     "updatePostReadStatus",
     "updatePostPubStatus",
@@ -273,6 +274,7 @@ export default {
     "audioPlay",
     "goToNextPost",
     "goToPreviousPost",
+    "enableFilterBySubscription",
   ],
   data() {
     return {

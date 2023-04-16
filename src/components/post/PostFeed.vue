@@ -166,6 +166,7 @@
                 :theme="theme" 
                 :baseUrl="baseUrl"
                 :isSelected="this.selectedPostId === post.id"
+                :enableFilterBySubscription="this.allPostSubscriptions.length > 1" 
                 tabindex="0"
                 @keypress.self="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @click="isModalShowing ? false : setSelectedPost($event, post.id)"
@@ -787,10 +788,26 @@ export default {
       if (f.feed.feedId !== this.selectedFeedId) {
         this.setSelectedFeedId(f.feed.feedId);
         this.$nextTick(() => {
-          this.updatePostFeedFilter(f);
+          this.setPostFeedFilterSubscription(f.value);
         })
       } else {
-        this.updatePostFeedFilter(f);
+        this.setPostFeedFilterSubscription(f.value);
+      }
+    },
+    setPostFeedFilterSubscription(subscriptionId) {
+      let r = null;
+      for (let i = 0; i < this.allPostSubscriptions.length; i++) {
+        if (this.allPostSubscriptions[i].id === subscriptionId) {
+          r = this.allPostSubscriptions[i];
+          break;
+        }
+      }
+      if (r) {
+        if (this.selectedFeedFilterSubscriptions.indexOf(r) < 0) {
+          this.selectedFeedFilterSubscriptions.splice(0);
+          this.selectedFeedFilterSubscriptions.push(r);
+          this.showFeedFilterPills = true;
+        } 
       }
     },
     updatePostFeedFilter(f) {
