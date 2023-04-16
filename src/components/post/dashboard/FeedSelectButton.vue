@@ -11,8 +11,16 @@
       <!-- card -->
       <!-- TODO: component -->
       <div class="feed-image-wrapper">
-        <img v-if="feed.imgSrc" class="feed-image" :src="'data:image/png;base64,' + feed.imgSrc" :alt="this.$t('queueLogoImage')">
-        <img v-else class="feed-image" src="feedgears.png" :alt="this.$t('queueLogoImage')">
+        <img v-if="feed.imgSrc" 
+          class="feed-image" 
+          :src="'data:image/png;base64,' + feed.imgSrc" 
+          :alt="this.$t('queueLogoImage')" 
+          height="35">
+        <img v-else 
+          class="feed-image" 
+          src="feedgears.png" 
+          :alt="this.$t('queueLogoImage')" 
+          height="35">
         <div class="feed-info-wrapper">
           <label class="feed-info-label">
             <span class="fa fa-eye" /> {{ this.inboundCount }}
@@ -97,12 +105,6 @@ export default {
   gap: .44rem;
   overflow-wrap: break-word;
   word-break: break-word;
-}
-
-.feed-info-label > img {
-  max-height: 24px;
-  max-width: 24px;
-  padding-right: .44rem;
 }
 
 .feed-info-label > span {

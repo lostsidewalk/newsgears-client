@@ -5,7 +5,8 @@
       style="display: block" 
       class="post-media-metadata-thumbnail"
       :alt="this.$t('postMediaThumbnail')" 
-      loading="lazy" />
+      loading="lazy" 
+      height="140" />
     <div>
       <PostMediaCommunity v-if="this.metadata.community" :community="this.metadata.community" :theme="theme" />
       <pre style="white-space: pre-line;">{{ this.metadata.desc }}</pre>

@@ -157,7 +157,7 @@
           </div>
           <!-- inbound queue -- hide when modal is showing -->
           <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
-            <div v-auto-animate>
+            <div>
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" 
                 :post="post"
                 :id="'post_' + post.id"

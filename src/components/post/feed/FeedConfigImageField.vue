@@ -17,12 +17,14 @@
         class="feed-image" 
         :src="'data:image/png;base64,' + modelValue" 
         :title="this.$t('clickToChangeQueueImage')"
-        :alt="this.$t('queueLogoImage')" />
+        :alt="this.$t('queueLogoImage')" 
+        height="140" />
       <img v-else 
         class="feed-image"
         src="feedgears.png"
         :title="this.$t('clickToAddQueueImage')"
-        :alt="this.$t('queueLogoImage')" />
+        :alt="this.$t('queueLogoImage')" 
+        height="140" />
     </label>
     <div class="feed-image-buttons">
       <button :disabled="disabled || inTransit || !modelValue" 

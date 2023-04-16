@@ -14,7 +14,9 @@
         :title="filterPill.label"
         @click="filterPill.invoke"
         :disabled="disabled">
-        <img v-if="filterPill.image" :src="filterPill.image" />
+        <img v-if="filterPill.image" 
+          :src="filterPill.image" 
+          height="24" />
         {{ filterPill.label }}
       </button>
     </div>

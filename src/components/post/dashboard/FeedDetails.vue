@@ -9,9 +9,15 @@
       v-for="rssAtomFeedUrl of this.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
       :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
       <!-- feed logo image -->
-      <img v-if="rssAtomFeedUrl.image" :src="rssAtomFeedUrl.image.url" :alt="this.$t('feedLogoImage')" /> 
+      <img v-if="rssAtomFeedUrl.image" 
+        :src="rssAtomFeedUrl.image.url"
+        :alt="this.$t('feedLogoImage')" 
+        height="24" /> 
       <!-- RSS logo -->
-      <img v-else src="rss_logo.svg" :alt="this.$t('rssLogo')" /> 
+      <img v-else 
+        src="rss_logo.svg" 
+        :alt="this.$t('rssLogo')" 
+         height="24" /> 
       <!-- last http status -->
       <span v-if="hasFeedMetrics(rssAtomFeedUrl)">
         {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}

@@ -120,7 +120,8 @@
               :src="post.postImgSrc"
               class="post-thumbnail" 
               :disabled="disabled" 
-              :alt="this.$t('postThumbnailImage')" /> 
+              :alt="this.$t('postThumbnailImage')" 
+              height="140" /> 
           </button>
           <div v-if="isHtmlContent(post.postTitle)" 
             class="post-field-wrapper post-html-frame"

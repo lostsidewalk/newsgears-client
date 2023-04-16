@@ -8,10 +8,12 @@
         <div class="rss-atom-feed-info-image">
           <img v-if="this.info.icon" :href="this.info.icon.link" :src="this.info.icon.url" 
             :title="this.info.icon.title" 
-            :alt="this.$t('feedLogoImage')" />
+            :alt="this.$t('feedLogoImage')" 
+            width="128" />
           <img v-if="this.info.image && !this.info.icon" :src="this.info.image.url" 
             :title="this.info.image.title" 
-            :alt="this.$t('feedLogoImage')" />
+            :alt="this.$t('feedLogoImage')" 
+            width="128" />
           <img v-if="!this.info.image && !this.info.icon" src="rss_logo.svg" />
         </div>
       </div>

@@ -7,7 +7,8 @@
         class="post-itunes-content-image" 
         tabindex="0" 
         :alt="this.$t('postITunesImage')" 
-        loading="lazy" />
+        loading="lazy" 
+        height="140" />
     </button>
     <div class="pill-container">
       <button class="br-pill-subdued fa fa-headphones audio-player-control" @click="this.$emit('playFirstEnclosure', this.iTunes)" />
