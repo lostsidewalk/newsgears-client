@@ -104,6 +104,17 @@
                 {{ this.getFeedById(this.selectedFeedId).title }}
               </template>
               <template v-slot:body>
+                <!-- feed filter expression -->
+                <div class="filter-expression-container">
+                  <!-- TODO: interpolated string -->
+                  <div class="filter-expression" v-auto-animate>
+                    {{ this.$t('viewingColon')}} <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
+                    <span class="filter-subscriptions-expression">{{ this.filterSubscriptionsExpression }}</span>
+                    <span v-show="this.selectedFeedFilterCategories.length > 0"> with categories in: 
+                      <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.join(', ') }}</span>
+                    </span>
+                  </div>
+                </div>
                 <!-- feed management buttons -->
                 <div v-if="this.showFullInboundQueueHeader" class="queue-management-buttons">
                   <button v-if="this.selectedFeedId"
@@ -135,18 +146,8 @@
                   :theme="theme" />
                 <!-- feed filter pills -->
                 <FeedFilterPills v-show="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
-                  @unread="toggleFeedFilterMode('UNREAD')"
-                  @readLater="toggleFeedFilterMode('READ_LATER')"
-                  @read="toggleFeedFilterMode('READ')"
-                  @published="toggleFeedFilterMode('PUBLISHED')"
-                  @toggleSubscription="toggleFeedFilterSubscription"
-                  @toggleCategory="toggleFeedFilterCategory"
                   @resetFilterDefaults="resetFilterDefaults"
-                  :feedFilterModes="feedFilterModes"
-                  :allPostSubscriptions="allPostSubscriptions"
-                  :selectedFeedFilterSubscriptions="selectedFeedFilterSubscriptions"
-                  :allPostCategories="allPostCategories"
-                  :selectedFeedFilterCategories="selectedFeedFilterCategories"
+                  :allFilterPills="allFilterPills"
                   :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
                   :theme="theme" />
                 <!-- post feed audio controller -->
@@ -318,6 +319,7 @@ export default {
   created() {
   },
   computed: {
+    // 
     totalPages: function() {
       let t = Math.ceil(this.filteredInboundQueue.length / this.itemsPerPage);
       return t;
@@ -433,6 +435,90 @@ export default {
         }
       }
       return Array.from(subscriptions);
+    },
+    // 
+    filterModeExpression: function() {
+      let selectedMode = null;
+      for (let i = 0; i < 4; i++) {
+        if (this.allFilterPills[i].isSelected) {
+          selectedMode = this.allFilterPills[i].label;
+          break;
+        }
+      }
+      return selectedMode;
+    },
+    filterSubscriptionsExpression() {
+      let subscriptionNames = [];
+      if (this.allPostSubscriptions.length === 1) {
+        let t = this.allPostSubscriptions[0].title;
+        if (t) {
+          subscriptionNames.push(t.value);
+        }
+      } else if (this.selectedFeedFilterSubscriptions.length > 0) {
+        for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
+          let t = this.selectedFeedFilterSubscriptions[i].title;
+          if (t) {
+            subscriptionNames.push(t.value);
+          }
+        }
+      } else {
+        subscriptionNames.push(this.$t('allSubscriptions'));
+      }
+      return (subscriptionNames.length > 0 ? (subscriptionNames.join(', ')) : '');
+    },
+    allFilterPills: function() {
+      let filterPills = [
+        {
+          isSelected: this.lcSetContainsStr('UNREAD', this.feedFilterModes),
+          invoke: () => this.toggleFeedFilterMode('UNREAD'), 
+          label: this.$t('unread'),
+        },
+        {
+          isSelected: this.lcSetContainsStr('READ_LATER', this.feedFilterModes),
+          invoke: () => this.toggleFeedFilterMode('READ_LATER'), 
+          label: this.$t('readLater'),
+        },
+        {
+          isSelected: this.lcSetContainsStr('READ', this.feedFilterModes),
+          invoke: () => this.toggleFeedFilterMode('READ'), 
+          label: this.$t('read'),
+        },
+        {
+          isSelected: this.lcSetContainsStr('PUBLISHED', this.feedFilterModes),
+          invoke: () => this.toggleFeedFilterMode('PUBLISHED'), 
+          label: this.$t('starred'),
+        },
+      ];
+      if (this.allPostSubscriptions.length > 1) {
+        for (let i = 0; i < this.allPostSubscriptions.length; i++) {
+          let subscription = this.allPostSubscriptions[i];
+          let subscriptionLabel = null;
+          let title = subscription.title;
+          if (title) {
+            subscriptionLabel = title.value;
+          } else {
+            subscriptionLabel = subscription.feedUrl;
+          }
+          filterPills.push({
+            isSelected: this.setContains(subscription, this.selectedFeedFilterSubscriptions),
+            invoke: () => this.toggleFeedFilterSubscription(subscription),
+            label: subscriptionLabel,
+            image: subscription.feedImageUrl, 
+          });
+        }
+      }
+      if (this.allPostCategories.length > 1) {
+        for (let i = 0; i < this.allPostCategories.length; i++) {
+          let category = this.allPostCategories[i];
+          filterPills.push({
+            isSelected: this.lcSetContainsStr(category, this.selectedFeedFilterCategories),
+            invoke: () => this.toggleFeedFilterCategory(category),
+            label: category 
+          });
+        }
+      }
+
+      return filterPills;
     },
     isModalShowing: function() {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
@@ -619,14 +705,17 @@ export default {
           r1 = r;
         }
 
-        if (l1.publishTimestamp && !r1.publishTimestamp) {
+        let leftDate = l1.publishTimestamp == null ? l1.lastUpdatedTimestamp : l1.publishTimestamp;
+        let rightDate = r1.publishTimestamp == null ? r1.lastUpdatedTimestamp : r1.publishTimestamp;
+
+        if (leftDate && !rightDate) {
           return 1;
         }
-        if (!l1.publishTimestamp && r1.publishTimestamp) {
+        if (!leftDate && rightDate) {
           return -1;
         }
-        if (l1.publishTimestamp && r1.publishTimestamp) {
-          return l1.publishTimestamp > r1.publishTimestamp ? 1 : -1;
+        if (leftDate && rightDate) {
+          return leftDate > rightDate ? 1 : -1;
         } else {
           return l1.id > r1.id ? 1 : -1;
         }
@@ -1986,5 +2075,30 @@ footer {
 
 .header-button:disabled:hover {
   background-color: unset;
+}
+
+.filter-expression-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: .56rem;
+  padding-top: .56rem;
+}
+
+.filter-expression {
+  word-break: break-word;
+}
+
+.filter-mode-expression {
+  color: v-bind('theme.highlightedmessage');
+}
+
+.filter-subscriptions-expression {
+  color: v-bind('theme.highlightedmessage');
+}
+
+.filter-categories-expression {
+  color: v-bind('theme.highlightedmessage');
 }
 </style>

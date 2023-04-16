@@ -71,11 +71,10 @@ export default {
 
 <style scoped>
 .article-queue {
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: .56rem;
+  margin-right: .56rem;
   border-radius: 0px 0px 4px 4px;
-  padding-top: .75rem;
-  padding-bottom: .75rem;
+  padding-bottom: .56rem;
   border-top: 0px;
 
   text-align: left;
@@ -115,10 +114,10 @@ export default {
 }
 
 .feed-filter-buttons {
-  padding-top: .75rem;
+  padding-top: .56rem;
   display: flex;
   flex-wrap: wrap;
-  gap: .5rem;
+  gap: .56rem;
 }
 
 .feed-filter-button {
