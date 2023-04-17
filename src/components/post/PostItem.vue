@@ -523,6 +523,7 @@ export default {
 
 .post-html-frame > * {
   object-fit: scale-down;
+  background-color: currentColor;
 }
 
 .post-text-frame {
@@ -535,12 +536,9 @@ export default {
 .post-thumbnail {
   max-width: 140px;
   max-height: 140px;
-  display: inline-block; 
-  background-size: cover; 
-  background-position: center center;
-  background-repeat: no-repeat;
-  align-self: stretch;
   cursor: pointer;
+  object-fit: scale-down;
+  background-color: currentColor;
 }
 
 .post-wrapper {

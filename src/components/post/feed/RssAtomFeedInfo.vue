@@ -283,6 +283,7 @@ export default {
   border-radius: 4px;
   height: auto;
   width: 128px;
+  object-fit: scale-down;
 }
 
 .link {

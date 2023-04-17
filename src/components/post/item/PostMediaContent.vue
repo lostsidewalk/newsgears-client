@@ -124,6 +124,7 @@ export default {
   max-width: 75%;
   max-height: 75%;
   object-fit: scale-down;
+  background-color: currentColor;
 }
 
 .inner-pill-container {

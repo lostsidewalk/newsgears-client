@@ -75,6 +75,8 @@ export default {
   background-position: center center;
   background-repeat: no-repeat;
   align-self: stretch;
+  object-fit: scale-down;
+  background-color: currentColor;
 }
 
 .audio-player-control {

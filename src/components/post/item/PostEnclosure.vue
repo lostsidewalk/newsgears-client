@@ -90,6 +90,7 @@ export default {
   max-width: 75%;
   max-height: 75%;
   object-fit: scale-down;
+  background-color: currentColor;
 }
 
 .post-enclosure-image:hover, .post-enclosure-image:focus-visible {

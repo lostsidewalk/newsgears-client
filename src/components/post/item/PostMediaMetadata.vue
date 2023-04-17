@@ -47,6 +47,11 @@ pre {
   flex-wrap: wrap;
 }
 
+.post-media-metadata > img {
+  object-fit: scale-down;
+  background-color: currentColor;
+}
+
 .post-media-metadata > label {
   padding-bottom: .125rem;
 }

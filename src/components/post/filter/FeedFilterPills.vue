@@ -77,6 +77,7 @@ export default {
   max-height: 24px;
   max-width: 24px;
   padding-right: .44rem;
+  object-fit: scale-down;
 }
 
 .selectedMode {
