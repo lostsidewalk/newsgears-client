@@ -372,6 +372,7 @@ const i18n = createI18n({
       visitLSHomepage: 'Visite la página de inicio de Lost Sidewalk',
       goToQueueDashboardAriaLabel: 'Ir al panel de colas',
       switchModeAriaLabel: 'Cambiar a tema claro u oscuro',
+      switchLayoutAriaLabel: 'Cambiar al siguiente diseño',
       logoutArialLabel: 'Cerrar sesión',
       goToSettingsAriaLabel: 'Ir a la configuración de la cuenta',
       // image alts 
@@ -729,6 +730,7 @@ const i18n = createI18n({
       visitLSHomepage: 'Visit the Lost Sidewalk homepage',
       goToQueueDashboardAriaLabel: 'Go to queue dashboard',
       switchModeAriaLabel: 'Switch to light or dark theme',
+      switchLayoutAriaLabel: 'Switch to next grid layout',
       logoutArialLabel: 'Logout',
       goToSettingsAriaLabel: 'Go to account settings',
       // image alts 

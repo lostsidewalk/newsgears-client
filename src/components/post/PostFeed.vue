@@ -45,7 +45,7 @@
                 {{ this.$t('queueDashboard') }}
               </template>
               <template v-slot:body>
-                <div v-if="this.showQueueDashboard" class="grid-container" v-auto-animate>
+                <div v-if="this.showQueueDashboard" class="grid-container">
                   <FeedDashboardButtons v-if="this.showQueueDashboard && !this.showFeedConfigPanel && !this.showOpmlUploadPanel"
                     :selectedFeedId="this.selectedFeedId" 
                     :disabled="disabled || inTransit || isModalShowing"
@@ -157,7 +157,7 @@
           </div>
           <!-- inbound queue -- hide when modal is showing -->
           <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
-            <div>
+            <div class="post-grid">
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" 
                 :post="post"
                 :id="'post_' + post.id"
@@ -523,6 +523,9 @@ export default {
     },
     isModalShowing: function() {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
+    },
+    postGridTemplate: function() {
+      return this.$theme.postGridTemplate;
     }
   },
   data() {
@@ -1877,6 +1880,12 @@ export default {
   flex-direction: column;
   width: 100%;
   padding-top: .75rem;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: v-bind('postGridTemplate');
+  align-items: start;
 }
 
 .grid-container {

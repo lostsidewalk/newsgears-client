@@ -13,6 +13,11 @@
           :disabled="false" 
           :theme="theme" 
           @updateServerMessage="setLastServerMessage" />
+        <GridLayoutButton
+          :baseUrl="baseUrl"
+          :disabled="false"
+          :theme="theme"
+          @updateServerMessage="setLastServerMessage" />
       </div>
     </div>
     <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
@@ -29,6 +34,7 @@ import SettingsPanel from '@/components/settings/SettingsPanel.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';
 import SettingsButton from '@/components/nav/SettingsButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
+import GridLayoutButton from '@/components/nav/GridLayoutButton.vue';
 
 export default {
     name: "ControlPanel",
@@ -36,8 +42,9 @@ export default {
       FeedGearsLogo,
       SettingsPanel,
       LogoutButton,
-      SettingsButton, 
-      DisplayModeButton, 
+      SettingsButton,
+      DisplayModeButton,
+      GridLayoutButton
     },
     props: [ "baseUrl", "disabled", "theme" ],
     emits: [ "updateServerMessage" ],

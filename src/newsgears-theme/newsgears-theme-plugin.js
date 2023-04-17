@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 
 const DEFAULT_LIGHT_THEME = { 
   bodybg: '#aaaaaa',
@@ -118,6 +118,23 @@ export default {
       app.config.globalProperties.$theme.currentTheme.requiredind = theme.requiredind;
     }
 
+    function switchLayout() {
+      let currentLayout = app.config.globalProperties.$theme.postGridTemplate;
+      if (currentLayout && currentLayout.length > 0) {
+        let cols = currentLayout.split(' ').length;
+        if (cols > 3) {
+          cols = 1;
+        } else {
+          cols++;
+        }
+        let template = '1fr';
+        for (let i = 1; i < cols; i++) {
+          template = template + ' 1fr';
+        }
+        app.config.globalProperties.$theme.postGridTemplate = template;
+      }
+    }
+
     function setupDarkMode() {
       let systemTheme = DEFAULT_DARK_THEME;
       let userTheme = app.config.globalProperties.$theme.userDarkTheme;
@@ -184,7 +201,9 @@ export default {
       'switchMode': switchMode,
       'setupModes': setupModes,
       'setupDefaultMode': setupDarkMode,
+      'switchLayout': switchLayout,
       currentTheme: reactive({}),
+      postGridTemplate: ref('1fr'),
       userLightTheme: reactive({}),
       userDarkTheme: reactive({}),
       keySet: [
