@@ -191,7 +191,11 @@ export default {
     function getError(error) { // test for AxiosError 
       let r = error.response;
       if (r && r.data) {
-        return r.data.message;
+        let message = r.data.message;
+        if (r.data.details) {
+          message = message + ': ' + r.data.details;
+        }
+        return message;
       }
       return "Network error, please try again later.";
     }

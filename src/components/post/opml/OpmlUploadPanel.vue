@@ -176,7 +176,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           if (data.errors) {

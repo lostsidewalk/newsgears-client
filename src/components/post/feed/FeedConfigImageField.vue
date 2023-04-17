@@ -93,7 +93,7 @@ export default {
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
             return isJson ? response.json() : {};
           } else { // framework is rejecting the request 
-            throw Error(this.$t('unableToUseThisImage'));
+            throw new Error(this.$t('unableToUseThisImage'));
           }
         }).then((data) => {
           this.feedImageUploadErrors = data.errors;
@@ -134,7 +134,7 @@ export default {
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
             return isJson ? response.json() : {};
           } else { // framework is rejecting the request 
-            throw Error(this.$t('unableToFetchAnImage'));
+            throw new Error(this.$t('unableToFetchAnImage'));
           }
         }).then((data) => {
           this.$emit('update:modelValue', data.imgSrc);

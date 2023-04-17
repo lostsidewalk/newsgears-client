@@ -281,11 +281,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {
-              throw new Error(j.message, { cause: {} });
-            }) : response.text().then(t => {
-              throw new Error(t, { cause: {} })
-            });
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
+              response.text().then(t => {throw new Error(t, { cause: {} })});
           }
         }).then((data) => {
           let queryDefinitions = data.queryDefinitions;
@@ -325,11 +323,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {
-              throw new Error(j.message, { cause: {} });
-            }) : response.text().then(t => {
-              throw new Error(t, { cause: {} })
-            });
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
+              response.text().then(t => {throw new Error(t, { cause: {} })});
           }
         }).then(() => {
           this.$emit('deleteRssAtomUrl', id);
@@ -371,11 +367,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {
-              throw new Error(j.message, { cause: {} });
-            }) : response.text().then(t => {
-              throw new Error(t, { cause: {} })
-            });
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
+              response.text().then(t => {throw new Error(t, { cause: {} })});
           }
         }).then((data) => {
           let queryDefinitions = data.queryDefinitions;

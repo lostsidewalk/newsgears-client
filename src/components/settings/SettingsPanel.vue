@@ -455,7 +455,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           this.account = {
@@ -493,14 +495,6 @@ export default {
     },
     // put framework config to /settings 
     updateSettings(newSettings) {
-      try {
-        if (newSettings.emailAddress && newSettings.emailAddress.length > 512) {
-          throw Error("");
-        }
-      } catch (error) {
-        console.log(error);
-        return;
-      }
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -518,7 +512,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
           // TODO: set the account obj properties from the JSON response object (above) 
@@ -573,7 +569,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
           this.setLastServerMessage(this.$t('themeSettingsUpdated'));
@@ -607,7 +605,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).then((blob) => {
           let url = window.URL.createObjectURL(blob);
@@ -649,7 +649,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);
@@ -701,7 +703,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           window.location.href = data.sessionUrl;
@@ -741,7 +745,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);
@@ -778,7 +784,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);

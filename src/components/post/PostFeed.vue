@@ -891,7 +891,7 @@ export default {
               let isJson = contentType && contentType.indexOf("application/json") !== -1;
               return isJson ? response.json() : {};
             } else {
-              throw Error(this.$t('refreshFailedDueTo') + 
+              throw new Error(this.$t('refreshFailedDueTo') + 
                 " HTTP " + response.status + ": " + 
                   (response.statusText ? 
                     response.statusText : ("(" + this.$t('noMessage') + ")")
@@ -932,7 +932,7 @@ export default {
                 let isJson = contentType && contentType.indexOf("application/json") !== -1;
                 return isJson ? response.json() : {};
               } else {
-                throw Error(this.$t('refreshFailedDueTo') + 
+                throw new Error(this.$t('refreshFailedDueTo') + 
                   " HTTP " + response.status + ": " + 
                     (response.statusText ? 
                       response.statusText : ("(" + this.$t('noMessage') + ")")
@@ -1140,7 +1140,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
           let originator = result.originator;
@@ -1180,7 +1182,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           // update the post 
@@ -1252,34 +1256,7 @@ export default {
       this.showOpmlUploadPanel = true;
       this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },
-    validateFeed(feed) {
-      if (this.len(feed.ident) > 2048) {
-        throw Error(this.$t('queueIdentifierTooLong'));
-      }
-      if (this.len(feed.title) > 2048) {
-        throw Error(this.$t('queueTitleTooLong'));
-      }
-      if (this.len(feed.generator) > 2048) {
-        throw Error(this.$t('feedGeneratorTooLong'));
-      }
-      if (feed.rssAtomFeedUrls) {
-        for (let i = 0; i < feed.rssAtomFeedUrls.length; i++) {
-          if (this.len(feed.rssAtomFeedUrls[i].feedUrl) > 2048) {
-            throw Error(this.$t('feedURLTooLong'));
-          }
-        }
-      }
-    },
     createOpmlFeeds(feeds) {
-      for (let i = 0; i < feeds.length; i++) {
-        let feed = feeds[i];
-        try {
-          this.validateFeed(feed);
-        } catch (error) {
-          console.error(error);
-          return;
-        }
-      }
       let method = 'POST';
       this.inTransit = true;
       console.log("post-feed: pushing feeds to remote, ct=" + feeds.length);
@@ -1300,7 +1277,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : [];
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         })
         .then((data) => {
@@ -1338,12 +1317,6 @@ export default {
       this.$nextTick(() => this.$refs.feedConfigPanel.setup(this.getFeedById(feedId)));
     },
     createOrUpdateFeed(feed) {
-      try {
-        this.validateFeed(feed);
-      } catch (error) {
-        console.error(error);
-        return;
-      }
       let isUpdate = feed.id ? true : false;
       let method = isUpdate ? 'PUT' : 'POST';
       this.inTransit = true;
@@ -1450,7 +1423,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           console.log("post-feed: deleted feedId=" + this.feedIdToDelete);
@@ -1520,7 +1495,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           this.inboundQueuesByFeed[this.feedIdToMarkAsRead].forEach((p) => { 

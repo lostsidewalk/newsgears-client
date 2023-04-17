@@ -8,7 +8,11 @@
         <!-- settings button -->
         <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
         <!-- display mode switch, don't disable -->
-        <DisplayModeButton :baseUrl="baseUrl" :disabled="false" :theme="theme" />
+        <DisplayModeButton 
+          :baseUrl="baseUrl" 
+          :disabled="false" 
+          :theme="theme" 
+          @updateServerMessage="setLastServerMessage" />
       </div>
     </div>
     <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 

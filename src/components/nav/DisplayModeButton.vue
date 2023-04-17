@@ -68,7 +68,9 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
           let displayConfig = data.displayConfig;
@@ -110,7 +112,9 @@ export default {
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json().then(j => {throw new Error(j.message)}) : response.text().then(t => {throw new Error(t)});
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
           console.log(error);
