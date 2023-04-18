@@ -51,6 +51,16 @@ export default {
       }
     },
     refreshDisplaySettings() {
+
+      // this.$web.get("/settings/display")
+      // .then((data) => {
+      //   let displayConfig = data.displayConfig;
+      //   if (displayConfig) {
+      //     let themeConfig = data.themeConfig;
+      //     this.$theme.setupModes(displayConfig.displayMode, themeConfig);
+      //   }
+      // });
+
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -85,10 +95,19 @@ export default {
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.isLoaded = false;
+        this.inTransit = false;
       });
     },
     updateModeSetting() {
+
+      // this.$web.put("/settings/display", JSON.stringify({ 
+      //   frameworkConfig: { 
+      //     display: { 
+      //       displayMode: this.$theme.currentTheme.ident 
+      //     } 
+      //   } 
+      // }));
+
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const requestOptions = {
@@ -117,17 +136,13 @@ export default {
               response.text().then(t => {throw new Error(t)});
           }
         }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
+          this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
+        this.inTransit = false;
       });
     }
   },

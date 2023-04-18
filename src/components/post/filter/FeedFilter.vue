@@ -7,7 +7,7 @@
       <input id="feed-filter" 
         type="text" 
         :placeholder="this.$t('filter')" 
-        @input="$emit('update:modelValue', $event.target.value)" 
+        @input="this.$emit('update:modelValue', $event.target.value)" 
         :value="inboundQueueFilter" 
         :disabled="disabled" />
       <div class="feed-filter-buttons">
@@ -65,6 +65,7 @@ export default {
     "refreshFeeds", 
     "markAsRead", 
     "toggleFeedFilterPills",
+    "update:modelValue",
   ],
 }
 </script>

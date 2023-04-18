@@ -247,7 +247,7 @@
 </template>
 
 <script>
-// import lunr from 'lunr';
+import lunr from 'lunr';
 // confirmation modal dialog 
 import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 // feed configuration panel 
@@ -328,14 +328,27 @@ export default {
     },
     filteredInboundQueue: function() {
       if (this.inboundQueue) {
+        let unfilteredResults = null;
+        // lunr 
+        let lcFilter = this.inboundQueueFilter ? this.inboundQueueFilter.toLowerCase() : null;
+        if (lcFilter) {
+          let lunrResults = this.inboundQueue.index.search(lcFilter)
+            .map(item => parseInt(item.ref));
+          if (lunrResults.length > 0) {
+            unfilteredResults = this.inboundQueue.values.filter(item => {
+              return lunrResults.includes(item.id);
+            });
+          }
+        } else {
+          unfilteredResults = this.inboundQueue.values;
+        }
         // 
-        // filter inbondQueue according to the filter modes, &c 
-        // 
-        let filtered = this.inboundQueue.filter((post) => {
+        let filtered = unfilteredResults ? unfilteredResults.filter((post) => {
+          // check the mode (i.e., post status) 
           if (!this.modeMatches(post)) {
             return false;
           }
-          // check the subscription (importer desc) against the filter subscriptions (if any) 
+          // check the subscription (query Id) against the filter subscriptions (if any) 
           let subscriptionMatches = false;
           if (this.selectedFeedFilterSubscriptions.length === 0) {
             subscriptionMatches = true;
@@ -343,7 +356,7 @@ export default {
             if (this.selectedFeedFilterSubscriptions) {
               for (let i = 0; i < this.selectedFeedFilterSubscriptions.length; i++) {
                 let r = this.selectedFeedFilterSubscriptions[i];
-                if (this.lcStrEq(new String(post.queryId), new String(r.id))) {
+                if (post.queryId === r.id) {
                   subscriptionMatches = true;
                   break;
                 }
@@ -370,21 +383,19 @@ export default {
           if (!categoriesMatch) {
             return false;
           }
-          // check title and desc against filter text, if defined 
-          let lcFilter = this.inboundQueueFilter ? this.inboundQueueFilter.toLowerCase() : null;
-          return lcFilter ? (
-            post.postTitle.value.toLowerCase().includes(lcFilter) || 
-            (post.postDesc && post.postDesc.value.toLowerCase().includes(lcFilter)) // TODO: add post contents and consider cases where title, description, contents are HTML 
-          ) : true;
-        });
+
+          return true;
+        }) : null;
         // 
         // sort the filtered result 
         // 
-        this.sortQueue(filtered, this.inboundQueueSortOrder);
+        if (filtered) {
+          this.sortQueue(filtered, this.inboundQueueSortOrder);
+        }
         // 
         // return the final result 
         // 
-        return filtered;
+        return filtered ? filtered : [];
       } else {
         return [];
       }
@@ -419,7 +430,7 @@ export default {
     allPostCategories: function () {
       let categories = new Set();
       if (this.inboundQueue) {
-        let f = this.inboundQueue;
+        let f = this.inboundQueue.values;
         for (let i = 0; i < f.length; i++) {
           if (f[i].postCategories) {
             f[i].postCategories.forEach((c) => categories.add(c));
@@ -562,7 +573,7 @@ export default {
       selectedPostId: null, // currently selected post 
       // queue material 
       inboundQueuesByFeed: {}, // all queues 
-      inboundQueue: [], // inbound queue for the currently selected feed  
+      inboundQueue: { values: [] }, // inbound queue for the currently selected feed  
       // queue pagination material 
       itemsPerPage: 100,
       currentPage: 0,
@@ -600,8 +611,9 @@ export default {
       return modeMatches;
     },
     onAudioPlay(bundle) {
-      for (let j = 0; j < this.inboundQueue.length; j++) {
-        let id = this.inboundQueue[j].id;
+      let f = this.inboundQueue.values;
+      for (let j = 0; j < f.length; j++) {
+        let id = f[j].id;
         let r = this.$refs['post_' + id];
         if (r && r.length > 0) {
           r[0].pauseMedia();
@@ -610,8 +622,9 @@ export default {
       this.$refs.postFeedAudio.play(bundle);
     },
     onMediaPlaying(postId) {
-      for (let j = 0; j < this.inboundQueue.length; j++) {
-        let id = this.inboundQueue[j].id;
+      let f = this.inboundQueue.values;
+      for (let j = 0; j < f.length; j++) {
+        let id = f[j].id;
         if (id !== postId) {
           let r = this.$refs['post_' + id];
           if (r && r.length > 0) {
@@ -857,8 +870,8 @@ export default {
       let iq = this.inboundQueuesByFeed[feedId];
       if (iq) {
         let unreadCt = 0;
-        for (let i = 0; i < iq.length; i++) {
-          if (iq[i].isRead !== true) {
+        for (let i = 0; i < iq.values.length; i++) {
+          if (iq.values[i].isRead !== true) {
             unreadCt++;
           }
         }
@@ -868,7 +881,7 @@ export default {
     },
     countOutboundQueue(feedId) {
       let iq = this.inboundQueuesByFeed[feedId];
-      return iq ? iq.filter(p => p.isPublished).length : 0;
+      return iq ? iq.values.filter(p => p.isPublished).length : 0;
     },
     // 
     // feed refresh 
@@ -878,6 +891,72 @@ export default {
     refreshFeeds(feedsToFetch, fetchFeedDefinitions) {
       console.log("post-feed: refreshing feeds");
       let rawPosts = [];
+
+      // let refreshPromises = [
+      //   this.$web.get(this.baseUrl + "/staging" + (feedsToFetch ? ("?feedIds=" + feedsToFetch) : ''))
+      //   .then((data) => {
+      //     let ct = 0;
+      //     let stagingPosts = data.stagingPosts;
+      //     if (stagingPosts) {
+      //       for (let i = 0; i < stagingPosts.length; i++) {
+      //         let p = stagingPosts[i].post;
+      //         p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
+      //         p.isRead = p.postReadStatus === 'READ';
+      //         p.isReadLater = p.postReadStatus === 'READ_LATER';
+      //         p.postImgSrc = stagingPosts[i].postImgSrc;
+      //         rawPosts.push(p);
+      //         ct++;
+      //       }
+      //       this.stagingCt = ct;
+      //       console.log("post-feed: staging post refresh complete, ct=" + this.stagingCt);
+      //     }
+      //   })
+      // ];
+      // if (fetchFeedDefinitions) {
+      //   refreshPromises.push(
+      //     this.$web.get(this.baseUrl + "/feeds")
+      //     .then((data) => {
+      //       // clear queryDefinitionImagesById 
+      //       this.queryDefinitionImagesById = {};
+      //       // populate feeds and queryDefinitionImagesById
+      //       let feedDefinitionData = data.feedDefinitions; // all feed definition data objects 
+      //       let queryDefinitionData = data.queryDefinitions; // all query definition data objects 
+      //       if (feedDefinitionData) {
+      //         for (let i = 0; i < feedDefinitionData.length; i++) {
+      //           let fd = feedDefinitionData[i]; // feed definition data for this feed 
+      //           let qd = queryDefinitionData[fd.id]; // query definitions for this feed 
+      //           // merge query definition and metrics data into feed definition 
+      //           this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
+      //           // marshall up all query definitions by Id for later reference 
+      //           if (qd) {
+      //             for (let j = 0; j < qd.length; j++) {
+      //               let wrapper = qd[j];
+      //               // console.log("queryDefinition id=" + wrapper.queryDefinition.id + ", queryTitle=" + wrapper.queryDefinition.queryTitle + ", queryDefinitionImageUrl=" + wrapper.queryDefinitionImageUrl);
+      //               this.queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
+      //             }
+      //           }
+      //           // parse feed definition export config (if present) 
+      //           fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
+      //           // locate the feed to update by id 
+      //           let idxToUpdate = -1;
+      //           for (let i = 0; i < this.feeds.length; i++) {
+      //             if (this.feeds[i].id === fd.id) {
+      //               idxToUpdate = i;
+      //             }
+      //           }
+      //           if (idxToUpdate >= 0) {
+      //             this.feeds[idxToUpdate] = fd;
+      //           } else {
+      //             fd.showMoreInformation = true;
+      //             this.feeds.push(fd);
+      //           }
+      //         }
+      //       }
+      //       this.rssAtomFeedCatalog = data.rssAtomFeedCatalog;
+      //     })
+      //   )
+      // }
+
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         let refreshPromises = [
@@ -919,7 +998,8 @@ export default {
               this.stagingCt = ct;
               console.log("post-feed: staging post refresh complete, ct=" + this.stagingCt);
             }
-          })];
+          })
+        ];
         if (fetchFeedDefinitions) {
           refreshPromises.push(
             fetch(this.baseUrl + "/feeds", {
@@ -996,10 +1076,11 @@ export default {
             let iq = this.inboundQueuesByFeed[feedId];
             if (iq) {
               if (!feedsToFetch || feedsToFetch.indexOf(this.feeds[i].id) >= 0) {
-                iq.splice(0);
+                iq.values.splice(0);
+                iq.index = null;
               }
             } else {
-              this.inboundQueuesByFeed[feedId] = [];
+              this.inboundQueuesByFeed[feedId] = { values: [] };
             }
           }
           for (let i = 0; i < rawPosts.length; i++) {
@@ -1009,8 +1090,31 @@ export default {
             if (!post.sourceImgUrl) {
               post.sourceImgUrl =  'rss_logo.svg';
             }
-            this.inboundQueuesByFeed[post.feedId].push(post);
+            this.inboundQueuesByFeed[post.feedId].values.push(post);
           }
+          for (let i = 0; i < this.feeds.length; i++) {
+            if (!feedsToFetch || feedsToFetch.indexOf(this.feeds[i].id) >= 0) {
+              let iq = this.inboundQueuesByFeed[this.feeds[i].id];
+              console.log("building lunr index for feedId=" + this.feeds[i].id);
+              iq.index = lunr(function () {
+                this.ref('id')
+                this.field('postTitle', {
+                  extractor: function(doc = {}) {
+                    return doc.postTitle ? doc.postTitle.value : null;
+                  }
+                })
+                this.field('postDesc', {
+                  extractor: function(doc = {}) {
+                    return doc.postDesc ? doc.postDesc.value : null;
+                  }
+                })
+                iq.values.forEach(function (doc) {
+                  this.add(doc)
+                }, this)
+              });
+            }            
+          }
+          // set selected feed Id and inbound queue 
           if (this.feeds.length > 0 && !this.selectedFeedId) {
             // TODO: should be a configurable 'default' feed 
             this.setSelectedFeedId(this.feeds[0].id);
@@ -1193,8 +1297,7 @@ export default {
         }).then((data) => {
           // update the post 
           let originator = result.originator;
-          let idx = this.getPostIndex(this.inboundQueue, result.id);
-          let p = this.inboundQueue[idx];
+          let p = this.getPostFromQueue(result.id);
           if (originator === "stagePost") {
             p.isPublished = true;
           } else if (originator === "unstagePost") {
@@ -1371,7 +1474,7 @@ export default {
           } else {
             let created = data[0].feedDefinition;
             this.feeds.push(created);
-            this.inboundQueuesByFeed[created.ident] = [];
+            this.inboundQueuesByFeed[created.ident] = { values: [] };
             this.$refs.feedConfigPanel.setupSubscriptionConfig(created.id);
             this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
             this.setSelectedFeedId(created.id);
@@ -1504,7 +1607,7 @@ export default {
               response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
-          this.inboundQueuesByFeed[this.feedIdToMarkAsRead].forEach((p) => { 
+          this.inboundQueuesByFeed[this.feedIdToMarkAsRead].values.forEach((p) => { 
             p.isRead = true;
             p.postReadStatus = 'READ';
             p.isReadLater = false;
@@ -1598,16 +1701,10 @@ export default {
       });
     },
     getPostFromQueue(id) {
-      for (let j = 0; j < this.inboundQueue.length; j++) {
-        if (this.inboundQueue[j].id === id) {
-          return this.inboundQueue[j];
-        }
-      }
-    },
-    getPostIndex(queue, id) {
-      for (let i = 0; i < queue.length; i++) {
-        if (queue[i].id === id) {
-          return i;
+      let f = this.inboundQueue.values;
+      for (let j = 0; j < f.length; j++) {
+        if (f[j].id === id) {
+          return f[j];
         }
       }
     },
