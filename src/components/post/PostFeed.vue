@@ -247,6 +247,7 @@
 </template>
 
 <script>
+// import lunr from 'lunr';
 // confirmation modal dialog 
 import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 // feed configuration panel 
