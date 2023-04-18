@@ -28,18 +28,25 @@
     <div class="post-feed-container" id="post-feed-container">
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
+        <button class="show-queue-dashboard-button accessible-button" 
+          v-if="!this.showQueueDashboard && this.windowWidth >= 1024" 
+          @click="this.showQueueDashboard = true">
+          <span class="fa fa-rss fa-1x" />
+        </button>
         <div class="feed-select-view" :class="{ 
           'feed-select-view-selected': this.selectedFeedId, 
-          'feed-select-view-collapsed': !this.showFeedSelectView
+          'feed-select-view-collapsed': !this.showQueueDashboard
         }">
           <ViewHeader 
             :sticky="true" 
-            :collapsible="windowWidth < 1024 || this.selectedFeedId === null" 
+            :collapsible="true" 
             :show="this.showQueueDashboard" 
             :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
             :inTransit="inTransit" 
             :theme="theme"
-            @toggle="this.showQueueDashboard = !this.showQueueDashboard">
+            @toggle="{
+                this.showQueueDashboard = !this.showQueueDashboard;
+              }">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
                 {{ this.$t('queueDashboard') }}
@@ -90,7 +97,7 @@
           </ViewHeader>
         </div>
         <!-- right side -->
-        <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showFeedSelectView }">
+        <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showQueueDashboard }">
           <!-- inbound queue header -- hide when modal is showing -->
           <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
             <ViewHeader :collapsible="true" 
@@ -553,8 +560,6 @@ export default {
       showOpmlUploadPanel: false,
       // show the help modal (t/f) 
       showHelpPanel: false,
-      // feed select view is expanded (t/f) 
-      showFeedSelectView: true, 
       // queue dashboard is expanded (t/f) 
       showQueueDashboard: true, 
       // inbound queue header is expanded, i.e., showing filter (t/f) 
@@ -1925,7 +1930,7 @@ export default {
 }
 
 .post-feed-container-inner {
-  width: stretch;
+  align-items: stretch;
 }
 
 .toggle-feed-select-view {
@@ -1959,7 +1964,7 @@ export default {
 
 .staging-header-view-collapsed {
   max-width: unset !important;
-  width: inherit;
+  width: 100%;
 }
 
 .staging-header-view {
@@ -2202,5 +2207,19 @@ footer {
 
 .filter-categories-expression {
   color: v-bind('theme.highlightedmessage');
+}
+
+.show-queue-dashboard-button {
+  border: unset;
+  background-color: v-bind('theme.buttonbg');
+  color: v-bind('theme.buttonfg');
+  padding: .44rem 1.25rem;
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+}
+
+.show-queue-dashboard-button:hover, .show-queue-dashboard-button:focus-visible {
+  background-color: v-bind('theme.buttonhighlight');
 }
 </style>
