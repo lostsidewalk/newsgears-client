@@ -181,7 +181,7 @@ export default {
               response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
-          if (data.errors) {
+          if (data.errors && data.errors.length > 0) {
             this.errors = data.errors;
           } else {
             this.feedConfigRequests = data.feedConfigRequests;
