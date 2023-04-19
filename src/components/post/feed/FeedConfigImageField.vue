@@ -97,7 +97,9 @@ export default {
           }
         }).then((data) => {
           this.feedImageUploadErrors = data.errors;
-          if (this.feedImageUploadErrors && this.feedImageUploadErrors.length === 0) {
+          if (this.feedImageUploadErrors && this.feedImageUploadErrors.length > 0) {
+            console.error(this.feedImageUploadErrors); // TODO: fix this 
+          } else {
             this.$emit('update:modelValue', data.imgSrc);
           }
         }).catch((error) => {
