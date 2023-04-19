@@ -26,7 +26,7 @@
         <!-- left side, feed selector -- hide when modal is showing -->
         <button class="show-queue-dashboard-button accessible-button" 
           v-if="!this.showQueueDashboard && this.windowWidth >= 1024" 
-          :disabled="isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
+          :disabled="isModalShowing"
           @click="this.showQueueDashboard = true">
           <span class="fa fa-rss fa-1x" />
         </button>
@@ -50,9 +50,9 @@
               </template>
               <template v-slot:body>
                 <div v-if="this.showQueueDashboard" class="grid-container">
-                  <FeedDashboardButtons v-if="this.showQueueDashboard && !this.showFeedConfigPanel && !this.showOpmlUploadPanel"
+                  <FeedDashboardButtons v-if="this.showQueueDashboard"
                     :selectedFeedId="this.selectedFeedId" 
-                    :disabled="disabled || inTransit || isModalShowing"
+                    :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
                     :theme="theme" 
                     @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
                     @newFeed="newFeed"
@@ -1344,13 +1344,13 @@ export default {
     // 
     newFeed() {
       document.activeElement.blur();
-      this.showQueueDashboard = false;
+      this.setSelectedFeedId(null);
       this.showFeedConfigPanel = true;
       this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [] }));
     },
     uploadOpml() {
       document.activeElement.blur();
-      this.showQueueDashboard = false;
+      this.setSelectedFeedId(null);
       this.showOpmlUploadPanel = true;
       this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },

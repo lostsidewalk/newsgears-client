@@ -1,8 +1,7 @@
 <template>
   <div class="hide-button">
     <button @click="this.$emit('toggle')" 
-      :title="this.show ? this.$t('collapseThisPanel') : this.$t('restoreThisPanel')"
-      :disabled="disabled">
+      :title="this.show ? this.$t('collapseThisPanel') : this.$t('restoreThisPanel')">
       <i class="fa" :class="this.show ? 'fa-window-minimize' : 'fa-window-restore'"></i>
     </button>
   </div>
@@ -11,7 +10,7 @@
 <script>
 export default {
   name: "MinMaxButton",
-  props: [ "disabled", "theme", "show" ],
+  props: [ "theme", "show" ],
   emits: [ "toggle" ],
 }
 </script>

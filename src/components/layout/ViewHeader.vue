@@ -6,8 +6,7 @@
       </h3>
       <MinMaxButton :class="{ 'hidden': !collapsible }" class="min-max-button" 
         @toggle="this.$emit('toggle')" 
-        :show="show" :theme="theme" 
-        :disabled="disabled || inTransit" />
+        :show="show" :theme="theme" />
     </span>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <slot name="body" />
