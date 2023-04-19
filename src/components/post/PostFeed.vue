@@ -1186,7 +1186,7 @@ export default {
       if (!p.isRead) {
         console.log("post-item: marking post id=" + p.id + " as read and selecting next unread");
         newStatus = 'READ';
-        selectNextPost = true;
+        selectNextPost = this.lcSetContainsStr(newStatus, this.feedFilterModes);
       } else {
         console.log("post-item: unmarking post id=" + p.id + " as read");
         newStatus = 'UNREAD';
