@@ -153,7 +153,7 @@ export default {
 }
 
 .modal-body {
-  background: v-bind('theme.sectionhighlight');
+  background: v-bind('theme.appbg');
   color: v-bind('theme.normalmessage');
   text-align: center;
   width: 100%;
