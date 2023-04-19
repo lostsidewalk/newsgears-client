@@ -30,6 +30,7 @@
         <!-- left side, feed selector -- hide when modal is showing -->
         <button class="show-queue-dashboard-button accessible-button" 
           v-if="!this.showQueueDashboard && this.windowWidth >= 1024" 
+          :disabled="isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
           @click="this.showQueueDashboard = true">
           <span class="fa fa-rss fa-1x" />
         </button>
@@ -1359,12 +1360,13 @@ export default {
     // 
     newFeed() {
       document.activeElement.blur();
+      this.showQueueDashboard = false;
       this.showFeedConfigPanel = true;
       this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [] }));
-      
     },
     uploadOpml() {
       document.activeElement.blur();
+      this.showQueueDashboard = false;
       this.showOpmlUploadPanel = true;
       this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },
@@ -2210,6 +2212,8 @@ footer {
 }
 
 .show-queue-dashboard-button {
+  display: flex;
+  font-size: larger;
   border: unset;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
@@ -2217,6 +2221,10 @@ footer {
   cursor: pointer;
   text-align: center;
   user-select: none;
+}
+
+.show-queue-dashboard-button span {
+  margin-top: .56rem;
 }
 
 .show-queue-dashboard-button:hover, .show-queue-dashboard-button:focus-visible {
