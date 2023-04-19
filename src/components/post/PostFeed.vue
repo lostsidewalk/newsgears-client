@@ -2019,6 +2019,9 @@ footer {
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: flex-start;
+  padding: .44rem;
+  background-color: v-bind('theme.appbg');
+  border-radius: 5px;
 }
 
 /** has references */
@@ -2097,6 +2100,7 @@ footer {
   color: v-bind('theme.subduedmessage');
   font-family: Arial, Helvetica, sans-serif;
   margin: .44rem;
+  margin-bottom: 0px;
 }
 
 .link {
