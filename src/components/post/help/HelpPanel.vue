@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container" v-if="showModal" v-auto-animate>
+  <div class="modal-container" v-auto-animate>
     <div class="modal-body">
       <div class="keyboard-shortcut-container">
         <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel" :key="desc">
@@ -13,11 +13,6 @@
             </div>
           </div>
         </div>
-    </div>
-      <div class="modal-actions">
-        <button class="modal-button accessible-button" ref="dismissButton" @click.stop="this.$emit('dismiss')">
-          {{ this.$t('dismiss') }}
-        </button>
       </div>
     </div>
   </div>
@@ -27,18 +22,6 @@
 export default {
   name: "HelpPanel",
   props: ["theme"],
-  emits: ["dismiss"],
-  methods: {
-    show() {
-      this.showModal = true;
-      this.$nextTick(() => {
-        this.$refs.dismissButton.focus();
-      });
-    },
-    hide() {
-      this.showModal = false;
-    }
-  },
   data() {
     return {
       helpModel: [
@@ -107,19 +90,19 @@ export default {
             key: "V",
           },
           {
-            label: this.$t('showHideUnread'),
+            label: this.$t('showUnread'),
             key: "SHIFT + U",
           },
           {
-            label: this.$t('showHideStarred'),
+            label: this.$t('showStarred'),
             key: "SHIFT + T",
           },
           {
-            label: this.$t('showHideReadLater'),
+            label: this.$t('showReadLater'),
             key: "SHIFT + L",
           },
           {
-            label: this.$t('showHideRead'),
+            label: this.$t('showRead'),
             key: "SHIFT + H",
           },
           {
@@ -127,8 +110,6 @@ export default {
             key: "/",
           }
       ],
-      // 
-      showModal: false
     }
   }
 }
@@ -138,13 +119,8 @@ export default {
 .modal-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   overflow-y: auto;
   z-index: 1000;
   border: 1px solid transparent;
@@ -153,43 +129,13 @@ export default {
 }
 
 .modal-body {
-  background: v-bind('theme.appbg');
   color: v-bind('theme.normalmessage');
-  text-align: center;
+  text-align: left;
   width: 100%;
   height: fit-content;
-  padding-top: 2rem;
-  padding-left: .125rem;
-  padding-right: .125rem;
-  padding-bottom: 1rem;
+  padding: 2rem;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
-
-.modal-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 3rem;
-  justify-content: center;
-  padding-top: .75rem;
-}
-
-.modal-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  border-radius: 4px;
-  margin: .56rem;
-  text-align: center;
-}
-
-.modal-button:hover, .modal-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight') !important;
-}
-
 
 .keyboard-shortcut-container {
   overflow-y: auto; 

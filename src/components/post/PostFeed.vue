@@ -15,10 +15,6 @@
       @confirm="performFeedMarkAsRead" 
       @cancel="cancelFeedMarkAsRead"
       :prompt="this.$t('confirmMarkQueueAsRead')" />
-    <HelpPanel 
-      ref="helpPanel"
-      :theme="theme"
-      @dismiss="dismissHelpPanel" />
     <ControlPanel :baseUrl="baseUrl" 
       ref="controlPanel"
       :disabled="disabled || inTransit || isModalShowing" 
@@ -262,8 +258,6 @@ import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 import FeedConfigPanel from "./feed/FeedConfigPanel.vue";
 // OPML upload panel 
 import OpmlUploadPanel from "./opml/OpmlUploadPanel.vue";
-// help panel 
-import HelpPanel from "./help/HelpPanel.vue";
 // navbar 
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ViewHeader from "@/components/layout/ViewHeader.vue";
@@ -286,7 +280,6 @@ export default {
     ConfirmationDialog,
     FeedConfigPanel,
     OpmlUploadPanel,
-    HelpPanel,
     // layout 
     ViewHeader,
     NavbarFixedHeader,
@@ -639,15 +632,6 @@ export default {
         }
       }
       this.$refs.postFeedAudio.pausePlaying();
-    },
-    showHelp() {
-      document.activeElement.blur();
-      this.showHelpPanel = true;
-      this.$refs.helpPanel.show();
-    },
-    dismissHelpPanel() {
-      this.showHelpPanel = false;
-      this.$refs.helpPanel.hide();
     },
     getCurrentPostIdx() {
       let currentPostIdx = null;
@@ -1767,7 +1751,7 @@ export default {
       }
       // esc key handling 
       if (event.key === 'Escape') {
-        if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel && !this.showFeedConfigPanel && !this.showOpmlUploadPanel) {
+        if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel && !this.$refs.controlPanel.showHelpPanel && !this.showFeedConfigPanel && !this.showOpmlUploadPanel) {
           document.activeElement.blur();
         } else {
           // TODO: extract to 'cancelFeedDelete' 
@@ -1777,15 +1761,15 @@ export default {
           this.feedIdToMarkAsRead = null;
           this.$refs.feedMarkAsReadConfirmationModal.hide();
           // 
-          this.dismissHelpPanel();
           this.dismissCreateOrUpdateFeed();
           this.cancelOpmlUpload();
           this.$refs.controlPanel.showSettingsPanel = false;
+          this.$refs.controlPanel.showHelpPanel = false;
         }
         return;
       }
       // bail if a modal is showing
-      if (this.isModalShowing || this.$refs.controlPanel.showSettingsPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel) {
+      if (this.isModalShowing || this.$refs.controlPanel.showSettingsPanel || this.$refs.controlPanel.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel) {
         return;
       }
       // handle post-related key events 
@@ -1865,11 +1849,11 @@ export default {
           this.toggleFeedFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
-        } else if (event.key === 'D' && event.shiftKey) {
+        } else if (event.key === 'H' && event.shiftKey) {
           this.toggleFeedFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
-        } else if (event.key === 'S' && event.shiftKey) {
+        } else if (event.key === 'T' && event.shiftKey) {
           this.toggleFeedFilterMode('PUBLISHED');
           event.stopPropagation();
           event.preventDefault();
@@ -1886,10 +1870,6 @@ export default {
         event.preventDefault();
       } else if (event.key === 'Q') {
         this.newFeed();
-        event.stopPropagation();
-        event.preventDefault();
-      } else if (event.key === '?') {
-        this.showHelp();
         event.stopPropagation();
         event.preventDefault();
       }

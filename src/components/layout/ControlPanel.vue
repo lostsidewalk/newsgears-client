@@ -7,6 +7,11 @@
         <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="false" :theme="theme" />
         <!-- settings button -->
         <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
+        <!-- help button, don't disable -->
+        <HelpButton
+          :disabled="false"
+          :theme="theme" 
+          @showHelp="this.showHelpPanel = !this.showHelpPanel" />
         <!-- display mode switch, don't disable -->
         <DisplayModeButton 
           :baseUrl="baseUrl" 
@@ -25,26 +30,32 @@
       :disabled="disabled" 
       :baseUrl="baseUrl" 
       @updateServerMessage="setLastServerMessage" />
+    <HelpPanel v-if="this.showHelpPanel && this.$auth.$isAuthenticated" 
+      :theme="theme" />
   </div>
 </template>
 
 <script>
 import FeedGearsLogo from '@/components/nav/FeedGearsLogo.vue';
 import SettingsPanel from '@/components/settings/SettingsPanel.vue';
+import HelpPanel from '@/components/post/help/HelpPanel.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';
 import SettingsButton from '@/components/nav/SettingsButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
 import GridLayoutButton from '@/components/nav/GridLayoutButton.vue';
+import HelpButton from '@/components/nav/HelpButton.vue';
 
 export default {
     name: "ControlPanel",
     components: {
       FeedGearsLogo,
       SettingsPanel,
+      HelpPanel, 
       LogoutButton,
       SettingsButton,
       DisplayModeButton,
-      GridLayoutButton
+      GridLayoutButton,
+      HelpButton, 
     },
     props: [ "baseUrl", "disabled", "theme" ],
     emits: [ "updateServerMessage" ],
@@ -57,11 +68,13 @@ export default {
       // 
       cancelSettings() {
         this.showSettingsPanel = false;
+        this.showHelpPanel = false;
       },
     },
     data() {
       return {
         showSettingsPanel: false,
+        showHelpPanel: false,
       }
     }
 }

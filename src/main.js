@@ -88,7 +88,8 @@ const i18n = createI18n({
       // navbar button components 
       login: 'Acceso', 
       logout: 'Cerrar sesión',
-      settings: 'Ajustes', 
+      settings: 'Ajustes',
+      help: 'Ayuda', 
       // queue dashboard buttons 
       manageSubscriptions: 'Administrar suscripciones',
       createNewQueue: 'Crear una nueva cola',
@@ -214,10 +215,10 @@ const i18n = createI18n({
       starSelectedPost: 'Destacar la publicación seleccionada',
       toggleReadStatusSelectedPost: 'Alternar la publicación seleccionada leída/no leída',
       openOriginalArticleSelectedPost: 'Abrir la URL de la publicación seleccionada en una nueva pestaña',
-      showHideUnread: 'Mostrar/ocultar no leídos', 
-      showHideStarred: 'Mostrar/ocultar destacado',
-      showHideReadLater: 'Mostrar/ocultar leer más tarde',
-      showHideRead: 'Mostrar/ocultar leído',
+      showUnread: 'Mostrar no leídos', 
+      showStarred: 'Mostrar destacado',
+      showReadLater: 'Mostrar leer más tarde',
+      showRead: 'Mostrar leído',
       search: 'Buscar',
       // iTunes
       explicit: 'EXPLÍCITO',
@@ -447,6 +448,7 @@ const i18n = createI18n({
       login: 'Login', 
       logout: 'Logout',
       settings: 'Settings', 
+      help: 'Help',
       // queue dashboard buttons 
       manageSubscriptions: 'Manage subscriptions',
       createNewQueue: 'Create a new queue',
@@ -572,10 +574,10 @@ const i18n = createI18n({
       starSelectedPost: 'Star the selected post',
       toggleReadStatusSelectedPost: 'Toggle the selected post read/unread',
       openOriginalArticleSelectedPost: 'Open selected post URL in a new tab',
-      showHideUnread: 'Show/hide unread', 
-      showHideStarred: 'Show/hide starred',
-      showHideReadLater: 'Show/hide read-later',
-      showHideRead: 'Show/hide read',
+      showUnread: 'Show unread', 
+      showStarred: 'Show starred',
+      showReadLater: 'Show read-later',
+      showRead: 'Show read',
       search: 'Search',
       // iTunes
       explicit: 'EXPLICIT',
