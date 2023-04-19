@@ -68,21 +68,31 @@
                         :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                         :theme="theme" 
                         @click.stop="this.setSelectedFeedId(feed.id)" />
-                      <!-- more information -->
-                      <a class="feed-info-label-small link" 
-                        v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0"
-                        @click.stop="this.toggleFeedShowMoreInformation(feed.id)" 
-                        @keypress.enter.prevent="this.toggleFeedShowMoreInformation(feed.id)" 
-                        tabindex="0">
-                        {{ this.getFeedById(feed.id).showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
-                      </a>
+                      <div class="feed-info-labels">
+                        <!-- manage subscriptions -->
+                        <a class="feed-info-label-small link"
+                          @click.stop="this.configureFeed(feed.id)"
+                          @keypress.enter.prevent="this.configureFeed(feed.id)"
+                          tabindex="0"
+                          :class="{ 'link-disabled': disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel }">
+                          {{ feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? this.$t('manageSubscriptions') : this.$t('addSubscriptions')}}
+                        </a>
+                        <!-- more information -->
+                        <a class="feed-info-label-small link" 
+                          v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0"
+                          @click.stop="this.toggleFeedShowMoreInformation(feed.id)" 
+                          @keypress.enter.prevent="this.toggleFeedShowMoreInformation(feed.id)" 
+                          tabindex="0">
+                          {{ this.getFeedById(feed.id).showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo') }}
+                        </a>
+                      </div>
                       <FeedDetails 
                         v-if="this.getFeedById(feed.id).showMoreInformation"
                         :rssAtomFeedUrls="feed.rssAtomFeedUrls" 
                         :jsonPubUrl="this.feedUrl + '/feed/json/' + feed.transportIdent" 
                         :rssPubUrl="this.feedUrl + '/feed/rss/' + feed.transportIdent" 
                         :atomPubUrl="this.feedUrl + '/feed/atom/' + feed.transportIdent" 
-                        :disabled="disabled" 
+                        :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                         :theme="theme" 
                         @updatePostFeedFilter="selectFeedAndUpdateFilter" />
                     </div>
@@ -118,24 +128,6 @@
                       <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.join(', ') }}</span>
                     </span>
                   </div>
-                </div>
-                <!-- feed management buttons -->
-                <div v-if="this.showFullInboundQueueHeader" class="queue-management-buttons">
-                  <button v-if="this.selectedFeedId"
-                    class="header-button accessible-button" 
-                    @click.stop="this.configureFeed(this.selectedFeedId)" 
-                    :disabled="disabled" 
-                    :title="this.$t('manageSubscriptions')">
-                    {{ this.$t('manageSubscriptions') }} &nbsp; <span class="fa fa-wrench" />
-                  </button>
-                  <!-- delete queue button -->
-                  <button v-if="this.selectedFeedId"
-                    class="header-button accessible-button" 
-                    @click.stop="this.deleteFeed(this.selectedFeedId)" 
-                    :disabled="disabled" 
-                    :title="this.$t('deleteThisQueue')">
-                    {{ this.$t('deleteThisQueue') }} &nbsp; <span class="fa fa-trash" />
-                  </button>
                 </div>
                 <!-- feed filter field -->
                 <FeedFilter v-if="this.showFullInboundQueueHeader" 
@@ -568,8 +560,9 @@ export default {
       // feed material 
       feeds: [], // all feeds 
       queryDefinitionImagesById: {}, // all query definition images (by Id)
-      selectedFeedId: null, // currently selected feed 
-      selectedPostId: null, // currently selected post 
+      selectedFeedId: null, // currently selected feed Id 
+      previousFeedId: null, // previously selected feed Id 
+      selectedPostId: null, // currently selected post Id 
       // queue material 
       inboundQueuesByFeed: {}, // all queues 
       inboundQueue: { values: [] }, // inbound queue for the currently selected feed  
@@ -1046,7 +1039,7 @@ export default {
                   if (idxToUpdate >= 0) {
                     this.feeds[idxToUpdate] = fd;
                   } else {
-                    fd.showMoreInformation = true;
+                    fd.showMoreInformation = false;
                     this.feeds.push(fd);
                   }
                 }
@@ -1407,6 +1400,7 @@ export default {
       if (this.$refs.opmlUploadPanel) {
         this.$refs.opmlUploadPanel.hide();
         this.showOpmlUploadPanel = false;
+        this.restorePreviousFeedId();
       }
     },
     configureFeed(feedId) {
@@ -1484,6 +1478,9 @@ export default {
       if (this.$refs.feedConfigPanel) {
         this.$refs.feedConfigPanel.tearDown();
         this.showFeedConfigPanel = false;
+        if (!this.selectedFeedId) {
+          this.restorePreviousFeedId();
+        }
       }
     },
     // 
@@ -1626,12 +1623,16 @@ export default {
     // data model methods 
     // 
     setSelectedFeedId(feedId) {
+      this.previousFeedId = this.selectedFeedId;
       this.selectedFeedId = feedId;
       this.inboundQueue = feedId ? this.inboundQueuesByFeed[feedId] : null;
       this.selectedFeedFilterCategories = [];
       this.selectedFeedFilterSubscriptions = [];
       this.currentPage = 0;
       this.itemCount = 0;
+    },
+    restorePreviousFeedId() {
+      this.setSelectedFeedId(this.previousFeedId);
     },
     getSelectedFeed() {
       if (this.selectedFeedId) {
@@ -2082,6 +2083,14 @@ footer {
   background-color: unset;
 }
 
+.feed-info-labels {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
 .feed-info-label-small {
   max-width: fit-content;
   cursor: pointer;
@@ -2102,6 +2111,10 @@ footer {
 .link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
+}
+
+.link-disabled {
+  pointer-events: none;
 }
 
 @media (max-width: 1023px) {
@@ -2135,37 +2148,6 @@ footer {
   }
 }
 
-.queue-management-buttons {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.header-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: left;
-  border-radius: 4px;
-  margin: .56rem;
-  text-align: center;
-  user-select: none;
-}
-
-.header-button:hover, .header-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.header-button:disabled {
-  cursor: auto;
-}
-
-.header-button:disabled:hover {
-  background-color: unset;
-}
-
 .filter-expression-container {
   display: flex;
   flex-direction: row;
@@ -2173,6 +2155,7 @@ footer {
   font-family: Arial, Helvetica, sans-serif;
   margin-left: .56rem;
   padding-top: .56rem;
+  padding-bottom: .56rem;
 }
 
 .filter-expression {

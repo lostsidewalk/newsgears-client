@@ -36,7 +36,7 @@
         <!-- tab panel -->
         <div class="tabbed-panel">
           <!-- tab 1: subscription config, collection browser, catalog search -->
-          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SUBSCRIPTIONS_CONFIG'">
+          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SUBSCRIPTION_CONFIG'">
             <!-- subscriptions config -->
             <SubscriptionsConfig
               ref="subscriptionsConfig"
@@ -197,20 +197,20 @@ export default {
   computed: {
     tabModel: function() {
       let arr = [];
-      arr.push({
-          name: "QUEUE_PROPERTIES",
-          description: this.$t('queueProperties'),
-          icon: "list",
-        });
       if (this.feed.id) {
         arr.push({
-          name: "SUBSCRIPTIONS_CONFIG",
+          name: "SUBSCRIPTION_CONFIG",
           description: this.$t('rssFeedDiscovery'),
           icon: "feed",
         });
         arr.push({
           name: "BROWSE_COLLECTIONS",
           description: this.$t('browseFeedCollections'),
+          icon: "list",
+        });
+        arr.push({
+          name: "QUEUE_PROPERTIES",
+          description: this.$t('queueProperties'),
           icon: "list",
         });
         // {
@@ -274,8 +274,8 @@ export default {
     // setup is called to initialize the panel for either a create or update operation 
     setup(feed) {
       this.feed = feed;
-      this.clearModel();
       this.setupFeed();
+      this.clearModel();
       this.showModal = true;
       this.$nextTick(() => {
         this.$refs.feedIdent.focus();
@@ -287,7 +287,7 @@ export default {
       if (this.feed) {
         this.feed.id = feedId;
       }
-      this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
+      this.selectedTab = 'SUBSCRIPTION_CONFIG';
       this.$nextTick(() => {
         this.$refs.subscriptionsConfig.focus();
       });
@@ -295,7 +295,7 @@ export default {
     setupQuickAdd(feed) {
       this.feed = feed;
       this.setupFeed();
-      this.selectedTab = 'SUBSCRIPTIONS_CONFIG';
+      this.selectedTab = 'SUBSCRIPTION_CONFIG';
       this.showModal = true;
       this.$nextTick(() => {
         this.$refs.subscriptionsConfig.focus();

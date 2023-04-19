@@ -23,7 +23,7 @@
         {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
       </span>
       <!-- feed title/URL -->
-      <a class="link" href="#"
+      <a class="link" :class="{ 'link-disabled': disabled }" href="#"
         @click.stop="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
         @keypress.enter.prevent="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
         tabindex="0">
@@ -194,5 +194,9 @@ export default {
 .link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
+}
+
+.link-disabled {
+  pointer-events: none;
 }
 </style>
