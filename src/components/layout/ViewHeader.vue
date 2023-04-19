@@ -56,8 +56,6 @@ export default {
 
 /** has references */
 .view-header {
-  margin-left: .75rem;
-  margin-right: .75rem;
   padding: .75rem;
   text-align: left;
   border-radius: 4px 4px 0px 0px;
