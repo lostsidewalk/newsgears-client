@@ -76,7 +76,7 @@ export default {
   margin-right: .56rem;
   border-radius: 0px 0px 4px 4px;
   border-top: 0px;
-
+  font-family: Arial, Helvetica, sans-serif;
   text-align: left;
   display: flex;
   flex-direction: column;
