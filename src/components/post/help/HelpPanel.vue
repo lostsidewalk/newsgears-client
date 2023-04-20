@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container" v-auto-animate>
+  <div class="modal-container">
     <div class="modal-body">
       <div class="keyboard-shortcut-container">
         <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel" :key="desc">

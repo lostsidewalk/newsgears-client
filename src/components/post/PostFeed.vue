@@ -187,7 +187,7 @@
               </div>
             </div>
           </div>
-          <div class="staging-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel" v-auto-animate>
+          <div class="staging-header-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel" v-auto-animate>
             <ViewHeader v-if="this.showFeedConfigPanel" 
               :sticky="true" 
               :collapsible="false" 
@@ -512,7 +512,7 @@ export default {
           });
         }
       }
-      if (this.allPostCategories.length > 1) {
+      if (this.allPostCategories.length > 0) {
         for (let i = 0; i < this.allPostCategories.length; i++) {
           let category = this.allPostCategories[i];
           filterPills.push({
@@ -2178,8 +2178,7 @@ footer {
 .show-queue-dashboard-button {
   display: flex;
   font-size: larger;
-  border: unset;
-  border-top: 1px solid v-bind('theme.navbarsubshadow');
+  border: 1px solid v-bind('theme.sectionsubdued');
   background: v-bind('theme.sectionhighlight');
   color: v-bind('theme.buttonfg');
   padding: .44rem 1.25rem;

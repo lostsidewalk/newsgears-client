@@ -1,5 +1,5 @@
 <template>
-  <div v-auto-animate>
+  <div>
     <div class="control-panel-wrapper">
       <FeedGearsLogo :theme="theme" />
       <div class="control-panel-buttons">

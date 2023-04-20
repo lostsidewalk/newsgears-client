@@ -48,6 +48,10 @@ export default {
   align-items: baseline;
   padding: .56rem;
   cursor: pointer;
+  border-left: 1px solid v-bind('theme.sectionsubdued');
+  border-right: 1px solid v-bind('theme.sectionsubdued');
+  border-bottom: 1px solid v-bind('theme.sectionsubdued');
+  border-collapse: collapse;
 }
 
 /** has references */
@@ -62,6 +66,10 @@ export default {
   justify-content: space-between;
   align-items: baseline;
   padding: .56rem;
+  border-left: 1px solid v-bind('theme.sectionsubdued');
+  border-right: 1px solid v-bind('theme.sectionsubdued');
+  border-bottom: 1px solid v-bind('theme.sectionsubdued');
+  border-collapse: collapse;
 }
 
 /** has references */
