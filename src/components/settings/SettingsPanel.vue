@@ -886,7 +886,6 @@ export default {
 .tab {
   display: grid;
   contain: content;
-  max-height: 50svh;
   overflow: auto;
 }
 

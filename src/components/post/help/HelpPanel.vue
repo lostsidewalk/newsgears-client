@@ -133,18 +133,17 @@ export default {
   text-align: left;
   width: 100%;
   height: fit-content;
-  padding: 2rem;
+  padding: 1rem;
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+}
+
+.modal-actions {
+  padding-top: .75rem;
 }
 
 .keyboard-shortcut-container {
   overflow-y: auto; 
-  max-height: 75svh;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   align-items: start;
-  place-items: start stretch;
-  padding: .75rem;
   border-top: 0px;
   border-bottom: 1px solid v-bind('theme.sectionbordercolor');
   border-left: 1px solid v-bind('theme.sectionbordercolor');

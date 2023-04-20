@@ -19,7 +19,7 @@ export default {
   text-shadow: 2px 2px 2px v-bind('theme.darkshadow');
 }
 .not-authenticated > p {
-  padding: 2rem;
+  padding: 1rem;
   text-decoration: none;
 }
 

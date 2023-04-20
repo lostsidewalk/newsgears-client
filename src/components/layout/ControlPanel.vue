@@ -29,14 +29,14 @@
           :theme="theme"
           @updateServerMessage="setLastServerMessage" />
       </div>
+      <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
+        :theme="theme" 
+        :disabled="disabled" 
+        :baseUrl="baseUrl" 
+        @updateServerMessage="setLastServerMessage" />
+      <HelpPanel v-if="this.showHelpPanel && this.$auth.$isAuthenticated" 
+        :theme="theme" />
     </div>
-    <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
-      :theme="theme" 
-      :disabled="disabled" 
-      :baseUrl="baseUrl" 
-      @updateServerMessage="setLastServerMessage" />
-    <HelpPanel v-if="this.showHelpPanel && this.$auth.$isAuthenticated" 
-      :theme="theme" />
   </div>
 </template>
 
