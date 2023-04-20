@@ -142,19 +142,27 @@ export default {
   max-height: 75svh;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  gap: 1rem;
   align-items: start;
   place-items: start stretch;
+  padding: .75rem;
+  border-top: 0px;
+  border-bottom: 1px solid v-bind('theme.sectionbordercolor');
+  border-left: 1px solid v-bind('theme.sectionbordercolor');
+  border-right: 1px solid v-bind('theme.sectionbordercolor');
+  border-radius: 3px;
+  margin-bottom: 1rem;
+  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
+  background-color: v-bind('theme.sectionhighlight');
 }
 
 .keyboard-shortcut-desc {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: .75rem;
-  margin-right: .75rem;
+  margin: .56rem;
   padding: .75rem;
   border: 1px solid v-bind('theme.sectionbordercolor');
+  border-radius: 4px;
 }
 
 .keyboard-label-wrapper {

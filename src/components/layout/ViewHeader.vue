@@ -1,12 +1,12 @@
 <template>
   <div :class="sticky ? 'view-header sticky-header' : 'view-header'">
-    <span :class="collapsible ? 'collapsible-header' : 'inline-header'">
+    <span :class="collapsible ? 'collapsible-header' : 'inline-header'" @click.stop="this.$emit('toggle')">
       <h3 class="view-header-count">
         <slot name="count" />
       </h3>
-      <MinMaxButton :class="{ 'hidden': !collapsible }" class="min-max-button" 
-        @toggle="this.$emit('toggle')" 
-        :show="show" :theme="theme" />
+      <MinMaxButton :class="{ 'hidden': !collapsible }" class="min-max-button"  
+        :show="show" 
+        :theme="theme" />
     </span>
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <slot name="body" />
@@ -42,23 +42,33 @@ export default {
 
 /** has references */
 .collapsible-header {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
-  width: 100%;
   justify-content: space-between;
+  align-items: baseline;
+  padding: .56rem;
+  cursor: pointer;
+}
+
+/** has references */
+.collapsible-header:hover {
+  background-color: v-bind('theme.buttonhighlight');
 }
 
 /** has references */
 .inline-header {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: .56rem;
 }
 
 /** has references */
 .view-header {
-  padding: .75rem;
+  padding-bottom: .56rem;
   text-align: left;
-  border-radius: 4px 4px 0px 0px;
+  border-radius: 0;
 }
 
 /** has references */

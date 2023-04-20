@@ -114,7 +114,6 @@
               :inTransit="false" 
               :theme="theme">
               <template v-slot:count>
-                <span class="fa fa-gears fa-1x"/>
                 {{ this.getFeedById(this.selectedFeedId).title }}
               </template>
               <template v-slot:body>
@@ -1965,7 +1964,6 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: .75rem;
 }
 
 .post-grid {
@@ -1975,8 +1973,7 @@ export default {
 }
 
 .grid-container {
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
+  padding: .56rem;
   overflow: auto;
 }
 
@@ -2021,7 +2018,7 @@ footer {
   align-items: flex-start;
   padding: .44rem;
   background-color: v-bind('theme.appbg');
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 /** has references */
@@ -2182,12 +2179,14 @@ footer {
   display: flex;
   font-size: larger;
   border: unset;
-  background-color: v-bind('theme.buttonbg');
+  border-top: 1px solid v-bind('theme.navbarsubshadow');
+  background: v-bind('theme.sectionhighlight');
   color: v-bind('theme.buttonfg');
   padding: .44rem 1.25rem;
   cursor: pointer;
   text-align: center;
   user-select: none;
+  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
 .show-queue-dashboard-button span {

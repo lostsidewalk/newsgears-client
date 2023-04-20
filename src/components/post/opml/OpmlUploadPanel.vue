@@ -234,12 +234,10 @@ export default {
   text-align: left;
   width: 100%;
   height: fit-content;
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
 }
 
 .modal-actions {
-  padding-top: .75rem;
+  padding: .56rem;
 }
 
 .opml-upload-button-wrapper {

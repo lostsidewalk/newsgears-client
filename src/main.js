@@ -377,6 +377,7 @@ const i18n = createI18n({
       switchLayoutAriaLabel: 'Cambiar al siguiente diseño',
       logoutArialLabel: 'Cerrar sesión',
       goToSettingsAriaLabel: 'Ir a la configuración de la cuenta',
+      goToHelpAriaLabel: 'Mostrar ayuda',
       // image alts 
       queuePageScreenshot: 'Captura de pantalla de la página de cola de FeedGears',
       queueLogoImage: 'Imagen del logotipo de la cola',
@@ -737,6 +738,7 @@ const i18n = createI18n({
       switchLayoutAriaLabel: 'Switch to next grid layout',
       logoutArialLabel: 'Logout',
       goToSettingsAriaLabel: 'Go to account settings',
+      goToHelpAriaLabel: 'Show help',
       // image alts 
       queuePageScreenshot: 'FeedGears queue page screenshot',
       queueLogoImage: 'Queue logo image',
