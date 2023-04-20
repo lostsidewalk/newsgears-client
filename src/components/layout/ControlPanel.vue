@@ -6,11 +6,16 @@
         <!-- logout button, don't disable -->
         <LogoutButton v-if="this.$auth.$isAuthenticated" :disabled="false" :theme="theme" />
         <!-- settings button -->
-        <SettingsButton v-if="this.$auth.$isAuthenticated" @showSettings="this.showSettingsPanel = !this.showSettingsPanel" :disabled="disabled" :theme="theme" />
+        <SettingsButton v-if="this.$auth.$isAuthenticated" 
+          :disabled="disabled" 
+          :theme="theme" 
+          :expanded="this.showSettingsPanel" 
+          @showSettings="this.showSettingsPanel = !this.showSettingsPanel" />
         <!-- help button, don't disable -->
         <HelpButton
-          :disabled="false"
           :theme="theme" 
+          :disabled="false"
+          :expanded="this.showHelpPanel"
           @showHelp="this.showHelpPanel = !this.showHelpPanel" />
         <!-- display mode switch, don't disable -->
         <DisplayModeButton 

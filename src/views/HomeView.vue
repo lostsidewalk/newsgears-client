@@ -116,11 +116,6 @@ hr {
   color: v-bind('theme.sectionbordercolor');
 }
 
-#home {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
 .server-message {
   text-align: center;
   color: v-bind('theme.highlightedmessage');

@@ -1,5 +1,5 @@
 <template>
-  <div v-show="this.$auth.$isAuthenticated">
+  <div class="post-feed-container" id="post-feed-container" v-show="this.$auth.$isAuthenticated">
     <audio id="post-feed-audio" />
     <!-- feed delete confirmation modal (hidden) -->
     <ConfirmationDialog ref="feedDeleteConfirmationModal"
@@ -21,14 +21,14 @@
       :theme="theme" 
       @updateServerMessage="setLastServerMessage" />
     <NavbarFixedHeader :theme="theme" :inTransit="false" />
-    <div class="post-feed-container" id="post-feed-container">
+    <div>
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
         <!-- left side, feed selector -- hide when modal is showing -->
         <button class="show-queue-dashboard-button accessible-button" 
           v-if="!this.showQueueDashboard && this.windowWidth >= 1024" 
           :disabled="isModalShowing"
           @click="this.showQueueDashboard = true">
-          <span class="fa fa-rss fa-1x" />
+          <span class="fa fa-expand fa-1x" />
         </button>
         <div class="feed-select-view" :class="{ 
           'feed-select-view-selected': this.selectedFeedId, 
@@ -1770,7 +1770,7 @@ export default {
         return;
       }
       // bail if a modal is showing
-      if (this.isModalShowing || this.$refs.controlPanel.showSettingsPanel || this.$refs.controlPanel.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel) {
+      if (this.isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel) {
         return;
       }
       // handle post-related key events 

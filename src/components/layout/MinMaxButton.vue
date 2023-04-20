@@ -2,7 +2,7 @@
   <div class="hide-button">
     <button @click="this.$emit('toggle')" 
       :title="this.show ? this.$t('collapseThisPanel') : this.$t('restoreThisPanel')">
-      <i class="fa" :class="this.show ? 'fa-window-minimize' : 'fa-window-restore'"></i>
+      <i class="fa" :class="this.show ? 'fa-compress' : 'fa-expand'"></i>
     </button>
   </div>
 </template>

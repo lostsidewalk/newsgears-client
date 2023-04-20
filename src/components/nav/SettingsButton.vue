@@ -4,14 +4,14 @@
     accesskey="t" 
     :disabled="disabled" 
     :aria-label="this.$t('goToSettingsAriaLabel')">
-    {{ this.$t('settings') }} &nbsp; <span class="fa fa-expand" />
+    {{ this.$t('settings') }} &nbsp; <span class="fa" :class="this.expanded ? 'fa-compress' : 'fa-expand'" />
   </button>
 </template>
 
 <script>
 export default {
   name: "SettingsButton", 
-  props: [ "disabled", "theme" ],
+  props: [ "disabled", "theme", "expanded" ],
   emits: [ "showSettings" ],
 }
 </script>

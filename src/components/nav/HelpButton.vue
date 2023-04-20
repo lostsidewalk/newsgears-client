@@ -3,14 +3,14 @@
     @click="this.$emit('showHelp')" 
     accesskey="h" 
     :aria-label="this.$t('goToHelpAriaLabel')">
-    {{ this.$t('help') }} &nbsp; <span class="fa fa-expand" />
+    {{ this.$t('help') }} &nbsp; <span class="fa" :class="this.expanded ? 'fa-compress' : 'fa-expand'" />
   </button>
 </template>
 
 <script>
 export default {
   name: "HelpButton", 
-  props: [ "disabled", "theme" ],
+  props: [ "disabled", "theme", "expanded" ],
   emits: [ "showHelp" ],
 }
 </script>
