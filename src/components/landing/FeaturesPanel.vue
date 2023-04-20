@@ -31,7 +31,6 @@
         </div>
       </div>
       <div class="feature">
-        <div class="coming-soon">COMING SOON</div>
         <div class="feature-title">SOCIAL MEDIA INTEGRATION <span class="fa fa-share-square" role="presentation" /></div>
         <div class="feature-body">
           FeedGears makes it easy to share and discover content by integrating with social media platforms such as Facebook and LinkedIn. 
@@ -66,7 +65,6 @@
         </div>
       </div>
       <div class="feature">
-        <div class="coming-soon">COMING SOON</div>
         <div class="feature-title">ADVANCED SEARCH <span class="fa fa-search" role="presentation" /></div>
         <div class="feature-body">
           FeedGears has advanced search funnctionality that allows you to search through feeds by keyword, date range, 

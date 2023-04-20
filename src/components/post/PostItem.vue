@@ -88,7 +88,9 @@
             :aria-label="this.post.importerDesc">
             <img :src="this.post.sourceImgUrl" />
           </button>
-          <!-- toggle post categories -->
+        </span>
+        <!-- toggle post categories -->
+        <span class="post-admin-buttons">
           <button v-if="this.post.postCategories && this.post.postCategories.length > 0"
             class="post-admin-button accessible-button"
             @click.stop="togglePostCategories"
@@ -98,16 +100,35 @@
             <span class="fa fa-list"></span>
           </button>
         </span>
-        <!-- post header pills -->
-        <span class="post-item-header-pills pill-container" v-if="this.showPostCategories">
-          <!-- post categories -->
+        <!-- post category pills -->
+        <span class="post-item-header-pills" v-if="this.showPostCategories">
           <!-- TODO: interpolated string -->
           <button v-for="postCategory in post.postCategories" :key="postCategory"
-            class="br-pill accessible-button"
+            class="post-admin-button accessible-button"
             @click.stop="updatePostFeedFilter('category', postCategory)"
             :title="'Add this category (' + postCategory + ') to the filter'"
             :aria-label="'Add this category (' + postCategory + ') to the filter'">
             {{ postCategory }}
+          </button>
+        </span>
+        <!-- toggle post sharing pills -->
+        <span class="post-admin-buttons">
+          <button class="post-admin-button accessible-button"
+            @click.stop="togglePostSharing"
+            :disabled="disabled"
+            :title="this.$t('showPostSharing')"
+            :aria-label="this.$t('showPostSharing')">
+            <span class="fa fa-share-alt"></span>
+          </button>
+        </span>
+        <!-- post sharing pills -->
+        <span class="post-admin-buttons" v-if="this.showPostSharing">
+          <button v-for="sharingOption in this.sharingOptions" :key="sharingOption"
+            class="post-admin-button accessible-button"
+            @click.stop="share(sharingOption)"
+            :title="this.$t('shareWith_' + sharingOption.name)"
+            :aria-label="this.$t('shareWith_' + sharingOption.name + '_ariaLabel')">
+            <i class="fa" :class="'fa-' + sharingOption.icon" />
           </button>
         </span>
       </div>
@@ -257,6 +278,44 @@ import PostEnclosure from './item/PostEnclosure.vue';
 import PostMedia from './item/PostMedia.vue';
 import PostITunes from './item/PostITunes.vue';
 
+const sharingOptions = [
+  {
+    name: 'twitter',
+    icon: 'twitter',
+    url: 'https://twitter.com/intent/tweet?text={TITLE}&url={URL}',
+  },
+  {
+    name: 'facebook',
+    icon: 'facebook',
+    url: 'http://www.facebook.com/share.php?u={URL}&title={TITLE}',
+  },
+  {
+    name: 'telegram',
+    icon: 'telegram',
+    url: 'https://telegram.me/share/url?url={URL}&t={TITLE}', 
+  },
+  {
+    name: 'linkedIn',
+    icon: 'linkedin',
+    url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}', 
+  },
+  {
+    name: 'blogger',
+    icon: 'rss', // kind of generic 
+    url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}', 
+  },
+  {
+    name: 'buffer',
+    icon: 'share', // generic 
+    url: 'https://publish.buffer.com/compose?url={URL}&text={TITLE}', 
+  },
+  {
+    name: 'hootsuite',
+    icon: 'share', // generic 
+    url: 'http://hootsuite.com/twitter/bookmark-tool-v2?address={URL}&title={TITLE}', 
+  },
+];
+
 export default {
   name: "PostItem",
   components: { 
@@ -281,9 +340,32 @@ export default {
     return {
       showPostDetails: false,
       showPostCategories: false,
+      showPostSharing: false,
+      //
+      sharingOptions: sharingOptions,
     };
   },
   methods: {
+    share(sharingOption) {
+      let title = encodeURIComponent(this.post.postTitle.value);
+      let link = encodeURIComponent(this.post.postUrl);
+      let source = encodeURIComponent(this.post.importerDesc);
+      let content = encodeURIComponent(this.post.postDesc ? this.post.postDesc.value : '');
+      let url = this.replaceArray(sharingOption.url, 
+        ["{URL}", "{TITLE}", "{SOURCE}", "{CONTENT}"], 
+        [ link, title, source, content ]
+      );
+      window.open(url, '_blank');
+    },
+    replaceArray(str, find, replace) {
+      let replaceString = str;
+      let regex;
+      for (let i = 0; i < find.length; i++) {
+          regex = new RegExp(find[i], "g");
+          replaceString = replaceString.replace(regex, replace[i]);
+      }
+      return replaceString;
+    },
     focusHandle() {
       this.$refs.postHandle.focus();
     },
@@ -353,6 +435,9 @@ export default {
     },
     togglePostCategories() {
       this.showPostCategories = !this.showPostCategories;
+    },
+    togglePostSharing() {
+      this.showPostSharing = !this.showPostSharing;
     },
     stagePost() {
       console.log("post-item: publishing post id=" + this.post.id);
@@ -624,6 +709,8 @@ export default {
 .post-item-header-pills {
   display: flex;
   flex-direction: row-reverse;
+  flex-wrap: wrap;
+  gap: .44rem;
 }
 
 .post-info-label-small {
