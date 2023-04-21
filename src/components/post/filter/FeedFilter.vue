@@ -19,6 +19,14 @@
           :aria-label="this.$t('toggleSortOrder')">
           <span :class="'fa fa-arrow-' + (this.inboundQueueSortOrder === 'ASC' ? 'up' : 'down')" />
         </button>
+        <!-- show/hide all post details button -->
+        <button class="feed-filter-button accessible-button" 
+          @click="this.$emit('toggleAllPostDetails')" 
+          :disabled="disabled"
+          :title="this.$t('toggleAllPostDetails')" 
+          :aria-label="this.$t('toggleAllPostDetails')">
+          <span class="fa fa-arrows-alt" />
+        </button>
         <!-- refresh feed button -->
         <button class="feed-filter-button accessible-button" 
           @click="this.$emit('refreshFeeds')"
@@ -62,6 +70,7 @@ export default {
   ],
   emits: [
     "toggleSortOrder",
+    "toggleAllPostDetails",
     "refreshFeeds", 
     "markAsRead", 
     "toggleFeedFilterPills",

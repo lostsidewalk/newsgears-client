@@ -132,11 +132,13 @@
                 <!-- feed filter field -->
                 <FeedFilter v-if="this.showFullInboundQueueHeader" 
                   @toggleSortOrder="toggleInboundQueueSortOrder"
+                  @toggleAllPostDetails="toggleInboundQueuePostDetails"
                   @refreshFeeds="this.refreshFeeds(null, true)"
                   @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
                   @toggleFeedFilterPills="this.showFeedFilterPills = !this.showFeedFilterPills"
                   @update:modelValue="this.inboundQueueFilter = $event"
                   :inboundQueueFilter="this.inboundQueueFilter"
+                  :inboundQueueSortOrder="this.inboundQueueSortOrder"
                   :queueLength="this.filteredInboundQueue.length"
                   :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                   :theme="theme" />
@@ -168,6 +170,8 @@
                 @keypress.self="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @click="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @setActive="setSelectedPost($event, post.id, false)" 
+                @showPostDetails="post.showPostDetails = true"
+                @togglePostDetails="post.showPostDetails = !post.showPostDetails"
                 @openPostUrl="openPostUrl(post.id)"
                 @updatePostReadStatus="setPostReadStatus"
                 @updatePostPubStatus="updatePostPubStatus" 
@@ -760,6 +764,36 @@ export default {
         this.inboundQueueSortOrder = 'ASC';
       } else {
         this.inboundQueueSortOrder = 'DSC';
+      }
+      if (this.selectedPostId) {
+      this.$nextTick(() => {
+          let elem = document.getElementById('post_' + this.selectedPostId);
+          window.scrollTo({
+            behavior: 'smooth',
+            top: elem.getBoundingClientRect().top - document.body.getBoundingClientRect().top - document.getElementById('staging-header-view').getBoundingClientRect().height - 10,
+          });
+        });
+      }
+    },
+    toggleInboundQueuePostDetails() {
+      let hasExpanded = false;
+      let hasCollapsed = false;
+      let doExpand = false;
+      let f = this.inboundQueue.values;
+      for (let j = 0; j < f.length; j++) {
+        if (f[j].showPostDetails === true) {
+          hasExpanded = true;
+        } else {
+          hasCollapsed = true;
+        }
+        if (hasExpanded && hasCollapsed) {
+          doExpand = true;
+          break;
+        }
+      }
+      doExpand = doExpand ? doExpand : !hasExpanded;
+      for (let j = 0; j < f.length; j++) {
+        f[j].showPostDetails = doExpand;
       }
     },
     toggleFeedFilterMode(filterMode) {
@@ -1998,6 +2032,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-top: 4px; /* staging-header-view box-shadow + 1px */ 
 }
 
 .post-grid {

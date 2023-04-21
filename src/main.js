@@ -205,6 +205,7 @@ const i18n = createI18n({
       refreshQueues: 'Actualizar colas', 
       markQueueAsRead: 'Marcar esta cola como leída',
       toggleSortOrder: 'Alternar dirección de clasificación',
+      toggleAllPostDetails: 'Mostrar/ocultar todos los detalles de la publicación',
       showFilterOptions: 'Mostrar opciones de filtro', 
       // post feed filter pills 
       allSubscriptions: 'todas las suscripciones',
@@ -588,6 +589,7 @@ const i18n = createI18n({
       refreshQueues: 'Refresh queues', 
       markQueueAsRead: 'Mark this queue as read',
       toggleSortOrder: 'Toggle sort direction',
+      toggleAllPostDetails: 'Show/hide all post details',
       showFilterOptions: 'Show filter options', 
       // post feed filter pills 
       allSubscriptions: 'all subscriptions',
