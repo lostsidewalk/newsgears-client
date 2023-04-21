@@ -74,7 +74,7 @@ export default {
       HelpButton, 
     },
     props: [ "baseUrl", "disabled", "theme" ],
-    emits: [ "updateServerMessage" ],
+    emits: [ "updateServerMessage", "toggleDistractions" ],
     methods: {
       setLastServerMessage(message) {
         if (message) {

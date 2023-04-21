@@ -12,7 +12,8 @@
 <script>
 export default {
   name: "ToggleDistractionsButton",
-  props: ["disabled", "theme"],
+  props: [ "disabled", "theme" ],
+  emits: [ "toggleDistractions" ],
 }
 </script>
 
