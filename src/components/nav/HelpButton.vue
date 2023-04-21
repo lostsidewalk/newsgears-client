@@ -2,6 +2,7 @@
   <button class="help-button accessible-button" 
     @click="this.$emit('showHelp')" 
     accesskey="h" 
+    :title="this.$t('help')"
     :aria-label="this.$t('goToHelpAriaLabel')">
     {{ this.$t('help') }} &nbsp; <span class="fa" :class="this.expanded ? 'fa-compress' : 'fa-expand'" />
   </button>

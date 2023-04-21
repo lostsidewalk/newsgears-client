@@ -49,7 +49,7 @@
                 {{ this.$t('queueDashboard') }}
               </template>
               <template v-slot:body>
-                <div v-if="this.showQueueDashboard" class="grid-container">
+                <div v-if="this.showQueueDashboard" class="queue-dashboard">
                   <FeedDashboardButtons v-if="this.showQueueDashboard"
                     :selectedFeedId="this.selectedFeedId" 
                     :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
@@ -57,7 +57,7 @@
                     @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
                     @newFeed="newFeed"
                     @uploadOpml="uploadOpml" /> 
-                  <div v-if="this.filteredFeedIdentOptions.length > 0" class="grid">
+                  <div v-if="this.filteredFeedIdentOptions.length > 0" class="feed-selectors">
                     <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
                       <FeedSelectButton 
                         :feed="feed" 
@@ -152,7 +152,7 @@
           </div>
           <!-- inbound queue -- hide when modal is showing -->
           <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
-            <div class="post-grid">
+            <div :class="{ 'post-grid': this.layoutMode === 'GRID', 'post-table': this.layoutMode === 'TABLE' }">
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" 
                 :post="post"
                 :id="'post_' + post.id"
@@ -162,6 +162,7 @@
                 :baseUrl="baseUrl"
                 :isSelected="this.selectedPostId === post.id"
                 :enableFilterBySubscription="this.allPostSubscriptions.length > 1" 
+                :compact="this.layoutMode === 'TABLE'"
                 tabindex="0"
                 @keypress.self="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @click="isModalShowing ? false : setSelectedPost($event, post.id)"
@@ -530,6 +531,9 @@ export default {
     },
     postGridTemplate: function() {
       return this.$theme.postGridTemplate;
+    },
+    layoutMode: function() {
+      return this.$theme.layoutMode;
     }
   },
   data() {
@@ -1972,12 +1976,16 @@ export default {
   align-items: start;
 }
 
-.grid-container {
+.post-table {
+  display: block;
+}
+
+.queue-dashboard {
   padding: .56rem;
   overflow: auto;
 }
 
-.grid {
+.feed-selectors {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   resize: none;

@@ -3,7 +3,8 @@
     class="logout-button accessible-button" 
     @click="logout" 
     accesskey="o" 
-    :disabled="disabled">
+    :disabled="disabled"
+    :title="this.$t('logout')">
     {{ this.$t('logout') }} 
   </button>
 </template>

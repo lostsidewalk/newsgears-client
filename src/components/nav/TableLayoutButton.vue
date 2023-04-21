@@ -1,21 +1,21 @@
 <template>
   <button class="mode-switch-button accessible-button" 
-    @click="cycleGridLayout" 
+    @click="cycleTableLayout" 
     accesskey="g" 
-    :disabled="disabled || inTransit" 
-    :title="this.$t('cycleGridLayout')"
-    :aria-label="this.$t('cycleGridLayoutAriaLabel')">
-    <span class="fa fa-th" />
+    :disabled="disabled" 
+    :title="this.$t('cycleTableLayout')"
+    :aria-label="this.$t('cycleTableLayoutAriaLabel')">
+    <span class="fa fa-list" />
   </button>
 </template>
 
 <script>
 export default {
-  name: "GridLayoutButton",
-  props: ["disabled", "inTransit", "theme"],
+  name: "TableLayoutButton",
+  props: ["disabled", "theme"],
   methods: {
-    cycleGridLayout() {
-      this.$theme.cycleGridLayout();
+    cycleTableLayout() {
+      this.$theme.cycleTableLayout();
     }
   },
 }

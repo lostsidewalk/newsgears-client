@@ -3,6 +3,7 @@
     @click="this.$emit('showSettings')" 
     accesskey="t" 
     :disabled="disabled" 
+    :title="this.$t('settings')"
     :aria-label="this.$t('goToSettingsAriaLabel')">
     {{ this.$t('settings') }} &nbsp; <span class="fa" :class="this.expanded ? 'fa-compress' : 'fa-expand'" />
   </button>

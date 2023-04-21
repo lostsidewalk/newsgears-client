@@ -23,6 +23,9 @@
           :disabled="false" 
           :theme="theme" 
           @updateServerMessage="setLastServerMessage" />
+        <TableLayoutButton
+          :disabled="false"
+          :theme="theme" />
         <GridLayoutButton
           :baseUrl="baseUrl"
           :disabled="false"
@@ -47,6 +50,7 @@ import HelpPanel from '@/components/post/help/HelpPanel.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';
 import SettingsButton from '@/components/nav/SettingsButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
+import TableLayoutButton from '@/components/nav/TableLayoutButton.vue';
 import GridLayoutButton from '@/components/nav/GridLayoutButton.vue';
 import HelpButton from '@/components/nav/HelpButton.vue';
 
@@ -59,6 +63,7 @@ export default {
       LogoutButton,
       SettingsButton,
       DisplayModeButton,
+      TableLayoutButton,
       GridLayoutButton,
       HelpButton, 
     },

@@ -118,7 +118,16 @@ export default {
       app.config.globalProperties.$theme.currentTheme.requiredind = theme.requiredind;
     }
 
-    function switchLayout() {
+    function cycleTableLayout() {
+      app.config.globalProperties.$theme.layoutMode = 'TABLE';
+    }
+
+    function cycleGridLayout() {
+      let currentMode = app.config.globalProperties.$theme.layoutMode;
+      if (currentMode !== 'GRID') {
+        app.config.globalProperties.$theme.layoutMode = 'GRID';
+        return;
+      }
       let currentLayout = app.config.globalProperties.$theme.postGridTemplate;
       if (currentLayout && currentLayout.length > 0) {
         let cols = currentLayout.split(' ').length;
@@ -201,7 +210,9 @@ export default {
       'switchMode': switchMode,
       'setupModes': setupModes,
       'setupDefaultMode': setupDarkMode,
-      'switchLayout': switchLayout,
+      'cycleTableLayout': cycleTableLayout, 
+      'cycleGridLayout': cycleGridLayout,
+      layoutMode: 'GRID',
       currentTheme: reactive({}),
       postGridTemplate: ref('1fr'),
       userLightTheme: reactive({}),

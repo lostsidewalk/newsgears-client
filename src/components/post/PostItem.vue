@@ -1,157 +1,151 @@
 <template>
-  <div class="post-wrapper" :class="this.isSelected ? 'post-wrapper-selected' : ''" v-auto-animate>
-    <div class="post-item-wrapper">
-      <!-- post header -->
-      <div class="post-item-header">
-        <!-- post header buttons -->
-        <span class="post-admin-buttons">
-          <!-- TODO: extract post-item-button component -->
-          <!-- show details button -->
-          <button 
-            ref="postHandle"
-            class="post-admin-button accessible-button"
-            @click.stop="togglePostDetails"
-            :disabled="disabled"
-            :title="this.$t('showPostDetails')"
-            :aria-label="this.$t('showPostDetails')">
-            <span :class="this.showPostDetails ? 'fa fa-minus' : 'fa fa-plus'"></span>
-          </button>
-          <!-- go to next post button -->
-          <button
-            class="post-admin-button accessible-button"
-            @click.stop="goToNextPost"
-            :disabled="disabled"
-            :title="this.$t('goToNextPost')"
-            :aria-label="this.$t('goToNextPost')">
-            <span class="fa fa-arrow-down"></span>
-          </button>
-          <!-- go to previous post button -->
-          <button
-            class="post-admin-button accessible-button"
-            @click.stop="goToPreviousPost"
-            :disabled="disabled"
-            :title="this.$t('goToPreviousPost')"
-            :aria-lable="this.$t('goToPreviousPost')">
-            <span class="fa fa-arrow-up"></span>
-          </button>
-          <!-- toggle read status button -->
-          <button
-            class="post-admin-button accessible-button"
-            @click.stop="togglePostReadStatus"
-            :disabled="disabled"
-            :title="post.isRead ? this.$t('markPostAsUnread') : this.$t('markPostAsRead')"
-            :aria-label="this.$t('markPostAsUnread')">
-            <span class="fa" :class="post.isRead ? 'fa-eye' : 'fa-eye-slash'"></span>
-          </button>
-          <!-- toggle read-later status button -->
-          <button
-            class="post-admin-button accessible-button"
-            @click.stop="togglePostReadLaterStatus"
-            :disabled="disabled"
-            :title="post.isReadLater ? this.$t('unmarkPostAsReadLater') : this.$t('markPostAsReadLater')"
-            :aria-label="this.$t('markPostAsReadLater')">
-            <span :class="'fa ' + (post.isReadLater ? 'fa-bullseye' : 'fa-circle-o')"></span>
-          </button>
-          <!-- star button -->
-          <button v-if="!post.isPublished"
-            class="post-admin-button accessible-button"
-            @click.stop="stagePost"
-            :disabled="disabled"
-            :title="this.$t('starThisPost')"
-            :aria-label="this.$t('starThisPost')">
-            <span class="fa fa-star-o"></span>
-          </button>
-          <!-- un-star button -->
-          <button v-if="post.isPublished"
-            class="post-admin-button accessible-button star-colored"
-            @click.stop="unstagePost"
-            :disabled="disabled"
-            :title="this.$t('unstarThisPost')"
-            :aria-label="this.$t('unstarThisPost')">
-            <span class="fa fa-star"></span>
-          </button>
-          <!-- link button -->
-          <button
-            class="post-admin-button accessible-button"
-            @click.stop="this.$emit('openPostUrl')"
-            :disabled="disabled"
-            :title="this.$t('openOriginalArticle')"
-            :aria-label="this.$t('openOriginalArticle')">
-            <span class="fa fa-link"></span>
-          </button>
-          <!-- toggle post subscription -->
-          <button v-if="enableFilterBySubscription" 
-            class="post-admin-button accessible-button"
-            @click.stop="updatePostFeedFilter('subscriptionId', this.post.queryId)"
-            :disabled="disabled"
-            :title="this.post.importerDesc"
-            :aria-label="this.post.importerDesc">
-            <img :src="this.post.sourceImgUrl" />
-          </button>
-        </span>
-        <!-- toggle post categories -->
-        <span class="post-admin-buttons">
-          <button v-if="this.post.postCategories && this.post.postCategories.length > 0"
-            class="post-admin-button accessible-button"
-            @click.stop="togglePostCategories"
-            :disabled="disabled"
-            :title="this.$t('showPostCategories')"
-            :aria-label="this.$t('showPostCategories')">
-            <span class="fa fa-list"></span>
-          </button>
-        </span>
-        <!-- post category pills -->
-        <span class="post-item-header-pills" v-if="this.showPostCategories">
-          <!-- TODO: interpolated string -->
-          <button v-for="postCategory in post.postCategories" :key="postCategory"
-            class="post-admin-button accessible-button"
-            @click.stop="updatePostFeedFilter('category', postCategory)"
-            :title="'Add this category (' + postCategory + ') to the filter'"
-            :aria-label="'Add this category (' + postCategory + ') to the filter'">
-            {{ postCategory }}
-          </button>
-        </span>
-        <!-- toggle post sharing pills -->
-        <span class="post-admin-buttons">
-          <button class="post-admin-button accessible-button"
-            @click.stop="togglePostSharing"
-            :disabled="disabled"
-            :title="this.$t('showPostSharing')"
-            :aria-label="this.$t('showPostSharing')">
-            <span class="fa fa-share-alt"></span>
-          </button>
-        </span>
-        <!-- post sharing pills -->
-        <span class="post-admin-buttons" v-if="this.showPostSharing">
-          <button v-for="sharingOption in this.sharingOptions" :key="sharingOption"
-            class="post-admin-button accessible-button"
-            @click.stop="share(sharingOption)"
-            :title="this.$t('shareWith_' + sharingOption.name)"
-            :aria-label="this.$t('shareWith_' + sharingOption.name + '_ariaLabel')">
-            <i class="fa" :class="'fa-' + sharingOption.icon" />
-          </button>
-        </span>
-      </div>
+  <div :class="{ 'post-wrapper-compact' : compact, 'post-wrapper' : !compact, 'post-wrapper-selected' : isSelected }" v-auto-animate>
+    <div :class="{ 'post-item-wrapper-compact': compact, 'post-item-wrapper': !compact }">
       <!-- post item (everything after the dark grey box): title, description, image, url, comment -->
       <div class="post-item-body" :class="(post.isRead ? ' post-read' : '')">
         <!-- post title -->
-        <div class="post-item-row">
-          <button @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()">
+        <div class="post-item-row post-item-title" @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()">
+          <button class="toggle-post-details-button">
             <img v-if="post.postImgSrc" 
               :src="post.postImgSrc"
-              class="post-thumbnail" 
+              :class="{ 'post-thumbnail' : !compact, 'post-thumbnail-compact' : compact }" 
               :disabled="disabled" 
               :alt="this.$t('postThumbnailImage')" 
               height="140" /> 
           </button>
           <div v-if="isHtmlContent(post.postTitle)" 
+            @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()"
             class="post-field-wrapper post-html-frame"
             v-html="post.postTitle.value" frameborder="0" />
           <div v-else 
-            class="post-field-wrapper post-text-frame">
+            class="post-field-wrapper post-text-frame"
+            @click.stop="togglePostDetails" @keypress.enter.prevent="togglePostDetails()">
             {{ post.postTitle.value }}
           </div>
         </div>
+
+        <!-- post header -->
+        <div class="post-item-header" v-if="!compact || (compact && this.showPostDetails)">
+          <!-- post header buttons -->
+          <span class="post-admin-buttons">
+            <!-- TODO: extract post-item-button component -->
+            <!-- go to next post button -->
+            <button
+              class="post-admin-button accessible-button"
+              @click.stop="goToNextPost"
+              :disabled="disabled"
+              :title="this.$t('goToNextPost')"
+              :aria-label="this.$t('goToNextPost')">
+              <span class="fa fa-arrow-down"></span>
+            </button>
+            <!-- go to previous post button -->
+            <button
+              class="post-admin-button accessible-button"
+              @click.stop="goToPreviousPost"
+              :disabled="disabled"
+              :title="this.$t('goToPreviousPost')"
+              :aria-lable="this.$t('goToPreviousPost')">
+              <span class="fa fa-arrow-up"></span>
+            </button>
+            <!-- toggle read status button -->
+            <button
+              class="post-admin-button accessible-button"
+              @click.stop="togglePostReadStatus"
+              :disabled="disabled"
+              :title="post.isRead ? this.$t('markPostAsUnread') : this.$t('markPostAsRead')"
+              :aria-label="this.$t('markPostAsUnread')">
+              <span class="fa" :class="post.isRead ? 'fa-eye' : 'fa-eye-slash'"></span>
+            </button>
+            <!-- toggle read-later status button -->
+            <button
+              class="post-admin-button accessible-button"
+              @click.stop="togglePostReadLaterStatus"
+              :disabled="disabled"
+              :title="post.isReadLater ? this.$t('unmarkPostAsReadLater') : this.$t('markPostAsReadLater')"
+              :aria-label="this.$t('markPostAsReadLater')">
+              <span :class="'fa ' + (post.isReadLater ? 'fa-bullseye' : 'fa-circle-o')"></span>
+            </button>
+            <!-- star button -->
+            <button v-if="!post.isPublished"
+              class="post-admin-button accessible-button"
+              @click.stop="stagePost"
+              :disabled="disabled"
+              :title="this.$t('starThisPost')"
+              :aria-label="this.$t('starThisPost')">
+              <span class="fa fa-star-o"></span>
+            </button>
+            <!-- un-star button -->
+            <button v-if="post.isPublished"
+              class="post-admin-button accessible-button star-colored"
+              @click.stop="unstagePost"
+              :disabled="disabled"
+              :title="this.$t('unstarThisPost')"
+              :aria-label="this.$t('unstarThisPost')">
+              <span class="fa fa-star"></span>
+            </button>
+            <!-- link button -->
+            <button
+              class="post-admin-button accessible-button"
+              @click.stop="this.$emit('openPostUrl')"
+              :disabled="disabled"
+              :title="this.$t('openOriginalArticle')"
+              :aria-label="this.$t('openOriginalArticle')">
+              <span class="fa fa-link"></span>
+            </button>
+            <!-- toggle post subscription -->
+            <button v-if="enableFilterBySubscription" 
+              class="post-admin-button accessible-button"
+              @click.stop="updatePostFeedFilter('subscriptionId', this.post.queryId)"
+              :disabled="disabled"
+              :title="this.post.importerDesc"
+              :aria-label="this.post.importerDesc">
+              <img :src="this.post.sourceImgUrl" />
+            </button>
+          </span>
+          <!-- toggle post categories -->
+          <span class="post-admin-buttons">
+            <button v-if="this.post.postCategories && this.post.postCategories.length > 0"
+              class="post-admin-button accessible-button"
+              @click.stop="togglePostCategories"
+              :disabled="disabled"
+              :title="this.$t('showPostCategories')"
+              :aria-label="this.$t('showPostCategories')">
+              <span class="fa fa-list"></span>
+            </button>
+          </span>
+          <!-- post category pills -->
+          <span class="post-item-header-pills" v-if="this.showPostCategories">
+            <!-- TODO: interpolated string -->
+            <button v-for="postCategory in post.postCategories" :key="postCategory"
+              class="post-admin-button accessible-button"
+              @click.stop="updatePostFeedFilter('category', postCategory)"
+              :title="'Add this category (' + postCategory + ') to the filter'"
+              :aria-label="'Add this category (' + postCategory + ') to the filter'">
+              {{ postCategory }}
+            </button>
+          </span>
+          <!-- toggle post sharing pills -->
+          <span class="post-admin-buttons">
+            <button class="post-admin-button accessible-button"
+              @click.stop="togglePostSharing"
+              :disabled="disabled"
+              :title="this.$t('showPostSharing')"
+              :aria-label="this.$t('showPostSharing')">
+              <span class="fa fa-share-alt"></span>
+            </button>
+          </span>
+          <!-- post sharing pills -->
+          <span class="post-admin-buttons" v-if="this.showPostSharing">
+            <button v-for="sharingOption in this.sharingOptions" :key="sharingOption"
+              class="post-admin-button accessible-button"
+              @click.stop="share(sharingOption)"
+              :title="this.$t('shareWith_' + sharingOption.name)"
+              :aria-label="this.$t('shareWith_' + sharingOption.name + '_ariaLabel')">
+              <i class="fa" :class="'fa-' + sharingOption.icon" />
+            </button>
+          </span>
+        </div>
+
         <!-- post description (hidden w/no detials) -->
         <div class="post-item-row" v-if="(this.showPostDetails && post.postDesc)">
           <span class="post-field-wrapper">
@@ -323,7 +317,7 @@ export default {
     PostMedia, 
     PostITunes
   },
-  props: [ "post", "idx", "baseUrl", "isSelected", "enableFilterBySubscription", "disabled", "theme" ],
+  props: [ "post", "idx", "baseUrl", "isSelected", "enableFilterBySubscription", "disabled", "theme", "compact" ],
   emits: [
     "updatePostReadStatus",
     "updatePostPubStatus",
@@ -534,6 +528,20 @@ export default {
   border: unset;
 }
 
+.post-item-title {
+  user-select: none;
+  cursor: pointer;
+  flex-wrap: nowrap;
+}
+
+.post-item-title:hover, .post-item-title:focus-visible {
+  background-color: v-bind('theme.buttonhighlight');
+}
+
+.post-item-title > * {
+  cursor: pointer;
+}
+
 .post-item-media {
   display: block;
   overflow-x: auto;
@@ -577,9 +585,12 @@ export default {
 }
 
 .post-admin-button {
+  display: flex;
   border: 1px solid v-bind('theme.buttonborder');
   cursor: pointer;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
   border-radius: 4px;
   background-color: v-bind('theme.buttonbg');
   color: v-bind('theme.buttonfg');
@@ -626,14 +637,26 @@ export default {
   background-color: currentColor;
 }
 
+.post-thumbnail-compact {
+  max-width: 48px;
+  max-height: 48px;
+  cursor: pointer;
+  object-fit: scale-down;
+  background-color: currentColor;
+}
+
 .post-wrapper {
-  border: 1px solid transparent;
-  margin-bottom: .75rem;
   display: block;
+  border: 1px solid transparent;
+  border-radius: 4px;
   padding: .44rem;
+  margin-bottom: .75rem;
   margin-left: .75rem;
   margin-right: .75rem;
-  border-radius: 4px;
+}
+
+.post-wrapper-compact {
+
 }
 
 .post-wrapper:focus-visible {
@@ -651,6 +674,11 @@ export default {
   width: 100%;
   border: 1px solid v-bind('theme.sectionbordercolor');
   border-radius: 4px;
+  overflow: auto;
+}
+
+.post-item-wrapper-compact {
+  width: 100%;
   overflow: auto;
 }
 
@@ -720,5 +748,10 @@ export default {
 
 .star-colored {
   color: v-bind('theme.starcolor');
+}
+
+.toggle-post-details-button {
+  display: flex;
+  padding: 0;
 }
 </style>

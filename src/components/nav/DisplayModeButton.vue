@@ -3,6 +3,7 @@
     @click="switchMode" 
     accesskey="l" 
     :disabled="disabled || inTransit" 
+    :title="this.$t('switchMode')"
     :aria-label="this.$t('switchModeAriaLabel')">
     <span class="fa fa-lightbulb-o" /> <!-- use fa-moon-o for dark mode -->
   </button>
