@@ -101,9 +101,6 @@
               :aria-label="this.post.importerDesc">
               <img :src="this.post.sourceImgUrl" />
             </button>
-          </span>
-          <!-- toggle post categories -->
-          <span class="post-admin-buttons">
             <button v-if="this.post.postCategories && this.post.postCategories.length > 0"
               class="post-admin-button accessible-button"
               @click.stop="togglePostCategories"
@@ -112,20 +109,15 @@
               :aria-label="this.$t('showPostCategories')">
               <span class="fa fa-list"></span>
             </button>
-          </span>
-          <!-- post category pills -->
-          <span class="post-item-header-pills" v-if="this.showPostCategories">
             <!-- TODO: interpolated string -->
             <button v-for="postCategory in post.postCategories" :key="postCategory"
+              v-show="this.showPostCategories"
               class="post-admin-button accessible-button"
               @click.stop="updatePostFeedFilter('category', postCategory)"
               :title="'Add this category (' + postCategory + ') to the filter'"
               :aria-label="'Add this category (' + postCategory + ') to the filter'">
               {{ postCategory }}
             </button>
-          </span>
-          <!-- toggle post sharing pills -->
-          <span class="post-admin-buttons">
             <button class="post-admin-button accessible-button"
               @click.stop="togglePostSharing"
               :disabled="disabled"
@@ -133,10 +125,8 @@
               :aria-label="this.$t('showPostSharing')">
               <span class="fa fa-share-alt"></span>
             </button>
-          </span>
-          <!-- post sharing pills -->
-          <span class="post-admin-buttons" v-if="this.showPostSharing">
             <button v-for="sharingOption in this.sharingOptions" :key="sharingOption"
+              v-show="this.showPostSharing"
               class="post-admin-button accessible-button"
               @click.stop="share(sharingOption)"
               :title="this.$t('shareWith_' + sharingOption.name)"
@@ -538,7 +528,7 @@ export default {
   background-color: v-bind('theme.buttonhighlight');
 }
 
-.post-item-title > * {
+.post-item-title > div {
   cursor: pointer;
 }
 

@@ -173,8 +173,8 @@
                 @updatePostFeedFilter="updatePostFeedFilter" 
                 @playing="onMediaPlaying" 
                 @audioPlay="onAudioPlay" 
-                @goToNextPost="selectNextPost" 
-                @goToPreviousPost="selectPreviousPost" />
+                @goToNextPost="goToNextPost(post.id)" 
+                @goToPreviousPost="goToPreviousPost(post.id)" />
               <div v-if="this.totalPages === 0" class="queue-message">
                 {{ this.$t('noArticlesInQueue') }}
               </div>  
@@ -630,14 +630,31 @@ export default {
       this.$refs.postFeedAudio.pausePlaying();
     },
     getCurrentPostIdx() {
+      return this.getPostIdx(this.selectedPostId);
+    },
+    getPostIdx(postId) {
       let currentPostIdx = null;
       for (let i = 0; i < this.filteredInboundQueue.length; i++) {
-        if (this.filteredInboundQueue[i].id === this.selectedPostId) {
+        if (this.filteredInboundQueue[i].id === postId) {
           currentPostIdx = i;
           break;
         }
       }
       return currentPostIdx;
+    },
+    goToNextPost(postId) {
+      let currentPostIdx = this.getPostIdx(postId);
+      if (currentPostIdx < this.filteredInboundQueue.length - 1) {
+        let nextPostId = this.filteredInboundQueue[currentPostIdx + 1].id;
+        this.setSelectedPost(null, nextPostId);
+      }
+    },
+    goToPreviousPost(postId) {
+      let currentPostIdx = this.getPostIdx(postId);
+      if (currentPostIdx > 0) {
+        let nextPostId = this.filteredInboundQueue[currentPostIdx - 1].id;
+        this.setSelectedPost(null, nextPostId);
+      }
     },
     // 
     // open post URL in new URL 
@@ -2164,7 +2181,6 @@ footer {
   font-family: Arial, Helvetica, sans-serif;
   margin-left: .56rem;
   padding-top: .56rem;
-  padding-bottom: .56rem;
 }
 
 .filter-expression {

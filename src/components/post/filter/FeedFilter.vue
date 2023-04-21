@@ -80,6 +80,7 @@ export default {
   text-align: left;
   display: flex;
   flex-direction: column;
+  padding-top: .56rem;
 }
 
 .feed-filter {
