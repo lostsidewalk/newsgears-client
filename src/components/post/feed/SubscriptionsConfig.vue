@@ -205,6 +205,8 @@ export default {
       console.error(error);
       if (error.name === 'TypeError') {
         this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+      } else if (error.name === 'AbortError') {
+        this.setLastServerMessage(this.$t('requestTimedOut'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -265,16 +267,18 @@ export default {
       this.inTransit = true;
       console.log("subscription-config: pushing new subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: 'POST',
           headers: { 
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify([this.newRssAtomUrl])
+          body: JSON.stringify([this.newRssAtomUrl]),
+          signal: controller.signal
         };
-        let url = this.baseUrl + "/feeds/" + this.feedId + '/queries/';
-        fetch(url, requestOptions)
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/', requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -297,6 +301,7 @@ export default {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
@@ -308,15 +313,17 @@ export default {
       this.inTransit = true;
       console.log("subscription-config: deleteing subscription..");
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: 'DELETE',
           headers: { 
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
+          signal: controller.signal
         };
-        let url = this.baseUrl + "/feeds/" + this.feedId + '/queries/' + id;
-        fetch(url, requestOptions)
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/' + id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -334,6 +341,7 @@ export default {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
@@ -351,6 +359,7 @@ export default {
       this.inTransit = true;
       console.log("subscription-config: pushing updated subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
           headers: { 
@@ -358,9 +367,10 @@ export default {
             "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify(rssAtomUrl),
+          signal: controller.signal
         };
-        let url = this.baseUrl + "/feeds/" + this.feedId + '/queries/' + rssAtomUrl.id;
-        fetch(url, requestOptions)
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/' + rssAtomUrl.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -382,6 +392,7 @@ export default {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
@@ -412,6 +423,7 @@ export default {
         }
         this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
+          const controller = new AbortController();
           const requestOptions = {
             method: 'POST', 
             headers: { 
@@ -424,8 +436,10 @@ export default {
               username: r.username,
               password: r.password,
               includeRecommendations: true,
-            })
+            }),
+            signal: controller.signal
           };
+          const timeoutId = setTimeout(() => controller.abort(), 45000);
           fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -470,6 +484,8 @@ export default {
           }).catch((error) => {
             if (error.name === 'TypeError') {
               r.error = this.$t('somethingHorribleHappened');
+            } else if (error.name === 'AbortError') {
+              r.error = this.$t('requestTimedOut');
             } else {
               let cause = error.cause;
               if (cause) {
@@ -486,6 +502,7 @@ export default {
           })
           .finally(() => {
             this.inTransit = false;
+            clearTimeout(timeoutId);
           });
         }).catch((error) => {
           this.handleAuthError(error);

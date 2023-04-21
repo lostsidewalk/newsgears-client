@@ -93,6 +93,7 @@ export default {
         console.log("fetching collection: " + collection);
         this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
+          const controller = new AbortController();
           const requestOptions = {
               method: 'GET', 
               headers: { 
@@ -100,7 +101,9 @@ export default {
                 Authorization: `Bearer ${token}`
               },
               credentials: 'include', 
+              signal: controller.signal
             };
+          const timeoutId = setTimeout(() => controller.abort(), 45000);
           fetch(this.baseUrl + "/discovery/collection/" + collection, requestOptions).then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -132,11 +135,14 @@ export default {
           }).catch((error) => {
             if (error.name === 'TypeError') {
               this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            } else if (error.name === 'AbortError') {
+              this.setLastServerMessage(this.$t('requestTimedOut'));
             } else {
               this.setLastServerMessage(error.message);
             }
           }).finally(() => {
             this.inTransit = false;
+            clearTimeout(timeoutId);
           });
         }).catch((error) => {
           this.handleAuthError(error);
@@ -156,6 +162,7 @@ export default {
       if (r.feedUrl) { // sanity check 
         this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
+          const controller = new AbortController();
           const requestOptions = {
             method: 'POST', 
             headers: { 
@@ -168,8 +175,10 @@ export default {
               username: r.username,
               password: r.password,
               isIncludeRecommendations: false,
-            })
+            }),
+            signal: controller.signal
           };
+          const timeoutId = setTimeout(() => controller.abort(), 45000);
           fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -211,6 +220,8 @@ export default {
           }).catch((error) => {
             if (error.name === 'TypeError') {
               r.error = this.$t('somethingHorribleHappened');
+            } else if (error.name === 'AbortError') {
+              r.error = this.$t('requestTimedOut');
             } else {
               let cause = error.cause;
               if (cause) {
@@ -226,6 +237,7 @@ export default {
             }
           }).finally(() => {
             this.inTransit = false;
+            clearTimeout(timeoutId);
           });
         }).catch((error) => {
           this.handleAuthError(error);

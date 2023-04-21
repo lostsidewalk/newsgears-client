@@ -700,6 +700,8 @@ export default {
       console.error(error);
       if (error.name === 'TypeError') {
         this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+      } else if (error.name === 'AbortError') {
+        this.setLastServerMessage(this.$t('requestTimedOut'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -1009,13 +1011,17 @@ export default {
 
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const stagingPostRefreshController = new AbortController();
+        const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
+        let feedDefinitionRefreshTimeoutId;
         let refreshPromises = [
           fetch(this.baseUrl + "/staging" + (feedsToFetch ? ("?feedIds=" + feedsToFetch) : ''), { 
             headers: { 
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             },
-            credentials: 'include' 
+            credentials: 'include',
+            signal: stagingPostRefreshController.signal
           })
           .then((response) => {
             // server returns JSON or empty string on success 
@@ -1051,13 +1057,16 @@ export default {
           })
         ];
         if (fetchFeedDefinitions) {
+          const feedDefinitionRefreshController = new AbortController();
+          feedDefinitionRefreshTimeoutId = setTimeout(() => feedDefinitionRefreshController.abort(), 5000);
           refreshPromises.push(
             fetch(this.baseUrl + "/feeds", {
               headers: { 
                 "Content-Type": "application/json", 
                 "Authorization": `Bearer ${token}`
               },
-              credentials: 'include' 
+              credentials: 'include', 
+              signal: feedDefinitionRefreshController.signal,
             })
             .then((response) => {
               // server returns JSON or empty string on success 
@@ -1121,6 +1130,10 @@ export default {
           this.handleServerError(error);
         })
         .finally(() => {
+          clearTimeout(stagingPostRefreshTimeoutId);
+          if (feedDefinitionRefreshTimeoutId) {
+            clearTimeout(feedDefinitionRefreshTimeoutId);
+          }
           for (let i = 0; i < this.feeds.length; i++) {
             let feedId = this.feeds[i].id;
             let iq = this.inboundQueuesByFeed[feedId];
@@ -1283,6 +1296,7 @@ export default {
       console.log("post-feed: updating post status");
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
           headers: { 
@@ -1290,7 +1304,9 @@ export default {
             "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({ newStatus: result.newStatus }),
+          signal: controller.signal
         };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/staging/read-status/post/" + result.id, requestOptions)
         .then((response) => {
           if (response.status === 200) {
@@ -1315,6 +1331,7 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -1325,6 +1342,7 @@ export default {
       console.log("post-feed: updating post status");
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
           headers: { 
@@ -1332,7 +1350,9 @@ export default {
             "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({ newStatus: result.newStatus }),
+          signal: controller.signal
         };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/staging/pub-status/" + result.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
@@ -1365,6 +1385,7 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -1419,16 +1440,18 @@ export default {
       this.inTransit = true;
       console.log("post-feed: pushing feeds to remote, ct=" + feeds.length);
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: method,
           headers: { 
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(feeds)
+          body: JSON.stringify(feeds),
+          signal: controller.signal
         };
-        let url = this.baseUrl + "/feeds/";
-        fetch(url, requestOptions)
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/feeds/", requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1457,6 +1480,7 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -1481,16 +1505,18 @@ export default {
       this.inTransit = true;
       console.log("post-feed: pushing updated feed to remote..");
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: method,
           headers: { 
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(isUpdate ? feed : [feed])
+          body: JSON.stringify(isUpdate ? feed : [feed]),
+          signal: controller.signal
         };
-        let url = this.baseUrl + "/feeds/" + (isUpdate ? feed.id : '');
-        fetch(url, requestOptions)
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/feeds/" + (isUpdate ? feed.id : ''), requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1535,6 +1561,7 @@ export default {
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
@@ -1572,13 +1599,16 @@ export default {
       console.log("post-feed: deleting feed id=" + this.feedIdToDelete);
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/feeds/" + this.feedIdToDelete, {
           headers: { 
             "Content-Type": "application/json", 
             "Authorization": `Bearer ${token}`
           },
           method: 'DELETE',
-          credentials: 'include'
+          credentials: 'include',
+          signal: controller.signal
         }).then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1613,6 +1643,7 @@ export default {
           this.feedIdToDelete = null;
           this.$refs.feedDeleteConfirmationModal.hide();
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -1642,6 +1673,7 @@ export default {
       console.log("post-feed: updating feed status, id=" + this.feedIdToMarkAsRead);
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
           headers: { 
@@ -1649,7 +1681,9 @@ export default {
             "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({ newStatus: 'READ' }),
+          signal: controller.signal
         };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/staging/read-status/feed/" + this.feedIdToMarkAsRead, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
@@ -1674,6 +1708,7 @@ export default {
           this.feedIdToMarkAsRead = null;
           this.$refs.feedMarkAsReadConfirmationModal.hide();
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);

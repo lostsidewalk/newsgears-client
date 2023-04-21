@@ -66,6 +66,8 @@ export default {
       console.error(error);
       if (error.name === 'TypeError') {
         this.feedImageUploadErrors.push(this.$t('somethingHorribleHappened'));
+      } else if (error.name === 'AbortError') {
+        this.feedImageUploadErrors.push(this.$t('requestTimedOut'));
       } else {
         this.feedImageUploadErrors.push(error.message);
       }
@@ -78,14 +80,17 @@ export default {
       formData.append("file", file);
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-              method: 'POST',
-              headers: { 
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include',
-              body: formData
-            };
+          method: 'POST',
+          headers: { 
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          body: formData,
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/feeds/thumbnail", requestOptions)
         .then((response) => {
           if (response.status === 200) {
@@ -108,6 +113,7 @@ export default {
         })
         .finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         })
       }).catch((error) => {
         this.handleAuthError(error);
@@ -122,13 +128,16 @@ export default {
       this.feedImageUploadErrors.splice(0, this.feedImageUploadErrors.length);
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-              method: 'GET',
-              headers: { 
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include',
-            };
+          method: 'GET',
+          headers: { 
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/feeds/thumbnail/random", requestOptions)
         .then((response) => {
           if (response.status === 200) {
@@ -145,6 +154,7 @@ export default {
           this.$emit('update:modelValue', prevFeedImgSrc);
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         })
       }).catch((error) => {
         this.handleAuthError(error);

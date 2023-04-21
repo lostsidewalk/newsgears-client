@@ -32,7 +32,8 @@ const i18n = createI18n({
   messages: {
     es: {
       // generic 
-      somethingHorribleHappened: 'Algo horrible sucedió. Vuelva a intentarlo en unos momentos.',
+      somethingHorribleHappened: '¡Algo horrible sucedió, y no estamos seguros de qué! Vuelva a intentarlo en unos momentos.',
+      requestTimedOut: 'Se agotó el tiempo de espera de la solicitud. Vuelva a intentarlo en unos momentos.',
       privacyPolicy: 'Política de Privacidad',
       cancel: 'Cancelar',
       filter: 'Filtrar',
@@ -417,7 +418,8 @@ const i18n = createI18n({
     },
     en: {
       // generic 
-      somethingHorribleHappened: 'Something horrible happened.  Please try again in a few moments.',
+      somethingHorribleHappened: "Something horrible happened, and we're not sure what!  Please try again in a few moments.",
+      requestTimedOut: 'Request timed out, please try again in a few moments.',
       privacyPolicy: 'Privacy Policy',
       cancel: 'Cancel',
       filter: 'Filter',

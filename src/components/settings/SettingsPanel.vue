@@ -314,6 +314,8 @@ export default {
       console.error(error);
       if (error.name === 'TypeError') {
         this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+      } else if (error.name === 'AbortError') {
+        this.setLastServerMessage(this.$t('requestTimedOut'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -441,13 +443,16 @@ export default {
     refreshSettings() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-              headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include' 
-            };
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/settings", requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
@@ -487,6 +492,7 @@ export default {
           this.isLoaded = false;
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -497,15 +503,18 @@ export default {
     updateSettings(newSettings) {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-            method: 'PUT',
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(newSettings),
-            credentials: 'include' 
-          };
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
             return;
@@ -531,11 +540,14 @@ export default {
         }).catch((error) => {
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -551,17 +563,20 @@ export default {
         } else if (this.$theme.currentTheme.ident === 'dark') {
           t.darkTheme = this.$theme.currentTheme;
         }
+        const controller = new AbortController();
         const requestOptions = {
-              method: 'PUT',
-              headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              },
-              body: JSON.stringify({
-                themeConfig: t
-              }),
-              credentials: 'include' 
-            };
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            themeConfig: t
+          }),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/settings/display", requestOptions)
         .then((response) => {
           if (response.status === 200) {
@@ -578,11 +593,14 @@ export default {
         }).catch((error) => {
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -591,14 +609,17 @@ export default {
     exportOpml() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-            method: 'GET',
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            credentials: 'include' 
-          };
+          method: 'GET',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/feeds/opml", requestOptions).then((response) => {
           if (response.status === 200) {
             return response.blob();
@@ -622,11 +643,14 @@ export default {
           console.log(error);
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -635,14 +659,17 @@ export default {
     finalizeDeactivation() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-            method: 'DELETE',
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            credentials: 'include' 
-          };
+          method: 'DELETE',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/deregister", requestOptions).then((response) => {
           if (response.status === 200) {
             return response.blob();
@@ -657,6 +684,8 @@ export default {
           console.log(error);
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
@@ -665,6 +694,7 @@ export default {
           this.forceLogout = true;
           this.$auth.tearDownLoggedInSession();
           this.$router.push("/app");
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -688,14 +718,17 @@ export default {
     submitOrder() {
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-              method: 'POST',
-              headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include' 
-            };
+          method: 'POST',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/order", requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
@@ -713,11 +746,14 @@ export default {
           console.log(error);
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -725,17 +761,20 @@ export default {
     },
     cancelSubscription() {
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            credentials: 'include',
-            method: 'PUT',
-            body: JSON.stringify({
-              subscriptionStatus: 'CANCELED'
-            })
-          };
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          method: 'PUT',
+          body: JSON.stringify({
+            subscriptionStatus: 'CANCELED'
+          }),
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/subscriptions", requestOptions)
         .then((response) => {
           if (response.status === 200) {
@@ -753,11 +792,14 @@ export default {
           console.log(error);
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -765,17 +807,20 @@ export default {
     },
     resumeSubscription() {
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            credentials: 'include',
-            method: 'PUT',
-            body: JSON.stringify({
-              subscriptionStatus: 'ACTIVE'
-            })
-          };
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          method: 'PUT',
+          body: JSON.stringify({
+            subscriptionStatus: 'ACTIVE'
+          }),
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/subscriptions", requestOptions).then((response) => {
           if (response.status === 200) {
             this.$auth.subscribe();
@@ -792,11 +837,14 @@ export default {
           console.log(error);
           if (error.name === 'TypeError') {
             this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
           } else {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);

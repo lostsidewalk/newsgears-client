@@ -33,6 +33,8 @@ export default {
       console.error(error);
       if (error.name === 'TypeError') {
         this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+      } else if (error.name === 'AbortError') {
+        this.setLastServerMessage(this.$t('requestTimedOut'));
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
@@ -64,13 +66,16 @@ export default {
 
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
               headers: { 
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
               },
-              credentials: 'include' 
+              credentials: 'include', 
+              signal: controller.signal
             };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/settings/display", requestOptions)
         .then((response) => {
           // server can return text or JSON object on success or error 
@@ -93,6 +98,7 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
@@ -111,6 +117,7 @@ export default {
 
       this.inTransit = true;
       this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
         const requestOptions = {
             method: 'PUT',
             headers: { 
@@ -124,8 +131,10 @@ export default {
                 } 
               } 
             }),
-            credentials: 'include' 
+            credentials: 'include',
+            signal: controller.signal
           };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
             return;
@@ -140,6 +149,7 @@ export default {
           this.handleServerError(error);
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);

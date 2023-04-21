@@ -161,14 +161,17 @@ export default {
           formData.append('files', f.file, f.file.name);
         }
         // request options 
+        const controller = new AbortController();
         const requestOptions = {
-              method: 'POST', 
-              headers: { 
-                "Authorization": `Bearer ${token}`
-              },
-              credentials: 'include',
-              body: formData,
-            };
+          method: 'POST', 
+          headers: { 
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          body: formData,
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
         fetch(this.baseUrl + "/feeds/opml", requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
@@ -191,11 +194,14 @@ export default {
           console.error(error);
           if (error.name === 'TypeError') {
             this.errors.push(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.errors.push(this.$t('requestTimedOut'));
           } else {
             this.errors.push(error.message);
           }
         }).finally(() => {
           this.inTransit = false;
+          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleAuthError(error);
