@@ -31,7 +31,7 @@
       </a>
     </label>
     <!-- publications -->
-    <!-- <label class="feed-info-label-small">
+    <label class="feed-info-label-small">
       {{ this.$t('publications') }}
     </label>
     <button class="helptext fa fa-question" :title="this.$t('starredArticlesAvailableHere')"/>
@@ -61,7 +61,7 @@
         <span class="fa fa-link fa-1x" />
       </a>
       ATOM
-    </label> -->
+    </label>
   </div>
 </template>
 
@@ -128,7 +128,6 @@ export default {
   text-align: left !important;
   /* color: v-bind('theme.buttonfg'); */
   padding: .44rem;
-  cursor: pointer;
   text-align: center;
   align-self: start;
   user-select: none;
@@ -138,7 +137,6 @@ export default {
 .feed-info-label {
   display: flex;
   align-items: center;
-  cursor: pointer;
   padding: .44rem;
   gap: .44rem;
   overflow-wrap: break-word;
@@ -162,7 +160,6 @@ export default {
 
 .feed-info-label-small {
   max-width: fit-content;
-  cursor: pointer;
   color: v-bind('theme.subduedmessage');
   font-family: Arial, Helvetica, sans-serif;
 }
