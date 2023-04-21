@@ -401,6 +401,7 @@ const i18n = createI18n({
       shareWith_blogger_ariaLabel: 'Compartir con Blogger',
       shareWith_buffer_ariaLabel: 'Compartir con Buffer',
       shareWith_hootsuite_ariaLabel: 'Compartir con Hootsuite',
+      toggleDistractionsAriaLabel: 'Alternar el modo sin distracciones',
       // image alts 
       queuePageScreenshot: 'Captura de pantalla de la página de cola de FeedGears',
       queueLogoImage: 'Imagen del logotipo de la cola',
@@ -785,6 +786,7 @@ const i18n = createI18n({
       shareWith_blogger_ariaLabel: 'Share with Blogger',
       shareWith_buffer_ariaLabel: 'Share with Buffer',
       shareWith_hootsuite_ariaLabel: 'Share with Hootsuite',
+      toggleDistractionsAriaLabel: 'Toggle distraction-free mode',
       // image alts 
       queuePageScreenshot: 'FeedGears queue page screenshot',
       queueLogoImage: 'Queue logo image',
