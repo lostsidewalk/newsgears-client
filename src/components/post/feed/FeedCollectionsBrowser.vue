@@ -1,5 +1,13 @@
 <template>
-  <div class="collections">
+  <div class="feed-config-field">
+
+    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
+
+    <!-- label -->
+    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls">
+      <label>{{ inTransit ? this.$t('loadingCollections') : this.$t('browseCollectionsByCategory') }}</label>
+    </div>
+
     <div class="collection-label-buttons">
       <button class="collection-label-button accessible-button" v-for="c in this.defaultCollections" :key="c"
         @click.stop="this.doCollectionDiscovery(c)">
@@ -11,7 +19,6 @@
       <!-- <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls">
         <label>{{ this.$t(c + '.details') }}</label>
       </div> -->
-      <div class="collection-wrapper">
         <div class="rss-atom-url-wrapper" v-for="rssAtomUrl in this.collections[c].feeds" :key="rssAtomUrl">
           <!-- buttons (discovery, auth, subscribe) -->
           <div class="rss-atom-url-row-buttons">
@@ -29,12 +36,12 @@
             style="margin-top: 0.75rem" 
             @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" />
         </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
 
 export default {
@@ -62,6 +69,7 @@ export default {
   ],
   components: {
     RssAtomFeedInfo,
+    NavbarFixedHeader,
   },
   mounted() {
     this.doCollectionDiscovery(this.selectedCollection);
@@ -247,6 +255,22 @@ export default {
 </script>
 
 <style scoped>
+.feed-config-field {
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  text-align: left;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: .75rem;
+  border-radius: 4px;
+  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
+  overflow-x: auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.feed-config-field label {
+  font-size: smaller;
+}
 
 .collection-label-buttons {
   display: flex;
@@ -284,14 +308,9 @@ export default {
 }
 
 .collection-field {
-  border: 1px solid v-bind('theme.sectionbordercolor');
   text-align: left;
-  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  padding: .75rem;
-  border-radius: 4px;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   overflow-x: auto;
   font-family: Arial, Helvetica, sans-serif;
 }

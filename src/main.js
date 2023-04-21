@@ -158,6 +158,8 @@ const i18n = createI18n({
       sampleEntries: 'Artículos recientes',
       recommendedFeeds: 'Fuentes RSS similares',
       // feed collections browser 
+      loadingCollections: 'CARGANDO COLECCIONES...',
+      browseCollectionsByCategory: 'EXPLORAR COLECCIONES POR CATEGORÍA',
       topNews: 'Noticias',
       investing: 'Invertir',
       technology: 'Tecnología',
@@ -534,6 +536,8 @@ const i18n = createI18n({
       sampleEntries: 'Recent articles',
       recommendedFeeds: 'Similar feeds',
       // feed collections browser 
+      loadingCollections: 'LOADING COLLECTIONS...',
+      browseCollectionsByCategory: 'BROWSE COLLECTIONS BY CATEGORY',
       topNews: 'News',
       investing: 'Investing',
       technology: 'Technology',

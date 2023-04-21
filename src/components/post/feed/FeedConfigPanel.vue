@@ -506,11 +506,8 @@ export default {
 
 .tabbed-panel {
   padding: .75rem;
-  border-top: 0px;
-  border-bottom: 1px solid v-bind('theme.sectionbordercolor');
-  border-left: 1px solid v-bind('theme.sectionbordercolor');
-  border-right: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 0px 0px 3px 3px;
+  border: 1px solid v-bind('theme.sectionbordercolor');
+  border-radius: 3px;
   margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   min-height: 50svh;

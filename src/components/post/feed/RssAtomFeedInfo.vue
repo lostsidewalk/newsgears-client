@@ -104,7 +104,7 @@
             class="br-pill accessible-button rss-atom-url-row-button"
             :title="this.$t('sampleEntries')"
             @click="this.showSampleEntries = !this.showSampleEntries">
-            {{ this.$t('sampleEntries') }}  &nbsp; <span class="fa fa-expand" />
+            {{ this.$t('sampleEntries') }}  &nbsp; <span class="fa" :class="this.showSampleEntries ? 'fa-compress' : 'fa-expand'" />
           </button>
         </div>
         <!-- sample entries -->
@@ -216,7 +216,7 @@ export default {
   },
   data() {
     return {
-      showSampleEntries: true,
+      showSampleEntries: false,
       showRecommendedFeeds: true,
     }
   }
