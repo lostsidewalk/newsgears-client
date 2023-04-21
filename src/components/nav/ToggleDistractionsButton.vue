@@ -2,7 +2,7 @@
   <button class="mode-switch-button accessible-button" 
     @click.stop="this.$emit('toggleDistractions')" 
     accesskey="f" 
-    :disabled="disabled || inTransit" 
+    :disabled="disabled" 
     :title="this.$t('toggleDistractions')"
     :aria-label="this.$t('toggleDistractionsAriaLabel')">
     <span class="fa fa-arrows-alt" />

@@ -93,6 +93,7 @@ const i18n = createI18n({
       switchMode: 'Cambiar el modo de visualización',
       cycleGridLayout: 'Cambiar al diseño de cuadrícula',
       cycleTableLayout: 'Cambiar a diseño tabular',
+      toggleDistractions: 'Alternar el modo sin distracciones',
       // queue dashboard buttons 
       createNewQueue: 'Crear una nueva cola',
       uploadOPML: 'Subir OPML',
@@ -475,6 +476,7 @@ const i18n = createI18n({
       switchMode: 'Switch display mode',
       cycleGridLayout: 'Switch to grid layout',
       cycleTableLayout: 'Switch to tabular layout',
+      toggleDistractions: 'Toggle distraction-free mode',
       // queue dashboard buttons 
       createNewQueue: 'Create a new queue',
       uploadOPML: 'Upload OPML',
