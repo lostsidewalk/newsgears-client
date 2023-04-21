@@ -31,6 +31,10 @@
           :disabled="false"
           :theme="theme"
           @updateServerMessage="setLastServerMessage" />
+        <ToggleDistractionsButton 
+          :disabled="false" 
+          :theme="theme" 
+          @toggleDistractions="this.$emit('toggleDistractions')" />
       </div>
       <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
         :theme="theme" 
@@ -52,6 +56,7 @@ import SettingsButton from '@/components/nav/SettingsButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
 import TableLayoutButton from '@/components/nav/TableLayoutButton.vue';
 import GridLayoutButton from '@/components/nav/GridLayoutButton.vue';
+import ToggleDistractionsButton from '@/components/nav/ToggleDistractionsButton.vue';
 import HelpButton from '@/components/nav/HelpButton.vue';
 
 export default {
@@ -65,6 +70,7 @@ export default {
       DisplayModeButton,
       TableLayoutButton,
       GridLayoutButton,
+      ToggleDistractionsButton,
       HelpButton, 
     },
     props: [ "baseUrl", "disabled", "theme" ],

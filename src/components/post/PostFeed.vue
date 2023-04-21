@@ -19,7 +19,8 @@
       ref="controlPanel"
       :disabled="disabled || inTransit || isModalShowing" 
       :theme="theme" 
-      @updateServerMessage="setLastServerMessage" />
+      @updateServerMessage="setLastServerMessage" 
+      @toggleDistractions="toggleDistractions" />
     <NavbarFixedHeader :theme="theme" :inTransit="false" />
     <div>
       <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
@@ -704,6 +705,18 @@ export default {
     setLastServerMessage(message) {
       if (message) {
         this.$emit('updateServerMessage', { message: message });
+      }
+    },
+    // 
+    // toggle distractions (if queue dashboard if the full inbound queue are showing, collapse everything; otherwise show everything) 
+    // 
+    toggleDistractions() {
+      if (this.showQueueDashboard || this.showFullInboundQueueHeader) {
+        this.showQueueDashboard = false;
+        this.showFullInboundQueueHeader = false;
+      } else {
+        this.showQueueDashboard = true;
+        this.showFullInboundQueueHeader = true;
       }
     },
     // 
