@@ -114,16 +114,17 @@
         <!-- TODO: component -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-show="this.showSampleEntries" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.postTitle">
           <!-- sample entry thumbnail -->
-          <div class="left" v-if="this.hasThumbnail(sampleEntry.postMedia)">
+          <div class="sample-entry-thumbnail" v-if="this.hasThumbnail(sampleEntry.postMedia)">
             <div class="rss-atom-feed-info-image">
               <button class="link"
-              @click.stop="sampleEntry.showDetails = !sampleEntry.showDetails">
-                <img :src="sampleEntry.postMedia.postMediaMetadata.thumbnails[0].url" />
+                @click.stop="sampleEntry.showDetails = !sampleEntry.showDetails">
+                <img class="sample-entry-thumbnail-img" 
+                  :src="sampleEntry.postMedia.postMediaMetadata.thumbnails[0].url" />
             </button>
             </div>
           </div>
           <!-- sample entry verbiage (link, description, publish timestamp, etc.) -->
-          <div class="right">
+          <div class="sample-entry-verbiage">
             <!-- post title -->
             <div class="rss-atom-feed-info-field rss-atom-feed-info-title">
               <a class="link"
@@ -230,6 +231,7 @@ export default {
 .rss-atom-feed-info {
   display: inline-flex;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .rss-atom-feed-info-field {
@@ -270,9 +272,10 @@ export default {
 
 .rss-atom-feed-info-sample {
   color: v-bind('theme.subduedmessage');
-  display: grid;
-  grid-template: auto 1fr / auto 1fr auto;
-  grid-gap: .44rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: .44rem;
 }
 
 .rss-atom-feed-info-image {
@@ -299,6 +302,23 @@ export default {
 .link:hover, .link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
+}
+
+.sample-entry-thumbnail {
+  margin-right: .44rem;
+}
+
+.sample-entry-thumbnail-img {
+  max-width: 140px;
+  max-height: 140px;
+  object-fit: scale-down;
+  background-color: currentColor;
+}
+
+.sample-entry-verbiage {
+  margin-left: .125rem;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .pill-container {
