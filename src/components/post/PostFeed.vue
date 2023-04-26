@@ -535,7 +535,7 @@ export default {
       return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
     },
     postGridTemplate: function() {
-      return this.$theme.postGridTemplate;
+      return this.windowWidth > 1023 ? this.$theme.postGridTemplate : '1fr';
     },
     layoutMode: function() {
       return this.$theme.layoutMode;

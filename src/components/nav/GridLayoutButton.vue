@@ -2,7 +2,7 @@
   <button class="mode-switch-button accessible-button" 
     @click="cycleGridLayout" 
     accesskey="g" 
-    :disabled="disabled || inTransit" 
+    :disabled="disabled || inTransit || this.windowWidth < 1024" 
     :title="this.$t('cycleGridLayout')"
     :aria-label="this.$t('cycleGridLayoutAriaLabel')">
     <span class="fa fa-th" />
@@ -13,11 +13,23 @@
 export default {
   name: "GridLayoutButton",
   props: ["disabled", "inTransit", "theme"],
+  mounted() {
+    window.addEventListener('resize', () => {
+      this.windowWidth = window.innerWidth;
+    });
+  },
   methods: {
     cycleGridLayout() {
-      this.$theme.cycleGridLayout();
+      if (this.windowWidth > 1023) {
+        this.$theme.cycleGridLayout();
+      }
     }
   },
+  data() {
+    return {
+      windowWidth: window.innerWidth,
+    }
+  }
 }
 </script>
 
