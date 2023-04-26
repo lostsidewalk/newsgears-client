@@ -1425,13 +1425,13 @@ export default {
     // 
     newFeed() {
       document.activeElement.blur();
-      this.setSelectedFeedId(null);
+      this.setSelectedFeedId(this.selectedFeedId);
       this.showFeedConfigPanel = true;
       this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [] }));
     },
     uploadOpml() {
       document.activeElement.blur();
-      this.setSelectedFeedId(null);
+      this.setSelectedFeedId(this.selectedFeedId);
       this.showOpmlUploadPanel = true;
       this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },
