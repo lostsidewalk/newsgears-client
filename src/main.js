@@ -211,7 +211,8 @@ const i18n = createI18n({
       showFilterOptions: 'Mostrar opciones de filtro', 
       // post feed filter pills 
       allSubscriptions: 'todas las suscripciones',
-      viewingColon: 'Visita:',
+      filterExpression: 'Viewing: {filterModeExpression} articles in {filterSubscriptionsExpression}.',
+      all: 'todos',
       unread: 'NO LEÍDO', 
       readLater: 'LEER MÁS TARDE',
       read: 'LEÍDO',
@@ -597,7 +598,8 @@ const i18n = createI18n({
       showFilterOptions: 'Show filter options', 
       // post feed filter pills 
       allSubscriptions: 'all subscriptions',
-      viewingColon: 'Viewing:',
+      filterExpression: 'Viewing: {filterModeExpression} articles in {filterSubscriptionsExpression}.',
+      all: 'all',
       unread: 'UNREAD', 
       readLater: 'READ-LATER',
       read: 'READ',

@@ -120,12 +120,12 @@
               <template v-slot:body>
                 <!-- feed filter expression -->
                 <div class="filter-expression-container">
-                  <!-- TODO: interpolated string -->
                   <div class="filter-expression" v-auto-animate>
-                    {{ this.$t('viewingColon')}} <span class="filter-mode-expression">{{ this.filterModeExpression }}</span> articles in 
-                    <span class="filter-subscriptions-expression">{{ this.filterSubscriptionsExpression }}</span>
-                    <span v-show="this.selectedFeedFilterCategories.length > 0"> with categories in: 
-                      <span class="filter-categories-expression">{{ this.selectedFeedFilterCategories.join(', ') }}</span>
+                    <span class="filter-mode-expression">
+                      {{ this.$t('filterExpression', {
+                        filterModeExpression: this.filterModeExpression, 
+                        filterSubscriptionsExpression: this.filterSubscriptionsExpression 
+                      }) }}
                     </span>
                   </div>
                 </div>
@@ -454,7 +454,7 @@ export default {
           selectedModes.push(this.allFilterPills[i].label);
         }
       }
-      return selectedModes.join(', ');
+      return selectedModes.length === 0 ? this.$t('all') : selectedModes.join(', ');
     },
     filterSubscriptionsExpression() {
       let subscriptionNames = [];
@@ -2002,20 +2002,6 @@ export default {
   align-items: stretch;
 }
 
-.toggle-feed-select-view {
-  background: transparent;
-  width: min-content;
-  border-left: 1px dashed black;
-  border-top: 0px;
-  border-bottom: 0px;
-  border-right: 1px solid black;
-  cursor: pointer;
-}
-
-.toggle-feed-select-view:hover, .toggle-feed-select-view:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
 .feed-select-view {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
   display: flex;
@@ -2270,14 +2256,6 @@ footer {
 }
 
 .filter-mode-expression {
-  color: v-bind('theme.highlightedmessage');
-}
-
-.filter-subscriptions-expression {
-  color: v-bind('theme.highlightedmessage');
-}
-
-.filter-categories-expression {
   color: v-bind('theme.highlightedmessage');
 }
 
