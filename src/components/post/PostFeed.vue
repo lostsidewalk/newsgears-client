@@ -480,19 +480,9 @@ export default {
     allFilterPills: function() {
       let filterPills = [
         {
-          isSelected: this.lcSetContainsStr('UNREAD', this.feedFilterModes),
-          invoke: () => this.toggleFeedFilterMode('UNREAD'), 
-          label: this.$t('unread'),
-        },
-        {
           isSelected: this.lcSetContainsStr('READ_LATER', this.feedFilterModes),
           invoke: () => this.toggleFeedFilterMode('READ_LATER'), 
           label: this.$t('readLater'),
-        },
-        {
-          isSelected: this.lcSetContainsStr('READ', this.feedFilterModes),
-          invoke: () => this.toggleFeedFilterMode('READ'), 
-          label: this.$t('read'),
         },
         {
           isSelected: this.lcSetContainsStr('PUBLISHED', this.feedFilterModes),
@@ -580,7 +570,7 @@ export default {
       itemCount: 0,
       // queue filter material 
       inboundQueueFilter: null, // user-supplied filter text 
-      feedFilterModes: ['UNREAD'], // currently selected filter modes 
+      feedFilterModes: [], // currently selected filter modes 
       selectedFeedFilterSubscriptions: [],
       selectedFeedFilterCategories: [],
       // queue sorting material 
@@ -598,13 +588,11 @@ export default {
       }
     },
     modeMatches(post) {
-      // check mode (extract to function) 
       let modeMatches = false;
       if (this.feedFilterModes.length === 0) {
-        modeMatches = false;
+        modeMatches = true;
       } else {
         modeMatches = this.lcSetContainsStr('PUBLISHED', this.feedFilterModes) && post.isPublished;
-        modeMatches = modeMatches || (this.lcSetContainsStr('UNREAD', this.feedFilterModes) && (!post.isRead && !post.isReadLater));
         modeMatches = modeMatches || this.lcSetContainsStr(post.postReadStatus, this.feedFilterModes);
         modeMatches = modeMatches || this.lcSetContainsStr(post.postPubStatus, this.feedFilterModes);
       }
@@ -799,24 +787,23 @@ export default {
       }
     },
     toggleFeedFilterMode(filterMode) {
-      this.feedFilterModes.splice(0);
-      if (!this.lcSetContainsStr(filterMode, this.feedFilterModes)) {
-        this.feedFilterModes.push(filterMode);
-      }
-      this.$nextTick(() => {
-        let idx = this.getCurrentPostIdx.apply();
-        if (idx === null) {
-          let newFirstItem = this.getCurrentPage(this.filteredInboundQueue)[0];
-          if (newFirstItem) {
-            this.$nextTick(() => {
-              this.setSelectedPost(null, newFirstItem.id);
-            });
+      if (this.lcSetContainsStr(filterMode, this.feedFilterModes)) {
+        let idxToSplice = -1;
+        for (let i = 0; i < this.feedFilterModes.length; i++) {
+          if (this.feedFilterModes[i] === filterMode) {
+            idxToSplice = i;
+            break;
           }
         }
-      });
+        if (idxToSplice >= 0) {
+          this.feedFilterModes.splice(idxToSplice, 1);
+        }
+      } else {
+        this.feedFilterModes.push(filterMode);
+      }
     },
     resetFilterDefaults() {
-      this.feedFilterModes = ['UNREAD'];
+      this.feedFilterModes = [];
       this.selectedFeedFilterCategories.splice(0);
       this.selectedFeedFilterSubscriptions.splice(0);
     },
