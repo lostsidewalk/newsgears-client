@@ -212,7 +212,6 @@ const i18n = createI18n({
       // post feed filter pills 
       allSubscriptions: 'todas las suscripciones',
       viewingColon: 'Visita:',
-      resetToDefault: 'Restablecen a los predeterminados',
       unread: 'NO LEÍDO', 
       readLater: 'LEER MÁS TARDE',
       read: 'LEÍDO',
@@ -599,7 +598,6 @@ const i18n = createI18n({
       // post feed filter pills 
       allSubscriptions: 'all subscriptions',
       viewingColon: 'Viewing:',
-      resetToDefault: 'Reset to default',
       unread: 'UNREAD', 
       readLater: 'READ-LATER',
       read: 'READ',

@@ -1,11 +1,5 @@
 <template>
   <div class="feed-filter-pills pill-container">
-    <!-- clear button -->
-    <div class="reset-container">
-      <button class="reset-button accessible-button" @click="this.$emit('resetFilterDefaults')">
-        <i class="fa fa-undo" /> &nbsp; {{ this.$t('resetToDefault') }}
-      </button>
-    </div>
     <!-- pills -->
     <div class="filter-pills-buttons">
       <button v-for="filterPill in this.allFilterPills" :key="filterPill" 
@@ -30,9 +24,6 @@ export default {
     "allFilterPills",
     "disabled", 
     "theme"
-  ],
-  emits: [
-    "resetFilterDefaults",
   ],
 }
 </script>
@@ -104,29 +95,5 @@ export default {
   .filter-pills-buttons {
     grid-template-columns: repeat(1, 1fr);
   }
-}
-
-.reset-container {
-  padding-bottom: .75rem;
-}
-
-.reset-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.reset-button:hover, .reset-button:focus-visible {
-  background: v-bind('theme.buttonhighlight');
-}
-
-.reset-button:last-child {
-  border-radius: 0px 3px 3px 0px;
 }
 </style>

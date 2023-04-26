@@ -144,7 +144,6 @@
                   :theme="theme" />
                 <!-- feed filter pills -->
                 <FeedFilterPills v-show="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
-                  @resetFilterDefaults="resetFilterDefaults"
                   :allFilterPills="allFilterPills"
                   :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
                   :theme="theme" />
@@ -800,11 +799,6 @@ export default {
       } else {
         this.feedFilterModes.push(filterMode);
       }
-    },
-    resetFilterDefaults() {
-      this.feedFilterModes = [];
-      this.selectedFeedFilterCategories.splice(0);
-      this.selectedFeedFilterSubscriptions.splice(0);
     },
     toggleFeedFilterCategory(category) {
       if (this.lcSetContainsStr(category, this.selectedFeedFilterCategories)) {
