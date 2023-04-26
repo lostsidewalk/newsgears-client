@@ -5,16 +5,19 @@
       <div class="left">
         <!-- icon -->
         <!-- TODO: component -->
-        <div class="rss-atom-feed-info-image">
-          <img v-if="this.info.icon" :href="this.info.icon.link" :src="this.info.icon.url" 
+        <div>
+          <img class="rss-atom-feed-info-image"
+            v-if="this.info.icon" 
+            :src="this.info.icon.url" 
             :title="this.info.icon.title" 
             :alt="this.$t('feedLogoImage')" 
             width="128" />
-          <img v-if="this.info.image && !this.info.icon" :src="this.info.image.url" 
+          <img class="rss-atom-feed-info-image"
+            v-if="this.info.image && !this.info.icon" 
+            :src="this.info.image.url" 
             :title="this.info.image.title" 
             :alt="this.$t('feedLogoImage')" 
             width="128" />
-          <img v-if="!this.info.image && !this.info.icon" src="rss_logo.svg" />
         </div>
       </div>
       <!-- right chunk (text) -->
@@ -273,17 +276,14 @@ export default {
 }
 
 .rss-atom-feed-info-image {
-  max-height: 128px;
-  max-width: 128px;
-  min-height: 32px;
-  min-width: 32px;
-}
-
-.rss-atom-feed-info-image img {
   border-radius: 4px;
   height: auto;
   width: 128px;
   object-fit: scale-down;
+  max-height: 128px;
+  max-width: 128px;
+  min-height: 32px;
+  min-width: 32px;
 }
 
 .link {
