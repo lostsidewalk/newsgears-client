@@ -35,8 +35,7 @@
         :src="this.mediaContent.reference.uri"
         class="post-media-content-image" 
         tabindex="0" 
-        :alt="this.$t('postMediaContentImage')" 
-        loading="lazy" />
+        :alt="this.$t('postMediaContentImage')" />
         <!-- PLAY BUTTON PLACEHOLDER -->
       <!-- <div v-else-if="isAudio() && this.showContents" class="post-media-content-audio">
         <button class="fa fa-play audio-player-control" @click="this.$emit('audioPlay', { url: this.mediaContent.reference.uri })" />
