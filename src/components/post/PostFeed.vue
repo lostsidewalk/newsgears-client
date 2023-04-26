@@ -2225,7 +2225,6 @@ footer {
   }
   
   .feed-select-view {
-    resize: vertical;
     width: 100% !important;
   }
 }
@@ -2245,7 +2244,7 @@ footer {
 
   .feed-select-view {
     resize: horizontal;
-    height: min-content !important;
+    height: min-content;
   }
 
   .feed-select-view-collapsed {
