@@ -179,17 +179,17 @@
                 @audioPlay="onAudioPlay" 
                 @goToNextPost="goToNextPost(post.id)" 
                 @goToPreviousPost="goToPreviousPost(post.id)" />
-              <div v-if="this.totalPages === 0" class="queue-message">
-                {{ this.$t('noArticlesInQueue') }}
-              </div>  
-              <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">
-                {{ this.$t('endOfQueueReached') }}
-              </div>
-              <div v-if="this.currentPage + 1 < this.totalPages" class="queue-message">
-                <button class="click-for-more-button" @click.stop="this.nextPage(false)">
-                  {{ this.$t('clickToLoadMore') }}
-                </button>
-              </div>
+            </div>
+            <div v-if="this.totalPages === 0" class="queue-message">
+              {{ this.$t('noArticlesInQueue') }}
+            </div>  
+            <div v-if="this.currentPage + 1 == this.totalPages" class="queue-message">
+              {{ this.$t('endOfQueueReached') }}
+            </div>
+            <div v-if="this.currentPage + 1 < this.totalPages" class="queue-message">
+              <button class="click-for-more-button" @click.stop="this.nextPage(false)">
+                {{ this.$t('clickToLoadMore') }}
+              </button>
             </div>
           </div>
           <div class="staging-header-view" v-if="this.showFeedConfigPanel || this.showOpmlUploadPanel" v-auto-animate>
