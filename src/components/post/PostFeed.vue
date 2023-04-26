@@ -201,7 +201,7 @@
               :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
-                {{ this.$t('queueSettings') }}
+                {{ this.$t('queueSettings') }} ({{ this.getFeedById(this.configuredFeedId).ident }})
               </template>
               <template v-slot:body>
                 <FeedConfigPanel ref="feedConfigPanel"
@@ -537,7 +537,8 @@ export default {
       feedIdToDelete: null, 
       feedIdToMarkAsRead: null,
       // show the feed config modal (t/f) 
-      showFeedConfigPanel: false, 
+      showFeedConfigPanel: false,
+      configuredFeedId: null, 
       // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
       // show the help modal (t/f) 
@@ -1477,6 +1478,7 @@ export default {
     configureFeed(feedId) {
       document.activeElement.blur();
       this.showFeedConfigPanel = true;
+      this.configuredFeedId = feedId;
       this.$nextTick(() => this.$refs.feedConfigPanel.setup(this.getFeedById(feedId)));
     },
     createOrUpdateFeed(feed) {
@@ -1552,6 +1554,7 @@ export default {
       if (this.$refs.feedConfigPanel) {
         this.$refs.feedConfigPanel.tearDown();
         this.showFeedConfigPanel = false;
+        this.configuredFeedId = null;
         if (!this.selectedFeedId) {
           this.restorePreviousFeedId();
         }
@@ -1564,6 +1567,7 @@ export default {
       if (this.selectedFeedId) {
         document.activeElement.blur();
         this.showFeedConfigPanel = true;
+        this.configuredFeedId = this.selectedFeedId;
         this.$nextTick(() => this.$refs.feedConfigPanel.setupQuickAdd(this.getFeedById(this.selectedFeedId)));
       }
     },
@@ -2115,6 +2119,11 @@ footer {
   border-color: v-bind('theme.fieldborderhighlight');
   background-color: v-bind('theme.fieldbackgroundhighlight');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
+}
+
+/** has references */
+.selected-feed:disabled {
+  background-color: unset;
 }
 
 .logo {

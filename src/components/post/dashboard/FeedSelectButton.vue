@@ -1,5 +1,5 @@
 <template>
-  <button class="feed-select" 
+  <button class="feed-select-button" 
     :value="feed.value" 
     :key="feed.value" 
     :disabled="disabled">
@@ -46,7 +46,7 @@ export default {
 
 <style scoped>
 /** has references */
-.feed-select {
+.feed-select-button {
   display: block !important;
   text-align: left !important;
   color: v-bind('theme.buttonfg');
@@ -63,21 +63,28 @@ export default {
 }
 
 /** has references */
-.feed-select:hover, .feed-select:focus-visible {
+.feed-select-button:hover, .feed-select-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
   box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
 }
 
+.feed-select-button:disabled {
+  cursor: default;
+}
+
+.feed-select-button:disabled:hover {
+  background-color: unset;
+}
+
+
 .feed-select-underlay {
   z-index: 1;
-  cursor: pointer;
 }
 
 .feed-select-label {
   font-family: "Russo One", system-ui, sans-serif;
   overflow-wrap: anywhere;
   color: v-bind('theme.logocolor');
-  cursor: pointer;
   text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
 }
 
@@ -86,21 +93,18 @@ export default {
   flex-direction: row;
   padding-top: .125rem;
   padding-bottom: .125rem;
-  cursor: pointer;
 }
 
 .feed-info-wrapper {
   flex-direction: row;
   display: flex;
   padding-left: .44rem;
-  cursor: pointer;
   align-items: flex-start;
 }
 
 .feed-info-label {
   display: flex;
   align-items: center;
-  cursor: pointer;
   padding: .44rem;
   gap: .44rem;
   overflow-wrap: break-word;
