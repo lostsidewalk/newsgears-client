@@ -20,13 +20,20 @@
         <label>{{ this.$t(c + '.details') }}</label>
       </div> -->
         <div class="rss-atom-url-wrapper" v-for="rssAtomUrl in this.collections[c].feeds" :key="rssAtomUrl">
-          <!-- buttons (discovery, auth, subscribe) -->
+          <!-- buttons (subscribe) -->
           <div class="rss-atom-url-row-buttons">
             <button class="rss-atom-url-row-button accessible-button"
-              @click="this.$emit('addRssAtomUrl', rssAtomUrl)"
+              @click="this.addRssAtomUrl(rssAtomUrl, false)"
               :disabled="disabled || inTransit || this.isSubscribed(rssAtomUrl)"
               :title="this.isSubscribed(rssAtomUrl) ? this.$t('subscribed') : this.$t('subscribe')">
               <span class="fa fa-plus" /> &nbsp; {{ this.isSubscribed(rssAtomUrl) ? this.$t('subscribed') : this.$t('subscribe') }}
+            </button>
+            <button class="rss-atom-url-row-button accessible-button"
+              v-if="!this.isSubscribed(rssAtomUrl)"
+              @click="this.addRssAtomUrl(rssAtomUrl, true)"
+              :disabled="disabled || inTransit"
+              :title="this.$t('subscribeAndClose')">
+              <span class="fa fa-plus" /> &nbsp; {{ this.$t('subscribeAndClose') }}
             </button>
           </div>
           <RssAtomFeedInfo :info="rssAtomUrl"
@@ -46,7 +53,7 @@ import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
 
 export default {
   name: "FeedCollectionsBrowser",
-  props: ["rssAtomFeedUrls", "disabled", "theme", "baseUrl"],
+  props: [ "rssAtomFeedUrls", "feedId", "disabled", "theme", "baseUrl" ],
   computed: {
     defaultCollections: function() {
       return [
@@ -61,11 +68,11 @@ export default {
     }
   },
   emits: [
-    "addRssAtomFeedUrl", 
-    "addRssAtomFeedUrls", 
-    "deleteRssAtomFeedUrl",
+    "addRssAtomUrl", 
+    "addRssAtomUrls", 
     "authError",
     "updateServerMessage",
+    "dismiss",
   ],
   components: {
     RssAtomFeedInfo,
@@ -75,6 +82,29 @@ export default {
     this.doCollectionDiscovery(this.selectedCollection);
   },
   methods: {
+    // 
+    // server error 
+    // 
+    handleServerError(error) {
+      console.error(error);
+      if (error.name === 'TypeError') {
+        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+      } else if (error.name === 'AbortError') {
+        this.setLastServerMessage(this.$t('requestTimedOut'));
+      } else if (error.message) {
+        this.setLastServerMessage(error.message); 
+      } else {
+        this.setLastServerMessage(error); // $auth plugin errors 
+      }
+    },
+    setLastServerMessage(message) {
+      if (message) {
+        this.$emit('updateServerMessage', message);
+      }
+    },
+    // 
+    // 
+    // 
     isSubscribed(rssAtomUrl) {
       let isSubscribed = false;
       if (this.rssAtomFeedUrls) {
@@ -88,69 +118,62 @@ export default {
       return isSubscribed;
     },
     // 
-    doCollectionDiscovery(collection) {
-      if (!this.collections[collection]) {
-        console.log("fetching collection: " + collection);
-        this.inTransit = true;
-        this.$auth.getTokenSilently().then((token) => {
-          const controller = new AbortController();
-          const requestOptions = {
-              method: 'GET', 
-              headers: { 
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-              },
-              credentials: 'include', 
-              signal: controller.signal
-            };
-          const timeoutId = setTimeout(() => controller.abort(), 45000);
-          fetch(this.baseUrl + "/discovery/collection/" + collection, requestOptions).then((response) => {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            if (response.status === 200) {
-              return isJson ? response.json() : {};
-            } else {
-              return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-            }
-          }).then((data) => {
-            let feeds = [];
-            for (let i = 0; i < data.length; i++) {
-              let r = {};
-              r.feedUrl = data[i].feedUrl; 
-              r.title = data[i].title;
-              r.description = data[i].description;
-              r.icon = data[i].icon;
-              r.image = data[i].image;
-              r.language = data[i].language;
-              r.publishedDate = data[i].publishedDate;
-              r.sampleEntries = data[i].sampleEntries;
-              feeds.push(r);
-            }
-            this.collections[collection] = {
-              feeds: feeds
-            };
-            this.selectedCollection = collection;
-          }).catch((error) => {
-            if (error.name === 'TypeError') {
-              this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-            } else if (error.name === 'AbortError') {
-              this.setLastServerMessage(this.$t('requestTimedOut'));
-            } else {
-              this.setLastServerMessage(error.message);
-            }
-          }).finally(() => {
-            this.inTransit = false;
-            clearTimeout(timeoutId);
-          });
+    // make POST call to feed controller/query definitions endpoint  
+    addRssAtomUrl(rssAtomUrl, dismiss) {
+      this.inTransit = true;
+      console.log("subscription-config: pushing new subscription to remote..");
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const newRssAtomUrl = {
+          feedUrl: rssAtomUrl.feedUrl,
+          username: null,
+          password: null,
+        };
+        const requestOptions = {
+          method: 'POST',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify([newRssAtomUrl]),
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/', requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
+              response.text().then(t => {throw new Error(t, { cause: {} })});
+          }
+        }).then((data) => {
+          let queryDefinitions = data.queryDefinitions;
+          if (queryDefinitions && queryDefinitions.length > 0) {
+            let qd = queryDefinitions[0];
+            this.$emit('addRssAtomUrl', qd);
+            this.setLastServerMessage(this.$t('subscriptionAdded'));
+          }
         }).catch((error) => {
-          this.handleAuthError(error);
+          dismiss = false;
+          this.handleServerError(error); 
+        }).finally(() => {
+          this.inTransit = false;
+          clearTimeout(timeoutId);
+          if (dismiss) {
+            this.$emit('dismiss');
+          }
         });
-      } else {
-        this.selectedCollection = collection;
-      }
+      }).catch((error) => {
+        this.handleServerError(error); 
+        this.inTransit = false;
+      });
     },
+    // 
+    // discovery 
     // 
     refreshRssAtomUrlInfo(rssAtomUrl) {
       rssAtomUrl.error = null;
@@ -244,15 +267,75 @@ export default {
         });
       }
     },
+    doCollectionDiscovery(collection) {
+      if (!this.collections[collection]) {
+        console.log("fetching collection: " + collection);
+        this.inTransit = true;
+        this.$auth.getTokenSilently().then((token) => {
+          const controller = new AbortController();
+          const requestOptions = {
+              method: 'GET', 
+              headers: { 
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+              credentials: 'include', 
+              signal: controller.signal
+            };
+          const timeoutId = setTimeout(() => controller.abort(), 45000);
+          fetch(this.baseUrl + "/discovery/collection/" + collection, requestOptions).then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+            }
+          }).then((data) => {
+            let feeds = [];
+            for (let i = 0; i < data.length; i++) {
+              let r = {};
+              r.feedUrl = data[i].feedUrl; 
+              r.title = data[i].title;
+              r.description = data[i].description;
+              r.icon = data[i].icon;
+              r.image = data[i].image;
+              r.language = data[i].language;
+              r.publishedDate = data[i].publishedDate;
+              r.sampleEntries = data[i].sampleEntries;
+              feeds.push(r);
+            }
+            this.collections[collection] = {
+              feeds: feeds
+            };
+            this.selectedCollection = collection;
+          }).catch((error) => {
+            if (error.name === 'TypeError') {
+              this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            } else if (error.name === 'AbortError') {
+              this.setLastServerMessage(this.$t('requestTimedOut'));
+            } else {
+              this.setLastServerMessage(error.message);
+            }
+          }).finally(() => {
+            this.inTransit = false;
+            clearTimeout(timeoutId);
+          });
+        }).catch((error) => {
+          this.handleAuthError(error);
+        });
+      } else {
+        this.selectedCollection = collection;
+      }
+    },
     //
+    // misc 
+    // 
     handleAuthError(error) {
       this.$emit('authError', error);
       this.inTransit = false;
-    },
-    setLastServerMessage(message) {
-      if (message) {
-        this.$emit('updateServerMessage', message);
-      }
     },
   },
   data() {

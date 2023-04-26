@@ -49,7 +49,8 @@
               @deleteRssAtomUrl="deleteRssAtomUrl" 
               @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
               @authError="handleAuthError" 
-              @updateServerMessage="setLastServerMessage" /> 
+              @updateServerMessage="setLastServerMessage" 
+              @dismiss="dismissFeedConfig" /> 
           </div>
           <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
             <!-- collections browser -->
@@ -58,11 +59,12 @@
               :disabled="disabled || inTransit"
               :theme="theme"
               :rssAtomFeedUrls="this.rssAtomFeedUrls"
-              @addRssAtomUrls="addRssAtomUrls" 
+              :feedId="this.feed.id"
               @addRssAtomUrl="addRssAtomUrl" 
-              @deleteRssAtomUrl="deleteRssAtomUrl" 
+              @addRssAtomUrls="addRssAtomUrls" 
               @authError="handleAuthError" 
-              @updateServerMessage="setLastServerMessage" />
+              @updateServerMessage="setLastServerMessage" 
+              @dismiss="dismissFeedConfig" />
           </div>
           <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SEARCH_CATALOG'">
             <!-- catalog search -->

@@ -41,6 +41,12 @@
             :title="this.$t('subscribe')">
             <span class="fa fa-plus" /> &nbsp; {{ this.$t('subscribe') }}
           </button>
+          <button class="rss-atom-url-row-button accessible-button"
+            @click="this.addNewRssAtomUrl(true)"
+            :disabled="disabled || inTransit || !newRssAtomUrl.feedUrl"
+            :title="this.$t('subscribeAndClose')">
+            <span class="fa fa-plus" /> &nbsp; {{ this.$t('subscribeAndClose') }}
+          </button>
         </div>
       </div>
       <!-- credentials -->
@@ -196,6 +202,7 @@ export default {
     "updateRssAtomUrlAuth",
     "authError",
     "updateServerMessage",
+    "dismiss",
   ],
   methods: {
     // 
@@ -257,7 +264,7 @@ export default {
       this.currentPage = this.totalPages - 1;
     },
     // make POST call to feed controller/query definitions endpoint 
-    addNewRssAtomUrl() {
+    addNewRssAtomUrl(dismiss) {
       try {
         this.validateRssAtomUrl(this.newRssAtomUrl);
       } catch (error) {
@@ -298,10 +305,14 @@ export default {
             this.setLastServerMessage(this.$t('subscriptionAdded'));
           }
         }).catch((error) => {
+          dismiss = false;
           this.handleServerError(error); 
         }).finally(() => {
           this.inTransit = false;
           clearTimeout(timeoutId);
+          if (dismiss) {
+            this.$emit('dismiss');
+          }
         });
       }).catch((error) => {
         this.handleServerError(error); 
