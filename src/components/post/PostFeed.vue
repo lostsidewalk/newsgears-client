@@ -449,14 +449,13 @@ export default {
     },
     // 
     filterModeExpression: function() {
-      let selectedMode = null;
-      for (let i = 0; i < 4; i++) {
+      let selectedModes = [];
+      for (let i = 0; i < this.allFilterPills.length; i++) {
         if (this.allFilterPills[i].isSelected) {
-          selectedMode = this.allFilterPills[i].label;
-          break;
+          selectedModes.push(this.allFilterPills[i].label);
         }
       }
-      return selectedMode;
+      return selectedModes.join(', ');
     },
     filterSubscriptionsExpression() {
       let subscriptionNames = [];
