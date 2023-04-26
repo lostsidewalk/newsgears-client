@@ -115,13 +115,11 @@
         <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-show="this.showSampleEntries" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.postTitle">
           <!-- sample entry thumbnail -->
           <div class="sample-entry-thumbnail" v-if="this.hasThumbnail(sampleEntry.postMedia)">
-            <div class="rss-atom-feed-info-image">
-              <button class="link"
-                @click.stop="sampleEntry.showDetails = !sampleEntry.showDetails">
-                <img class="sample-entry-thumbnail-img" 
-                  :src="sampleEntry.postMedia.postMediaMetadata.thumbnails[0].url" />
+            <button class="link"
+              @click.stop="sampleEntry.showDetails = !sampleEntry.showDetails">
+              <img class="sample-entry-thumbnail-img" 
+                :src="sampleEntry.postMedia.postMediaMetadata.thumbnails[0].url" />
             </button>
-            </div>
           </div>
           <!-- sample entry verbiage (link, description, publish timestamp, etc.) -->
           <div class="sample-entry-verbiage">
@@ -305,10 +303,10 @@ export default {
 }
 
 .sample-entry-thumbnail {
-  margin-right: .44rem;
 }
 
 .sample-entry-thumbnail-img {
+  border-radius: 4px;
   max-width: 140px;
   max-height: 140px;
   object-fit: scale-down;
@@ -316,7 +314,6 @@ export default {
 }
 
 .sample-entry-verbiage {
-  margin-left: .125rem;
   width: 100%;
   overflow-y: auto;
 }
