@@ -2069,9 +2069,10 @@ export default {
   overflow: auto;
 }
 
+/** has references */
 .feed-selectors {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   resize: none;
   min-width: 104px;
   max-width: 100%; 

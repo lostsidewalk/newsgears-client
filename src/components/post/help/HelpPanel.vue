@@ -152,6 +152,8 @@ export default {
   margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
   background-color: v-bind('theme.sectionhighlight');
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .keyboard-shortcut-desc {
