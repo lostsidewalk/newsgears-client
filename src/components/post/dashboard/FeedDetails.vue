@@ -75,26 +75,32 @@ export default {
     buildMetricStatusMessage(feedMetrics) {
       if (feedMetrics) {
         let m = this.getMostRecentMetric(feedMetrics);
-
-        // TODO: interpolated string 
-        let metricStatusMessage = 'Importer ran at ' + m.importTimestamp;
+        // 
+        let metricStatusMessage = this.$t('importerRanAt', { importTimestamp: m.importTimestamp }); // 'Importer ran at ' + m.importTimestamp;
         // add the persist ct to the metric status message 
         if (m.persistCt > 0) {
-          let persistMessage = m.persistCt + ' new articles saved';
-          metricStatusMessage = metricStatusMessage + '\n' + persistMessage;
+          metricStatusMessage = metricStatusMessage + '\n' + this.$t('nNewArticlesSaved', { n: m.persistCt }); // m.persistCt + ' new articles saved';;
         }
         if (m.archiveCt > 0) {
-          let archiveMessage = m.archiveCt + ' articles archived';
-          metricStatusMessage = metricStatusMessage + '\n' + archiveMessage;
+          metricStatusMessage = metricStatusMessage + '\n' + this.$t('nArticlesArchived', { n: m.archiveCt }); // m.archiveCt + ' articles archived';
         }
         // add the http status code, http status message, redirect status code, redirect status message to the metric status message, if any 
         if (m.httpStatusCode && m.httpStatusCode > 0) {
-          // e.g.: HTTP 302 (Moved), redirected to https://whatever.com/feed (HTTP 200 OK)
-          let httpStatusMessage = m.httpStatusCode + ' (' + m.httpStatusMessage + ')' + (m.redirectFeedUrl ? (', redirected to ' + m.redirectFeedUrl + ' (' + m.redirectHttpStatusCode + ' ' + m.redirectHttpStatusMessage + ')') : '')
-          metricStatusMessage = metricStatusMessage + '\n' + httpStatusMessage;
+          metricStatusMessage = metricStatusMessage + '\n' + this.$t('httpStatus', { 
+            httpStatusCode: m.httpStatusCode, 
+            httpStatusMessage: m.httpStatusMessage 
+          });
+          if (m.redirectFeedUrl) {
+            metricStatusMessage = metricStatusMessage + '\n' + this.$t('redirectedTo', { 
+              redirectFeedUrl: m.redirectFeedUrl, 
+              redirectHttpStatusCode: m.redirectHttpStatusCode, 
+              redirectHttpStatusMessage: m.redirectHttpStatusMessage
+            });
+          }
         }
         // add query exception message, if any 
         if (m.queryExceptionTypeMessage) {
+          // TODO: translate queryExceptionTypeMessage 
           metricStatusMessage = metricStatusMessage + '\n' + m.queryExceptionTypeMessage;
         }
         return metricStatusMessage;

@@ -15,8 +15,7 @@
       <div class="br-pill-subdued" v-if="this.iTunes.subTitle">{{ this.iTunes.subTitle }}</div>
       <div class="br-pill-subdued" v-if="this.iTunes.author">{{ this.iTunes.author }}</div>
       <div class="br-pill-subdued" v-if="this.iTunes.explicit">{{ this.$t('explicit')}}</div>
-      <!-- TODO: interpolated string -->
-      <div class="br-pill-subdued" v-if="this.iTunes.epiosodeType"> {{ this.iTunes.epiosodeType + ' episode' }}</div>
+      <div class="br-pill-subdued" v-if="this.iTunes.epiosodeType"> {{ this.$t('episodeType', { episodeType: this.iTunes.epiosodeType }) }}</div>
       <!-- <div class="br-pill-subdued" v-if="this.iTunes.duration"> {{ this.iTunes.duration.milliseconds + ' ms' }}</div> -->
       <div class="br-pill-subdued" v-for="keyword of this.iTunes.keywords" :key="keyword">{{ keyword }}</div>
       <div class="br-pill-subdued" v-if="this.iTunes.closeCaptioned === true">{{ this.$t('closedCaptioned') }}</div>

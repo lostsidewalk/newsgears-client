@@ -446,7 +446,7 @@ export default {
               url: r.feedUrl,
               username: r.username,
               password: r.password,
-              includeRecommendations: true,
+              includeRecommendations: false,
             }),
             signal: controller.signal
           };

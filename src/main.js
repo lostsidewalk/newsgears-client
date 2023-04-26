@@ -109,6 +109,11 @@ const i18n = createI18n({
       publications: 'PUBLICACIONES',
       zeroSubscriptions: '0 suscripciones',
       starredArticlesAvailableHere: 'Los artículos destacados en esta cola están disponibles en las siguientes fuentes RSS.',
+      importerRanAt: 'Importadora corrió a las {importTimestamp}',
+      nNewArticlesSaved: '{n} nuevos artículos guardados',
+      nArticlesArchived: '{n} artículos archivados', 
+      httpStatus: 'HTTP {httpStatusCode} ({httpStatusMessage})',
+      redirectedTo: 'REDIRIGIDO A {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})',
       metricsNotYetAvailable: 'Las métricas aún no están disponibles para esta fuente RSS.',
       // queue config image field 
       clickToChangeQueueImage: 'Haga clic aquí para cambiar la imagen de la cola.',
@@ -162,6 +167,7 @@ const i18n = createI18n({
       feedAlsoAvailableInHttps: 'Este feed también está disponible en HTTPS.', 
       sampleEntries: 'Artículos recientes',
       recommendedFeeds: 'Fuentes RSS similares',
+      refreshThisFeed: 'Actualizar este feed',
       // feed collections browser 
       loadingCollections: 'CARGANDO COLECCIONES...',
       browseCollectionsByCategory: 'EXPLORAR COLECCIONES POR CATEGORÍA',
@@ -233,6 +239,7 @@ const i18n = createI18n({
       // iTunes
       explicit: 'EXPLÍCITO',
       closedCaptioned: 'Subtitulado',
+      episodeType: 'Episodio {episodeType}',
       // post media 
       media: 'MEDIOS DE COMUNICACIÓN', 
       // community 
@@ -276,6 +283,7 @@ const i18n = createI18n({
       // post item 
       showPostDetails: 'Mostrar detalles de la publicación', 
       showPostCategories: 'Mostrar categorías de publicaciones',
+      addCategoryToFilter: 'Añadir esta categoría ({postCategory}) al filtro',
       showPostSharing: 'Mostrar publicación compartida',
       shareWith_twitter: 'Compartir con Twitter',
       shareWith_facebook: 'Compartir con Facebook',
@@ -345,6 +353,7 @@ const i18n = createI18n({
       opmlExportDownloaded: 'Exportación OPML descargada',
       yourSubscriptionWasCanceledClickToResume: 'Su suscripción fue cancelada. Para reanudar, haga clic en \'Reanudar suscripción\' en esta página.', 
       yourSubscriptionWasResumed: 'Tu suscripción fue reanudada',
+      subscriptionStatus: 'Su suscripción está actualmente {status}.  Comenzó el {started}.',
       // docs 
       feedGearsDocumentation: 'DOCUMENTACIÓN DE ENGRANAJES', 
       // api 
@@ -496,6 +505,11 @@ const i18n = createI18n({
       publications: 'PUBLICATIONS',
       zeroSubscriptions: '0 subscriptions',
       starredArticlesAvailableHere: 'The starred articles in this queue are available in the following feeds.',
+      importerRanAt: 'Importer ran at {importTimestamp}',
+      nNewArticlesSaved: '{n} new articles saved',
+      nArticlesArchived: '{n} articles archived', 
+      httpStatus: 'HTTP {httpStatusCode} ({httpStatusMessage})',
+      redirectedTo: 'REDIRECT TO {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})',
       metricsNotYetAvailable: 'Metrics are not yet available for this feed.',
       // queue config image field 
       clickToChangeQueueImage: 'Click here to change the queue image.',
@@ -549,6 +563,7 @@ const i18n = createI18n({
       feedAlsoAvailableInHttps: 'This feed is also available in HTTPS.', 
       sampleEntries: 'Recent articles',
       recommendedFeeds: 'Similar feeds',
+      refreshThisFeed: 'Refresh this feed',
       // feed collections browser 
       loadingCollections: 'LOADING COLLECTIONS...',
       browseCollectionsByCategory: 'BROWSE COLLECTIONS BY CATEGORY',
@@ -620,6 +635,7 @@ const i18n = createI18n({
       // iTunes
       explicit: 'EXPLICIT',
       closedCaptioned: 'Closed Captioned',
+      episodeType: '{episodeType} episode',
       // post media 
       media: 'MEDIA', 
       // community 
@@ -663,6 +679,7 @@ const i18n = createI18n({
       // post item 
       showPostDetails: 'Show post details', 
       showPostCategories: 'Show post categories',
+      addCategoryToFilter: 'Add this category ({postCategory}) to the filter',
       showPostSharing: 'Show post sharing options',
       shareWith_twitter: 'Share with Twitter',
       shareWith_facebook: 'Share with Facebook',
@@ -732,6 +749,7 @@ const i18n = createI18n({
       opmlExportDownloaded: 'OPML export downloaded',
       yourSubscriptionWasCanceledClickToResume: 'Your subscription was canceled.  To resume, click \'Resume Subscription\' on this page.', 
       yourSubscriptionWasResumed: 'Your subscription was resumed',
+      subscriptionStatus: 'Your subscription is currently {status}.  It began at {started}.',
       // docs 
       feedGearsDocumentation: 'FEEDGEARS DOCUMENTATION', 
       // api 

@@ -146,8 +146,10 @@
             </div>
 
             <div v-if="this.subscription">
-              <!-- TODO: interpolated string -->
-              <p>Your subscription is currently {{ getSubscriptionStatus() }}.  It began at {{ getSubscriptionStarted() }}.</p>
+              <p>{{ this.$t('subscriptionStatus', { 
+                status: getSubscrpitionStatus(), 
+                started: getSubscriptionStarted() 
+                }) }}</p>
 
               <p v-if="isCanceled()">{{ this.$t('yourSubscriptionWasCanceled') }}</p>
 

@@ -109,13 +109,12 @@
               :aria-label="this.$t('showPostCategories')">
               <span class="fa fa-list"></span>
             </button>
-            <!-- TODO: interpolated string -->
             <button v-for="postCategory in post.postCategories" :key="postCategory"
               v-show="this.showPostCategories"
               class="post-admin-button accessible-button"
               @click.stop="updatePostFeedFilter('category', postCategory)"
-              :title="'Add this category (' + postCategory + ') to the filter'"
-              :aria-label="'Add this category (' + postCategory + ') to the filter'">
+              :title="this.$t('addCategoryToFilter', { postCategory: postCategory })"
+              :aria-label="this.$t('addCategoryToFilter', { postCategory: postCategory })">
               {{ postCategory }}
             </button>
             <button class="post-admin-button accessible-button"

@@ -44,8 +44,8 @@
           {{ this.info.description ? this.info.description.value : '' }}
         </div>
         <div v-if="!this.sampleEntries || this.sampleEntries.length === 0" class="rss-atom-feed-info-field br-pill-subdued">
-          <!-- TODO: interpolated string -->
-          Click <span class="link fa fa-refresh" @click="this.$emit('refreshFeed')" /> to refresh this feed.
+          <span class="link fa fa-refresh" @click="this.$emit('refreshFeed')" /> 
+          {{ this.$t('refreshThisFeed') }}
         </div>
         <!-- categories -->
         <div v-if="this.info.categories && this.info.categories.length > 0" class="rss-atom-feed-info-field pill-container">
@@ -94,9 +94,17 @@
         </div>
         <!-- technical information pills -->
         <div v-if="this.info.httpStatusCode" class="rss-atom-feed-info-field br-pill-subdued">
-          <!-- http satus code + status message -->
-          <!-- TODO: interpolated string -->
-          Last known HTTP status: {{ this.info.httpStatusCode }}{{ this.info.redirectHttpStatusCode ? ', HTTP redirect status: ' + this.info.redirectHttpStatusCode : '' }}
+          {{ this.$t('httpStatus', { 
+            httpStatusCode: this.info.httpStatusCode, 
+            httpStatusMessage: this.info.httpStatusMessage 
+          }) }}
+        </div>
+        <div v-if="this.info.redirectHttpStatusCode" class="rss-atom-feed-info-field br-pill-subdued">
+          {{ this.$t('redirectedTo', { 
+              redirectFeedUrl: this.info.redirectFeedUrl, 
+              redirectHttpStatusCode: this.info.redirectHttpStatusCode, 
+              redirectHttpStatusMessage: this.info.redirectHttpStatusMessage
+            }) }}
         </div>
         <div v-if="this.info.isUrlUpgradable === true" class="rss-atom-feed-info-field br-pill-subdued">
           {{ this.$t('feedAlsoAvailableInHttps') }}
@@ -154,7 +162,7 @@
           </button>
         </div>
         <!-- recommended feeds -->
-        <div class="rss-atom-feed-info-field" v-show="this.showRecommendedFeeds" v-for="recommendedFeed in this.recommendedFeeds" :key="recommendedFeed">
+        <div class="rss-atom-feed-info-field" v-show="this.showRecommendedFeeds && this.recommendedFeeds.length > 0" v-for="recommendedFeed in this.recommendedFeeds" :key="recommendedFeed">
           <div class="br-pill-subdued">
             <button class="link" 
               @click.stop="this.$emit('followRecommendation', recommendedFeed)">
@@ -218,8 +226,8 @@ export default {
   },
   data() {
     return {
-      showSampleEntries: false,
-      showRecommendedFeeds: true,
+      showSampleEntries: true,
+      showRecommendedFeeds: false,
     }
   }
 }
