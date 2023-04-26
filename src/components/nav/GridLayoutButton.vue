@@ -2,7 +2,7 @@
   <button class="mode-switch-button accessible-button" 
     @click="cycleGridLayout" 
     accesskey="g" 
-    :disabled="disabled || inTransit || this.windowWidth < 1024" 
+    :disabled="disabled || inTransit" 
     :title="this.$t('cycleGridLayout')"
     :aria-label="this.$t('cycleGridLayoutAriaLabel')">
     <span class="fa fa-th" />
@@ -22,6 +22,8 @@ export default {
     cycleGridLayout() {
       if (this.windowWidth > 1023) {
         this.$theme.cycleGridLayout();
+      } else {
+        this.$theme.compactGridLayout();
       }
     }
   },

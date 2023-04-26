@@ -144,6 +144,15 @@ export default {
       }
     }
 
+    function compactGridLayout() {
+      let currentMode = app.config.globalProperties.$theme.layoutMode;
+      if (currentMode !== 'GRID') {
+        app.config.globalProperties.$theme.layoutMode = 'GRID';
+        return;
+      }
+      app.config.globalProperties.$theme.postGridTemplate = '1fr';
+    }
+
     function setupDarkMode() {
       let systemTheme = DEFAULT_DARK_THEME;
       let userTheme = app.config.globalProperties.$theme.userDarkTheme;
@@ -212,6 +221,7 @@ export default {
       'setupDefaultMode': setupDarkMode,
       'cycleTableLayout': cycleTableLayout, 
       'cycleGridLayout': cycleGridLayout,
+      'compactGridLayout': compactGridLayout,
       layoutMode: 'GRID',
       currentTheme: reactive({}),
       postGridTemplate: ref('1fr'),
