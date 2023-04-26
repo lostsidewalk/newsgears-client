@@ -3,7 +3,7 @@
     <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <img 
       v-if="isImage()" 
-      :src="this.enclosure.uri"
+      :src="this.enclosure.url"
       class="post-enclosure-image" 
       tabindex="0" 
       :alt="this.$t('postEnclosureImage')" 
