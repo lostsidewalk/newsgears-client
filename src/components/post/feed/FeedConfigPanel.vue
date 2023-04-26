@@ -512,8 +512,6 @@ export default {
   border-radius: 3px;
   margin-bottom: 1rem;
   box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  min-height: 50svh;
-  overflow-y: auto;
   background-color: v-bind('theme.sectionhighlight');
 }
 

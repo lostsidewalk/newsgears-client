@@ -217,7 +217,7 @@ const i18n = createI18n({
       showFilterOptions: 'Mostrar opciones de filtro', 
       // post feed filter pills 
       allSubscriptions: 'todas las suscripciones',
-      filterExpression: 'Viewing: {filterModeExpression} articles in {filterSubscriptionsExpression}.',
+      filterExpression: 'Mostrando: {filterModeExpression} artículos en {filterSubscriptionsExpression}.',
       all: 'todos',
       unread: 'NO LEÍDO', 
       readLater: 'LEER MÁS TARDE',

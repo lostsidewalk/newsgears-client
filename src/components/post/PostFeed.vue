@@ -201,7 +201,7 @@
               :theme="theme">
               <template v-slot:count>
                 <span class="fa fa-feed fa-1x"/>
-                {{ this.$t('queueSettings') }} ({{ this.getFeedById(this.configuredFeedId).ident }})
+                {{ this.$t('queueSettings') }} {{ this.configuredFeedId ? ('(' + this.getFeedById(this.configuredFeedId).ident + ')') : '' }}
               </template>
               <template v-slot:body>
                 <FeedConfigPanel ref="feedConfigPanel"

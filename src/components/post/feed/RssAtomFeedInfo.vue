@@ -226,7 +226,7 @@ export default {
   },
   data() {
     return {
-      showSampleEntries: true,
+      showSampleEntries: false,
       showRecommendedFeeds: false,
     }
   }
