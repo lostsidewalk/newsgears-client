@@ -2237,6 +2237,11 @@ footer {
   .post-feed-container-inner-selected {
     display: unset;
   }
+  
+  .feed-select-view {
+    resize: vertical;
+    width: 100% !important;
+  }
 }
 
 .feed-select-view-selected {
@@ -2250,6 +2255,11 @@ footer {
     position: sticky;
     width: 30svw;
     max-height: 100svh;
+  }
+
+  .feed-select-view {
+    resize: horizontal;
+    height: min-content !important;
   }
 
   .feed-select-view-collapsed {
