@@ -13,10 +13,8 @@
       </h2>
       <div class="flex" style="padding-top: 2svh;padding-bottom: 2svh;">
         <GoogleAuthButton :theme="theme" :disabled="false" />
-        <!-- sign-up button -->
         <SignUpButton :disabled="false" :theme="theme" />
       </div>
-      <!-- TODO: add feed discovery button -->
     </div>
   </div>
 </template>
