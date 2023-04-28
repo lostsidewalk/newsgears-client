@@ -225,6 +225,9 @@ const i18n = createI18n({
       starred: 'SEMBRADO DE ESTRELLAS',
       // help panel 
       dismiss: 'Despedir',
+      globalShortcutKeys: 'TECLAS DE ACCESO DIRECTO GLOBALES',
+      whenAQueueIsSelected: 'CUANDO SE SELECCIONA UNA COLA...',
+      whenAPostIsSelected: 'CUANDO SE SELECCIONA UN ARTÍCULO...',
       configureSelectedQueue: 'Administrar suscripciones en la cola seleccionada',
       markSelectedQueueAsRead: 'Marcar la cola seleccionada como leída',
       addSubscriptionToSelectedQueue: 'Agregar una suscripción a la cola seleccionada',
@@ -621,6 +624,9 @@ const i18n = createI18n({
       starred: 'STARRED',
       // help panel 
       dismiss: 'Dismiss',
+      globalShortcutKeys: 'GLOBAL SHORTCUT KEYS',
+      whenAQueueIsSelected: 'WHEN A QUEUE IS SELECTED...',
+      whenAPostIsSelected: 'WHEN AN ARTICLE IS SELECTED...',
       configureSelectedQueue: 'Manage subscriptions in the selected queue',
       markSelectedQueueAsRead: 'Mark the selected queue as read',
       addSubscriptionToSelectedQueue: 'Add a subscription to selected queue',

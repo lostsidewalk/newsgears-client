@@ -1,8 +1,40 @@
 <template>
   <div class="modal-container">
     <div class="modal-body">
+      <!-- global -->
+      <h3 class="view-header-no-count">{{ this.$t('globalShortcutKeys') }}</h3>
       <div class="keyboard-shortcut-container">
-        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel" :key="desc">
+        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel.fromAnywhere" :key="desc">
+          <span class="keyboard-label-wrapper">
+            {{ desc.label }}
+          </span>
+          <div class="keyboard-key-wrapper">
+            <div class="keyboard-key">
+              <i v-if="desc.icon" :class="'fa ' + desc.icon" />
+              <span v-if="desc.key">{{ desc.key }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- queue selected -->
+      <h3 class="view-header-no-count">{{ this.$t('whenAQueueIsSelected') }}</h3>
+      <div class="keyboard-shortcut-container">
+        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel.aQueueIsSelected" :key="desc">
+          <span class="keyboard-label-wrapper">
+            {{ desc.label }}
+          </span>
+          <div class="keyboard-key-wrapper">
+            <div class="keyboard-key">
+              <i v-if="desc.icon" :class="'fa ' + desc.icon" />
+              <span v-if="desc.key">{{ desc.key }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- post selected -->
+      <h3 class="view-header-no-count">{{ this.$t('whenAPostIsSelected') }}</h3>
+      <div class="keyboard-shortcut-container">
+        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel.aPostIsSelected" :key="desc">
           <span class="keyboard-label-wrapper">
             {{ desc.label }}
           </span>
@@ -24,92 +56,108 @@ export default {
   props: ["theme"],
   data() {
     return {
-      helpModel: [
+      helpModel: {
+        fromAnywhere: [
           {
             label: this.$t('switchModeAriaLabel'),
-            key: "ALT + L",
+            key: "ALT + L", // global accel 
           },
           {
             label: this.$t('logout'),
-            key: "ALT + O",
+            key: "ALT + O", // global accel 
           },
           {
             label: this.$t('goToSettingsAriaLabel'),
-            key: "ALT + T",
+            key: "ALT + T", // global accel 
           },
           {
             label: this.$t('uploadOPML'),
-            key: "ALT + M",
-          },
-          {
-            label: this.$t('goToPreviousPost'),
-            icon: "fa-arrow-up",
-          },
-          {
-            label: this.$t('goToNextPost'),
-            icon: "fa-arrow-down",
-          },
-          {
-            label: this.$t('goToFirstPost'),
-            key: "HOME",
-          },
-          {
-            label: this.$t('goToLastPost'),
-            key: "END",
-          },
-          {
-            label: this.$t('configureSelectedQueue'),
-            key: "SHIFT + E"
-          },
-          {
-            label: this.$t('markSelectedQueueAsRead'),
-            key: "SHIFT + A"
-          },
-          {
-            label: this.$t('refreshQueues'),
-            key: "SHIFT + R"
+            key: "ALT + M", // global accel 
           },
           {
             label: this.$t('createNewQueue'),
-            key: "SHIFT + Q"
+            key: "SHIFT + Q" // key handler from anywhere 
+          },
+          {
+            label: this.$t('refreshQueues'),
+            key: "SHIFT + R" // key handler from anywhere 
+          },
+        ],
+        aQueueIsSelected: [
+          {
+            label: this.$t('configureSelectedQueue'),
+            key: "SHIFT + E", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
+          },
+          {
+            label: this.$t('markSelectedQueueAsRead'),
+            key: "SHIFT + A", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('addSubscriptionToSelectedQueue'),
-            key: "SHIFT + S"
-          },
-          {
-            label: this.$t('starSelectedPost'),
-            key: "S",
-          },
-          {
-            label: this.$t('toggleReadStatusSelectedPost'),
-            key: "M",
-          },
-          {
-            label: this.$t('openOriginalArticleSelectedPost'),
-            key: "V",
-          },
-          {
-            label: this.$t('showUnread'),
-            key: "SHIFT + U",
+            key: "SHIFT + S", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('showStarred'),
-            key: "SHIFT + T",
+            key: "SHIFT + T", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('showReadLater'),
-            key: "SHIFT + L",
+            key: "SHIFT + L", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('showRead'),
-            key: "SHIFT + H",
+            key: "SHIFT + H", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('search'),
-            key: "/",
-          }
-      ],
+            key: "/", // key handler when queue is selected 
+            when: this.$t('aQueueIsSelected')
+          },
+        ],
+        aPostIsSelected: [
+          {
+            label: this.$t('goToPreviousPost'),
+            icon: "fa-arrow-up", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+          {
+            label: this.$t('goToNextPost'),
+            icon: "fa-arrow-down", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+          {
+            label: this.$t('goToFirstPost'),
+            key: "HOME", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+          {
+            label: this.$t('goToLastPost'),
+            key: "END", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+          {
+            label: this.$t('starSelectedPost'),
+            key: "S", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+          {
+            label: this.$t('toggleReadStatusSelectedPost'),
+            key: "M", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+          {
+            label: this.$t('openOriginalArticleSelectedPost'),
+            key: "V", // key handler when post is selected 
+            when: this.$t('aPostIsSelected')
+          },
+        ]
+      }
     }
   }
 }
@@ -185,5 +233,13 @@ export default {
 .keyboard-key-wrapper {
   display: flex;
   align-items: center;
+}
+
+.view-header-no-count {
+  font-family: "Russo One", system-ui, sans-serif;
+  font-weight: bold;
+  font-size: larger;
+  color: v-bind('theme.logocolor');
+  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
 }
 </style>

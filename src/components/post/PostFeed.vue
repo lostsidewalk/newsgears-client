@@ -1836,7 +1836,9 @@ export default {
       if (!event.key) {
         return;
       }
-      // esc key handling 
+      // 
+      // ESC key handling 
+      // 
       if (event.key === 'Escape') {
         if (!this.isModalShowing && !this.$refs.controlPanel.showSettingsPanel && !this.$refs.controlPanel.showHelpPanel && !this.showFeedConfigPanel && !this.showOpmlUploadPanel) {
           document.activeElement.blur();
@@ -1865,32 +1867,53 @@ export default {
         if (t === 'text') {
           return;
         }
+        // 
+        // ARROW DOWN KEY 
+        // 
         if (event.key === 'ArrowDown') {
           this.selectNextPost();
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // ARROW UP KEY 
+        // 
         } else if (event.key === 'ArrowUp') {
           this.selectPreviousPost();
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // HOME KEY 
+        // 
         } else if (event.key === 'Home') {
           this.setSelectedPost(null, this.getCurrentPage(this.filteredInboundQueue)[0].id, false);
           event.stopPropagation();
           event.preventDefault();
           return false;
+        // 
+        // END KEY 
+        // 
         } else if (event.key === 'End') {
           let c = this.getCurrentPage(this.filteredInboundQueue);
           this.setSelectedPost(null, c[c.length - 1].id);
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // S KEY  
+        // 
         } else if (event.key === 's') {
           this.toggleSelectedPostPubStatus();
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // M KEY 
+        // 
         } else if (event.key === 'm') {
           this.toggleSelectedPostReadStatus();
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // V KEY 
+        // 
         } else if (event.key === 'v') {
           this.openPostUrl(this.selectedPostId);
           event.stopPropagation();
@@ -1903,14 +1926,23 @@ export default {
         if (t === 'text') {
           return;
         }
+        // 
+        // SHIFT + E KEY 
+        // 
         if (event.key === 'E' && event.shiftKey === true) {
           this.configureFeed(this.selectedFeedId);
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // SHFIT + S KEY 
+        // 
         } else if (event.key === 'S' && event.shiftKey === true) {
           this.rssAtomUrlQuickAdd();
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // SLASH KEY 
+        // 
         } else if (event.key === '/') {
           this.$nextTick(() => {
             let filterElem = document.getElementById('feed-filter');
@@ -1928,34 +1960,47 @@ export default {
           });
           event.stopPropagation();
           event.preventDefault();
-        } else if (event.key === 'U' && event.shiftKey) {
-          this.toggleFeedFilterMode('UNREAD');
-          event.stopPropagation();
-          event.preventDefault();
+        // 
+        // SHIFT + L KEY 
+        // 
         } else if (event.key === 'L' && event.shiftKey) {
           this.toggleFeedFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // SHIFT + H KEY 
+        // 
         } else if (event.key === 'H' && event.shiftKey) {
           this.toggleFeedFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // SHIFT + T KEY 
+        // 
         } else if (event.key === 'T' && event.shiftKey) {
           this.toggleFeedFilterMode('PUBLISHED');
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // SHIFT + A KEY 
+        // 
         } else if (event.key === 'A' && event.shiftKey === true) {
           this.markSelectedFeedAsRead();
           event.stopPropagation();
           event.preventDefault();
         }
       }
-      // handle others (global feed refresh, help, etc.)
+      // 
+      // SHIFT + R KEY 
+      // 
       if (event.key === 'R' && event.shiftKey === true) {
         this.refreshFeeds(null, true);
         event.stopPropagation();
         event.preventDefault();
-      } else if (event.key === 'Q') {
+      // 
+      // SHIFT + Q KEY 
+      // 
+      } else if (event.key === 'Q' && event.shiftKey === true) {
         this.newFeed();
         event.stopPropagation();
         event.preventDefault();
