@@ -127,7 +127,7 @@
             <button v-for="sharingOption in this.sharingOptions" :key="sharingOption"
               v-show="this.showPostSharing"
               class="post-admin-button accessible-button"
-              @click.stop="share(sharingOption)"
+              @click.stop="this.$emit('share', { sharingOption: sharingOption, post: this.post })"
               :title="this.$t('shareWith_' + sharingOption.name)"
               :aria-label="this.$t('shareWith_' + sharingOption.name + '_ariaLabel')">
               <i class="fa" :class="'fa-' + sharingOption.icon" />
@@ -261,44 +261,6 @@ import PostEnclosure from './item/PostEnclosure.vue';
 import PostMedia from './item/PostMedia.vue';
 import PostITunes from './item/PostITunes.vue';
 
-const sharingOptions = [
-  {
-    name: 'twitter',
-    icon: 'twitter',
-    url: 'https://twitter.com/intent/tweet?text={TITLE}&url={URL}',
-  },
-  {
-    name: 'facebook',
-    icon: 'facebook',
-    url: 'http://www.facebook.com/share.php?u={URL}&title={TITLE}',
-  },
-  {
-    name: 'telegram',
-    icon: 'telegram',
-    url: 'https://telegram.me/share/url?url={URL}&t={TITLE}', 
-  },
-  {
-    name: 'linkedIn',
-    icon: 'linkedin',
-    url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}', 
-  },
-  {
-    name: 'blogger',
-    icon: 'rss', // kind of generic 
-    url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}', 
-  },
-  {
-    name: 'buffer',
-    icon: 'share', // generic 
-    url: 'https://publish.buffer.com/compose?url={URL}&text={TITLE}', 
-  },
-  {
-    name: 'hootsuite',
-    icon: 'share', // generic 
-    url: 'http://hootsuite.com/twitter/bookmark-tool-v2?address={URL}&title={TITLE}', 
-  },
-];
-
 export default {
   name: "PostItem",
   components: { 
@@ -306,7 +268,7 @@ export default {
     PostMedia, 
     PostITunes
   },
-  props: [ "post", "idx", "baseUrl", "isSelected", "enableFilterBySubscription", "disabled", "theme", "compact" ],
+  props: [ "post", "idx", "baseUrl", "isSelected", "enableFilterBySubscription", "disabled", "theme", "compact", "sharingOptions" ],
   emits: [
     "updatePostReadStatus",
     "updatePostPubStatus",
@@ -320,36 +282,15 @@ export default {
     "goToNextPost",
     "goToPreviousPost",
     "enableFilterBySubscription",
+    "share",
   ],
   data() {
     return {
       showPostCategories: false,
       showPostSharing: false,
-      //
-      sharingOptions: sharingOptions,
     };
   },
   methods: {
-    share(sharingOption) {
-      let title = encodeURIComponent(this.post.postTitle.value);
-      let link = encodeURIComponent(this.post.postUrl);
-      let source = encodeURIComponent(this.post.importerDesc);
-      let content = encodeURIComponent(this.post.postDesc ? this.post.postDesc.value : '');
-      let url = this.replaceArray(sharingOption.url, 
-        ["{URL}", "{TITLE}", "{SOURCE}", "{CONTENT}"], 
-        [ link, title, source, content ]
-      );
-      window.open(url, '_blank');
-    },
-    replaceArray(str, find, replace) {
-      let replaceString = str;
-      let regex;
-      for (let i = 0; i < find.length; i++) {
-          regex = new RegExp(find[i], "g");
-          replaceString = replaceString.replace(regex, replace[i]);
-      }
-      return replaceString;
-    },
     focusHandle() {
       this.$refs.postHandle.focus();
     },

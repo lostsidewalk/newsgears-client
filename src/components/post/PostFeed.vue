@@ -165,6 +165,7 @@
                 :isSelected="this.selectedPostId === post.id"
                 :enableFilterBySubscription="this.allPostSubscriptions.length > 1" 
                 :compact="this.layoutMode === 'TABLE'"
+                :sharingOptions="sharingOptions"
                 tabindex="0"
                 @keypress.self="isModalShowing ? false : setSelectedPost($event, post.id)"
                 @click="isModalShowing ? false : setSelectedPost($event, post.id)"
@@ -178,7 +179,8 @@
                 @playing="onMediaPlaying" 
                 @audioPlay="onAudioPlay" 
                 @goToNextPost="goToNextPost(post.id)" 
-                @goToPreviousPost="goToPreviousPost(post.id)" />
+                @goToPreviousPost="goToPreviousPost(post.id)" 
+                @share="$event => this.share($event.sharingOption, $event.post)" />
             </div>
             <div v-if="this.totalPages === 0" class="queue-message">
               {{ this.$t('noArticlesInQueue') }}
@@ -269,6 +271,44 @@ import PostItem from "./PostItem.vue";
 import FeedSelectButton from './dashboard/FeedSelectButton.vue';
 import FeedDetails from './dashboard/FeedDetails.vue';
 import FeedDashboardButtons from './dashboard/FeedDashboardButtons.vue';
+
+const sharingOptions = [
+  {
+    name: 'twitter',
+    icon: 'twitter',
+    url: 'https://twitter.com/intent/tweet?text={TITLE}&url={URL}',
+  },
+  {
+    name: 'facebook',
+    icon: 'facebook',
+    url: 'http://www.facebook.com/share.php?u={URL}&title={TITLE}',
+  },
+  {
+    name: 'telegram',
+    icon: 'telegram',
+    url: 'https://telegram.me/share/url?url={URL}&t={TITLE}', 
+  },
+  {
+    name: 'linkedIn',
+    icon: 'linkedin',
+    url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}', 
+  },
+  {
+    name: 'blogger',
+    icon: 'rss', // kind of generic 
+    url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}', 
+  },
+  {
+    name: 'buffer',
+    icon: 'share', // generic 
+    url: 'https://publish.buffer.com/compose?url={URL}&text={TITLE}', 
+  },
+  {
+    name: 'hootsuite',
+    icon: 'share', // generic 
+    url: 'http://hootsuite.com/twitter/bookmark-tool-v2?address={URL}&title={TITLE}', 
+  },
+];
 
 export default {
   components: { 
@@ -527,6 +567,9 @@ export default {
     },
     layoutMode: function() {
       return this.$theme.layoutMode;
+    },
+    sharingOptions: function() {
+      return sharingOptions;
     }
   },
   data() {
@@ -653,6 +696,20 @@ export default {
     // 
     openPostUrl(postId) {
       window.open(this.getPostFromQueue(postId).postUrl, '_blank');
+    },
+    // 
+    // share 
+    // 
+    share(sharingOption, post) {
+      let title = encodeURIComponent(post.postTitle.value);
+      let link = encodeURIComponent(post.postUrl);
+      let source = encodeURIComponent(post.importerDesc);
+      let content = encodeURIComponent(post.postDesc ? post.postDesc.value : '');
+      let url = this.replaceArray(sharingOption.url, 
+        ["{URL}", "{TITLE}", "{SOURCE}", "{CONTENT}"], 
+        [ link, title, source, content ]
+      );
+      window.open(url, '_blank');
     },
     // 
     // pagination 
@@ -1828,6 +1885,15 @@ export default {
       do {
         currentDate = Date.now();
       } while (currentDate - date < milliseconds);
+    },
+    replaceArray(str, find, replace) {
+      let replaceString = str;
+      let regex;
+      for (let i = 0; i < find.length; i++) {
+          regex = new RegExp(find[i], "g");
+          replaceString = replaceString.replace(regex, replace[i]);
+      }
+      return replaceString;
     },
     // 
     // 
