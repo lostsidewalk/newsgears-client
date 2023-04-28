@@ -99,74 +99,60 @@ export default {
           {
             label: this.$t('configureSelectedQueue'),
             key: "SHIFT + E", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('markSelectedQueueAsRead'),
             key: "SHIFT + A", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('addSubscriptionToSelectedQueue'),
             key: "SHIFT + S", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('showStarred'),
             key: "SHIFT + T", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('showReadLater'),
             key: "SHIFT + L", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('showRead'),
             key: "SHIFT + H", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
           {
             label: this.$t('search'),
             key: "/", // key handler when queue is selected 
-            when: this.$t('aQueueIsSelected')
           },
         ],
         aPostIsSelected: [
           {
             label: this.$t('goToPreviousPost'),
             icon: "fa-arrow-up", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
           {
             label: this.$t('goToNextPost'),
             icon: "fa-arrow-down", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
           {
             label: this.$t('goToFirstPost'),
             key: "HOME", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
           {
             label: this.$t('goToLastPost'),
             key: "END", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
           {
             label: this.$t('starSelectedPost'),
             key: "S", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
           {
             label: this.$t('toggleReadStatusSelectedPost'),
             key: "M", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
           {
             label: this.$t('openOriginalArticleSelectedPost'),
             key: "V", // key handler when post is selected 
-            when: this.$t('aPostIsSelected')
           },
         ]
       }
