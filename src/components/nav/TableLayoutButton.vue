@@ -1,7 +1,7 @@
 <template>
   <button class="mode-switch-button accessible-button" 
     @click="cycleTableLayout" 
-    accesskey="g" 
+    accesskey="b" 
     :disabled="disabled" 
     :title="this.$t('cycleTableLayout')"
     :aria-label="this.$t('cycleTableLayoutAriaLabel')">

@@ -63,7 +63,7 @@ export default {
             key: "ALT + L", // global accel 
           },
           {
-            label: this.$t('logout'),
+            label: this.$t('logoutArialLabel'),
             key: "ALT + O", // global accel 
           },
           {
@@ -73,6 +73,18 @@ export default {
           {
             label: this.$t('uploadOPML'),
             key: "ALT + M", // global accel 
+          },
+          {
+            label: this.$t('cycleGridLayoutAriaLabel'),
+            key: "ALT + G", // global accel 
+          },
+          {
+            label: this.$t('cycleTableLayoutAriaLabel'),
+            key: "ALT + B", // global accel 
+          },
+          {
+            label: this.$t(''),
+            key: "ALT + Z", // global accel 
           },
           {
             label: this.$t('createNewQueue'),

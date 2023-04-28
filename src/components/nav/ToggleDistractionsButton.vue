@@ -1,7 +1,7 @@
 <template>
   <button class="mode-switch-button accessible-button" 
     @click.stop="this.$emit('toggleDistractions')" 
-    accesskey="f" 
+    accesskey="z" 
     :disabled="disabled" 
     :title="this.$t('toggleDistractions')"
     :aria-label="this.$t('toggleDistractionsAriaLabel')">
