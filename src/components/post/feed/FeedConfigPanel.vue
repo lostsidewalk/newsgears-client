@@ -77,7 +77,7 @@
           </div>
           <!-- tab 2: queue properties -->
           <div class="tab" v-show="this.selectedTab === 'QUEUE_PROPERTIES'">
-            <!-- TODO: component -->
+            <!-- TODO: (refactor) extract component -->
             <!-- feed ident -->
             <FeedConfigTextField 
               ref="feedIdent"
@@ -306,9 +306,6 @@ export default {
     tearDown() {
       this.clearModel();
       this.showModal = false;
-    },
-    error(error) {
-      console.error(error); // TODO: fix this 
     },
     // 
     handleAuthError(error) {

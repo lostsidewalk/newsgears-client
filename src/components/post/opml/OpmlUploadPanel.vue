@@ -215,7 +215,7 @@ export default {
       this.removeFile(file);
     },
     clearModel() {
-      // TODO: possibly warn of un-saved data / get confirmation if files or feedConfigRequests are non-empty 
+      // TODO: (enhancement) possibly warn of un-saved data / get confirmation if files or feedConfigRequests are non-empty 
       this.files.splice(0);
       this.atStep2 = false;
       this.errors.splice(0);

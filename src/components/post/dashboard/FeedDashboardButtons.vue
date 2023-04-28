@@ -1,6 +1,6 @@
 <template>
   <div class="feed-dashboard-buttons">
-    <!-- TODO: component -->
+    <!-- TODO: (refactor) extract component -->
     <!-- upload OPML button -->
     <button class="header-button accessible-button" 
       @click.stop="this.$emit('uploadOpml')" 

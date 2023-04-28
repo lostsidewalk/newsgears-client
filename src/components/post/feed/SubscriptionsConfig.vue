@@ -9,7 +9,7 @@
     </div>
 
     <!-- add RSS/ATOM feed from URL -->
-    <!-- TODO: component -->
+    <!-- TODO: (refactor) extract component -->
     <div class="rss-atom-url-wrapper">
       <!-- url input field w/refresh and delete buttons -->
       <div class="rss-atom-url-row">
@@ -265,12 +265,6 @@ export default {
     },
     // make POST call to feed controller/query definitions endpoint 
     addNewRssAtomUrl(dismiss) {
-      try {
-        this.validateRssAtomUrl(this.newRssAtomUrl);
-      } catch (error) {
-        console.error(error);
-        return;
-      }
       this.inTransit = true;
       console.log("subscription-config: pushing new subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
@@ -411,12 +405,6 @@ export default {
       });
     },
     // 
-    // validation 
-    // 
-    validateRssAtomUrl(rssAtomUrl) {
-      console.log("validating subscription: " + JSON.stringify(rssAtomUrl));
-    },
-    // 
     // discovery 
     // 
     refreshRssAtomUrlInfo(rssAtomUrl) {
@@ -428,10 +416,6 @@ export default {
     },
     doDiscovery(r) {
       if (r.feedUrl && r.feedUrl !== r.discoveryUrl) {
-        if (this.len(r.feedUrl) > 2048) {
-          // TODO: fix this 
-          console.log("RSS/ATOM feed URL is too long (max 2048 characters).");
-        }
         this.inTransit = true;
         this.$auth.getTokenSilently().then((token) => {
           const controller = new AbortController();

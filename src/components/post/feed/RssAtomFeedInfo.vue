@@ -4,7 +4,7 @@
       <!-- left chunk (image) -->
       <div class="left">
         <!-- icon -->
-        <!-- TODO: component -->
+        <!-- TODO: (refactor) extract component -->
         <div>
           <img class="rss-atom-feed-info-image"
             v-if="this.info.icon" 
@@ -23,7 +23,7 @@
       <!-- right chunk (text) -->
       <div class="right">
         <!-- title -->
-        <!-- TODO: component -->
+        <!-- TODO: (refactor) extract component -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-title br-pill-subdued">
           <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
             {{ this.info.title ? this.info.title.value : this.info.feedUrl }}
@@ -119,7 +119,7 @@
           </button>
         </div>
         <!-- sample entries -->
-        <!-- TODO: component -->
+        <!-- TODO: (refactor) extract component -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-show="this.showSampleEntries" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.postTitle">
           <!-- sample entry thumbnail -->
           <div class="sample-entry-thumbnail" v-if="this.hasThumbnail(sampleEntry.postMedia)">

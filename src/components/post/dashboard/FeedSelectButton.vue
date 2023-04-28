@@ -9,7 +9,7 @@
         {{ feed.label }}
       </label>
       <!-- card -->
-      <!-- TODO: component -->
+      <!-- TODO: (refactor) extract component -->
       <div class="feed-image-wrapper">
         <img v-if="feed.imgSrc" 
           class="feed-image" 

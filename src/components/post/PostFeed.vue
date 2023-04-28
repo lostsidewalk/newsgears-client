@@ -1160,7 +1160,7 @@ export default {
           }
           // set selected feed Id and inbound queue 
           if (this.feeds.length > 0 && !this.selectedFeedId) {
-            // TODO: should be a configurable 'default' feed 
+            // TODO: (enhancement) should be a configurable 'default' feed 
             this.setSelectedFeedId(this.feeds[0].id);
           } else {
             this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
@@ -1530,7 +1530,7 @@ export default {
             current.categoryDomain = updated.categoryDomain;
             this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.queryMetrics);
             this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
-            this.refreshFeeds([current.id], false); // TODO: this is wrong, the refresh should be returned from the update call 
+            this.refreshFeeds([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
           } else {
             let created = data[0].feedDefinition;
             this.feeds.push(created);
@@ -1617,7 +1617,7 @@ export default {
             let nextFeedId = this.feeds.length > idxToSplice + 1 ? this.feeds[idxToSplice + 1].id : null;
             this.feeds.splice(idxToSplice, 1);
             if (this.selectedFeedId === this.feedIdToDelete) {
-              this.setSelectedFeedId(nextFeedId); // TODO: should be a configurable 'default' feed 
+              this.setSelectedFeedId(nextFeedId); // TODO: (enhancement) should be a configurable 'default' feed 
             }
           }
           this.setLastServerMessage(data.message);

@@ -528,7 +528,7 @@ export default {
                 response.text().then(t => {throw new Error(t)});
           }
         }).then(() => {
-          // TODO: set the account obj properties from the JSON response object (above) 
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
           if (newSettings.username) {
             this.account.username = newSettings.username;
           }

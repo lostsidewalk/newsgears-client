@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="features-view">
-      <!-- TODO: component -->
+      <!-- TODO: (refactor) extract component -->
       <div class="feature">
         <div class="feature-title">IT'S FREE <span class="fa fa-beer" role="presentation" /></div>
         <div class="feature-body">

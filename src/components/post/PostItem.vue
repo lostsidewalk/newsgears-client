@@ -28,7 +28,7 @@
         <div class="post-item-header" v-if="!compact || (compact && post.showPostDetails)">
           <!-- post header buttons -->
           <span class="post-admin-buttons">
-            <!-- TODO: extract post-item-button component -->
+            <!-- TODO: (refactor) extract component -->
             <!-- go to next post button -->
             <button
               class="post-admin-button accessible-button"

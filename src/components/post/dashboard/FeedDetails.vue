@@ -100,7 +100,7 @@ export default {
         }
         // add query exception message, if any 
         if (m.queryExceptionTypeMessage) {
-          // TODO: translate queryExceptionTypeMessage 
+          // TODO: (translation) translate queryExceptionTypeMessage 
           metricStatusMessage = metricStatusMessage + '\n' + m.queryExceptionTypeMessage;
         }
         return metricStatusMessage;

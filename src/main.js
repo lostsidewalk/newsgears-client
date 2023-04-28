@@ -401,7 +401,7 @@ const i18n = createI18n({
       goToQueueDashboardAriaLabel: 'Ir al panel de colas',
       switchModeAriaLabel: 'Cambiar a tema claro u oscuro',
       cycleGridLayoutAriaLabel: 'Cambiar al diseño de cuadrícula',
-      cycleTableLayoutAriaLabel: 'Cambiar a diseño tabular', // TODO: fix this 
+      cycleTableLayoutAriaLabel: 'Cambiar a diseño tabular', // TODO: (defect) fix this 
       logoutArialLabel: 'Cerrar sesión',
       goToSettingsAriaLabel: 'Ir a la configuración de la cuenta',
       goToHelpAriaLabel: 'Mostrar ayuda',
