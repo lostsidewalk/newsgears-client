@@ -303,7 +303,7 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("keydown", this.eventHandler);
+    window.addEventListener("keydown", this.keyHandler);
     if (this.$auth.$isAuthenticated) {
         this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
     }
@@ -313,7 +313,7 @@ export default {
     });
   },
   beforeUnmount() {
-    window.removeEventListener("keydown", this.eventHandler);
+    window.removeEventListener("keydown", this.keyHandler);
   },
   created() {
   },
@@ -1832,7 +1832,7 @@ export default {
     // 
     // 
     // 
-    eventHandler(event) {
+    keyHandler(event) {
       if (!event.key) {
         return;
       }
