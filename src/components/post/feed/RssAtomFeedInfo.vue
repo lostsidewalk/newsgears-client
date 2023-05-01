@@ -109,8 +109,8 @@
         <div v-if="this.info.isUrlUpgradable === true" class="rss-atom-feed-info-field br-pill-subdued">
           {{ this.$t('feedAlsoAvailableInHttps') }}
         </div>
-        <div class="rss-atom-feed-info-field pill-container" v-show="this.showSampleEntries">
-          <!-- show/hide sample entries -->
+        <!-- show/hide sample entries -->
+        <div class="rss-atom-feed-info-field pill-container" v-show="this.sampleEntries">
           <button v-if="this.info.sampleEntries" 
             class="br-pill accessible-button rss-atom-url-row-button"
             :title="this.$t('sampleEntries')"
@@ -119,7 +119,6 @@
           </button>
         </div>
         <!-- sample entries -->
-        <!-- TODO: (refactor) extract component -->
         <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-show="this.showSampleEntries" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.postTitle">
           <!-- sample entry thumbnail -->
           <div class="sample-entry-thumbnail" v-if="this.hasThumbnail(sampleEntry.postMedia)">
@@ -152,8 +151,8 @@
             </div>
           </div>
         </div>
-        <div class="rss-atom-feed-info-field pill-container" v-show="this.showRecommendedFeeds && this.recommendedFeeds.length > 0">
-          <!-- show/hide recommended feeds -->
+        <!-- show/hide recommended feeds -->
+        <div class="rss-atom-feed-info-field pill-container" v-show="this.recommendedFeeds.length > 0">
           <button v-if="this.info.feedRecommendationInfo" 
             class="br-pill accessible-button rss-atom-url-row-button"
             :title="this.$t('recommendedFeeds')"
