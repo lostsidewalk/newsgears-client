@@ -83,7 +83,7 @@ export default {
             key: "ALT + B", // global accel 
           },
           {
-            label: this.$t(''),
+            label: this.$t('toggleDistractions'),
             key: "ALT + Z", // global accel 
           },
           {
