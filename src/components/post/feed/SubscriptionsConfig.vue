@@ -68,7 +68,7 @@
           :disabled="disabled || inTransit"
           :placeholder="this.$t('password')" />
       </div>
-      <RssAtomFeedInfo v-if="newRssAtomUrl.discoveryUrl"
+      <RssAtomFeedInfo v-if="newRssAtomUrl.discoveryUrl || newRssAtomUrl.error"
         :info="newRssAtomUrl"
         :disabled="disabled || inTransit"
         :theme="theme"
