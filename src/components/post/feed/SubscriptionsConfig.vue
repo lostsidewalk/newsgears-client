@@ -73,7 +73,6 @@
         :disabled="disabled || inTransit"
         :theme="theme"
         :filterSupport="false"
-        style="margin-top: .75rem" 
         @followRecommendation="followRecommendation" />
     </div>
 
@@ -168,7 +167,6 @@
         :disabled="disabled || inTransit"
         :theme="theme"
         :filterSupport="false"
-        style="margin-top: 0.75rem" 
         @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" 
         @followRecommendation="followRecommendation" />
     </div>

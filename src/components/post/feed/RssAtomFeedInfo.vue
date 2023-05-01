@@ -109,7 +109,7 @@
         <div v-if="this.info.isUrlUpgradable === true" class="rss-atom-feed-info-field br-pill-subdued">
           {{ this.$t('feedAlsoAvailableInHttps') }}
         </div>
-        <div class="rss-atom-feed-info-field pill-container">
+        <div class="rss-atom-feed-info-field pill-container" v-show="this.showSampleEntries">
           <!-- show/hide sample entries -->
           <button v-if="this.info.sampleEntries" 
             class="br-pill accessible-button rss-atom-url-row-button"
@@ -152,7 +152,7 @@
             </div>
           </div>
         </div>
-        <div class="rss-atom-feed-info-field pill-container">
+        <div class="rss-atom-feed-info-field pill-container" v-show="this.showRecommendedFeeds && this.recommendedFeeds.length > 0">
           <!-- show/hide recommended feeds -->
           <button v-if="this.info.feedRecommendationInfo" 
             class="br-pill accessible-button rss-atom-url-row-button"
@@ -223,6 +223,9 @@ export default {
     updateFeedFilter(filterName, filterValue) {
       this.$emit("updateFilter", { name: filterName, value: filterValue });
     },
+  },
+  mounted() {
+    console.log("feedMetrics: " + JSON.stringify(this.info.feedMetrics));
   },
   data() {
     return {
