@@ -660,7 +660,8 @@ export default {
   box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
 }
 
-.rss-atom-url-row > input:disabled {
+.rss-atom-url-row > input:read-only:hover, .rss-atom-url-row > input:read-only:focus-visible {
+  background: unset;
   cursor: auto;
 }
 
