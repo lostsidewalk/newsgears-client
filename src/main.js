@@ -208,6 +208,8 @@ const i18n = createI18n({
       subscriptionAdded: 'Suscripción añadida',
       subscriptionUpdated: 'Suscripción actualizada',
       subscriptionDeleted: 'Suscripción eliminada',
+      queryMetrics: 'Métricas de fuentes RSS', 
+      importedNArticlesAt: '{n} artículos importados a las {at}.',
       // post feed filter 
       articleQueue: 'COLA DE ARTÍCULOS',
       refreshQueues: 'Actualizar colas', 
@@ -607,6 +609,8 @@ const i18n = createI18n({
       subscriptionAdded: 'Subscription added',
       subscriptionUpdated: 'Subscription updated',
       subscriptionDeleted: 'Subscription deleted',
+      queryMetrics: 'RSS feed metrics',
+      importedNArticlesAt: 'Imported {n} articles at {at}.',
       // post feed filter  
       articleQueue: 'ARTICLE QUEUE',
       refreshQueues: 'Refresh queues', 

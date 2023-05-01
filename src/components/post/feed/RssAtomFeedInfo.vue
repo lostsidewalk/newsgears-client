@@ -92,13 +92,14 @@
             {{ this.$t('webmasterColon') }} {{ this.info.webMaster }}
           </button>
         </div>
-        <!-- technical information pills -->
+        <!-- HTTP status -->
         <div v-if="this.info.httpStatusCode" class="rss-atom-feed-info-field br-pill-subdued">
           {{ this.$t('httpStatus', { 
             httpStatusCode: this.info.httpStatusCode, 
             httpStatusMessage: this.info.httpStatusMessage 
           }) }}
         </div>
+        <!-- HTTP redirect status -->
         <div v-if="this.info.redirectHttpStatusCode" class="rss-atom-feed-info-field br-pill-subdued">
           {{ this.$t('redirectedTo', { 
               redirectFeedUrl: this.info.redirectFeedUrl, 
@@ -106,8 +107,13 @@
               redirectHttpStatusMessage: this.info.redirectHttpStatusMessage
             }) }}
         </div>
+        <!-- URL is upgradable -->
         <div v-if="this.info.isUrlUpgradable === true" class="rss-atom-feed-info-field br-pill-subdued">
           {{ this.$t('feedAlsoAvailableInHttps') }}
+        </div>
+        <!-- error -->
+        <div v-if="this.info.error" class="rss-atom-feed-info-field br-pill-subdued error">
+          {{ this.info.error }}
         </div>
         <!-- show/hide sample entries -->
         <div class="rss-atom-feed-info-field pill-container" v-show="this.sampleEntries">
@@ -157,7 +163,7 @@
             class="br-pill accessible-button rss-atom-url-row-button"
             :title="this.$t('recommendedFeeds')"
             @click="this.showRecommendedFeeds = !this.showRecommendedFeeds">
-            {{ this.$t('recommendedFeeds') }} &nbsp; <span class="fa fa-expand" />
+            {{ this.$t('recommendedFeeds') }} &nbsp; <span class="fa" :class="this.showRecommendedFeeds ? 'fa-compress' : 'fa-expand'" />
           </button>
         </div>
         <!-- recommended feeds -->
@@ -169,23 +175,41 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
-    <div v-if="this.info.error" class="error">
-      {{ this.info.error }}
-      <div class="rss-atom-feed-info-field pill-container">
-        <!-- http satus code + status message -->
-        <span v-if="this.info.httpStatusCode" 
-          class="br-pill-subdued" 
-          :title="'HTTP ' + this.info.httpStatusCode + ' (' + this.info.httpStatusMessage + ')' + (this.info.redirectFeedUrl ? ('=> ' + this.info.redirectFeedUrl) : '')">
-          {{ 'HTTP ' + this.info.httpStatusCode + ' ' + this.info.httpStatusMessage }} &nbsp;
-          <span v-if="this.info.redirectFeedUrl">
-            <span class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectFeedUrl }}
-          </span>
-          <span v-if="this.info.redirectHttpStatusCode">
-            &nbsp; <span class="fa fa-arrow-right fa-1x" /> &nbsp; {{ this.info.redirectHttpStatusCode + ' ' + this.info.redirectHttpStatusMessage }}
-          </span>
-        </span>
+        <!-- show/hide query metrics -->
+        <div class="rss-atom-feed-info-field pill-container" v-show="this.usefulFeedMetrics.length > 0">
+          <button v-if="this.info.feedMetrics" 
+            class="br-pill accessible-button rss-atom-url-row-button"
+            :title="this.$t('queryMetrics')"
+            @click="this.showQueryMetrics = !this.showQueryMetrics">
+            {{ this.$t('queryMetrics') }} &nbsp; <span class="fa fa-expand"  :class="this.showQueryMetrics ? 'fa-compress' : 'fa-expand'" />
+          </button>
+        </div>
+        <!-- query metrics -->
+        <div class="rss-atom-feed-info-field br-pill-subdued" v-show="this.showQueryMetrics && this.usefulFeedMetrics.length > 0" 
+          v-for="queryMetric in this.usefulFeedMetrics" :key="queryMetric">
+          <div v-if="queryMetric.importTimestamp">
+            {{ this.$t('importedNArticlesAt', { n: queryMetric.persistCt, at: queryMetric.importTimestamp }) }}
+          </div>
+          <!-- HTTP status -->
+          <div v-if="queryMetric.httpStatusCode">
+            {{ this.$t('httpStatus', { 
+              httpStatusCode: queryMetric.httpStatusCode, 
+              httpStatusMessage: queryMetric.httpStatusMessage 
+            }) }}
+          </div>
+          <!-- HTTP redirect status -->
+          <div v-if="queryMetric.redirectHttpStatusCode">
+            {{ this.$t('redirectedTo', { 
+                redirectFeedUrl: queryMetric.redirectFeedUrl, 
+                redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
+                redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
+              }) }}
+          </div>
+          <!-- error -->
+          <div v-if="queryMetric.queryExceptionTypeMessage" class="error">
+            {{ queryMetric.queryExceptionTypeMessage }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -202,6 +226,9 @@ export default {
     recommendedFeeds: function() {
       return this.info.feedRecommendationInfo ? this.info.feedRecommendationInfo.recommendedUrls : [];
     },
+    usefulFeedMetrics: function() {
+      return this.info.feedMetrics ? this.info.feedMetrics.filter(f => f.persistCt > 0) : [];
+    }
   },
   emits: [ "updateFilter", "refreshFeed", "followRecommendation" ],
   methods: {
@@ -223,13 +250,11 @@ export default {
       this.$emit("updateFilter", { name: filterName, value: filterValue });
     },
   },
-  mounted() {
-    console.log("feedMetrics: " + JSON.stringify(this.info.feedMetrics));
-  },
   data() {
     return {
       showSampleEntries: false,
       showRecommendedFeeds: false,
+      showQueryMetrics: false,
     }
   }
 }

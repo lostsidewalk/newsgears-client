@@ -405,11 +405,37 @@ export default {
     // 
     // discovery 
     // 
-    refreshRssAtomUrlInfo(rssAtomUrl) {
-      rssAtomUrl.error = null;
-      rssAtomUrl.discoveryUrl = null;
-      if (rssAtomUrl.feedUrl) {
-        this.doDiscovery(rssAtomUrl);
+    refreshRssAtomUrlInfo(r) {
+      if (r.feedUrl) {
+        r.title = null;
+        r.description = null;
+        r.author = null;
+        r.categories = null;
+        r.copyright = null;
+        r.docs = null;
+        r.encoding = null;
+        r.feedType = null;
+        r.generator = null;
+        r.icon = null;
+        r.image = null;
+        r.language = null;
+        r.link = null;
+        r.managingEditor = null;
+        r.publishedDate = null;
+        r.styleSheet = null;
+        r.supportedTypes = null;
+        r.webMaster = null;
+        r.sampleEntries = null;
+        r.feedRecommendationInfo = null;
+        r.discoveryUrl = null;
+        r.httpStatusCode = null;
+        r.httpStatusMessage = null;
+        r.redirectFeedUrl = null;
+        r.redirectHttpStatusCode = null;
+        r.redirectHttpStatusMessage = null;
+        r.error = null;
+        r.discoveryUrl = null;
+        this.doDiscovery(r);
       }
     },
     doDiscovery(r) {
