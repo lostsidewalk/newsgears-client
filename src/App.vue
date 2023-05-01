@@ -28,7 +28,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  font-family: 'Merriweather', system-ui, sans-serif;
+  font-family: Arial, Helvetica, system-ui, sans-serif;
 }
 
 @font-face {

@@ -26,6 +26,20 @@ export default {
   margin-right: 4%;
 }
 
+@media (max-width: 640px) {
+  .demo-view {
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+}
+
+@media (max-width: 320px) {
+  .demo-view {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 .image-panel {
   margin-top: 2%;
   margin-bottom: 2%;

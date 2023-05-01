@@ -104,6 +104,20 @@ export default {
   font-size: smaller;
 }
 
+@media (max-width: 640px) {
+  .copyright-view {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+}
+
+@media (max-width: 320px) {
+  .copyright-view {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 .copyright-view > div { 
   margin: .125rem;
 }

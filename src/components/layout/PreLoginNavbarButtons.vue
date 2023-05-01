@@ -2,7 +2,7 @@
   <div style="display: flex;flex-wrap: wrap;justify-content: space-between;">
     <!-- dashboard button -->
     <FeedGearsLogo :theme="theme" />
-    <div style="display: flex;flex-direction: row-reverse;">
+    <div style="display: flex;flex-direction: row-reverse;flex-wrap: wrap;">
       <!-- display mode switch -->
       <DisplayModeButton :baseUrl="baseUrl" :disabled="false" :theme="theme" />
       <!-- sign-up button -->

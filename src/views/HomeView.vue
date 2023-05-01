@@ -122,6 +122,20 @@ hr {
   padding: 4%;
 }
 
+@media (max-width: 640px) {
+  .server-message {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+}
+
+@media (max-width: 320px) {
+  .server-message {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 .animated {
   animation-duration: .5s;
   -webkit-animation-duration: .5s;

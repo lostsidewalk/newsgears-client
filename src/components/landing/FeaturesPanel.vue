@@ -7,7 +7,6 @@
         <div class="feature-body">
           You can always have a free account, and there will never be ads while using FeedGears.  
           We love RSS/ATOM, and we want people to use our software. You can even host it yourself! 
-          We will try to keep resources unlimited, but we will sensibly rate limit the backend as needed.
         </div>
       </div>
       <div class="feature">
@@ -100,6 +99,22 @@ export default {
   margin-right: 4%;
   padding-top: 2%;
   padding-bottom: 2%;
+}
+
+@media (max-width: 640px) {
+  .features-view {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+}
+
+@media (max-width: 320px) {
+  .features-view {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .feature {

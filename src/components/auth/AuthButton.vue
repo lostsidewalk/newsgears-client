@@ -38,6 +38,20 @@ export default {
   user-select: none;
 }
 
+@media (max-width: 640px) {
+  .auth-button {
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+}
+
+@media (max-width: 320px) {
+  .auth-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 /** has-references */
 .auth-button:hover, .auth-button:focus-visible {
   background-color: v-bind('theme.buttonhighlight');
