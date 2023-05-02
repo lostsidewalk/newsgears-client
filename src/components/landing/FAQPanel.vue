@@ -39,12 +39,20 @@
       </div>
 
       <!-- RSS Made Easy! (video) -->
-      <!-- <div class="question">
+      <div class="question">
         <div class="question-verbiage">RSS Made Easy</div>
         <div class="answer">
-          <p>https://www.youtube.com/watch?v=6HNUqDL-pI8</p>
+          <vue-plyr style="width: 100%;height: auto;">
+            <div class="plyr__video-embed">
+              <iframe
+                src="https://www.youtube.com/watch?v=6HNUqDL-pI8"
+                allowfullscreen
+                allowtransparency
+                allow="autoplay" />
+            </div>
+          </vue-plyr>
         </div>
-      </div> -->
+      </div>
 
       <!-- <div class="question">
         <div class="question-verbiage">What are some applications of RSS/ATOM?</div>
