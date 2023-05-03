@@ -53,7 +53,7 @@ export default {
   right: 0;
   width: 100%;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 99999;
   border: 1px solid transparent;
   border-radius: 4px;
   font-family: Arial, Helvetica, sans-serif;
