@@ -2124,8 +2124,6 @@ export default {
 
 .staging-header-view-selected {
   border-top: 1px solid v-bind('theme.navbarsubshadow');
-  min-width: 70svw;
-  max-width: 70svw;
 }
 
 .staging-header-view-collapsed {
@@ -2360,8 +2358,6 @@ footer {
 @media (max-width: 1023px) {
   .staging-header-view-selected, .staging-header-view-collapsed {
     border-top: unset;
-    min-width: unset;
-    max-width: unset;
   }
 
   /** has references */
@@ -2376,8 +2372,6 @@ footer {
 
 @media (min-width: 1023px) {
   .staging-header-view-selected {
-    min-width: unset;
-    max-width: unset;
     flex-grow: 1;
     flex-shrink: 1;
   }
@@ -2386,6 +2380,7 @@ footer {
     top: -1px;
     position: sticky;
     width: 30svw;
+    min-width: 15svw;
     max-height: 100svh;
   }
 
