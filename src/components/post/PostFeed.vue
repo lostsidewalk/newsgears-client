@@ -2378,7 +2378,8 @@ footer {
   .staging-header-view-selected {
     min-width: unset;
     max-width: unset;
-    width: 100%;
+    flex-grow: 1;
+    flex-shrink: 1;
   }
 
   .feed-select-view-selected {
