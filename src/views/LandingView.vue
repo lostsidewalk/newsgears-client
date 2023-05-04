@@ -22,7 +22,7 @@
   
 <script>
 import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-import PreLoginNavbarButtons from '@/components/layout/PreLoginNavbarButtons.vue';
+import PreLoginNavbarButtons from '@/components/prelogin/PreLoginNavbarButtons.vue';
 import BannerPanel from '@/components/landing/BannerPanel.vue';
 import DemoPanel from '@/components/landing/DemoPanel.vue';
 import FeaturesPanel from '@/components/landing/FeaturesPanel.vue';
