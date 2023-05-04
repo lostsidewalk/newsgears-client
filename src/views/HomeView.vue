@@ -108,6 +108,10 @@ export default {
   outline-style: outset;
 }
 
+pre {
+  white-space: break-spaces !important;
+}
+
 body {
   margin: 0rem !important;
 }

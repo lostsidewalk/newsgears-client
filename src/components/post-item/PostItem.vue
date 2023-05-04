@@ -462,7 +462,7 @@ export default {
 .post-item-title {
   user-select: none;
   cursor: pointer;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .post-item-title:hover, .post-item-title:focus-visible {
@@ -549,7 +549,6 @@ export default {
 }
 
 .post-html-frame > * {
-  object-fit: scale-down;
   background-color: currentColor;
 }
 
