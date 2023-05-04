@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import FeedGearsLogo from '@/components/nav/FeedGearsLogo.vue';
+import FeedGearsLogo from '@/components/layout/FeedGearsLogo.vue';
 import SettingsPanel from '@/components/settings/SettingsPanel.vue';
 import HelpPanel from '@/components/post/help/HelpPanel.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';

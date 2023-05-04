@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import FeedGearsLogo from '@/components/nav/FeedGearsLogo.vue';
+import FeedGearsLogo from '@/components/layout/FeedGearsLogo.vue';
 import LoginButton from '@/components/nav/LoginButton.vue';
 import SignUpButton from '@/components/nav/SignUpButton.vue';
 import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
