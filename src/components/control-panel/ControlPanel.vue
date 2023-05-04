@@ -50,7 +50,7 @@
 <script>
 import FeedGearsLogo from '@/components/layout/FeedGearsLogo.vue';
 import DisplayModeButton from '@/components/layout/DisplayModeButton.vue';
-import SettingsPanel from '@/components/settings/SettingsPanel.vue';
+import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
 import HelpPanel from '@/components/help-panel/HelpPanel.vue';
 import LogoutButton from '@/components/control-panel/LogoutButton.vue';
 import SettingsButton from '@/components/control-panel/SettingsButton.vue';

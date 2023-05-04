@@ -230,7 +230,7 @@ import { maxLength, email } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import TabHeader from '@/components/layout/TabHeader.vue';
-import ColorField from './ColorField.vue';
+import ColorField from '@/components/settings-panel/ColorField.vue';
 
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
