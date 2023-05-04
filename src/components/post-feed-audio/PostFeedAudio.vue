@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import VolumeControl from "./VolumeControl";
+import VolumeControl from "@/components/post-feed-audio/VolumeControl";
 
 const stopPlayer = (player) => {
   player.pause();
