@@ -25,7 +25,7 @@
 import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";
 import AuthPanel from "@/components/auth-panel/AuthPanel.vue";
-import PostFeed from "@/components/post/PostFeed.vue";
+import PostFeed from "@/components/post-feed/PostFeed.vue";
 
 
 export default {

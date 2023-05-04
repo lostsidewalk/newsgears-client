@@ -262,15 +262,15 @@ import ViewHeader from "@/components/layout/ViewHeader.vue";
 // settings 
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 // post item filter 
-import FeedFilter from "./filter/FeedFilter.vue";
-import FeedFilterPills from "./filter/FeedFilterPills.vue";
+import FeedFilter from "@/components/post-feed/FeedFilter.vue";
+import FeedFilterPills from "@/components/post-feed/FeedFilterPills.vue";
 import PostFeedAudio from '@/components/post-feed-audio/PostFeedAudio.vue';
 // post item 
 import PostItem from "@/components/post-item/PostItem.vue";
 // feed dashboard 
-import FeedSelectButton from './dashboard/FeedSelectButton.vue';
-import FeedDetails from './dashboard/FeedDetails.vue';
-import FeedDashboardButtons from './dashboard/FeedDashboardButtons.vue';
+import FeedSelectButton from '@/components/post-feed/FeedSelectButton.vue';
+import FeedDetails from '@/components/post-feed/FeedDetails.vue';
+import FeedDashboardButtons from '@/components/post-feed/FeedDashboardButtons.vue';
 
 const sharingOptions = [
   {
