@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import GoogleAuthButton from '@/components/auth/GoogleAuthButton.vue';
+import GoogleAuthButton from '@/components/prelogin/GoogleAuthButton.vue';
 import SignUpButton from '@/components/prelogin/SignUpButton.vue';
 
 export default {
