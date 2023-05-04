@@ -258,7 +258,7 @@
 
 <script>
 import PostEnclosure from '@/components/post-item/PostEnclosure.vue';
-import PostMedia from '@/components/post/item/PostMedia.vue';
+import PostMedia from '@/components/post-media/PostMedia.vue';
 import PostITunes from '@/components/post-item/PostITunes.vue';
 
 export default {
