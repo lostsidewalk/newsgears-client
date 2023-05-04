@@ -15,8 +15,8 @@
 
 <script>
 import FeedGearsLogo from '@/components/layout/FeedGearsLogo.vue';
-import LoginButton from '@/components/nav/LoginButton.vue';
-import SignUpButton from '@/components/nav/SignUpButton.vue';
+import LoginButton from '@/components/prelogin/LoginButton.vue';
+import SignUpButton from '@/components/prelogin/SignUpButton.vue';
 import DisplayModeButton from '@/components/layout/DisplayModeButton.vue';
 
 export default {
