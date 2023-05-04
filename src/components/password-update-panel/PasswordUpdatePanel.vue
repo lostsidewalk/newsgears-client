@@ -32,11 +32,11 @@
 </template>
 
 <script>
-import NavbarFixedHeader from '../layout/NavbarFixedHeader.vue';
-import AuthTextField from './AuthTextField.vue';
-import AuthButton from './AuthButton.vue'
-import AuthServerResponse from './AuthServerResponse.vue';
-import AuthFooterView from './AuthFooterView.vue';
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
+import AuthTextField from '@/components/auth/AuthTextField.vue';
+import AuthButton from '@/components/auth/AuthButton.vue'
+import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
+import AuthFooterView from '@/components/auth/AuthFooterView.vue';
 
 export default {
   components: {

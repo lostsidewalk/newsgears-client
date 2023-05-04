@@ -36,13 +36,13 @@
 </template>
 
 <script>
-import NavbarFixedHeader from '../layout/NavbarFixedHeader.vue';
-import AuthTextField from './AuthTextField.vue';
-import AuthButton from './AuthButton.vue'
-import GoogleAuthButton from './GoogleAuthButton.vue';
-import AuthPanelLink from './AuthPanelLink.vue';
-import AuthServerResponse from './AuthServerResponse.vue';
-import AuthFooterView from './AuthFooterView.vue';
+import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
+import AuthTextField from '@/components/auth/AuthTextField.vue';
+import AuthButton from '@/components/auth/AuthButton.vue'
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton.vue';
+import AuthPanelLink from '@/components/auth/AuthPanelLink.vue';
+import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
+import AuthFooterView from '@/components/auth/AuthFooterView.vue';
 
 export default {
   name: "AuthPanel",

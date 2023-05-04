@@ -9,7 +9,7 @@
 
 <script>
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import PasswordUpdatePanel from "@/components/auth/PasswordUpdatePanel.vue";
+import PasswordUpdatePanel from "@/components/password-update-panel/PasswordUpdatePanel.vue";
 
 export default {
   name: "PasswordResetCallbackView",

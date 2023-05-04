@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import PasswordResetRequestPanel from "@/components/auth/PasswordResetRequestPanel.vue";
+import PasswordResetRequestPanel from "@/components/password-reset-panel/PasswordResetRequestPanel.vue";
 
 export default {
   name: "PasswordResetRequestView",

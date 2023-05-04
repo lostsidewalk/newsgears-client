@@ -9,7 +9,7 @@
 
 <script>
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import RegistrationRequestPanel from "@/components/auth/RegistrationRequestPanel.vue";
+import RegistrationRequestPanel from "@/components/registration-panel/RegistrationRequestPanel.vue";
 
 export default {
   name: "RegistrationRequestView",
