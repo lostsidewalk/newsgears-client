@@ -17,7 +17,7 @@
 import FeedGearsLogo from '@/components/layout/FeedGearsLogo.vue';
 import LoginButton from '@/components/nav/LoginButton.vue';
 import SignUpButton from '@/components/nav/SignUpButton.vue';
-import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
+import DisplayModeButton from '@/components/layout/DisplayModeButton.vue';
 
 export default {
     name: "PreLoginNavbarButtons",

@@ -53,7 +53,7 @@ import SettingsPanel from '@/components/settings/SettingsPanel.vue';
 import HelpPanel from '@/components/post/help/HelpPanel.vue';
 import LogoutButton from '@/components/nav/LogoutButton.vue';
 import SettingsButton from '@/components/nav/SettingsButton.vue';
-import DisplayModeButton from '@/components/nav/DisplayModeButton.vue';
+import DisplayModeButton from '@/components/layout/DisplayModeButton.vue';
 import TableLayoutButton from '@/components/nav/TableLayoutButton.vue';
 import GridLayoutButton from '@/components/nav/GridLayoutButton.vue';
 import ToggleDistractionsButton from '@/components/nav/ToggleDistractionsButton.vue';
