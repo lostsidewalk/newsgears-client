@@ -63,8 +63,6 @@ const i18n = createI18n({
       enterAndConfirmNewPw: 'Ingresa y confirma tu nueva contraseña.',
       pwUpdated: 'Contraseña actualiza.',
       registrationRequirements: 'Se requiere nombre de usuario, dirección de correo electrónico y contraseña para registrarse.',
-      youHaveBeenLoggedOut: 'Has sido desconectado.',
-      clickHereToStartOver: 'Haga clic aquí para empezar de nuevo.',
       // landing
       createAnAccount: 'Crear una cuenta',
       whatIsFeedGears: 'Un lector de feeds seguro, privado y accesible.',
@@ -464,8 +462,6 @@ const i18n = createI18n({
       enterAndConfirmNewPw: 'Enter and confirm your new password.',
       pwUpdated: 'Password updated.',
       registrationRequirements: 'Username, email address, and password are required in order to register.',
-      youHaveBeenLoggedOut: 'You\'ve been logged out.',
-      clickHereToStartOver: 'Click here to start over.',
       // landing 
       createAnAccount: 'Create an account',
       whatIsFeedGears: 'A secure, private, accessible feed reader.',
