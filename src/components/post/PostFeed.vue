@@ -264,7 +264,7 @@ import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 // post item filter 
 import FeedFilter from "./filter/FeedFilter.vue";
 import FeedFilterPills from "./filter/FeedFilterPills.vue";
-import PostFeedAudio from '@/components/post/PostFeedAudio.vue';
+import PostFeedAudio from '@/components/post-feed-audio/PostFeedAudio.vue';
 // post item 
 import PostItem from "./PostItem.vue";
 // feed dashboard 
