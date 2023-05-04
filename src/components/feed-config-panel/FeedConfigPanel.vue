@@ -164,14 +164,14 @@
 
 <script>
 import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-import TabHeader from '../../layout/TabHeader.vue';
-import FeedConfigTextField from './FeedConfigTextField.vue';
-import FeedConfigImageField from './FeedConfigImageField.vue';
+import TabHeader from '@/components/layout/TabHeader.vue';
+import FeedConfigTextField from '@/components/feed-config-panel/FeedConfigTextField.vue';
+import FeedConfigImageField from '@/components/feed-config-panel/FeedConfigImageField.vue';
 import { required, maxLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
-import SubscriptionsConfig from './SubscriptionsConfig.vue';
-import FeedCollectionsBrowser from './FeedCollectionsBrowser.vue';
-import FeedCatalogSearch from './FeedCatalogSearch.vue';
+import SubscriptionsConfig from '@/components/feed-config-panel/SubscriptionsConfig.vue';
+import FeedCollectionsBrowser from '@/components/feed-config-panel/FeedCollectionsBrowser.vue';
+import FeedCatalogSearch from '@/components/feed-config-panel/FeedCatalogSearch.vue';
 
 
 export default {

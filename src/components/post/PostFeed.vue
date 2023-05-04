@@ -253,7 +253,7 @@ import lunr from 'lunr';
 // confirmation modal dialog 
 import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 // feed configuration panel 
-import FeedConfigPanel from "./feed/FeedConfigPanel.vue";
+import FeedConfigPanel from "@/components/feed-config-panel/FeedConfigPanel.vue";
 // OPML upload panel 
 import OpmlUploadPanel from "@/components/opml-upload-panel/OpmlUploadPanel.vue";
 // navbar 
