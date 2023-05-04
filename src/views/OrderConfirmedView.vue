@@ -39,7 +39,7 @@
   
 <script>
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
-import ControlPanel from "@/components/layout/ControlPanel.vue";
+import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
 import ViewHeader from "@/components/layout/ViewHeader.vue";
 import LastServerMessage from "@/components/layout/LastServerMessage.vue";

@@ -260,7 +260,7 @@ import OpmlUploadPanel from "./opml/OpmlUploadPanel.vue";
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ViewHeader from "@/components/layout/ViewHeader.vue";
 // settings 
-import ControlPanel from "@/components/layout/ControlPanel.vue";
+import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 // post item filter 
 import FeedFilter from "./filter/FeedFilter.vue";
 import FeedFilterPills from "./filter/FeedFilterPills.vue";
