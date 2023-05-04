@@ -2374,6 +2374,7 @@ footer {
   .staging-header-view-selected {
     flex-grow: 1;
     flex-shrink: 1;
+    flex-basis: min-content;
   }
 
   .feed-select-view-selected {

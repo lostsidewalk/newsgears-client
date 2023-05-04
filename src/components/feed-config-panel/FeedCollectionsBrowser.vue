@@ -40,7 +40,6 @@
             :disabled="disabled || inTransit"
             :theme="theme"
             :filterSupport="false"
-            style="margin-top: 0.75rem" 
             @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" />
         </div>
     </div>
