@@ -453,7 +453,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: fill-available;
+  height: stretch;
   overflow-y: auto;
   font-family: Arial, Helvetica, sans-serif;
 }

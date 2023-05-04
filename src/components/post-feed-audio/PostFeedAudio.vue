@@ -234,7 +234,7 @@ export default {
 .audio-player-progress {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
   min-width: 50%;
   margin-right: .125rem;
 }
@@ -279,7 +279,7 @@ export default {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  justify-content: start;
+  justify-content: flex-start;
   gap: .5rem;
 }
 </style>
