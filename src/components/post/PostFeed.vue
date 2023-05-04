@@ -255,7 +255,7 @@ import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 // feed configuration panel 
 import FeedConfigPanel from "./feed/FeedConfigPanel.vue";
 // OPML upload panel 
-import OpmlUploadPanel from "./opml/OpmlUploadPanel.vue";
+import OpmlUploadPanel from "@/components/opml-upload-panel/OpmlUploadPanel.vue";
 // navbar 
 import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ViewHeader from "@/components/layout/ViewHeader.vue";
