@@ -257,9 +257,9 @@
 </template>
 
 <script>
-import PostEnclosure from './item/PostEnclosure.vue';
-import PostMedia from './item/PostMedia.vue';
-import PostITunes from './item/PostITunes.vue';
+import PostEnclosure from '@/components/post-item/PostEnclosure.vue';
+import PostMedia from '@/components/post/item/PostMedia.vue';
+import PostITunes from '@/components/post-item/PostITunes.vue';
 
 export default {
   name: "PostItem",

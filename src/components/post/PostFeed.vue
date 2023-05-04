@@ -266,7 +266,7 @@ import FeedFilter from "./filter/FeedFilter.vue";
 import FeedFilterPills from "./filter/FeedFilterPills.vue";
 import PostFeedAudio from '@/components/post-feed-audio/PostFeedAudio.vue';
 // post item 
-import PostItem from "./PostItem.vue";
+import PostItem from "@/components/post-item/PostItem.vue";
 // feed dashboard 
 import FeedSelectButton from './dashboard/FeedSelectButton.vue';
 import FeedDetails from './dashboard/FeedDetails.vue';
