@@ -49,7 +49,12 @@ const i18n = createI18n({
       emailAddress: 'Dirección de correo electrónico',
       inDevelopment: 'Lo sentimos, esta sección de FeedGears aún no está lista. ¡Vuelve a consultar en unos días!',
       // auth 
-      accountRecovery: 'Recuperación de Cuenta',
+      loginToYourAccount: 'Ingrese a su cuenta',
+      accountRecovery: 'Recuperación de cuenta',
+      passwordReset: 'Restablecimiento de contraseña',
+      accountRegistration: 'Registro de cuenta',
+      alreadyHaveAnAccount: '¿Ya tienes una cuenta? Entre aquí.',
+      accountRecoveryHere: '¿Necesitas ayuda para iniciar sesión?',
       registerHere: 'FeedGears es gratis. Crea una cuenta aquí.',
       unableToCompleteYourRequest: 'No pudimos completar su solicitud. Intente iniciar sesión con otro método.',
       usernameAndPasswordAreRequired: 'Se requiere nombre de usuario y contraseña.',
@@ -66,7 +71,7 @@ const i18n = createI18n({
       // landing
       createAnAccount: 'Crear una cuenta',
       whatIsFeedGears: 'Un lector de feeds seguro, privado y accesible.',
-      whyIsFeedGearsFree: 'FeedGears es gratis porque creemos en RSS',
+      whyIsFeedGearsFree: 'FeedGears es gratis porque creemos en RSS.',
       devBlog: 'Blog de desarrollo',
       docs: 'Documentos',
       api: 'API',
@@ -448,14 +453,19 @@ const i18n = createI18n({
       emailAddress: 'Email address',
       inDevelopment: 'Sorry, this section of FeedGears isn\'t quite ready yet.  Check back in a few days!',
       // auth 
-      accountRecovery: 'Account recovery',
+      loginToYourAccount: 'Login to Your Account',
+      accountRecovery: 'Account Recovery',
+      passwordReset: 'Password Reset',
+      accountRegistration: 'Account Registration',
+      alreadyHaveAnAccount: 'Already have an accont? Login here.',
+      accountRecoveryHere: 'Need help signing in?', 
       registerHere: 'FeedGears is free.  Create an account here.',
       unableToCompleteYourRequest: 'We weren\'t able to complete your request.  Please try to login using another method.',
       usernameAndPasswordAreRequired: 'Username and password are required.',
       passwordIsRequired: 'Password is required.',
       usernameIsRequired: 'Username is required.',
       signinWithGoogle: 'Sign in with Google',
-      pwResetRequestMessage: 'Enter your username and email address.  We\'ll send a password reset link to your verified email address."',
+      pwResetRequestMessage: 'Enter your username and email address.  We\'ll send a password reset link to your verified email address.',
       checkEmailForFurther: 'Check your email to further instructions.',
       newPassword: 'New password',
       confirmNewPassword: 'Confirm new password',
@@ -465,7 +475,7 @@ const i18n = createI18n({
       // landing 
       createAnAccount: 'Create an account',
       whatIsFeedGears: 'A secure, private, accessible feed reader.',
-      whyIsFeedGearsFree: 'Free forever because we love RSS',
+      whyIsFeedGearsFree: 'Free forever because we love RSS.',
       devBlog: 'Dev Blog',
       docs: 'Docs',
       api: 'API',
@@ -831,6 +841,17 @@ const i18n = createI18n({
   }
 });
 
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
 createApp(App, {})
     .use(NewsGearsWebPlugin, {})
     .use(NewsGearsThemePlugin)
@@ -841,6 +862,7 @@ createApp(App, {})
     })
     .use(VueAnnouncer)
     .use(i18n)
+    .use(vuetify)
     .use(Vue3NativeNotification, {
       requestOnNotify: true
     })

@@ -1,20 +1,17 @@
 <template>
-  <div id="home">
-    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
+  <v-main>
     <RegistrationRequestPanel ref="registration" 
       :disabled="this.inTransit" 
       :theme="theme" />
-  </div>
+  </v-main>
 </template>
 
 <script>
-import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import RegistrationRequestPanel from "@/components/registration-panel/RegistrationRequestPanel.vue";
 
 export default {
   name: "RegistrationRequestView",
   components: {
-    NavbarFixedHeader,
     RegistrationRequestPanel,
   },
   props: [ "baseUrl" ],
@@ -29,13 +26,6 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-#home {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-</style>
 
 <style>
 .accessible-button {

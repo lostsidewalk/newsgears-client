@@ -13,11 +13,8 @@ export default {
 
 <style scoped>
 .auth-field {
-  margin-left: 2svw;
-  margin-right: 2svw;
-  margin-top: 2svh;
-  margin-bottom: 2svh;
   color: v-bind('theme.normalmessage');
+  padding: .75rem;
 }
 
 .auth-field > a:hover, .auth-field > a:focus-visible {

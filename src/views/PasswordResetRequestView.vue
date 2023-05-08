@@ -1,9 +1,9 @@
 <template>
-  <div id="home" style="height: 100%;">
+  <v-main>
     <PasswordResetRequestPanel ref="passwordReset" 
       :disabled="inTransit" 
       :theme="theme" />
-  </div>
+  </v-main>
 </template>
 
 <script>
@@ -26,13 +26,6 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-#home {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-</style>
 
 <style>
 .accessible-button {

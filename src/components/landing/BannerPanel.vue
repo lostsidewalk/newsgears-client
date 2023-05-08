@@ -1,22 +1,36 @@
 <template>
-  <div>
-    <div class="banner-view">
-      <div class="logocontainer">
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" sm="10">
         <h1 class="logotext">FeedGears RSS</h1>
         <i class="logo fa fa-rss fa-5x"></i>
-      </div>
-      <h2 class="logosubtext fancy">
-        {{ this.$t('whatIsFeedGears') }}
-      </h2>
-      <h2 class="logosubduedtext fancy">
-        {{ this.$t('whyIsFeedGearsFree') }} <span class="fa fa-rss" />
-      </h2>
-      <div class="flex" style="padding-top: 2svh;padding-bottom: 2svh;">
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="12" sm="10">
+        <h2 class="logosubtext fancy">
+          {{ this.$t('whatIsFeedGears') }}
+        </h2>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="12" sm="10">
+        <h2 class="logosubduedtext fancy">
+          {{ this.$t('whyIsFeedGearsFree') }} 
+        </h2>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="12" sm="10">
         <GoogleAuthButton :theme="theme" :disabled="false" />
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="12" sm="10">
         <SignUpButton :disabled="false" :theme="theme" />
-      </div>
-    </div>
-  </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -34,22 +48,10 @@ export default {
 </script>
 
 <style scoped>
-
-.banner-view {
-  border-top: 1px solid v-bind('theme.navbarsubshadow');
-  align-items: center;
-  width: 100%;
-}
-
-.logocontainer {
-  padding-top: 2svh;
-  padding-bottom: 2svh;
-}
-
 .logotext {
   font-family: 'Russo One';
   color: v-bind('theme.logosubtextcolor');
-  text-shadow: 1px 0px 1px v-bind('theme.logocolor');
+  text-shadow: 2px 0px 2px v-bind('theme.logocolor');
 }
 
 .logo {
@@ -61,15 +63,11 @@ export default {
   font-size: 3.0rem;
   color: v-bind('theme.logosubtextcolor');
   text-shadow: 3px 3px 3px v-bind('theme.logosubshadow');
-  padding-top: 2svh;
-  padding-bottom: 2svh;
 }
 
 .logosubduedtext {
   font-size: 2.0rem;
   color: v-bind('theme.logosubtextcolor');
-  padding-top: 1svh;
-  padding-bottom: 1svh;
 }
 
 .fancy {

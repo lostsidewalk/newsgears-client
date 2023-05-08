@@ -1,5 +1,5 @@
 <template>
-  <div class="post-feed-container" id="post-feed-container" v-show="this.$auth.$isAuthenticated">
+  <div class="post-feed-container" id="post-feed-container" v-show="this.$auth.$isAuthenticated" v-auto-animate>
     <audio id="post-feed-audio" />
     <!-- feed delete confirmation modal (hidden) -->
     <ConfirmationDialog ref="feedDeleteConfirmationModal"
@@ -15,15 +15,33 @@
       @confirm="performFeedMarkAsRead" 
       @cancel="cancelFeedMarkAsRead"
       :prompt="this.$t('confirmMarkQueueAsRead')" />
-    <ControlPanel :baseUrl="baseUrl" 
-      ref="controlPanel"
-      :disabled="disabled || inTransit || isModalShowing" 
+    <NavbarFixedHeader :theme="theme" :inTransit="false">
+      <template v-slot:logo>
+        <h2 class="pa-2 logotext">FeedGears RSS</h2>
+      </template>
+      <template v-slot:buttons>
+        <ControlPanel :baseUrl="baseUrl" 
+          ref="controlPanel"
+          :showSettingsPanel="showSettingsPanel"
+          :showHelpPanel="showHelpPanel"
+          :disabled="disabled || inTransit || isModalShowing" 
+          :theme="theme" 
+          @showSettings="this.showSettingsPanel = !this.showSettingsPanel"
+          @showHelp="this.showHelpPanel = !this.showHelpPanel"
+          @cancelSettings="cancelSettings"
+          @updateServerMessage="setLastServerMessage" 
+          @toggleDistractions="toggleDistractions" />
+      </template>
+    </NavbarFixedHeader>
+    <SettingsPanel v-if="this.showSettingsPanel && this.$auth.$isAuthenticated" 
       :theme="theme" 
-      @updateServerMessage="setLastServerMessage" 
-      @toggleDistractions="toggleDistractions" />
-    <NavbarFixedHeader :theme="theme" :inTransit="false" />
+      :disabled="disabled" 
+      :baseUrl="baseUrl" 
+      @updateServerMessage="setLastServerMessage" />
+    <HelpPanel v-if="this.showHelpPanel && this.$auth.$isAuthenticated" 
+      :theme="theme" />
     <div>
-      <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''">
+      <div class="post-feed-container-inner" :class="this.selectedFeedId ? 'post-feed-container-inner-selected' : ''" v-auto-animate>
         <!-- left side, feed selector -- hide when modal is showing -->
         <button class="show-queue-dashboard-button accessible-button" 
           v-if="!this.showQueueDashboard && this.windowWidth >= 1024" 
@@ -50,7 +68,7 @@
                 {{ this.$t('queueDashboard') }}
               </template>
               <template v-slot:body>
-                <div v-if="this.showQueueDashboard" class="queue-dashboard">
+                <div v-if="this.showQueueDashboard" class="queue-dashboard" v-auto-animate>
                   <FeedDashboardButtons v-if="this.showQueueDashboard"
                     :selectedFeedId="this.selectedFeedId" 
                     :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
@@ -58,8 +76,8 @@
                     @rssAtomUrlQuickAdd="rssAtomUrlQuickAdd" 
                     @newFeed="newFeed"
                     @uploadOpml="uploadOpml" /> 
-                  <div v-if="this.filteredFeedIdentOptions.length > 0" class="feed-selectors">
-                    <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper">
+                  <div v-if="this.filteredFeedIdentOptions.length > 0" class="feed-selectors" v-auto-animate>
+                    <div v-for="feed in filteredFeedIdentOptions" :key="feed.id" class="feed-select-wrapper" v-auto-animate>
                       <FeedSelectButton 
                         :feed="feed" 
                         :feedUrl="this.feedUrl"
@@ -69,7 +87,7 @@
                         :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
                         :theme="theme" 
                         @click.stop="this.setSelectedFeedId(feed.id)" />
-                      <div class="feed-info-labels">
+                      <div class="feed-info-labels" v-auto-animate>
                         <!-- manage subscriptions -->
                         <a class="feed-info-label-small link"
                           @click.stop="this.configureFeed(feed.id)"
@@ -105,7 +123,7 @@
           </ViewHeader>
         </div>
         <!-- right side -->
-        <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showQueueDashboard }">
+        <div :class="{ 'staging-header-view-selected': this.selectedFeedId, 'staging-header-view-collapsed': !this.showQueueDashboard }" v-auto-animate>
           <!-- inbound queue header -- hide when modal is showing -->
           <div id="staging-header-view" class="staging-header-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
             <ViewHeader :collapsible="true" 
@@ -130,31 +148,33 @@
                   </div>
                 </div>
                 <!-- feed filter field -->
-                <FeedFilter v-if="this.showFullInboundQueueHeader" 
-                  @toggleSortOrder="toggleInboundQueueSortOrder"
-                  @toggleAllPostDetails="toggleInboundQueuePostDetails"
-                  @refreshFeeds="this.refreshFeeds(null, true)"
-                  @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
-                  @toggleFeedFilterPills="this.showFeedFilterPills = !this.showFeedFilterPills"
-                  @update:modelValue="this.inboundQueueFilter = $event"
-                  :inboundQueueFilter="this.inboundQueueFilter"
-                  :inboundQueueSortOrder="this.inboundQueueSortOrder"
-                  :queueLength="this.filteredInboundQueue.length"
-                  :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
-                  :theme="theme" />
-                <!-- feed filter pills -->
-                <FeedFilterPills v-show="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
-                  :allFilterPills="allFilterPills"
-                  :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
-                  :theme="theme" />
+                <div v-auto-animate>
+                  <FeedFilter v-if="this.showFullInboundQueueHeader" 
+                    @toggleSortOrder="toggleInboundQueueSortOrder"
+                    @toggleAllPostDetails="toggleInboundQueuePostDetails"
+                    @refreshFeeds="this.refreshFeeds(null, true)"
+                    @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
+                    @toggleFeedFilterPills="this.showFeedFilterPills = !this.showFeedFilterPills"
+                    @update:modelValue="this.inboundQueueFilter = $event"
+                    :inboundQueueFilter="this.inboundQueueFilter"
+                    :inboundQueueSortOrder="this.inboundQueueSortOrder"
+                    :queueLength="this.filteredInboundQueue.length"
+                    :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel" 
+                    :theme="theme" />
+                  <!-- feed filter pills -->
+                  <FeedFilterPills v-if="this.showFeedFilterPills && this.showFullInboundQueueHeader" 
+                    :allFilterPills="allFilterPills"
+                    :disabled="disabled || inTransit || isModalShowing || this.showFeedConfigPanel || this.showOpmlUploadPanel"
+                    :theme="theme" />
+                </div>
                 <!-- post feed audio controller -->
                 <PostFeedAudio ref="postFeedAudio" />
               </template>
             </ViewHeader>
           </div>
           <!-- inbound queue -- hide when modal is showing -->
-          <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel">
-            <div :class="{ 'post-grid': this.layoutMode === 'GRID', 'post-table': this.layoutMode === 'TABLE' }">
+          <div class="staging-view" v-if="this.selectedFeedId && !this.showFeedConfigPanel && !this.showOpmlUploadPanel" v-auto-animate>
+            <div :class="{ 'post-grid': this.layoutMode === 'GRID', 'post-table': this.layoutMode === 'TABLE' }" v-auto-animate>
               <PostItem v-for="post in this.getCurrentPage(filteredInboundQueue)" :key="post.id" 
                 :post="post"
                 :id="'post_' + post.id"
@@ -239,9 +259,6 @@
               </template>
             </ViewHeader>
           </div>
-          <div class="logo">
-            <span class="fa fa-rss" style="font-size: 15em;" />
-          </div>
         </div>
       </div>
     </div>
@@ -261,6 +278,8 @@ import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ViewHeader from "@/components/layout/ViewHeader.vue";
 // settings 
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
+import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
+import HelpPanel from '@/components/help-panel/HelpPanel.vue';
 // post item filter 
 import FeedFilter from "@/components/post-feed/FeedFilter.vue";
 import FeedFilterPills from "@/components/post-feed/FeedFilterPills.vue";
@@ -320,7 +339,9 @@ export default {
     ViewHeader,
     NavbarFixedHeader,
     // settings 
-    ControlPanel, 
+    ControlPanel,
+    SettingsPanel,
+    HelpPanel, 
     // filter 
     FeedFilter,
     FeedFilterPills,
@@ -560,7 +581,7 @@ export default {
       return filterPills;
     },
     isModalShowing: function() {
-      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null || this.showHelpPanel);
+      return (this.feedIdToDelete !== null || this.feedIdToMarkAsRead !== null);
     },
     postGridTemplate: function() {
       return this.windowWidth > 1023 ? this.$theme.postGridTemplate : '1fr';
@@ -585,6 +606,7 @@ export default {
       // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
       // show the help modal (t/f) 
+      showSettingsPanel: false,
       showHelpPanel: false,
       // queue dashboard is expanded (t/f) 
       showQueueDashboard: true, 
@@ -622,6 +644,11 @@ export default {
     };
   },
   methods: {
+    // 
+    cancelSettings() {
+      this.showSettingsPanel = false;
+      this.showHelpPanel = false;
+    },
     toggleFeedShowMoreInformation(feedId) {
       // 
       let f = this.getFeedById(feedId);
@@ -2354,7 +2381,12 @@ footer {
   background-color: v-bind('theme.buttonhighlight');
 }
 
-
+.logotext {
+  font-family: 'Russo One';
+  color: v-bind('theme.logosubtextcolor');
+  text-shadow: 2px 0px 2px v-bind('theme.logocolor');
+  float: left;
+}
 @media (max-width: 1023px) {
   .staging-header-view-selected, .staging-header-view-collapsed {
     border-top: unset;

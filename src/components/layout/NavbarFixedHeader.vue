@@ -1,6 +1,9 @@
 <template>
   <div class="navbar fixed-header">
-    <slot name="buttons"></slot>
+    <slot name="logo"></slot>
+    <div class="pa-2" style="display: flex;flex-wrap: wrap;justify-content: flex-end;gap: 1rem;flex: auto;">
+      <slot name="buttons"></slot>
+    </div>
     <div class="loader" v-if="this.inTransit">
       <div class="loading_1"></div>
     </div>
@@ -11,9 +14,7 @@
 </template>
 
 <script>
-
 export default {
-  components: { },
   name: "NavbarFixedHeader",
   props: [ "inTransit", "theme" ],
 }
@@ -22,9 +23,13 @@ export default {
 
 <style scoped>
 .navbar.fixed-header {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-evenly;
   width: 100%;
   z-index: 200;
+  overflow: auto;
 }
 
 .loader {

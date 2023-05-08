@@ -2,6 +2,9 @@
   <div id="home">
     <!-- fixed header -->
     <NavbarFixedHeader :theme="theme" :inTransit="false">
+      <template v-slot:logo>
+        <h2 class="pa-2 logotext">FeedGears RSS</h2>
+      </template>
       <template v-slot:buttons>
         <ControlPanel :baseUrl="baseUrl" 
           :disabled="false" 
@@ -191,5 +194,12 @@ export default {
 .footer-link:hover, .footer-link:focus-visible {
   text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
+}
+
+.logotext {
+  font-family: 'Russo One';
+  color: v-bind('theme.logosubtextcolor');
+  text-shadow: 2px 0px 2px v-bind('theme.logocolor');
+  float: left;
 }
 </style>

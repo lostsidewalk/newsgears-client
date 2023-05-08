@@ -1,61 +1,102 @@
 <template>
-  <div class="password-update-container">
-    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-    <!-- password reset panel -->
-    <div class="password-update-container-inner" v-auto-animate>
-      <!-- new password -->
-      <AuthTextField :placeholder="this.$t('newPassword')" 
-        :theme="theme" 
-        :modelValue="this.newPassword" 
-        @update:modelValue="this.username = $event"
-        :type="'password'" 
-        :disabled="disabled || inTransit" />
-      <!-- new password (confirm) -->
-      <AuthTextField :placeholder="this.$t('confirmNewPassword')" 
-        :theme="theme" 
-        :modelValue="this.newPasswordConfirmed" 
-        @update:modelValue="this.username = $event"
-        :type="'password'" 
-        :disabled="disabled || inTransit" />
-      <!-- submit button -->
-      <AuthButton
-        :label="this.$t('submit')"
-        :theme="theme"
-        @clicked="submitPwUpdate()"
-        :disabled="disabled || inTransit" />
-      <!-- server response -->
-      <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
-      <!-- footer -->
-      <AuthFooterView :theme="theme" />
-    </div>
-  </div>
+  <v-container>
+    <!-- row -->
+    <v-row align="center" justify="center">
+      <!-- col -->
+      <v-col cols="12" sm="10">
+        <!-- card -->
+        <v-card elevation="6" class="mt-10">
+          <!-- window -->
+          <v-window v-model="step">
+            <!-- window item -->
+            <v-window-item :value="1">
+              <!-- row -->
+              <v-row>
+                <!-- col -->
+                <v-col cols="12">
+                  <!-- card-text -->
+                  <v-card-text class="mt-12 mb-12">
+                    <!-- banner (large) -->
+                    <h4 class="text-center mt-4 mb-4">{{ this.$t('passwordReset') }}</h4>
+                    <!-- banner (small) -->
+                    <h6 class="text-center mt-4-mb-4">{{ this.$t('enterAndConfirmNewPw') }}</h6>
+                    <!-- row -->
+                    <v-row align="center" justify="center">
+                      <!-- col -->
+                      <v-col cols="12" sm="8" v-auto-animate>
+                        <!-- new password -->
+                        <AuthTextField 
+                          class="mt-4 mb-4"
+                          type="password"
+                          :label="this.$t('newPassword')" 
+                          :placeholder="this.$t('newPassword')" 
+                          :theme="theme" 
+                          :modelValue="this.newPassword" 
+                          :disabled="disabled || inTransit" 
+                          @update:modelValue="this.newPassword = $event" 
+                          />
+                          <!-- new password (confirm) -->
+                        <AuthTextField 
+                          class="mt-4 mb-4"
+                          type="password"
+                          :label="this.$t('confirmNewPassword')" 
+                          :placeholder="this.$t('confirmNewPassword')" 
+                          :theme="theme" 
+                          :modelValue="this.newPasswordConfirmed" 
+                          :disabled="disabled || inTransit" 
+                          @update:modelValue="this.newPasswordConfirmed = $event" 
+                          />
+                        <v-row class="mb-4">
+                          <v-col cols="12">
+                            <!-- submit button -->
+                            <AuthButton
+                              :label="this.$t('submit')"
+                              :theme="theme"
+                              @clicked="submitPwUpdate()"
+                              :disabled="disabled || inTransit" />
+                          </v-col>
+                        </v-row>
+                        <AuthServerResponse :serverMessage="serverMessage" :theme="theme" />
+                        <div class="footer-view mt-4 mb-4">
+                          <AuthPanelLink :to="'/privacy'" :message="this.$t('privacyPolicy')" :theme="theme" />
+                        </div>
+                      </v-col>
+                    </v-row>  
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-window-item>
+          </v-window>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-import AuthTextField from '@/components/auth/AuthTextField.vue';
 import AuthButton from '@/components/auth/AuthButton.vue'
+import AuthTextField from '@/components/auth/AuthTextField.vue';
+import AuthPanelLink from '@/components/auth/AuthPanelLink.vue';
 import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
-import AuthFooterView from '@/components/auth/AuthFooterView.vue';
 
 export default {
   components: {
-    NavbarFixedHeader,
     AuthTextField,
     AuthButton,
-    AuthServerResponse,
-    AuthFooterView,
+    AuthPanelLink,
+    AuthServerResponse, 
 },
   props: [ "disabled", "theme" ],
   data() {
     return {
+      step: null,
       // new password/new password confirmed 
       newPassword: null,
       newPasswordConfirmed: null,
       // server response/initiating action 
-      serverMessage: this.$t('enterAndConfirmNewPw'),
+      serverMessage: null,
       // 
-      inTransit : false,
+      inTransit: false,
     }
   },
   methods: {
@@ -77,7 +118,6 @@ export default {
             this.serverMessage = this.$t('pwUpdated');
           })
           .catch((error) => {
-            this.lastAction = "PW_UPDATE";
             this.serverMessage = error;
           })
           .finally(() => {
@@ -94,7 +134,6 @@ export default {
       this.clearServerResponse();
     },
     clearServerResponse() {
-      this.lastAction = null;
       this.serverMessage = null;
     }
   }
@@ -102,20 +141,11 @@ export default {
 </script>
 
 <style scoped>
-.password-update-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  font-size: larger; 
-}
-
-.password-update-container-inner {
-  margin: 2%;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  background: v-bind('theme.sectionhighlight');
-  border-radius: 4px;
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
+.footer-view {
+  border-top: 1px solid v-bind('theme.navbarsubshadow');
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  padding: 1.25rem;
 }
 </style>

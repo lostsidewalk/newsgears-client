@@ -1,9 +1,10 @@
 <template>
-  <button class="signup-button accessible-button" 
-    @click="this.$router.push('/register')" 
-    :disabled="disabled">
+  <v-btn depressed outlined 
+    class="signup-button"
+    :disabled="disabled"
+    @click="this.$router.push('/register')">
     {{ this.$t('createAnAccount') }}
-  </button>
+  </v-btn>
 </template>
 
 <script>
@@ -15,27 +16,8 @@ export default {
 
 <style scoped>
 .signup-button {
+  min-height: 3rem;
   padding: .75rem 1rem;
-  border-radius: 4px;
-  border: 1px solid v-bind('theme.buttonborder');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  cursor: pointer;
   font-weight: bold;
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  margin: .56rem;
-  text-align: center;
-}
-
-.signup-button:disabled {
-  cursor: auto;
-}
-
-.signup-button:hover, .signup-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.signup-button:hover:disabled {
-  background-color: unset;
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <div class="auth-field">
-    <input
-      :type="type ? type : 'text'"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      @input="this.$emit('update:modelValue', $event.target.value)"
-    />
-  </div>
+  <v-text-field
+    outlined
+    dense
+    autocomplete="false"
+    :label="this.label"
+    :placeholder="placeholder"
+    :value="modelValue"
+    :type="type ? type : 'text'"
+    @input="this.$emit('update:modelValue', $event.target.value)" />
 </template>
 
 <script>
@@ -15,32 +15,7 @@
 export default {
   name: "AuthTextField",
   components: { },
-  props: [ "placeholder", "type", "disabled", "theme", "modelValue", "errorValue" ],
+  props: [ "label", "placeholder", "type", "disabled", "theme", "modelValue", "errorValue" ],
   emits: [ "update:modelValue" ],
 };
 </script>
-
-<style scoped>
-.auth-field {
-  margin-left: 2svw;
-  margin-right: 2svw;
-  margin-top: 2svh;
-  margin-bottom: 2svh;
-}
-
-.auth-field > input {
-  padding: .44rem;
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.normalmessage');
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-}
-
-.auth-field > input:hover, .auth-field > input:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-</style>

@@ -1,53 +1,55 @@
 <template>
-  <div class="modal-container">
-    <div class="modal-body">
+  <v-container>
+    <v-row elevation="6" class="pa-4">
+      <v-col cols=12 align="left">
       <!-- global -->
       <h3 class="view-header-no-count">{{ this.$t('globalShortcutKeys') }}</h3>
-      <div class="keyboard-shortcut-container">
-        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel.fromAnywhere" :key="desc">
-          <span class="keyboard-label-wrapper">
-            {{ desc.label }}
-          </span>
-          <div class="keyboard-key-wrapper">
-            <div class="keyboard-key">
+      <div class="d-flex flex-row flex-wrap">
+        <v-card class="ma-4" max-width="320" v-for="desc in this.helpModel.fromAnywhere" :key="desc">
+          <v-card-title>
+            <v-btn>
               <i v-if="desc.icon" :class="'fa ' + desc.icon" />
               <span v-if="desc.key">{{ desc.key }}</span>
-            </div>
-          </div>
-        </div>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            {{  desc.label }}
+          </v-card-text>
+        </v-card>
       </div>
       <!-- queue selected -->
       <h3 class="view-header-no-count">{{ this.$t('whenAQueueIsSelected') }}</h3>
-      <div class="keyboard-shortcut-container">
-        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel.aQueueIsSelected" :key="desc">
-          <span class="keyboard-label-wrapper">
-            {{ desc.label }}
-          </span>
-          <div class="keyboard-key-wrapper">
-            <div class="keyboard-key">
+      <div class="d-flex flex-row flex-wrap">
+        <v-card class="ma-4" max-width="320" v-for="desc in this.helpModel.aQueueIsSelected" :key="desc">
+          <v-card-title>
+            <v-btn>
               <i v-if="desc.icon" :class="'fa ' + desc.icon" />
               <span v-if="desc.key">{{ desc.key }}</span>
-            </div>
-          </div>
-        </div>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            {{ desc.label }}
+          </v-card-text>
+        </v-card>
       </div>
       <!-- post selected -->
       <h3 class="view-header-no-count">{{ this.$t('whenAPostIsSelected') }}</h3>
-      <div class="keyboard-shortcut-container">
-        <div class="keyboard-shortcut-desc" v-for="desc in this.helpModel.aPostIsSelected" :key="desc">
-          <span class="keyboard-label-wrapper">
-            {{ desc.label }}
-          </span>
-          <div class="keyboard-key-wrapper">
-            <div class="keyboard-key">
+      <div class="d-flex flex-row flex-wrap">
+        <v-card class="ma-4" max-width="320" v-for="desc in this.helpModel.aPostIsSelected" :key="desc">
+          <v-card-title>
+            <v-btn>
               <i v-if="desc.icon" :class="'fa ' + desc.icon" />
               <span v-if="desc.key">{{ desc.key }}</span>
-            </div>
-          </div>
-        </div>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            {{ desc.label }}
+          </v-card-text>
+        </v-card>
       </div>
-    </div>
-  </div>
+      </v-col>      
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -217,7 +219,7 @@ export default {
 }
 
 .keyboard-key {
-  padding: .75rem;
+  /* padding: .75rem;
   border: 1px solid v-bind('theme.buttonborder');
   border-radius: 4px;
   box-shadow: 3px 3px 1px v-bind('theme.darkshadow');
@@ -225,7 +227,7 @@ export default {
   background-color: v-bind('theme.buttonbg');
   margin: .56rem;
   user-select: none;
-  white-space: nowrap;
+  white-space: nowrap; */
 }
 
 .keyboard-key-wrapper {

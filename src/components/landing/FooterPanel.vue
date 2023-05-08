@@ -2,45 +2,45 @@
   <div>
     <div class="links-view">
       <!-- TODO: (refactor) extract component -->
-      <button class="footer-link" 
+      <v-btn class="footer-link" 
         :aria-label="this.$t('visitLSDevBlogAriaLabel')" 
         @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')">
         <span class="fa fa-code-fork" /> &nbsp; {{ this.$t('devBlog') }}
-      </button>
-      <button class="footer-link" @click.prevent="this.$router.push('/docs');">
+      </v-btn>
+      <v-btn class="footer-link" @click.prevent="this.$router.push('/docs');">
         <span class="fa fa-question-circle" /> &nbsp; {{ this.$t('docs') }}
-      </button>
-      <button class="footer-link" @click.prevent="this.$router.push('/privacy');">
+      </v-btn>
+      <v-btn class="footer-link" @click.prevent="this.$router.push('/privacy');">
         <span class="fa fa-file-text" /> &nbsp; {{ this.$t('privacyPolicy') }}
-      </button>
-      <button class="footer-link" @click.prevent="this.$router.push('/api');">
+      </v-btn>
+      <v-btn class="footer-link" @click.prevent="this.$router.push('/api');">
         <span class="fa fa-plug" /> &nbsp; {{ this.$t('api') }}
-      </button>
-      <button class="footer-link" 
+      </v-btn>
+      <v-btn class="footer-link" 
         :aria-label="this.$t('emailSupportArialLabel')" 
         @click.prevent="window.open('mailto:support@feedgears.com', '_blank')">
         <span class="fa fa-envelope" /> &nbsp; {{ this.$t('email') }}
-      </button>
-      <button class="footer-link" 
+      </v-btn>
+      <v-btn class="footer-link" 
         :aria-label="this.$t('visitLSTwitterAriaLabel')" 
         @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')">
         <span class="fa fa-twitter" /> &nbsp; {{ this.$t('twitter') }}
-      </button>
-      <button class="footer-link" 
+      </v-btn>
+      <v-btn class="footer-link" 
         :aria-label="this.$t('visitLSGithubArialLabel')" 
         @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')">
         <span class="fa fa-github" /> &nbsp; {{ this.$t('github') }}
-      </button>
-      <button class="footer-link" 
+      </v-btn>
+      <v-btn class="footer-link" 
         :aria-label="this.$t('visitLSTwitchAriaLabel')" 
         @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')">
         <span class="fa fa-twitch" /> &nbsp; {{ this.$t('twitch') }}
-      </button>
-      <button class="footer-link" 
+      </v-btn>
+      <v-btn class="footer-link" 
         :aria-label="this.$t('visitLSDiscordAriaLabel')" 
         @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')">
         <span class="fa fa-comments-o" /> &nbsp; {{ this.$t('discord') }}
-      </button>
+      </v-btn>
     </div>
     <div class="footer-divider"/>
     <div class="copyright-view">
@@ -79,7 +79,6 @@ export default {
 }
 
 .footer-link:hover, .footer-link:focus-visible {
-  text-decoration: underline;
   color: v-bind('theme.highlightedmessage');
 }
 

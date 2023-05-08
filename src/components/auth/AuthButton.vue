@@ -1,14 +1,10 @@
 <template>
-  <div>
-    <button
-      :disabled="disabled"
-      type="button"
-      @click="onClick()"
-      class="auth-button accessible-button">
-      {{ label }}<br />
-      {{ subLabel }}
-    </button>
-  </div>
+  <v-btn depressed outlined block 
+    class="auth-button"
+    :disabled="disabled"
+    @click="onClick()">
+    {{ label }}
+  </v-btn>
 </template>
   
 <script>
@@ -24,46 +20,10 @@ export default {
 </script>
 
 <style scoped>
-/** has references */
 .auth-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  margin: 4%;
-  cursor: pointer;
-  border-radius: 4px;
-  text-align: center;
-  user-select: none;
-}
-
-@media (max-width: 640px) {
-  .auth-button {
-    margin-left: 2%;
-    margin-right: 2%;
-  }
-}
-
-@media (max-width: 320px) {
-  .auth-button {
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
-/** has-references */
-.auth-button:hover, .auth-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-/** has-references */
-.auth-button:disabled {
-  cursor: auto;
-}
-
-/** has-references */
-.auth-button:disabled:hover {
-  background-color: unset;
+  max-width: 256px;
+  min-height: 3rem;
+  padding: .75rem 1rem .75rem 2.625rem;
+  font-weight: bold;
 }
 </style>

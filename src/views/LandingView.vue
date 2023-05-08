@@ -1,23 +1,25 @@
 <template>
-  <div id="landing" style="height: 100%;">
-    <div class="background" />
+  <v-main>
     <!-- fixed header -->
     <NavbarFixedHeader :theme="theme" :inTransit="false" class="landing-navbar">
+      <template v-slot:logo>
+        <h2 class="pa-2 logotext">FeedGears RSS</h2>
+      </template>
       <template v-slot:buttons>
         <PreLoginNavbarButtons :baseUrl="baseUrl" :theme="theme"/>
       </template>
     </NavbarFixedHeader>
 
-    <BannerPanel :theme="theme" class="banner" />
+    <BannerPanel :theme="theme" class="panel" />
 
-    <DemoPanel :theme="theme" class="demo" /> 
+    <DemoPanel :theme="theme" class="panel" /> 
 
-    <FeaturesPanel :theme="theme" class="features" /> 
+    <FeaturesPanel :theme="theme" class="panel" /> 
 
-    <FAQPanel :theme="theme" class="faq" />
+    <FAQPanel :theme="theme" class="panel" />
 
-    <FooterPanel :theme="theme" class="footer" />
-</div>
+    <FooterPanel :theme="theme" class="panel" />
+  </v-main>
 </template>
   
 <script>
@@ -64,12 +66,6 @@ export default {
 </script>
   
 <style scoped>
-#landing {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: v-bind('theme.normalmessage');
-}
-
 .landing-navbar {
   position: sticky;
   top: 0;
@@ -78,23 +74,21 @@ export default {
   box-shadow: 0px 3px 3px v-bind('theme.darksubshadow');
 }
 
-.banner {
-  background-image: linear-gradient(180deg, v-bind('theme.lightshadow'), v-bind('theme.darkshadow'));
+.panel {
+  overflow: auto;
 }
 
-.demo {
-  background-image: linear-gradient(180deg, v-bind('theme.darkshadow'), v-bind('theme.appbg'));
+.panel-divider {
+  margin: 2svw;
+  height: 2px;
+  background-color: v-bind('theme.navbarsubshadow');
 }
 
-.features {
-  background-image: linear-gradient(180deg, v-bind('theme.appbg'), v-bind('theme.bodybg'));
-}
-
-.faq {
-}
-
-.footer {
-
+.logotext {
+  font-family: 'Russo One';
+  color: v-bind('theme.logosubtextcolor');
+  text-shadow: 2px 0px 2px v-bind('theme.logocolor');
+  float: left;
 }
 </style>
 

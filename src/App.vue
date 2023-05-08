@@ -1,11 +1,11 @@
 <template>
-  <div id="apphome">
+  <v-app id="apphome" theme="dark" class="text-center">
     <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
         </transition>
     </router-view>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -27,8 +27,6 @@ export default {
 #apphome {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  font-family: Arial, Helvetica, system-ui, sans-serif;
 }
 
 @font-face {
