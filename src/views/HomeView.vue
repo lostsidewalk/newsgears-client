@@ -146,40 +146,43 @@
           @authError="handleServerError" />
       </v-dialog>
 
-      <!-- feed filter  -->
-      <FeedFilter v-if="this.selectedFeedId"
-        class="mb-4 rounded-0" 
-        :inboundQueueFilter="this.inboundQueueFilter"
-        :inboundQueueSortOrder="this.inboundQueueSortOrder"
-        :queueLength="this.filteredInboundQueue.length"
-        :queueName="this.getSelectedFeed().title"
-        :allFilterPills="this.allFilterPills"
-        :theme="theme" 
-        @toggleSortOrder="toggleInboundQueueSortOrder"
-        @refreshFeeds="this.refreshFeeds(null, true)"
-        @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
-        @update:modelValue="this.inboundQueueFilter = $event" />
+      <v-container class="post-feed-container d-flex flex-column flex-grow-1 rounded mt-4">
+        <!-- feed filter  -->
+        <FeedFilter v-if="this.selectedFeedId"
+          class="rounded-0" 
+          :class="{ 'mb-4': this.filteredInboundQueue.length > 0 }"
+          :inboundQueueFilter="this.inboundQueueFilter"
+          :inboundQueueSortOrder="this.inboundQueueSortOrder"
+          :queueLength="this.filteredInboundQueue.length"
+          :queueName="this.getSelectedFeed().title"
+          :allFilterPills="this.allFilterPills"
+          :theme="theme" 
+          @toggleSortOrder="toggleInboundQueueSortOrder"
+          @refreshFeeds="this.refreshFeeds(null, true)"
+          @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
+          @update:modelValue="this.inboundQueueFilter = $event" />
 
-      <!-- post feed audio controller -->
-      <PostFeedAudio ref="postFeedAudio" v-if="this.selectedFeedId" />
+        <!-- post feed audio controller -->
+        <PostFeedAudio ref="postFeedAudio" v-if="this.selectedFeedId" />
 
-      <!-- inbound queue -->
-      <PostItem v-for="post in this.filteredInboundQueue" :key="post.id" 
-        :post="post"
-        :id="'post_' + post.id"
-        :ref="'post_' + post.id"
-        :theme="theme" 
-        :baseUrl="baseUrl"
-        :compact="this.layoutMode === 'TABLE'"
-        :sharingOptions="sharingOptions"
-        class="ma-4"
-        @openPostUrl="openPostUrl(post.id)"
-        @updatePostReadStatus="updatePostReadStatus"
-        @updatePostPubStatus="updatePostPubStatus" 
-        @updatePostFeedFilter="updatePostFeedFilter" 
-        @playing="onMediaPlaying" 
-        @audioPlay="onAudioPlay" 
-        @share="$event => this.share($event.sharingOption, $event.post)" />
+        <!-- inbound queue -->
+        <PostItem v-for="post in this.filteredInboundQueue" :key="post.id" 
+          :post="post"
+          :id="'post_' + post.id"
+          :ref="'post_' + post.id"
+          :theme="theme" 
+          :baseUrl="baseUrl"
+          :compact="this.layoutMode === 'TABLE'"
+          :sharingOptions="sharingOptions"
+          class="ma-4"
+          @openPostUrl="openPostUrl(post.id)"
+          @updatePostReadStatus="updatePostReadStatus"
+          @updatePostPubStatus="updatePostPubStatus" 
+          @updatePostFeedFilter="updatePostFeedFilter" 
+          @playing="onMediaPlaying" 
+          @audioPlay="onAudioPlay" 
+          @share="$event => this.share($event.sharingOption, $event.post)" />
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -1607,29 +1610,6 @@ export default {
         event.preventDefault();
       }
     },
-    // wheelHandler(wheelEvent) {
-    //   if (!this.selectedFeedId) {
-    //     return;
-    //   }
-    //   if (wheelEvent.deltaY <= 0) {
-    //     return true;
-    //   }
-    //   let c = document.getElementById('post-feed-container');
-    //   if (c) {
-    //     let w = (window.innerHeight + window.scrollY);
-    //     if (w >= c.offsetHeight) {
-    //       if (this.atBottomOfPage) {
-    //         this.atBottomOfPage = false;
-    //         this.nextPage(false);
-    //         wheelEvent.stopPropagation();
-    //       } else {
-    //         this.atBottomOfPage = true;
-    //       }
-    //     } else {
-    //       this.atBottomOfPage = false;
-    //     }
-    //   }
-    // }
   }
 };
 </script>
@@ -1677,5 +1657,10 @@ body {
 .v-navigation-drawer__content {
  overflow-y: scroll !important;
  overflow-x: auto !important;
+}
+
+.post-feed-container {
+  background-color: ghostwhite;
+  border: 1px solid;
 }
 </style>

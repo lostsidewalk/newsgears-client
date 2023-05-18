@@ -4,13 +4,13 @@
     :class="{ 'post-read' : post.isRead }"
     @click="this.showFullPost = !this.showFullPost">
     <!-- title + thumbnail -->
-    <v-card-title class="d-flex flex-row flex-auto pa-4 flex-wrap align-start">
+    <v-card-title class="d-flex flex-row flex-auto pa-4 flex-wrap align-start" style="gap: 1rem;">
       <v-img v-if="post.postImgSrc" 
-        class="post-thumbnail"
+        class="post-thumbnail roundedm"
         :src="post.postImgSrc"
         :alt="this.$t('postThumbnailImage')" 
         width="140" max-height="140" max-width="140" /> 
-      <div class="d-flex flex-column flex-auto flex-grow-1 flex-wrap">
+      <div class="d-flex flex-column flex-auto flex-grow-1">
         <div v-if="isHtmlContent(post.postTitle)" 
           class="post-html-frame"
           v-html="post.postTitle.value" frameborder="0" />
