@@ -1,74 +1,85 @@
 <template>
-  <div class="feed-info-details">
-    <!-- subscriptions label -->
-    <label class="feed-info-label-small" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
-      {{ this.$t('subscriptions') }}
-    </label>
-    <!-- subscriptions -->
-    <label class="feed-info-label subscription-label" 
-      v-for="rssAtomFeedUrl of this.rssAtomFeedUrls" :key="rssAtomFeedUrl" 
-      :title='buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)'>
-      <!-- feed logo image -->
-      <img v-if="rssAtomFeedUrl.image" 
-        :src="rssAtomFeedUrl.image.url"
-        :alt="this.$t('feedLogoImage')" 
-        height="24" /> 
-      <!-- RSS logo -->
-      <img v-else 
-        src="rss_logo.svg" 
-        :alt="this.$t('rssLogo')" 
-         height="24" /> 
-      <!-- last http status -->
-      <span v-if="hasFeedMetrics(rssAtomFeedUrl)">
-        {{ buildImportCtMessage(rssAtomFeedUrl.feedMetrics) }}
-      </span>
-      <!-- feed title/URL -->
-      <a class="link" :class="{ 'link-disabled': disabled }" href="#"
-        @click.stop="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
-        @keypress.enter.prevent="this.$emit('updatePostFeedFilter', { name: 'subscriptionId', value: rssAtomFeedUrl.id, feed: rssAtomFeedUrl })" 
-        tabindex="0">
-        {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title.value : rssAtomFeedUrl.feedUrl }}
-      </a>
-    </label>
-    <!-- publications -->
-    <label class="feed-info-label-small">
-      {{ this.$t('publications') }}
-    </label>
-    <button class="helptext fa fa-question" :title="this.$t('starredArticlesAvailableHere')"/>
-    <label class="feed-info-label subscription-label">
-      <a class="link" 
-        :href="this.jsonPubUrl" 
-        target="_blank"
-        :disabled="disabled">
-        <span class="fa fa-link fa-1x" />
-      </a>
-      JSON
-    </label>
-    <label class="feed-info-label subscription-label">
-      <a class="link" 
-        :href="this.rssPubUrl" 
-        target="_blank"
-        :disabled="disabled">
-        <span class="fa fa-link fa-1x" />
-      </a>
-      RSS
-    </label>
-    <label class="feed-info-label subscription-label">
-      <a class="link" 
-        :href="this.atomPubUrl" 
-        target="_blank"
-        :disabled="disabled">
-        <span class="fa fa-link fa-1x" />
-      </a>
-      ATOM
-    </label>
-  </div>
+  <v-sheet>
+    <v-card class="ma-4" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
+      <!-- subscriptions label -->
+      <v-card-title>
+        {{ this.$t('subscriptions') }}
+      </v-card-title>
+      <!-- subscriptions -->
+      <v-divider />
+      <v-list>
+        <v-list-item v-for="rssAtomFeedUrl of this.rssAtomFeedUrls" :key="rssAtomFeedUrl"
+          class="ma-2 pa-2"
+          :title="rssAtomFeedUrl.title ? rssAtomFeedUrl.title : rssAtomFeedUrl.feedUrl">
+          <template v-slot:subtitle>
+            {{ rssAtomFeedUrl.feedUrl }}
+            <v-divider class="mb-1 mt-1" />
+          </template>
+          <template v-slot:prepend>
+            <!-- feed logo image -->
+            <v-img v-if="rssAtomFeedUrl.image" 
+              class="ma-2"
+              :src="rssAtomFeedUrl.image.url"
+              :alt="this.$t('feedLogoImage')" 
+              width="48" 
+              max-width="48"
+              max-height="48" /> 
+            <!-- RSS logo -->
+            <v-img v-else 
+              src="rss_logo.svg" 
+              :alt="this.$t('rssLogo')" 
+              width="48" 
+              max-width="48"
+              max-height="48" /> 
+          </template>
+          <v-list-item-action>
+            <!-- TODO: click here should go to subscriptions config -> RSS feed metrics for this sub -->
+            <v-btn size="x-small" class="mr-2"
+              variant="outlined"
+              :text="buildImportCtMessage(rssAtomFeedUrl.feedMetrics)" 
+              :title="buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)" />
+            <v-btn size="x-small" class="border-0"
+              variant="outlined"
+              icon="fa-filter"
+              @click.stop="this.$emit('updatePostFeedFilter', {
+                name: 'subscription', 
+                feedId: rssAtomFeedUrl.feedId,
+                value: rssAtomFeedUrl.title,
+              })" />
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="ma-4">
+      <!-- publications label -->
+      <v-card-title>
+        {{ this.$t('publications') }}
+      </v-card-title>
+      <v-divider />
+      <v-card-actions>
+        <v-btn-group>
+          <v-btn label
+            :href="this.jsonPubUrl" >
+            <v-icon start icon="fa-link" /> JSON
+          </v-btn>
+          <v-btn label
+            :href="this.rssPubUrl" >
+            <v-icon start icon="fa-link" /> RSS
+          </v-btn>
+          <v-btn label
+            :href="this.atomPubUrl">
+            <v-icon start icon="fa-link" /> ATOM
+          </v-btn>
+        </v-btn-group>
+      </v-card-actions>
+    </v-card>
+  </v-sheet>
 </template>
 
 <script>
 export default {
   name: "FeedDetails",
-  props: ["rssAtomFeedUrls", "jsonPubUrl", "rssPubUrl", "atomPubUrl", "disabled", "theme"],
+  props: ["rssAtomFeedUrls", "jsonPubUrl", "rssPubUrl", "atomPubUrl", "theme"],
   emits: ["updatePostFeedFilter"], 
   methods: {
     // shown on hover 
@@ -115,7 +126,10 @@ export default {
     // shown next to the RSS/ATOM icon 
     buildImportCtMessage(feedMetrics) {
       let m = this.getMostRecentMetric(feedMetrics);
-      return '+' + (m.persistCt > 0 ? m.persistCt : 0);
+      if (m) {
+        return '+' + (m.persistCt > 0 ? m.persistCt : 0);
+      }
+      return '';
     },
     getMostRecentMetric(feedMetrics) {
       if (feedMetrics) {
@@ -127,79 +141,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.feed-info-details {
-  display: block !important;
-  text-align: left !important;
-  /* color: v-bind('theme.buttonfg'); */
-  padding: .44rem;
-  text-align: center;
-  align-self: start;
-  user-select: none;
-  z-index: 0;
-}
-
-.feed-info-label {
-  display: flex;
-  align-items: center;
-  padding: .44rem;
-  gap: .44rem;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  font-family: Arial, Helvetica, sans-serif;
-  color: v-bind('theme.normalmessage');
-}
-
-.feed-info-label > img {
-  max-height: 24px;
-  max-width: 24px;
-  padding-right: .44rem;
-  object-fit: scale-down;
-}
-
-.feed-info-label > span {
-  padding-right: .44rem;
-  word-wrap: break-word;
-  word-break: keep-all;
-}
-
-.feed-info-label-small {
-  max-width: fit-content;
-  color: v-bind('theme.subduedmessage');
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.subscription-label {
-  margin-top: .31rem;
-  margin-bottom: .31rem;
-}
-
-.helptext {
-  background-color: unset;
-  border: 1px solid v-bind('theme.buttonborder');
-  color: v-bind('theme.buttonfg');;
-  cursor: help;
-  border-radius: 4px;
-  text-align: center;
-  margin-top: .125rem;
-  margin-left: .44rem;
-}
-
-.link {
-  text-decoration: none;
-  color: unset;
-  cursor: pointer;
-  border: 1px solid transparent;
-  user-select: none;
-}
-
-.link:hover, .link:focus-visible {
-  text-decoration: underline;
-  color: v-bind('theme.highlightedmessage');
-}
-
-.link-disabled {
-  pointer-events: none;
-}
-</style>

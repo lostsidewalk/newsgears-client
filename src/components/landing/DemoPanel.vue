@@ -1,8 +1,19 @@
 <template>
-  <v-container align="center">
-    <v-card elevation="6" max-width="1024">
-      <v-img class="reader-image" :src="'reader_global_news_' + this.$theme.currentTheme.ident + '.png'" :alt="this.$t('queuePageScreenshot')"/>
-    </v-card>
+  <v-container>
+    <!-- row -->
+    <v-row align="center" justify="center">
+      <!-- col -->
+      <v-col cols="12" sm="10">
+        <v-hover v-slot="{ isHovering, props }">
+          <v-card  :elevation="isHovering ? 7 : 6" 
+            v-bind="props">
+            <v-img class="reader-image" 
+              :src="'reader_global_news_' + this.$theme.currentTheme.ident + '.png'" 
+              :alt="this.$t('queuePageScreenshot')" />
+          </v-card>
+        </v-hover>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

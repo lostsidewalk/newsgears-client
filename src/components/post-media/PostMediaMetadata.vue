@@ -1,16 +1,18 @@
 <template>
-  <div class="post-media-metadata">
-    <img v-for="thumbnail of this.metadata.thumbnails" :key="thumbnail" 
-      :src="thumbnail.url" 
-      style="display: block" 
-      class="post-media-metadata-thumbnail"
-      :alt="this.$t('postMediaThumbnail')" 
-      height="140" />
-    <div>
-      <PostMediaCommunity v-if="this.metadata.community" :community="this.metadata.community" :theme="theme" />
+  <v-card variant="outlined" align="left" justify="left">
+    <v-card-title>
+      <v-img v-for="thumbnail of this.metadata.thumbnails" :key="thumbnail" 
+        :src="thumbnail.url" 
+        :alt="this.$t('postMediaThumbnail')" 
+        max-height="140" max-width="140" width="140" />
+    </v-card-title>
+    <v-card-text v-if="this.metadata.desc">
       <pre style="white-space: pre-line;">{{ this.metadata.desc }}</pre>
-    </div>
-</div>
+    </v-card-text>
+    <v-card-actions v-if="this.metadata.community">
+      <PostMediaCommunity class="pa-2 w-100" :community="this.metadata.community" :theme="theme" />
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
@@ -26,42 +28,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-p {
-  margin: 0rem;
-}
-
-pre {
-  font-family: 'Merriweather', system-ui, system-ui, sans-serif
-}
-
-.post-media-metadata {
-  display: flex;
-  flex-direction: row;
-  gap: .44rem;
-  max-width: fit-content;
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  flex-wrap: wrap;
-}
-
-.post-media-metadata > img {
-  object-fit: scale-down;
-  background-color: currentColor;
-}
-
-.post-media-metadata > label {
-  padding-bottom: .125rem;
-}
-
-.post-media-metadata-thumbnail {
-  max-width: 140px;
-  max-height: 140px;
-  display: inline-block; 
-  background-size: cover; 
-  background-position: center center;
-  background-repeat: no-repeat;
-  align-self: stretch;
-}
-</style>

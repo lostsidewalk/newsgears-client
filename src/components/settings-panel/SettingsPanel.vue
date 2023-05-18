@@ -1,236 +1,209 @@
 <template>
-  <div class="modal-container">
-    <div class="modal-body">
-      <div class="modal-header">
-        <h3 class="view-header-no-count">
-          <span class="fa fa-feed fa-1x" />
-          {{ this.$t('accountSettings') }}
-          <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-        </h3>
-      </div>
-      <div class="modal-actions">
-        <TabHeader :tabModel="tabModel" 
-          :selectedTab="selectedTab" 
-          :disabled="inTransit" 
-          :theme="theme" 
-          @selectTab="this.selectedTab = $event" />
-        <!-- tab panel -->
-        <div class="tabbed-panel">
-          <!-- tab 1: settings -->
-          <div class="tab" v-if="isLoaded && this.selectedTab === 'SETTINGS'">
-            <!-- oauth2 profile (remote) -->
-            <div class="settings-field" style="flex-direction: row;" v-if="authProvider !== 'LOCAL'">
-              <!-- profile image -->
-              <img v-if="authProviderProfileImgUrl" 
-                :src="authProviderProfileImgUrl" 
-                referrerpolicy="no-referrer" 
-                class="oauth2-profile-img" 
-                :alt="this.$t('oAuth2ProfileImage')" />
-              <img v-else src="feedgears.png" 
-                referrerpolicy="no-referrer" 
-                class="oauth2-profile-img" 
-                :alt="this.$t('defaultOAuth2ProfileImage')" />
-              <div style="display: inline-flex; flex-direction: column; padding-left: .5rem;">
-                <!-- auth provider username (auth provider user Id) -->
-                <span style="padding: .125rem;">{{ authProviderUsername }}</span>
-                <!-- email address -->
-                <span style="padding: .125rem;">{{ emailAddress }}</span>
-                <!-- auth provider -->
-                <!-- <span style="padding: .125rem;">AUTH PROVIDER: {{ authProvider }}</span> -->
-              </div>
-            </div>
-
-            <!-- username (local) -->
-            <div class="settings-field" v-if="authProvider === 'LOCAL'">
-              <label for="username">{{ this.$t('usernameColon') }}</label>
-              <input name="username" type="text" v-model="username" :disabled="true"/>
-            </div>
-            <!-- email address (local) -->
-            <div class="settings-field" :class="{ error: v$.emailAddress.$errors.length }" v-if="authProvider === 'LOCAL'">
-              <label for="email">{{ this.$t('emailAddressColon') }}</label>
-              <input name="email" type="text" v-model="v$.emailAddress.$model" :disabled="inTransit"/>
-              <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
-                <div class="settings-error-message">{{ error.$message }}</div>
-              </div>
-            </div>
-
-            <div class="account-management-buttons">
-              <!-- apply changes button (local) -->
-              <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
-                id="updateAccount" 
-                class="header-button accessible-button" 
-                @click="updateAccount()" 
-                :disabled="inTransit || v$.$invalid">
-                {{ this.$t('applyChanges') }}
-              </button>
-              <!-- deactivate account button -->
-              <button v-if="!this.showDeactivateUser && !this.showResetPassword" 
-                class="header-button accessible-button" 
-                @click="this.showDeactivateUser = true" 
-                :disabled="inTransit">
-                {{ this.$t('deactivateYourAccount') }}
-              </button>
-              <!-- download your data button-->
-              <button v-if="this.showDeactivateUser" 
-                class="header-button accessible-button" 
-                @click="exportOpml()"
-                :disabled="inTransit">
-                {{ this.$t('downloadYourData') }}
-              </button>
-              <!-- permanently delete your account button -->
-              <button v-if="this.showDeactivateUser" 
-                class="header-button accessible-button" 
-                @click="finalizeDeactivation()"
-                :disabled="inTransit">
-                {{ this.$t('permanentlyDeleteYourAccount') }}
-              </button>
-              <!-- cancel (deactivate account) button -->
-              <button v-if="this.showDeactivateUser" id="cancelDeactivateAccount" 
-                class="header-button accessible-button" 
-                @click="this.showDeactivateUser = false" 
-                :disabled="inTransit">
-                {{ this.$t('cancel') }}
-              </button>
-              <button v-if="this.showResetPassword" 
-                class="header-button accessible-button" 
-                @click="initPasswordReset()"
-                :disabled="inTransit">
-                {{ this.$t('sendPasswordResetEmail') }}
-              </button>
-              <!-- reset password button (local) -->
-              <button v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
-                id="resetPassword" 
-                class="header-button accessible-button" 
-                @click="resetPassword()" 
-                :disabled="inTransit">
-                {{ this.$t('resetPassword') }}
-              </button>
-              <!-- cancel (reset password) -->
-              <button v-if="this.showResetPassword" 
-                id="cancelResetPassword" 
-                class="header-button accessible-button" 
-                @click="this.showResetPassword = false" 
-                :disabled="inTransit">
-                {{ this.$t('cancel') }}
-              </button>
-            </div>
-
-            <p>
-              {{ this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? this.$t('emailNotificationsAreDisabled') : this.$t('emailNotificationsAreEnabled') }} {{ this.$t('weWillNotSellOrDiscloseYourInformation') }} 
-            </p>
-
-            <div class="settings-field settings-inline-field">
-              <input type="checkbox" id="enableAccountAlerts" name="enableAccountAlerts" v-model="enableAccountAlerts" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
-              <label class="notification-checkbox" for="enableAccountAlerts">
-                {{ this.$t('enableAccountAlertsNotifications') }}
-              </label>
-            </div>
-
-            <div class="settings-field settings-inline-field">
-              <input type="checkbox" id="enableProductNotifications" name="enableProductNotifications" v-model="enableProductNotifications" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"/>
-              <label class="notification-checkbox" for="enableProductNotifications">
-                {{ this.$t('enableProductNotifications') }}
-              </label>
-            </div>
-
-            <div class="account-management-buttons">
-              <!-- update notification preferences button -->
-              <button id="updateNotificationPreferences" 
-                class="header-button accessible-button" @click="updateNotificationPreferences()" :disabled="inTransit || this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)">
-                {{ this.$t('updateNotificationPreferences') }}
-              </button>
-              <!-- toggle (all) notifications button -->
-              <button class="header-button accessible-button" @click="toggleNotifications()" :disabled="inTransit">
-                {{ (this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? this.$t('enableSelectedNotifications') : this.$t('disableSelectedNotifications') }} 
-              </button>
-            </div>
-
-            <div v-if="this.subscription">
-              <p>{{ this.$t('subscriptionStatus', { 
-                status: getSubscrpitionStatus(), 
-                started: getSubscriptionStarted() 
-                }) }}</p>
-
-              <p v-if="isCanceled()">{{ this.$t('yourSubscriptionWasCanceled') }}</p>
-
-              <div class="settings-field" v-if="isActive()">
-                <label for="subscription-current-period">{{ this.$t('currentPeriod') }}</label>
-                <input name="subscription-current-period" type="text" :placeholder="getSubscriptionCurrentPeriod()" :disabled="inTransit" />
-              </div>
-
-              <div class="settings-field" v-if="hasEnded()">
-                <label for="subscription-ended-at">{{ this.$t('endedAt') }}</label>
-                <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionEndedAt()" :disabled="inTransit" />
-              </div>
-
-              <div class="settings-field" v-if="isCanceled()">
-                <label for="subscription-ended-at">{{ this.$t('willEndAt') }}</label>
-                <input name="subscription-ended-at" type="text" :placeholder="getSubscriptionCurrentPeriodEnd()" :disabled="inTransit" />
-              </div>
-
-              <div class="settings-field" v-if="hasLastInvoice()">
-                <label>{{ this.$t('mostRecentInvoice') }} ({{ getLastInvoiceCreated() }})</label>
-                <label>{{ this.$t('statusColon') }} {{ getLastInvoiceStatus() }}</label> 
-                <label>{{ this.$t('amountDueColon') }} {{ getAmountDue() }}</label>
-                <label>{{ this.$t('amountPaidColon') }} {{ getAmountPaid() }}</label>
-                <label>{{ this.$t('amountRemainingColon') }} {{ getAmountRemaining() }}</label>
-                <label>{{ this.$t('customerEmailAddressColon') }} {{ getCustomerEmailAddress() }}</label>
-                <label>{{ this.$t('customerNameColon') }} {{ getCustomerName() }}</label>
-                <label>{{ this.$t('invoiceUrlColon') }} <a :href="getHostedInvoiceUrl()" target="_blank">{{ this.$t('clckHere') }}</a></label>
-                <label>{{ this.$t('productColon') }} {{ getProductDescription() }}</label>
-              </div>
-
-              <div class="account-management-buttons">
-                <button id="cancelSubscription" class="header-button accessible-button" @click="cancelSubscription()" :disabled="inTransit" v-if="this.subscription && !isCanceled()">
-                  {{ this.$t('cancelSubscription') }}
-                </button>
-                <button id="resumeSubscription" class="header-button accessible-button" @click="resumeSubscription()" :disabled="inTransit" v-if="this.subscription && isCanceled()">
-                  {{ this.$t('resumeSubscription') }}
-                </button>
-              </div>
-            </div>
-            <div v-else>
-              <p>{{ this.$t('pleaseConsiderSubscribing') }}</p>
-
-              <div class="account-management-buttons">
-                <button id="checkout" class="header-button accessible-button" @click="submitOrder" :disabled="inTransit">
-                  {{ this.$t('checkout') }}
-                </button>
-              </div>
-            </div>
+  <v-card :disabled="this.inTransit">
+    <v-card-title class="text-center pa-4">
+      <h3 class="view-header-no-count">
+        <v-icon icon="fa-user" />
+        {{ this.$t('accountSettings') }}
+      </h3>
+    </v-card-title>
+    <v-divider />
+    <v-card-text v-if="isLoaded">
+      <!-- profile -->
+      <v-card elevation="6" class="mb-4 pa-1">
+        <v-card-item :title="authProvider !== 'LOCAL' ? authProviderUsername : username" :subtitle="emailAddress" />
+        <v-divider />
+        <v-card-text class="d-flex flex-row">
+          <!-- profile image -->
+          <v-img v-if="authProviderProfileImgUrl" 
+            :src="authProviderProfileImgUrl" 
+            referrerpolicy="no-referrer" 
+            class="profile-img" 
+            :alt="this.$t('oAuth2ProfileImage')" 
+            height="96" 
+            max-height="96" 
+            max-width="96" />
+          <v-img v-else src="feedgears.png" 
+            referrerpolicy="no-referrer" 
+            class="profile-img" 
+            :alt="this.$t('defaultOAuth2ProfileImage')" 
+            height="96" 
+            max-height="96" 
+            max-width="96" />
+        </v-card-text>
+        <v-card-actions>
+          <!-- deactivate account button -->
+          <v-btn v-if="!this.showDeactivateUser && !this.showResetPassword" 
+            @click="this.showDeactivateUser = true" 
+            :text="this.$t('deactivateYourAccount')" />
+          <!-- download your data button-->
+          <v-btn v-if="this.showDeactivateUser" 
+            @click="exportOpml()"
+            :loading="exportOpmlInTransit"
+            :text="this.$t('downloadYourData')" />
+          <!-- permanently delete your account button -->
+          <v-btn v-if="this.showDeactivateUser" 
+            @click="finalizeDeactivation()"
+            :loading="finalizeDeactivationInTransit"
+            :text="this.$t('permanentlyDeleteYourAccount')" />
+          <!-- cancel (deactivate account) button -->
+          <v-btn v-if="this.showDeactivateUser" id="cancelDeactivateAccount" 
+            @click="this.showDeactivateUser = false" 
+            :text="this.$t('cancel')" />
+          <v-btn v-if="this.showResetPassword" 
+            @click="initPasswordReset()"
+            :loading="initPasswordResetInTransit"
+            :text="this.$t('sendPasswordResetEmail')" />
+          <!-- reset password button (local) -->
+          <v-btn v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
+            id="resetPassword" 
+            @click="resetPassword()" 
+            :loading="resetPasswordInTransit"
+            :text="this.$t('resetPassword')" />
+          <!-- cancel (reset password) -->
+          <v-btn v-if="this.showResetPassword" 
+            id="cancelResetPassword" 
+            @click="this.showResetPassword = false" 
+            :text="this.$t('cancel')" />
+        </v-card-actions>
+      </v-card>
+      <!-- email address (local) -->
+      <v-card v-if="authProvider === 'LOCAL'" elevation="6" class="mb-4 pa-1"
+        :class="{ error: v$.emailAddress.$errors.length }">
+        <v-card-title class="pa-4">
+          CARD TITLE 
+        </v-card-title>
+        <v-divider />
+        <v-card-text>
+          <v-text-field name="email" 
+            :label="this.$t('emailAddressColon')"
+            type="text" 
+            v-model="v$.emailAddress.$model" />
+          <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
+            <div class="settings-error-message">{{ error.$message }}</div>
           </div>
-          <div class="tab" v-if="isLoaded && this.selectedTab === 'THEME'">
-            <div class="color-field-buttons">
-              <button class="header-button accessible-button" @click="updateDisplaySettings">
-                <span v-if="this.$theme.currentTheme.ident === 'light'">
-                  {{ this.$t('updateLightTheme') }}
-                </span>
-                <span v-if="this.$theme.currentTheme.ident === 'dark'">
-                  {{ this.$t('updateDarkTheme') }}
-                </span>
-                 &nbsp; <span class="fa fa-save" />
-              </button>
-            </div>
-            <div class="color-field-container">
-              <ColorField v-for="themeAttribute in this.$theme.keySet" :key="themeAttribute.name"
-              :attr="themeAttribute"
-              :value="this.$theme.currentTheme[themeAttribute.name]"
-              :theme="theme" 
-              @update:modelValue="$event => updateThemeAttribute(themeAttribute.name, $event)" />
-            </div>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <!-- apply changes button (local) -->
+          <v-btn v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
+            id="updateAccount" 
+            @click="updateAccount()" 
+            :disabled="v$.$invalid"
+            :loading="updateAccountInTransit"
+            :text="this.$t('applyChanges')" />
+        </v-card-actions>
+      </v-card>
+      <!-- email notifications -->
+      <v-card elevation="6" class="mb-4 pa-1">
+        <v-card-item 
+          :title="this.$t('emailNotifications')" 
+          :subtitle="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 
+            this.$t('emailNotificationsAreDisabled') : 
+            this.$t('emailNotificationsAreEnabled')" />
+        <v-divider />
+        <v-card-actions>
+          <v-checkbox id="enableAccountAlerts" 
+            name="enableAccountAlerts" 
+            :label="this.$t('enableAccountAlertsNotifications')"
+            v-model="enableAccountAlerts" 
+            :disabled="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)" />
+          <v-checkbox id="enableProductNotifications" 
+            name="enableProductNotifications" 
+            :label="this.$t('enableProductNotifications')"
+            v-model="enableProductNotifications" 
+            :disabled="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)" />
+        </v-card-actions>
+        <v-divider />
+        <v-card-actions>
+          <!-- update notification preferences button -->
+          <v-btn id="updateNotificationPreferences" 
+            @click="updateNotificationPreferences()" 
+            :disabled="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"
+            :loading="updateNotificationPreferencesInTransit"
+            :text="this.$t('updateNotificationPreferences')" />
+          <!-- toggle (all) notifications button -->
+          <v-btn 
+            @click="toggleNotifications()" 
+            :loading="toggleNotificationsInTransit"
+            :text="(this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? this.$t('enableSelectedNotifications') : this.$t('disableSelectedNotifications')" />
+        </v-card-actions>
+      </v-card>
+      <!-- subscription -->
+      <v-card v-if="this.subscription" elevation="6" class="mb-4 pa-1">
+        <v-card-item title="CARD TITLE" :subtitle="this.$t('subscriptionStatus', { 
+            status: getSubscrpitionStatus(), 
+            started: getSubscriptionStarted() 
+          })" />
+        <v-divider />
+        <v-card-text>
+          <p v-if="isCanceled()">{{ this.$t('yourSubscriptionWasCanceled') }}</p>
+
+          <div v-if="isActive()">
+            <v-label for="subscription-current-period">{{ this.$t('currentPeriod') }}</v-label>
+            <v-text-field name="subscription-current-period" type="text" 
+              :placeholder="getSubscriptionCurrentPeriod()" />
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
+          <div v-if="hasEnded()">
+            <v-label for="subscription-ended-at">{{ this.$t('endedAt') }}</v-label>
+            <v-text-field name="subscription-ended-at" type="text" 
+              :placeholder="getSubscriptionEndedAt()" />
+          </div>
+
+          <div v-if="isCanceled()">
+            <v-label for="subscription-ended-at">{{ this.$t('willEndAt') }}</v-label>
+            <v-text-field name="subscription-ended-at" type="text" 
+              :placeholder="getSubscriptionCurrentPeriodEnd()" />
+          </div>
+
+          <div v-if="hasLastInvoice()">
+            <v-label>{{ this.$t('mostRecentInvoice') }} ({{ getLastInvoiceCreated() }})</v-label>
+            <v-label>{{ this.$t('statusColon') }} {{ getLastInvoiceStatus() }}</v-label> 
+            <v-label>{{ this.$t('amountDueColon') }} {{ getAmountDue() }}</v-label>
+            <v-label>{{ this.$t('amountPaidColon') }} {{ getAmountPaid() }}</v-label>
+            <v-label>{{ this.$t('amountRemainingColon') }} {{ getAmountRemaining() }}</v-label>
+            <v-label>{{ this.$t('customerEmailAddressColon') }} {{ getCustomerEmailAddress() }}</v-label>
+            <v-label>{{ this.$t('customerNameColon') }} {{ getCustomerName() }}</v-label>
+            <v-label>{{ this.$t('invoiceUrlColon') }} <a :href="getHostedInvoiceUrl()" target="_blank">{{ this.$t('clckHere') }}</a></v-label>
+            <v-label>{{ this.$t('productColon') }} {{ getProductDescription() }}</v-label>
+          </div>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+              <v-btn v-if="this.subscription && !isCanceled()"
+                id="cancelSubscription" 
+                @click="cancelSubscription()" 
+                :loading="cancelSubscriptionInTransit"
+                :text="this.$t('cancelSubscription')" />
+              <v-btn v-if="this.subscription && isCanceled()"
+                id="resumeSubscription" 
+                @click="resumeSubscription()" 
+                :loading="resumeSubscriptionInTransit"
+                :text="this.$t('resumeSubscription')" />
+        </v-card-actions>
+      </v-card>
+      <!-- checkout -->
+      <v-card v-if="!this.subscription" elevation="6" class="mb-4 pa-1">
+        <v-card-item title="CARD TITLE" :subtitle="this.$t('pleaseConsiderSubscribing')" />
+        <v-divider />
+        <v-card-actions>
+          <v-btn id="checkout" 
+            @click="submitOrder" 
+            :loading="submitOrderInTransit"
+            :text="this.$t('checkout')" />
+        </v-card-actions>
+      </v-card>
+    </v-card-text>
+    <v-divider />
+    <v-card-actions>
+      DISMISS
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 import { maxLength, email } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-import TabHeader from '@/components/layout/TabHeader.vue';
-import ColorField from '@/components/settings-panel/ColorField.vue';
 
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
@@ -250,11 +223,6 @@ export default {
   },
   props: [ "baseUrl", "theme" ],
   emits: ["updateServerMessage"],
-  components: {
-    NavbarFixedHeader,
-    TabHeader,
-    ColorField,
-  },
   validations() {
     return {
       username: { 
@@ -277,9 +245,18 @@ export default {
       forceLogout: false,
       // 
       isLoaded: false,
-      inTransit: true,
+      inTransit: true, // top-level 
+      exportOpmlInTransit: false,
+      finalizeDeactivationInTransit: false,
+      initPasswordResetInTransit: false,
+      resetPasswordInTransit: false,
+      updateAccountInTransit: false,
+      updateNotificationPreferencesInTransit: false,
+      toggleNotificationsInTransit: false,
+      cancelSubscriptionInTransit: false,
+      resumeSubscriptionInTransit: false,
+      submitOrderInTransit: false,
       serverMessages: [],
-
       // 
       showModal: false,
       tabModel: [
@@ -340,7 +317,7 @@ export default {
       this.showDeactivateUser = true;
     },
     updateNotificationPreferences() {
-      let settingsObj = {
+      let newSettings = {
         frameworkConfig: {
           notifications: {
             accountAlerts: this.enableAccountAlerts,
@@ -349,10 +326,61 @@ export default {
           }
         }
       };
-      this.updateSettings(settingsObj);
+      this.updateNotificationPreferencesInTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return;
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then(() => {
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
+          if (newSettings.username) {
+            this.account.username = newSettings.username;
+          }
+          if (newSettings.emailAddress) {
+            this.account.emailAddress = newSettings.emailAddress;
+          }
+          if (newSettings.frameworkConfig) {
+            this.frameworkConfig = newSettings.frameworkConfig;
+          }
+          this.setLastServerMessage(this.$t('settingsUpdated'));
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.updateNotificationPreferencesInTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.updateNotificationPreferencesInTransit = false;
+      });
     },
     toggleNotifications() {
-      this.updateSettings({
+      let newSettings = {
         frameworkConfig: {
           notifications: {
             disabled: !this.isTrue(this.frameworkConfig.notifications.disabled),
@@ -361,16 +389,115 @@ export default {
             productNotifications: this.enableProductNotifications,
           }
         }
+      };
+      this.toggleNotificationsInTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return;
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then(() => {
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
+          if (newSettings.username) {
+            this.account.username = newSettings.username;
+          }
+          if (newSettings.emailAddress) {
+            this.account.emailAddress = newSettings.emailAddress;
+          }
+          if (newSettings.frameworkConfig) {
+            this.frameworkConfig = newSettings.frameworkConfig;
+          }
+          this.setLastServerMessage(this.$t('settingsUpdated'));
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.toggleNotificationsInTransit = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.toggleNotificationsInTransit = false;
       });
     },
     updateAccount() {
-      this.updateSettings({
+      let newSettings = {
         emailAddress: this.emailAddress
-      });
-    },
-    updateTheme() {
-      this.updateSettings({
-        theme: this.$theme.currentTheme,
+      };
+      this.updateAccountInTransit = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return;
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then(() => {
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
+          if (newSettings.username) {
+            this.account.username = newSettings.username;
+          }
+          if (newSettings.emailAddress) {
+            this.account.emailAddress = newSettings.emailAddress;
+          }
+          if (newSettings.frameworkConfig) {
+            this.frameworkConfig = newSettings.frameworkConfig;
+          }
+          this.setLastServerMessage(this.$t('settingsUpdated'));
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          this.updateAccountInTransit = false;
+          clearTimeout(timeoutId);
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.updateAccountInTransit = false;
       });
     },
     // 
@@ -443,7 +570,7 @@ export default {
     //
     // fetch framework config from /settings  
     refreshSettings() {
-      this.inTransit = true;
+      this.inTransit = true; // top-level
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -478,7 +605,7 @@ export default {
           this.subscription = data.subscription;
           this.username = this.account.username;
           this.emailAddress = this.account.emailAddress;
-          this.authProvider = this.account.authProvider;
+          this.authProvider = 'LOCAL'; // this.account.authProvider;
           this.authProviderProfileImgUrl = this.account.authProviderProfileImgUrl;
           this.authProviderUsername = this.account.authProviderUsername;
 
@@ -493,7 +620,7 @@ export default {
           this.handleServerError(error);
           this.isLoaded = false;
         }).finally(() => {
-          this.inTransit = false;
+          this.inTransit = false; // top-level 
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
@@ -501,115 +628,8 @@ export default {
         this.isLoaded = false;
       });
     },
-    // put framework config to /settings 
-    updateSettings(newSettings) {
-      this.inTransit = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.username) {
-            this.account.username = newSettings.username;
-          }
-          if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
-          }
-          if (newSettings.frameworkConfig) {
-            this.frameworkConfig = newSettings.frameworkConfig;
-          }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          this.inTransit = false;
-          clearTimeout(timeoutId);
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-      });
-    },
-    // put theme config to /settings/display (see DisplayMode->refreshDisplaySettings for accessor) 
-    updateDisplaySettings() {
-      this.inTransit = true;
-      this.$auth.getTokenSilently().then((token) => {
-        let t = {};
-        if (this.$theme.currentTheme.ident === 'light') {
-          t.lightTheme = this.$theme.currentTheme;
-        } else if (this.$theme.currentTheme.ident === 'dark') {
-          t.darkTheme = this.$theme.currentTheme;
-        }
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            themeConfig: t
-          }),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings/display", requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then(() => {
-          this.setLastServerMessage(this.$t('themeSettingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          this.inTransit = false;
-          clearTimeout(timeoutId);
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-      });
-    },
     exportOpml() {
-      this.inTransit = true;
+      this.exportOpmlInTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -651,15 +671,16 @@ export default {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.inTransit = false;
           clearTimeout(timeoutId);
+          this.exportOpmlInTransit = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
+        this.exportOpmlInTransit = false;
       });
     },
     finalizeDeactivation() {
-      this.inTransit = true;
+      this.finalizeDeactivationInTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -692,19 +713,20 @@ export default {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.inTransit = false;
+          clearTimeout(timeoutId);
+          this.finalizeDeactivationInTransit = false;
           this.forceLogout = true;
           this.$auth.tearDownLoggedInSession();
           this.$router.push("/app");
-          clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
+        this.finalizeDeactivationInTransit = false;
       });
     },
     initPasswordReset() {
       this.showResetPassword = false;
-      this.inTransit = true;
+      this.initPasswordResetInTransit = true;
       this.$auth
         .pwResetWithSupplied(this.account.username, this.account.emailAddress)
         .then(() => {
@@ -714,11 +736,11 @@ export default {
           this.setLastServerMessage(error);
         })
         .finally(() => {
-          this.inTransit = false;
+          this.initPasswordResetInTransit = false;
         });
     },
     submitOrder() {
-      this.inTransit = true;
+      this.submitOrderInTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -754,14 +776,16 @@ export default {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.inTransit = false;
           clearTimeout(timeoutId);
+          this.submitOrderInTransit = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
+        this.submitOrderInTransit = false;
       });
     },
     cancelSubscription() {
+      this.cancelSubscriptionInTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -800,14 +824,16 @@ export default {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.inTransit = false;
           clearTimeout(timeoutId);
+          this.cancelSubscriptionInTransit = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
+        this.cancelSubscriptionInTransit = false;
       });
     },
     resumeSubscription() {
+      this.resumeSubscriptionInTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -845,20 +871,13 @@ export default {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.inTransit = false;
           clearTimeout(timeoutId);
+          this.resumeSubscriptionInTransit = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
+        this.resumeSubscriptionInTransit = false;
       });
-    },
-    updateThemeAttribute(attrName, attrValue) {
-      this.$theme.currentTheme[attrName] = attrValue;
-      if (this.$theme.currentTheme.ident === 'light') {
-        this.$theme.userLightTheme[attrName] = attrValue;
-      } else if (this.$theme.currentTheme.ident === 'dark') {
-        this.$theme.userDarkTheme[attrName] = attrValue;
-      }
     },
     cancelSettings() {
       this.$emit('cancel');
@@ -868,206 +887,9 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: auto;
-  overflow-y: auto;
-  z-index: 1000;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-header {
-  text-align: left;
-}
-
-.modal-body {
-  color: v-bind('theme.normalmessage');
-  text-align: left;
-  width: 100%;
-  height: fit-content;
-  padding: 2rem;
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.modal-actions {
-  padding-top: .75rem;
-}
-
-.header-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: left;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.header-button:disabled {
-  cursor: auto;
-}
-
-.header-button:hover, .header-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.header-button:disabled:hover {
-  background-color: unset;
-}
-
-.tabbed-panel {
-  padding: .75rem;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 3px;
-  margin-bottom: 1rem;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  background-color: v-bind('theme.sectionhighlight');
-}
-
-.tab {
-  display: grid;
-  contain: content;
-  overflow: auto;
-}
-
 .view-header-no-count {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-  margin: 0rem;
-}
-
-@keyframes load {
-    0% {
-        width: 0%;
-    }
-
-    87.5% {
-        width: 100%;
-    }
-}
-
-@keyframes turn {
-    0% {
-        transform: rotateY(0deg);
-    }
-
-    6.25%,
-    50% {
-        transform: rotateY(180deg);
-    }
-
-    56.25%,
-    100% {
-        transform: rotateY(360deg);
-    }
-}
-
-@keyframes bounce {
-
-    0%,
-    100% {
-        top: .75rem;
-    }
-
-    12.5% {
-        top: 30px;
-    }
-}
-
-.settings-field {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  text-align: left;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  padding: .75rem;
-  border-radius: 4px;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  overflow-x: auto;
-}
-
-.settings-field label {
-  padding-bottom: .125rem;
-}
-
-.settings-field input {
-  padding: .44rem;
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.normalmessage');
-  border-radius: 4px;
-  margin-top: .125rem;
-}
-
-.settings-field input[type="text"] {
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-}
-
-.settings-field input:hover, .settings-field input:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-}
-
-.settings-field input[type="text"]:hover, .settings-field input[type="text"]:focus-visible  {
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.settings-inline-field {
-  flex-direction: row !important;
-}
-
-.notification-checkbox {
-  padding: .44rem;
-  border-radius: 4px;
-  user-select: none;
-}
-
-.notification-checkbox > input {
-  position: relative;
-  vertical-align: middle;
-  box-shadow: unset;
-}
-
-.notification-checkbox > input:hover, .notification-checkbox > input:focus-visible {
-  box-shadow: unset;
-}
-
-.notification-checkbox > input:disabled {
-  cursor: auto;
-}
-
-.oauth2-profile-img {
-  height: 96px;
-  width: 96px;
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-}
-
-.account-management-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: .5rem;
-}
-
-.color-field-container {
-  overflow: auto;
-  max-height: 46svh;
-}
-
-.color-field-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: .5rem;
-  margin-bottom: 1svh;
 }
 </style>

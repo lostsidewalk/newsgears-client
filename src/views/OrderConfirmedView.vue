@@ -1,62 +1,53 @@
 <template>
-  <div id="home">
-    <!-- fixed header -->
-    <NavbarFixedHeader :theme="theme" :inTransit="false">
-      <template v-slot:logo>
-        <h2 class="pa-2 logotext">FeedGears RSS</h2>
+  <v-app>
+    <v-app-bar app location="top" :scrol-behavior="'elevate'">
+      <template v-slot:title>
+        <span class="view-header-no-count">
+          FeedGears RSS
+        </span>
       </template>
-      <template v-slot:buttons>
-        <ControlPanel :baseUrl="baseUrl" 
-          :disabled="false" 
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon icon="fa-rss" />
+      </template>
+      <ControlPanel :baseUrl="baseUrl" 
           :theme="theme" 
-          @updateServerMessage="setLastServerMessage" />
-      </template>
-    </NavbarFixedHeader>
-    <!-- fixed subheader -->
-    <transition appear enter-active-class="animated fadeIn">
-      <NavbarFixedSubheader v-if="this.serverMessages.length > 0" :theme="theme">
-        <template v-slot:message>
-          <LastServerMessage :serverMessages="this.serverMessages" @clearLastServerMessage="this.clearLastServerMessage" :theme="theme"/>
-        </template>
-      </NavbarFixedSubheader>
-    </transition>
-    <!-- order confirmed view -->
-    <div class="order-confirmed-view">
-      <!-- order confirmed header-->
-      <ViewHeader :disabled="false" :inTransit="false" :theme="theme">
-        <template v-slot:count>
-          {{ this.$t('thankYouForYourOrder') }}
-        </template>
-        <template v-slot:body>
-          <p>
-            {{ this.$t('yourOrderIsConfirmed') }} &nbsp; 
-            <router-link style="text-decoration: none; color: inherit;" to="/app">{{ this.$t('clickHereToReturnToTheApp') }}</router-link>
-          </p>
-        </template>
-      </ViewHeader>
-    </div> 
-    <!-- "go back" link -->
-    <GoBack :disabled="false" :theme="theme" />
-  </div>
+          @updateServerMessage="setLastServerMessage">
+          <template v-slot:additional>
+            <GoBack :theme="theme" />
+          </template>
+      </ControlPanel>
+    </v-app-bar>
+
+    <v-main>
+      <!-- container -->
+      <BannerPanel :theme="theme" />
+
+      <v-divider /> 
+
+      <v-container>
+        {{ this.$t('thankYouForYourOrder') }}
+      </v-container>
+
+      <v-divider />
+
+      <FooterPanel :theme="theme" app />
+    </v-main>
+  </v-app>
 </template>
   
 <script>
-import NavbarFixedHeader from "@/components/layout/NavbarFixedHeader.vue";
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
-import NavbarFixedSubheader from "@/components/layout/NavbarFixedSubheader.vue";
-import ViewHeader from "@/components/layout/ViewHeader.vue";
-import LastServerMessage from "@/components/layout/LastServerMessage.vue";
 import GoBack from "@/components/layout/GoBack.vue";
+import BannerPanel from "@/components/landing/BannerPanel.vue";
+import FooterPanel from "@/components/landing/FooterPanel.vue";
 
 export default {
   name: "OrderConfirmedView",
   components: {
-    NavbarFixedHeader,
     ControlPanel,
-    NavbarFixedSubheader,
-    ViewHeader,
-    LastServerMessage,
     GoBack,
+    BannerPanel,
+    FooterPanel,
 },
   props: ["baseUrl"],
   methods: {
@@ -107,49 +98,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-#home {
-  background-color: v-bind('theme.appbg');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-/** start */
-.order-confirmed-view {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  border-top: 1px solid v-bind('theme.sectionbordercolor');
-  border-right: 1px solid v-bind('theme.sectionbordercolor');
-  color: v-bind('theme.normalmessage');
-  margin-bottom: .75rem;
-}
-
-.logotext {
-  font-family: 'Russo One';
-  color: v-bind('theme.logosubtextcolor');
-  text-shadow: 2px 0px 2px v-bind('theme.logocolor');
-  float: left;
-}
-</style>
-
-<style>
-.accessible-button {
-  min-height: 3rem;
-  min-width: 3rem;
-}
-
-@media (max-width: 640px) {
-  .accessible-button {
-    min-height: 1.5rem;
-    min-width: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .accessible-button {
-    min-height: unset;
-    min-width: unset;
-  }
-}
-</style>

@@ -1,27 +1,16 @@
 <template>
-  <v-btn class="mode-switch-button accessible-button" 
-    @click.stop="this.$emit('toggleDistractions')" 
+  <v-btn @click.stop="this.$emit('toggleDistractions')" 
+    size="small"
     accesskey="z" 
-    :disabled="disabled" 
     :title="this.$t('toggleDistractions')"
-    :aria-label="this.$t('toggleDistractionsAriaLabel')">
-    <span class="fa fa-arrows-alt" />
-  </v-btn>
+    :aria-label="this.$t('toggleDistractionsAriaLabel')"
+    icon="fa-arrows-alt" />
 </template>
 
 <script>
 export default {
   name: "ToggleDistractionsButton",
-  props: [ "disabled", "theme" ],
+  props: [ "theme" ],
   emits: [ "toggleDistractions" ],
 }
 </script>
-
-<style scoped>
-.mode-switch-button {
-  max-width: 256px;
-  min-height: 3rem;
-  padding: .75rem 1rem;
-  font-weight: bold;
-}
-</style>

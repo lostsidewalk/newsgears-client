@@ -8,7 +8,6 @@ import VerificationCallbackView from '@/views/VerificationCallbackView.vue';
 import OrderConfirmedView from '@/views/OrderConfirmedView.vue';
 import DocsView from '@/views/DocsView.vue';
 import ApiView from '@/views/ApiView.vue';
-import PrivacyPolicyView from '@/views/PrivacyPolicyView.vue';
 
 const routes = [
   {
@@ -81,14 +80,6 @@ const routes = [
     path: '/api',
     name: 'ApiView',
     component: ApiView,
-    props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
-    }
-  },
-  {
-    path: '/privacy',
-    name: 'PrivacyPolicyView',
-    component: PrivacyPolicyView,
     props: {
       baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL
     }

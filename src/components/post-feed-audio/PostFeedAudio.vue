@@ -7,8 +7,8 @@
       }">
     {{ this.details ? this.details.title : '' }}
     <div class="audio-player-buttons">
-      <span @click="togglePlay" :class="'fa ' + (state === 'play' ? 'fa-pause' : 'fa-play')" tabindex="0" />
-      <span @click="stopPlaying" class="fa fa-stop" tabindex="0" />
+      <v-icon @click="togglePlay" :icon="(state === 'play' ? 'fa-pause' : 'fa-play')" tabindex="0" />
+      <v-icon @click="stopPlaying" icon="fa-stop" tabindex="0" />
     </div>
     <div class="audio-player-progress">
       <span class="time">{{ currentTimePosition }}</span>

@@ -3,7 +3,6 @@ import App from './App.vue';
 import NewsGearsWebPlugin from '@/newsgears-web/newsgears-web-plugin';
 import NewsGearsThemePlugin from '@/newsgears-theme/newsgears-theme-plugin';
 import router from './router';
-import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import VuePlyr from 'vue-plyr';
 import VueAnnouncer from '@vue-a11y/announcer';
 import { createI18n } from 'vue-i18n';
@@ -85,7 +84,7 @@ const i18n = createI18n({
       // confirmation dialog 
       confirm: 'Confirmar',
       // go back
-      goBack: 'Regresa.',
+      goBack: 'Regresa',
       // min-max
       collapseThisPanel: 'Contraer este panel',
       restoreThisPanel: 'Restaurar este panel',
@@ -95,11 +94,9 @@ const i18n = createI18n({
       settings: 'Ajustes',
       help: 'Ayuda', 
       switchMode: 'Cambiar el modo de visualización',
-      cycleGridLayout: 'Cambiar al diseño de cuadrícula',
-      cycleTableLayout: 'Cambiar a diseño tabular',
       toggleDistractions: 'Alternar el modo sin distracciones',
       // queue dashboard buttons 
-      createNewQueue: 'Crear una nueva cola',
+      createNewQueue: 'Crear cola',
       uploadOPML: 'Subir OPML',
       weWillNotSellOrDiscloseYourInformation: 'Tenga en cuenta que nunca venderemos ni divulgaremos su información personal a nadie.',
       // queue select button 
@@ -168,42 +165,16 @@ const i18n = createI18n({
       httpStatusCode: 'Código de estado HTTP',
       redirectHttpStatusCode: 'Redirigir el código de estado HTTP', 
       feedAlsoAvailableInHttps: 'Este feed también está disponible en HTTPS.', 
-      sampleEntries: 'Artículos recientes',
       recommendedFeeds: 'Fuentes RSS similares',
       refreshThisFeed: 'Actualizar este feed',
-      // feed collections browser 
-      loadingCollections: 'CARGANDO COLECCIONES...',
-      browseCollectionsByCategory: 'EXPLORAR COLECCIONES POR CATEGORÍA',
-      topNews: 'Noticias',
-      investing: 'Invertir',
-      technology: 'Tecnología',
-      business: 'Negocio',
-      science: 'Ciencia',
-      creative: 'Creativo',
-      lifestyle: 'Estilo de vida',
-      // feed catalog 
-      feedCatalog: 'CATÁLOGO DE FUENTES RSS',
-      nFeedsMatchOnPageM: 'COINCIDENCIA DE FEEDS RSS, MOSTRANDO LA PÁGINA',
-      categoryColon: 'Categoría:',
-      languageColon: 'Idioma:',
-      docsColon: 'Documentos:',
-      encodingColon: 'Codificación:',
-      feedTypeColon: 'Tipo de fuente RSS:',
-      generatorColon: 'Generador:',
-      removeThisFilter: 'Eliminar este filtro',
-      subscribeToThisFeed: 'Suscríbete a esta fuente RSS',
-      youAreSubscribed: '¡Suscrito!',
       // subscription config 
       yourSubscriptions: 'SUS SUSCRIPCIONES',
       showingPageN: 'Mostrando la página',
       addFeedFromURL: 'Agregar fuente RSS desde una URL',
-      searchFeedCatalog: 'Buscar en el catálogo de fuentes RSS',
-      browseFeedCollections: 'Explorar colecciones de fuentes RSS',
       subscriptionNofM: 'SUSCRIPCIÓN',
       addANewSubscription: 'AGREGAR UNA NEUVA SUSCRIPCIÓN',
       feedUrl: 'URL de fuente RSS',
       credentialsUseMessage: '* Se proporcionarán las siguientes credenciales si esta fuente RSS solicita autenticación.',
-      unableToFetchCatalog: 'No pudimos obtener su catálogo de fuentes RSS. Por favor, inténtelo de nuevo más tarde.',
       discovery: 'Descubrimiento', 
       auth: 'Autorización',
       subscribeAndClose: 'Suscríbete y cierra',
@@ -213,16 +184,20 @@ const i18n = createI18n({
       subscriptionDeleted: 'Suscripción eliminada',
       queryMetrics: 'Métricas de fuentes RSS', 
       importedNArticlesAt: '{n} artículos importados a las {at}.',
+      importedNArticles: '{n} artículos importados.',
+      timestamp: 'Timestamp',
+      message: 'Message',
+      httpStatusLabel: 'HTTP Status',
+      httpRedirect: 'HTTP Redirect Status',
+      error: '',
       // post feed filter 
       articleQueue: 'COLA DE ARTÍCULOS',
       refreshQueues: 'Actualizar colas', 
       markQueueAsRead: 'Marcar esta cola como leída',
       toggleSortOrder: 'Alternar dirección de clasificación',
-      toggleAllPostDetails: 'Mostrar/ocultar todos los detalles de la publicación',
       showFilterOptions: 'Mostrar opciones de filtro', 
       // post feed filter pills 
       allSubscriptions: 'todas las suscripciones',
-      filterExpression: 'Mostrando: {filterModeExpression} artículos en {filterSubscriptionsExpression}.',
       all: 'todos',
       unread: 'NO LEÍDO', 
       readLater: 'LEER MÁS TARDE',
@@ -231,14 +206,9 @@ const i18n = createI18n({
       // help panel 
       dismiss: 'Despedir',
       globalShortcutKeys: 'TECLAS DE ACCESO DIRECTO GLOBALES',
-      whenAQueueIsSelected: 'CUANDO SE SELECCIONA UNA COLA...',
-      whenAPostIsSelected: 'CUANDO SE SELECCIONA UN ARTÍCULO...',
       configureSelectedQueue: 'Administrar suscripciones en la cola seleccionada',
       markSelectedQueueAsRead: 'Marcar la cola seleccionada como leída',
       addSubscriptionToSelectedQueue: 'Agregar una suscripción a la cola seleccionada',
-      starSelectedPost: 'Destacar la publicación seleccionada',
-      toggleReadStatusSelectedPost: 'Alternar la publicación seleccionada leída/no leída',
-      openOriginalArticleSelectedPost: 'Abrir la URL de la publicación seleccionada en una nueva pestaña',
       showUnread: 'Mostrar no leídos', 
       showStarred: 'Mostrar destacado',
       showReadLater: 'Mostrar leer más tarde',
@@ -264,7 +234,6 @@ const i18n = createI18n({
       widthColon: 'ANCHO:',
       samplingRateColon: 'TASA DE MUESTREO:',
       // opml 
-      opmlFilesColon: 'ARCHIVOS OPML:',
       previewThisFile: 'Obtenga una vista previa de este archivo en una nueva ventana.', 
       opmlFilesContainErrors: 'Sus archivos contienen los siguientes problemas. Resuelva estos problemas y vuelva a intentar la carga.',
       weWillCreateTheFollowingSubscriptions: 'Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:',
@@ -278,8 +247,6 @@ const i18n = createI18n({
       confirmDeleteQueue: 'Confirme que desea eliminar esta cola. Esta acción es irreversible.', 
       confirmMarkQueueAsRead: 'Confirme que desea marcar todos los elementos de esta cola como leídos.', 
       queueDashboard: 'PANEL DE RSS', 
-      noArticlesInQueue: 'No hay artículos en esta cola. Agregue suscripciones adicionales o espere a que se importen más artículos.', 
-      endOfQueueReached: 'Has llegado al final de esta cola. Agregue suscripciones adicionales o espere a que se importen más artículos.', 
       queueSettings: 'AJUSTES DE COLA', 
       opmlUpload: 'CARGA OPML', 
       refreshFailedDueToColon: 'Actualizar falló debido a:',
@@ -312,6 +279,7 @@ const i18n = createI18n({
       unstarThisPost: 'Un-star this post',
       openOriginalArticle: 'Abrir artículo original',
       description: 'DESCRIPCIÓN',
+      contents: 'CONTENIDO',
       links: 'ENLACES', 
       postComments: 'COMENTARIOS', 
       author: 'AUTOR',
@@ -399,20 +367,8 @@ const i18n = createI18n({
       doWeMakeUpdatesSummary: 'Sí, actualizaremos este aviso según sea necesario para cumplir con las leyes pertinentes.',
       howCanYouContactUs: '¿Cómo puede ponerse en contacto con nosotros acerca de este aviso?',
       // aria labels 
-      visitLSDevBlogAriaLabel: 'Visite el blog de desarrollo de Lost Sidewalk en una nueva pestaña',
-      emailSupportArialLabel: 'Abra su cliente de correo electrónico para enviar un correo electrónico al soporte de FeedGears',
-      visitLSTwitterAriaLabel: 'Visite el Twitter de Lost Sidewalk en una nueva pestaña',
-      visitLSGithubArialLabel: 'Visite Lost Sidewalk Github en una nueva pestaña',
-      visitLSTwitchAriaLabel: 'Visite Lost Sidewalk en Twitch en una nueva pestaña',
-      visitLSDiscordAriaLabel: 'Visite Lost Sidewalk Discord en una nueva pestaña',
-      visitLSHomepage: 'Visite la página de inicio de Lost Sidewalk',
-      goToQueueDashboardAriaLabel: 'Ir al panel de colas',
       switchModeAriaLabel: 'Cambiar a tema claro u oscuro',
-      cycleGridLayoutAriaLabel: 'Cambiar al diseño de cuadrícula',
-      cycleTableLayoutAriaLabel: 'Cambiar a diseño tabular', // TODO: (defect) fix this 
-      logoutArialLabel: 'Cerrar sesión',
       goToSettingsAriaLabel: 'Ir a la configuración de la cuenta',
-      goToHelpAriaLabel: 'Mostrar ayuda',
       shareWith_twitter_ariaLabel: 'Compartir con Twitter',
       shareWith_facebook_ariaLabel: 'Compartir con Facebook',
       shareWith_telegram_ariaLabel: 'Compartir con Telegram',
@@ -489,7 +445,7 @@ const i18n = createI18n({
       // confirmation dialog 
       confirm: 'Confirm',
       // go back
-      goBack: 'Go back.',
+      goBack: 'Go back',
       // min-max
       collapseThisPanel: 'Collapse this panel',
       restoreThisPanel: 'Restore this panel',
@@ -499,14 +455,13 @@ const i18n = createI18n({
       settings: 'Settings', 
       help: 'Help',
       switchMode: 'Switch display mode',
-      cycleGridLayout: 'Switch to grid layout',
-      cycleTableLayout: 'Switch to tabular layout',
       toggleDistractions: 'Toggle distraction-free mode',
       // queue dashboard buttons 
-      createNewQueue: 'Create a new queue',
+      createNewQueue: 'New queue',
       uploadOPML: 'Upload OPML',
       weWillNotSellOrDiscloseYourInformation: 'Please note that we will neve sell or disclose your personal information to anyone.',
       // queue select button 
+      viewArticles: 'View articles',
       showMoreInfo: 'Show details',
       hideMoreInfo: 'Hide details',
       addSubscriptions: 'Add subscriptions',
@@ -572,42 +527,16 @@ const i18n = createI18n({
       httpStatusCode: 'HTTP status code',
       redirectHttpStatusCode: 'Redirect HTTP status code', 
       feedAlsoAvailableInHttps: 'This feed is also available in HTTPS.', 
-      sampleEntries: 'Recent articles',
       recommendedFeeds: 'Similar feeds',
       refreshThisFeed: 'Refresh this feed',
-      // feed collections browser 
-      loadingCollections: 'LOADING COLLECTIONS...',
-      browseCollectionsByCategory: 'BROWSE COLLECTIONS BY CATEGORY',
-      topNews: 'News',
-      investing: 'Investing',
-      technology: 'Technology',
-      business: 'Business',
-      science: 'Science',
-      creative: 'Creative',
-      lifestyle: 'Lifestyle',
-      // feed catalog 
-      feedCatalog: 'FEED CATALOG',
-      nFeedsMatchOnPageM: 'FEEDS MATCH, SHOWING PAGE',
-      categoryColon: 'Category:',
-      languageColon: 'Language:',
-      docsColon: 'Docs:',
-      encodingColon: 'Encoding:',
-      feedTypeColon: 'Feed Type:',
-      generatorColon: 'Generator:',
-      removeThisFilter: 'Remove this filter',
-      subscribeToThisFeed: 'Subscribe to this feed',
-      youAreSubscribed: 'Subscribed!',
       // subscription config 
       yourSubscriptions: 'YOUR SUBSCRIPTIONS',
       showingPageN: 'Showing page',
       addFeedFromURL: 'Add feed from a URL',
-      searchFeedCatalog: 'Search our feed catalog',
-      browseFeedCollections: 'Browse feed collections',
       subscriptionNofM: 'SUBSCRIPTION',
       addANewSubscription: 'ADD A NEW SUBSCRIPTION',
-      feedUrl: 'FEED URL',
+      feedUrl: 'Feed URL',
       credentialsUseMessage: '* The following credentials will be supplied if this feed requests authentication.',
-      unableToFetchCatalog: 'We weren\'t able to fetch our feed catalog.  Please try again later.',
       discovery: 'Discovery', 
       auth: 'Auth',
       subscribeAndClose: 'Subscribe and close',
@@ -617,16 +546,19 @@ const i18n = createI18n({
       subscriptionDeleted: 'Subscription deleted',
       queryMetrics: 'RSS feed metrics',
       importedNArticlesAt: 'Imported {n} articles at {at}.',
+      importedNArticles: 'Imported {n} articles.',
+      timestamp: 'Timestamp',
+      message: 'Message',
+      httpStatusLabel: 'HTTP Status',
+      httpRedirect: 'HTTP Redirect Status',
+      error: 'Error',
       // post feed filter  
-      articleQueue: 'ARTICLE QUEUE',
       refreshQueues: 'Refresh queues', 
       markQueueAsRead: 'Mark this queue as read',
       toggleSortOrder: 'Toggle sort direction',
-      toggleAllPostDetails: 'Show/hide all post details',
       showFilterOptions: 'Show filter options', 
       // post feed filter pills 
       allSubscriptions: 'all subscriptions',
-      filterExpression: 'Viewing: {filterModeExpression} articles in {filterSubscriptionsExpression}.',
       all: 'all',
       unread: 'UNREAD', 
       readLater: 'READ-LATER',
@@ -635,14 +567,9 @@ const i18n = createI18n({
       // help panel 
       dismiss: 'Dismiss',
       globalShortcutKeys: 'GLOBAL SHORTCUT KEYS',
-      whenAQueueIsSelected: 'WHEN A QUEUE IS SELECTED...',
-      whenAPostIsSelected: 'WHEN AN ARTICLE IS SELECTED...',
       configureSelectedQueue: 'Manage subscriptions in the selected queue',
       markSelectedQueueAsRead: 'Mark the selected queue as read',
       addSubscriptionToSelectedQueue: 'Add a subscription to selected queue',
-      starSelectedPost: 'Star the selected post',
-      toggleReadStatusSelectedPost: 'Toggle the selected post read/unread',
-      openOriginalArticleSelectedPost: 'Open selected post URL in a new tab',
       showUnread: 'Show unread', 
       showStarred: 'Show starred',
       showReadLater: 'Show read-later',
@@ -668,7 +595,6 @@ const i18n = createI18n({
       widthColon: 'WIDTH:',
       samplingRateColon: 'SAMPLING RATE:',
       // opml 
-      opmlFilesColon: 'OPML FILES:',
       previewThisFile: 'Preview this file in a new window.', 
       opmlFilesContainErrors: 'Your files contain the following problems.  Please resolve these issues and re-attempt your upload.',
       weWillCreateTheFollowingSubscriptions: 'We will create the following queues from your OPML file(s):',
@@ -682,8 +608,6 @@ const i18n = createI18n({
       confirmDeleteQueue: 'Please confirm that you want to delete this queue. This action is irreversible.', 
       confirmMarkQueueAsRead: 'Please confirm that you want to mark all items in this queue as read.', 
       queueDashboard: 'FEED DASHBOARD', 
-      noArticlesInQueue: 'There are no articles in this queue.  Add additional subscriptions or wait for more articles to be imported.', 
-      endOfQueueReached: 'You have reached the end of this queue.  Add additional subscriptions or wait for more articles to be imported.', 
       queueSettings: 'QUEUE SETTINGS', 
       opmlUpload: 'OPML UPLOAD', 
       refreshFailedDueToColon: 'Refresh failed due to:',
@@ -716,6 +640,7 @@ const i18n = createI18n({
       unstarThisPost: 'Un-star this post',
       openOriginalArticle: 'Open original article',
       description: 'DESCRIPTION',
+      contents: 'CONTENTS',
       links: 'LINKS', 
       postComments: 'COMMENTS', 
       author: 'AUTHOR',
@@ -803,28 +728,16 @@ const i18n = createI18n({
       doWeMakeUpdatesSummary: 'Yes, we will update this notice as necessary to stay compliant with relevant laws.',
       howCanYouContactUs: 'How can you contact us about this notice?',
       // aria labels 
-      visitLSDevBlogAriaLabel: 'Visit the Lost Sidewalk dev blog in a new tab',
-      emailSupportArialLabel: 'Open your email client to send email to FeedGears support',
-      visitLSTwitterAriaLabel: 'Visit the Lost Sidewalk Twitter in a new tab',
-      visitLSGithubArialLabel: 'Visit the Lost Sidewalk Github in a new tab',
-      visitLSTwitchAriaLabel: 'Visit Lost Sidewalk on Twitch in a new tab',
-      visitLSDiscordAriaLabel: 'Visit the Lost Sidewalk Discord in a new tab',
-      visitLSHomepage: 'Visit the Lost Sidewalk homepage',
-      goToQueueDashboardAriaLabel: 'Go to queue dashboard',
-      switchModeAriaLabel: 'Switch to light or dark theme',
-      cycleGridLayoutAriaLabel: 'Switch to grid layout',
-      cycleTableLayoutAriaLabel: 'Switch to table layout',
-      logoutArialLabel: 'Logout',
-      goToSettingsAriaLabel: 'Go to account settings',
-      goToHelpAriaLabel: 'Show help',
-      shareWith_twitter_ariaLabel: 'Share with Twitter',
-      shareWith_facebook_ariaLabel: 'Share with Facebook',
-      shareWith_telegram_ariaLabel: 'Share with Telegram',
-      shareWith_linkedIn_ariaLabel: 'Share with LinkedIn',
-      shareWith_blogger_ariaLabel: 'Share with Blogger',
-      shareWith_buffer_ariaLabel: 'Share with Buffer',
-      shareWith_hootsuite_ariaLabel: 'Share with Hootsuite',
-      toggleDistractionsAriaLabel: 'Toggle distraction-free mode',
+      switchModeAriaLabel: 'Switch to light or dark theme', // ok 
+      goToSettingsAriaLabel: 'Go to account settings', // ok 
+      shareWith_twitter_ariaLabel: 'Share with Twitter', // ok 
+      shareWith_facebook_ariaLabel: 'Share with Facebook', // ok 
+      shareWith_telegram_ariaLabel: 'Share with Telegram', // ok 
+      shareWith_linkedIn_ariaLabel: 'Share with LinkedIn', // ok 
+      shareWith_blogger_ariaLabel: 'Share with Blogger', // ok 
+      shareWith_buffer_ariaLabel: 'Share with Buffer', // ok 
+      shareWith_hootsuite_ariaLabel: 'Share with Hootsuite', // ok 
+      toggleDistractionsAriaLabel: 'Toggle distraction-free mode', // ok 
       // image alts 
       queuePageScreenshot: 'FeedGears queue page screenshot',
       queueLogoImage: 'Queue logo image',
@@ -844,19 +757,39 @@ const i18n = createI18n({
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
+import { aliases, fa } from 'vuetify/iconsets/fa4'
+import { md2 } from 'vuetify/blueprints'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 const vuetify = createVuetify({
+  blueprint: md2,
+  theme: {
+    defaultTheme: 'light',
+  },
+  icons: {
+    defaultSet: 'fa',
+    aliases,
+    sets: {
+      fa,
+    },
+  },
   components,
   directives,
+  defaults: {
+    VCardTitle: {
+      style: 'font-family: "Russo One", system-ui, sans-serif;white-space: normal;'
+    },
+    VCardSubtitle: {
+      style: 'white-space: normal;',
+    }
+  }
 })
 
 createApp(App, {})
     .use(NewsGearsWebPlugin, {})
     .use(NewsGearsThemePlugin)
     .use(router)
-    .use(autoAnimatePlugin)
     .use(VuePlyr, {
       plyr: {}
     })

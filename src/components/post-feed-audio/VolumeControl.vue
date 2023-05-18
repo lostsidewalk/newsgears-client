@@ -1,13 +1,13 @@
 <template>
   <div class="volume-control">
-      <span class="fa" :class="volumeIcon" />
-      <input type="range"
-          v-model="volume"
-          height="4px"
-          width="64px"
-          class="volume-slider"
-          step="0.5" min="1" max="100"
-          :style="volumeStyle" />
+    <v-range-slider
+        v-model="volume"
+        height="4px"
+        width="64px"
+        class="volume-slider"
+        step="0.5" min="1" max="100"
+        :style="volumeStyle" 
+        :prepend-icon="volumeIcon" />
   </div>
 </template>
 

@@ -3,7 +3,7 @@
     outlined
     dense
     autocomplete="false"
-    :label="this.label"
+    :label="label"
     :placeholder="placeholder"
     :value="modelValue"
     :type="type ? type : 'text'"
@@ -15,7 +15,7 @@
 export default {
   name: "AuthTextField",
   components: { },
-  props: [ "label", "placeholder", "type", "disabled", "theme", "modelValue", "errorValue" ],
+  props: [ "label", "placeholder", "type", "theme", "modelValue" ],
   emits: [ "update:modelValue" ],
 };
 </script>

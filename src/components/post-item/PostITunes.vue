@@ -1,25 +1,29 @@
 <template>
   <div class="post-itunes-content">
-    <button v-if="this.iTunes.imageUri" 
-      class="post-itunes-content-image-wrapper" 
-      @click="this.$emit('playFirstEnclosure', this.iTunes)">
-      <img :src="this.iTunes.imageUri" 
-        class="post-itunes-content-image" 
+    <v-btn v-if="this.iTunes.imageUri" 
+      @click="this.$emit('playFirstEnclosure', this.iTunes)"
+      size="small"
+      variant="tonal">
+      <v-img :src="this.iTunes.imageUri" 
         tabindex="0" 
         :alt="this.$t('postITunesImage')" 
-        height="140" />
-    </button>
-    <div class="pill-container">
-      <button class="br-pill-subdued fa fa-headphones audio-player-control" @click="this.$emit('playFirstEnclosure', this.iTunes)" />
-      <div class="br-pill-subdued" v-if="this.iTunes.title">{{ this.iTunes.title }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.subTitle">{{ this.iTunes.subTitle }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.author">{{ this.iTunes.author }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.explicit">{{ this.$t('explicit')}}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.epiosodeType"> {{ this.$t('episodeType', { episodeType: this.iTunes.epiosodeType }) }}</div>
-      <!-- <div class="br-pill-subdued" v-if="this.iTunes.duration"> {{ this.iTunes.duration.milliseconds + ' ms' }}</div> -->
-      <div class="br-pill-subdued" v-for="keyword of this.iTunes.keywords" :key="keyword">{{ keyword }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.closeCaptioned === true">{{ this.$t('closedCaptioned') }}</div>
-      <div class="br-pill-subdued" v-if="this.iTunes.summary">{{ this.iTunes.summary }}</div>
+        max-height="140" max-width="140" width="140" />
+    </v-btn>
+    <div class="d-flex flex-row flex-auto flex-wrap">
+      <v-btn @click="this.$emit('playFirstEnclosure', this.iTunes)" 
+        variant="tonal"
+        size="x-small"
+        icon="fa-headphones" />
+      <v-chip-group>
+        <v-chip v-if="this.iTunes.title" variant="text">{{ this.iTunes.title }}</v-chip>
+        <v-chip v-if="this.iTunes.subTitle" variant="text">{{ this.iTunes.subTitle }}</v-chip>
+        <v-chip v-if="this.iTunes.author" variant="text">{{ this.iTunes.author }}</v-chip>
+        <v-chip v-if="this.iTunes.explicit" variant="text">{{ this.$t('explicit')}}</v-chip>
+        <v-chip v-if="this.iTunes.epiosodeType" variant="text"> {{ this.$t('episodeType', { episodeType: this.iTunes.epiosodeType }) }}</v-chip>
+        <v-chip v-for="keyword of this.iTunes.keywords" :key="keyword" variant="text">{{ keyword }}</v-chip>
+        <v-chip v-if="this.iTunes.closeCaptioned === true" variant="text">{{ this.$t('closedCaptioned') }}</v-chip>
+        <v-chip v-if="this.iTunes.summary" variant="text">{{ this.iTunes.summary }}</v-chip>
+      </v-chip-group>
     </div>
   </div>
 </template>
@@ -31,53 +35,3 @@ export default {
   emits: ["playFirstEnclosure"],
 }
 </script>
-
-<style scoped>
-.post-itunes-content {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: .44rem;
-}
-
-.pill-container {
-  border: 1px solid transparent;
-  display: flex;
-  flex-flow: wrap;
-  gap: .44rem;
-  width: max-content;
-  align-items: flex-start;
-}
-
-.br-pill-subdued {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  cursor: unset;
-  border-radius: 4px;
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  padding: .44rem;
-  user-select: none;
-}
-
-.post-itunes-content-image-wrapper {
-  background: unset;
-  border: unset;
-}
-
-.post-itunes-content-image {
-  max-width: 140px;
-  max-height: 140px;
-  display: inline-block; 
-  background-size: cover; 
-  background-position: center center;
-  background-repeat: no-repeat;
-  align-self: stretch;
-  object-fit: scale-down;
-  background-color: currentColor;
-}
-
-.audio-player-control {
-  cursor: pointer;
-}
-</style>

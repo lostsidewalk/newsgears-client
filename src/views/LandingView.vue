@@ -1,48 +1,68 @@
 <template>
-  <v-main>
-    <!-- fixed header -->
-    <NavbarFixedHeader :theme="theme" :inTransit="false" class="landing-navbar">
-      <template v-slot:logo>
-        <h2 class="pa-2 logotext">FeedGears RSS</h2>
+  <v-app>
+    <v-app-bar app location="top" :scrol-behavior="'elevate'">
+      <template v-slot:title>
+        <span class="view-header-no-count">
+          FeedGears RSS
+        </span>
       </template>
-      <template v-slot:buttons>
-        <PreLoginNavbarButtons :baseUrl="baseUrl" :theme="theme"/>
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon icon="fa-rss" />
       </template>
-    </NavbarFixedHeader>
+      <PreLoginNavbarButtons :baseUrl="baseUrl" :theme="theme"/>
+    </v-app-bar>
 
-    <BannerPanel :theme="theme" class="panel" />
+    <v-main>
+      <!-- container -->
+      <BannerPanel :theme="theme" />
 
-    <DemoPanel :theme="theme" class="panel" /> 
+      <!-- container -->
+      <DemoPanel :theme="theme" /> 
 
-    <FeaturesPanel :theme="theme" class="panel" /> 
+      <v-divider /> 
 
-    <FAQPanel :theme="theme" class="panel" />
+      <v-container>
+        <!-- sheet -->
+        <FeaturesPanel :theme="theme" class="ma-4" /> 
 
-    <FooterPanel :theme="theme" class="panel" />
-  </v-main>
+        <v-divider class="mt-8 mb-8" /> 
+
+        <!-- card -->
+        <FAQPanel :theme="theme" class="ma-4" />
+
+        <v-divider class="mt-8 mb-8" /> 
+
+        <!-- card -->
+        <VideoPanel :theme="theme" class="ma-4" />
+      </v-container>
+
+      <v-divider /> 
+      
+      <FooterPanel :theme="theme" />
+    </v-main>
+
+  </v-app>
 </template>
   
 <script>
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import PreLoginNavbarButtons from '@/components/prelogin/PreLoginNavbarButtons.vue';
 import BannerPanel from '@/components/landing/BannerPanel.vue';
 import DemoPanel from '@/components/landing/DemoPanel.vue';
 import FeaturesPanel from '@/components/landing/FeaturesPanel.vue';
 import FAQPanel from '@/components/landing/FAQPanel.vue';
+import VideoPanel from '@/components/landing/VideoPanel.vue';
 import FooterPanel from '@/components/landing/FooterPanel.vue';
-// import SystemStatusPanel from '@/components/landing/SystemStatusPanel.vue';
 
 export default {
   name: "LandingView",
   components: {
-    NavbarFixedHeader,
     PreLoginNavbarButtons,
     BannerPanel, 
     DemoPanel, 
     FeaturesPanel, 
     FAQPanel,
+    VideoPanel,
     FooterPanel, 
-    // SystemStatusPanel, 
   },
   props: ["baseUrl"],
   data() {
@@ -59,56 +79,15 @@ export default {
         } else {
           console.log("landing: not authenticated on mount");
         }
-        this.inTransit = false;
     });
   },
 };
 </script>
   
 <style scoped>
-.landing-navbar {
-  position: sticky;
-  top: 0;
-  background-color: v-bind('theme.appbg');
-  border-bottom: 1px solid v-bind('theme.navbarsubshadow');
-  box-shadow: 0px 3px 3px v-bind('theme.darksubshadow');
-}
-
-.panel {
-  overflow: auto;
-}
-
-.panel-divider {
-  margin: 2svw;
-  height: 2px;
-  background-color: v-bind('theme.navbarsubshadow');
-}
-
-.logotext {
-  font-family: 'Russo One';
-  color: v-bind('theme.logosubtextcolor');
-  text-shadow: 2px 0px 2px v-bind('theme.logocolor');
-  float: left;
-}
-</style>
-
-<style>
-.accessible-button {
-  min-height: 3rem;
-  min-width: 3rem;
-}
-
-@media (max-width: 640px) {
-  .accessible-button {
-    min-height: 1.5rem;
-    min-width: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .accessible-button {
-    min-height: unset;
-    min-width: unset;
-  }
+.view-header-no-count {
+  font-family: "Russo One", system-ui, sans-serif;
+  font-weight: bold;
+  font-size: larger;
 }
 </style>

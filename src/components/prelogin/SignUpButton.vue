@@ -1,23 +1,22 @@
 <template>
-  <v-btn depressed outlined 
-    class="signup-button"
-    :disabled="disabled"
-    @click="this.$router.push('/register')">
-    {{ this.$t('createAnAccount') }}
-  </v-btn>
+  <v-btn @click="this.$router.push('/register')"
+    elevation="1"
+    class="signup-button flex-grow-1"
+    variant="tonal"
+    prepend-icon="fa-user" 
+    :text="this.$t('createAnAccount')" />
 </template>
 
 <script>
 export default {
   name: "SignUpButton",
-  props: [ "disabled", "theme" ],
+  props: [ "theme" ],
 }
 </script>
 
 <style scoped>
 .signup-button {
   min-height: 3rem;
-  padding: .75rem 1rem;
   font-weight: bold;
 }
 </style>

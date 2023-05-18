@@ -1,18 +1,17 @@
 <template>
-  <v-btn id="logout" 
-    class="logout-button accessible-button" 
-    @click="logout" 
+  <v-btn @click="logout" 
+    id="logout" 
+    size="small"
     accesskey="o" 
-    :disabled="disabled"
-    :title="this.$t('logout')">
-    {{ this.$t('logout') }} 
-  </v-btn>
+    :title="this.$t('logout')"
+    append-icon="fa-sign-out"
+    :text="this.$t('logout')" />
 </template>
 
 <script>
 export default {
   name: "LogoutButton",
-  props: [ "disabled", "theme" ],
+  props: [ "theme" ],
   methods: {
     logout() {
       this.$auth.logout()
@@ -25,12 +24,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.logout-button {
-  max-width: 256px;
-  min-height: 3rem;
-  padding: .75rem 1rem;
-  font-weight: bold;
-}
-</style>

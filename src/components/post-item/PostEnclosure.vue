@@ -1,6 +1,5 @@
 <template>
   <div class="post-enclosure">
-    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
     <img 
       v-if="isImage()" 
       :src="this.enclosure.url"
@@ -22,15 +21,9 @@
 </template>
 
 <script>
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-
-
 export default {
   name: "PostEnclosure",
   props: [ "enclosure", "theme" ],
-  components: {
-    NavbarFixedHeader,
-  },
   emits: [ "playing", "audioPlay" ],
   mounted() {
     if (this.isVideo()) {
@@ -67,24 +60,15 @@ export default {
     //     });
     // }
   },
-  data() {
-    return {
-      inTransit: false,
-    }
-  }
+  // data() {
+  //   return {
+  //     inTransit: false,
+  //   }
+  // }
 }
 </script>
 
 <style scoped>
-.post-enclosure {
-  width: 100%;
-}
-
-.post-enclosure > span:hover, .post-enclosure > span:focus-visible {
-  /* cursor: pointer; */
-  text-decoration: underline;
-}
-
 .post-enclosure-image {
   max-width: 75%;
   max-height: 75%;

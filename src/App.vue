@@ -1,11 +1,7 @@
 <template>
-  <v-app id="apphome" theme="dark" class="text-center">
-    <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-    </router-view>
-  </v-app>
+  <router-view v-slot="{ Component }">
+    <component :is="Component" />
+  </router-view>
 </template>
 
 <script>

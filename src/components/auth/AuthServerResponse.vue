@@ -1,7 +1,7 @@
 <template>
-  <div v-if="this.serverMessage && !this.$auth.$isAuthenticated" class="server-message">
+  <v-alert v-if="this.serverMessage && !this.$auth.$isAuthenticated" class="ma-4 text-align-cener" type="error" theme="dark">
     {{ this.serverMessage }}
-  </div>
+  </v-alert>
 </template>
 
 <script>
@@ -10,10 +10,3 @@ export default {
   props: [ "serverMessage", "theme" ]
 }
 </script>
-
-<style scoped>
-.server-message {
-  text-align: center;
-  color: v-bind('theme.normalmessage');
-}
-</style>

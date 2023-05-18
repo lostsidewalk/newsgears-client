@@ -1,16 +1,17 @@
 <template>
-  <v-btn depressed outlined block 
+  <v-btn 
+    elevation="1"
+    variant="tonal"
     class="auth-button"
-    :disabled="disabled"
-    @click="onClick()">
-    {{ label }}
-  </v-btn>
+    @click="onClick()"
+    :text="label"
+    :loading="inTransit" />
 </template>
   
 <script>
 export default {
   name: "AuthButton",
-  props: [ "label", "subLabel", "disabled", "theme" ],
+  props: [ "label", "subLabel", "inTransit", "theme" ],
   methods: {
     onClick() {
       this.$emit("clicked");
@@ -21,9 +22,9 @@ export default {
 
 <style scoped>
 .auth-button {
-  max-width: 256px;
   min-height: 3rem;
-  padding: .75rem 1rem .75rem 2.625rem;
   font-weight: bold;
+  flex-grow: 1;
 }
 </style>
+

@@ -1,55 +1,54 @@
 <template>
-  <v-container>
-    <v-row elevation="6" class="pa-4">
-      <v-col cols=12 align="left">
+  <v-card>
+    <v-card-title class="text-center pa-4">
+      {{ this.$t('feedGearsHelp') }}
+    </v-card-title>
+    <v-divider />
+    <v-card-text>
       <!-- global -->
-      <h3 class="view-header-no-count">{{ this.$t('globalShortcutKeys') }}</h3>
-      <div class="d-flex flex-row flex-wrap">
-        <v-card class="ma-4" max-width="320" v-for="desc in this.helpModel.fromAnywhere" :key="desc">
-          <v-card-title>
-            <v-btn>
-              <i v-if="desc.icon" :class="'fa ' + desc.icon" />
-              <span v-if="desc.key">{{ desc.key }}</span>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            {{  desc.label }}
-          </v-card-text>
-        </v-card>
-      </div>
+      <v-card elevation="6" class="mb-4 pa-1">
+        <v-card-title>
+          {{ this.$t('globalShortcutKeys') }}
+        </v-card-title>
+        <v-divider />
+        <v-card-text class="d-flex flex-row flex-wrap">
+          <v-hover v-slot="{ isHovering, props }" v-for="desc in this.helpModel.fromAnywhere" :key="desc">
+            <v-card  :elevation="isHovering ? 7 : 6" class="ma-4" 
+              max-width="320" 
+              v-bind="props"
+              variant="tonal">
+              <v-card-title class="pa-4">
+                {{  desc.label }}
+              </v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-btn variant="tonal" 
+                  :prepend-icon="desc.icon" 
+                  :text="desc.key" />
+              </v-card-text>
+            </v-card>
+          </v-hover>
+          <v-hover v-slot="{ isHovering, props }" v-for="desc in this.helpModel.aQueueIsSelected" :key="desc">
+            <v-card  :elevation="isHovering ? 7 : 6" class="ma-4" 
+              max-width="320" 
+              v-bind="props"
+              variant="tonal">
+              <v-card-title class="pa-4">
+                {{ desc.label }}
+              </v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-btn variant="tonal" 
+                  :prepend-icon="desc.icon" 
+                  :text="desc.key" />
+              </v-card-text>
+            </v-card>
+          </v-hover>
+        </v-card-text>
+      </v-card>
       <!-- queue selected -->
-      <h3 class="view-header-no-count">{{ this.$t('whenAQueueIsSelected') }}</h3>
-      <div class="d-flex flex-row flex-wrap">
-        <v-card class="ma-4" max-width="320" v-for="desc in this.helpModel.aQueueIsSelected" :key="desc">
-          <v-card-title>
-            <v-btn>
-              <i v-if="desc.icon" :class="'fa ' + desc.icon" />
-              <span v-if="desc.key">{{ desc.key }}</span>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            {{ desc.label }}
-          </v-card-text>
-        </v-card>
-      </div>
-      <!-- post selected -->
-      <h3 class="view-header-no-count">{{ this.$t('whenAPostIsSelected') }}</h3>
-      <div class="d-flex flex-row flex-wrap">
-        <v-card class="ma-4" max-width="320" v-for="desc in this.helpModel.aPostIsSelected" :key="desc">
-          <v-card-title>
-            <v-btn>
-              <i v-if="desc.icon" :class="'fa ' + desc.icon" />
-              <span v-if="desc.key">{{ desc.key }}</span>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            {{ desc.label }}
-          </v-card-text>
-        </v-card>
-      </div>
-      </v-col>      
-    </v-row>
-  </v-container>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -61,28 +60,20 @@ export default {
       helpModel: {
         fromAnywhere: [
           {
-            label: this.$t('switchModeAriaLabel'),
+            label: this.$t('switchMode'),
             key: "ALT + L", // global accel 
           },
           {
-            label: this.$t('logoutArialLabel'),
+            label: this.$t('logout'),
             key: "ALT + O", // global accel 
           },
           {
-            label: this.$t('goToSettingsAriaLabel'),
+            label: this.$t('settings'),
             key: "ALT + T", // global accel 
           },
           {
             label: this.$t('uploadOPML'),
             key: "ALT + M", // global accel 
-          },
-          {
-            label: this.$t('cycleGridLayoutAriaLabel'),
-            key: "ALT + G", // global accel 
-          },
-          {
-            label: this.$t('cycleTableLayoutAriaLabel'),
-            key: "ALT + B", // global accel 
           },
           {
             label: this.$t('toggleDistractions'),
@@ -127,119 +118,8 @@ export default {
             key: "/", // key handler when queue is selected 
           },
         ],
-        aPostIsSelected: [
-          {
-            label: this.$t('goToPreviousPost'),
-            icon: "fa-arrow-up", // key handler when post is selected 
-          },
-          {
-            label: this.$t('goToNextPost'),
-            icon: "fa-arrow-down", // key handler when post is selected 
-          },
-          {
-            label: this.$t('goToFirstPost'),
-            key: "HOME", // key handler when post is selected 
-          },
-          {
-            label: this.$t('goToLastPost'),
-            key: "END", // key handler when post is selected 
-          },
-          {
-            label: this.$t('starSelectedPost'),
-            key: "S", // key handler when post is selected 
-          },
-          {
-            label: this.$t('toggleReadStatusSelectedPost'),
-            key: "M", // key handler when post is selected 
-          },
-          {
-            label: this.$t('openOriginalArticleSelectedPost'),
-            key: "V", // key handler when post is selected 
-          },
-        ]
       }
     }
   }
 }
 </script>
-
-<style scoped>
-.modal-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: auto;
-  overflow-y: auto;
-  z-index: 1000;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-body {
-  color: v-bind('theme.normalmessage');
-  text-align: left;
-  width: 100%;
-  height: fit-content;
-  padding: 1rem;
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.modal-actions {
-  padding-top: .75rem;
-}
-
-.keyboard-shortcut-container {
-  overflow-y: auto; 
-  align-items: start;
-  border-top: 0px;
-  border-bottom: 1px solid v-bind('theme.sectionbordercolor');
-  border-left: 1px solid v-bind('theme.sectionbordercolor');
-  border-right: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 3px;
-  margin-bottom: 1rem;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  background-color: v-bind('theme.sectionhighlight');
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
-.keyboard-shortcut-desc {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: .56rem;
-  padding: .75rem;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 4px;
-}
-
-.keyboard-label-wrapper {
-  text-align: start;
-}
-
-.keyboard-key {
-  /* padding: .75rem;
-  border: 1px solid v-bind('theme.buttonborder');
-  border-radius: 4px;
-  box-shadow: 3px 3px 1px v-bind('theme.darkshadow');
-  color: v-bind('theme.buttonfg');
-  background-color: v-bind('theme.buttonbg');
-  margin: .56rem;
-  user-select: none;
-  white-space: nowrap; */
-}
-
-.keyboard-key-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.view-header-no-count {
-  font-family: "Russo One", system-ui, sans-serif;
-  font-weight: bold;
-  font-size: larger;
-  color: v-bind('theme.logocolor');
-  text-shadow: 1px 1px 1px v-bind('theme.accentshadow');
-}
-</style>

@@ -1,124 +1,81 @@
 <template>
-  <div>
-    <div class="links-view">
+  <v-footer elevation="6">
+    <v-dialog v-model="this.showPrivacyPolicy" width="75%" height="75%" scrollable>
+      <PrivacyPolicyPanel @dismiss="this.showPrivacyPolicy = false" />
+    </v-dialog>
+    <v-row justify="center" no-gutters cols="9">
       <!-- TODO: (refactor) extract component -->
-      <v-btn class="footer-link" 
-        :aria-label="this.$t('visitLSDevBlogAriaLabel')" 
-        @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')">
-        <span class="fa fa-code-fork" /> &nbsp; {{ this.$t('devBlog') }}
-      </v-btn>
-      <v-btn class="footer-link" @click.prevent="this.$router.push('/docs');">
-        <span class="fa fa-question-circle" /> &nbsp; {{ this.$t('docs') }}
-      </v-btn>
-      <v-btn class="footer-link" @click.prevent="this.$router.push('/privacy');">
-        <span class="fa fa-file-text" /> &nbsp; {{ this.$t('privacyPolicy') }}
-      </v-btn>
-      <v-btn class="footer-link" @click.prevent="this.$router.push('/api');">
-        <span class="fa fa-plug" /> &nbsp; {{ this.$t('api') }}
-      </v-btn>
-      <v-btn class="footer-link" 
-        :aria-label="this.$t('emailSupportArialLabel')" 
-        @click.prevent="window.open('mailto:support@feedgears.com', '_blank')">
-        <span class="fa fa-envelope" /> &nbsp; {{ this.$t('email') }}
-      </v-btn>
-      <v-btn class="footer-link" 
-        :aria-label="this.$t('visitLSTwitterAriaLabel')" 
-        @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')">
-        <span class="fa fa-twitter" /> &nbsp; {{ this.$t('twitter') }}
-      </v-btn>
-      <v-btn class="footer-link" 
-        :aria-label="this.$t('visitLSGithubArialLabel')" 
-        @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')">
-        <span class="fa fa-github" /> &nbsp; {{ this.$t('github') }}
-      </v-btn>
-      <v-btn class="footer-link" 
-        :aria-label="this.$t('visitLSTwitchAriaLabel')" 
-        @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')">
-        <span class="fa fa-twitch" /> &nbsp; {{ this.$t('twitch') }}
-      </v-btn>
-      <v-btn class="footer-link" 
-        :aria-label="this.$t('visitLSDiscordAriaLabel')" 
-        @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')">
-        <span class="fa fa-comments-o" /> &nbsp; {{ this.$t('discord') }}
-      </v-btn>
-    </div>
-    <div class="footer-divider"/>
-    <div class="copyright-view">
-      <div>{{ this.$t('copyright') }} <span class="fa fa-copyright" /> 2023 <a class="footer-link" :aria-label="this.$t('visitLSHomepage')" href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
-      <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
-    </div>
-  </div>
+      <v-btn @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')"
+        size="small"
+        variant="text"
+        prepend-icon="fa-code-fork" 
+        :text="this.$t('devBlog')" />
+      <v-btn @click.prevent="this.$router.push('/docs');"
+        size="small"
+        variant="text"
+        prepend-icon="fa-question-circle"
+        :text="this.$t('docs')" />
+      <v-btn @click="this.showPrivacyPolicy = !this.showPrivacyPolicy" 
+        size="small" 
+        variant="text" 
+        prepend-icon="fa-file-text"
+        :text="this.$t('privacyPolicy')" />
+      <v-btn @click.prevent="this.$router.push('/api');"
+        size="small" 
+        variant="text"
+        prepend-icon="fa-plug"
+        :text="this.$t('api')" />
+      <v-btn @click.prevent="sendSupportMail"
+        size="small" 
+        variant="text"
+        prepend-icon="fa-envelope"
+        :text="this.$t('email')" />
+      <v-btn @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')"
+        size="small" 
+        variant="text"
+        prepend-icon="fa-twitter"
+        :text="this.$t('twitter')" />
+      <v-btn @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')"
+        size="small" 
+        variant="text"
+        prepend-icon="fa-github" 
+        :text="this.$t('github')" />
+      <v-btn @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')"
+        size="small" 
+        variant="text"
+        prepend-icon="fa-twitch" 
+        :text="this.$t('twitch')" />
+      <v-btn @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')"
+        size="small" 
+        variant="text"
+        prepend-icon="fa-comments-o" 
+        :text="this.$t('discord')" />
+      <v-col cols="9" class="text-center mt-4">
+        <div>{{ this.$t('copyright') }} <v-icon icon="fa-copyright" /> 2023 <a href="https://www.lostsidewalk.com" target="_blank">LOST SIDEWALK SOFTWARE LLC</a></div>
+        <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
+      </v-col>
+    </v-row>
+  </v-footer>
 </template>
 
 <script>
+import PrivacyPolicyPanel from '../privacy-policy-panel/PrivacyPolicyPanel.vue';
+
 export default {
   name: "FooterPanel",
   props: [ "theme" ],
+  components: {
+    PrivacyPolicyPanel,
+  },
+  methods: {
+    sendSupportMail() {
+      window.open('mailto:support@feedgears.com', '_blank');
+    }
+  },
+  data() {
+    return {
+      showPrivacyPolicy: false,
+    }
+  }
 }
 </script>
-
-<style scoped>
-.links-view {
-  border-top: 1px solid v-bind('theme.navbarsubshadow');
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  gap: .75rem;
-  padding: 1.25rem;
-}
-
-.footer-link {
-  text-decoration: none;
-  color: v-bind('theme.subduedmessage');
-  cursor: pointer;
-  background: unset;
-  border: unset;
-  max-width: fit-content;
-  min-width: 48px;
-  min-height: 48px;
-}
-
-.footer-link:hover, .footer-link:focus-visible {
-  color: v-bind('theme.highlightedmessage');
-}
-
-.footer-divider {
-  border-top: 1px solid v-bind('theme.navbarsubshadow');
-  width: 75%;
-  margin: auto;
-  padding-top: 1%;
-  padding-bottom: 1%;
-}
-
-.copyright-view {
-  padding-left: 4%;
-  padding-right: 4%;
-  padding-bottom: 1%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-  font-size: smaller;
-}
-
-@media (max-width: 640px) {
-  .copyright-view {
-    padding-left: 2%;
-    padding-right: 2%;
-  }
-}
-
-@media (max-width: 320px) {
-  .copyright-view {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
-.copyright-view > div { 
-  margin: .125rem;
-}
-
-</style>

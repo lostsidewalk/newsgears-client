@@ -1,236 +1,242 @@
 <template>
-  <div :disabled="disabled" v-auto-animate>
-    <div class="rss-atom-feed-info">
-      <!-- left chunk (image) -->
-      <div class="left">
-        <!-- icon -->
-        <!-- TODO: (refactor) extract component -->
-        <div>
-          <img class="rss-atom-feed-info-image"
-            v-if="this.info.icon" 
-            :src="this.info.icon.url" 
-            :title="this.info.icon.title" 
-            :alt="this.$t('feedLogoImage')" 
-            width="128" />
-          <img class="rss-atom-feed-info-image"
-            v-if="this.info.image && !this.info.icon" 
-            :src="this.info.image.url" 
-            :title="this.info.image.title" 
-            :alt="this.$t('feedLogoImage')" 
-            width="128" />
-        </div>
-      </div>
-      <!-- right chunk (text) -->
-      <div class="right">
-        <!-- title -->
-        <!-- TODO: (refactor) extract component -->
-        <div class="rss-atom-feed-info-field rss-atom-feed-info-title br-pill-subdued">
-          <a class="link" :href="this.info.feedUrl" :style="this.disabled ? 'pointer-events: none' : ''" target="_blank">
-            {{ this.info.title ? this.info.title.value : this.info.feedUrl }}
-          </a>
-        </div>
+  <v-card @click="this.showSubscriptionDetails = !this.showSubscriptionDetails">
+    <!-- title -->
+    <v-card-title>
+      {{ this.info.title ? this.info.title : this.info.feedUrl }}
+    </v-card-title>
+    <v-divider />
+    <!-- icon -->
+    <v-card-subtitle v-if="this.showSubscriptionDetails">
+      <v-img class="mt-2 rounded h-auto"
+        v-if="this.info.icon" 
+        :src="this.info.icon.url" 
+        :title="this.info.icon.title" 
+        :alt="this.$t('feedLogoImage')" 
+        width="128" 
+        max-width="128"
+        max-height="128" />
+      <v-img class="mt-2 rounded h-auto"
+        v-if="this.info.image && !this.info.icon" 
+        :src="this.info.image.url" 
+        :title="this.info.image.title" 
+        :alt="this.$t('feedLogoImage')" 
+        width="128" 
+        max-width="128"
+        max-height="128" />
+    </v-card-subtitle>
+    <!-- description -->
+    <v-card-text v-if="this.info.description && this.showSubscriptionDetails">
+      {{ this.info.description ? this.info.description.value : '' }}
+    </v-card-text>
+    <!-- error -->
+    <v-divider v-if="this.info.error" />
+    <v-card-text v-if="this.info.error" class="ma-1 error">
+      {{ this.info.error }}
+    </v-card-text>
+    <!-- chips -->
+    <v-card-text v-show="this.showSubscriptionDetails">
+      <v-divider v-if="this.hasChips" />
+      <v-chip-group v-if="this.hasChips">
         <!-- author -->
-        <div v-if="this.info.author" class="rss-atom-feed-info-field br-pill-subdued">
+        <v-chip v-if="this.info.author" class="ma-1" elevation="2" variant="text">
           {{ this.$t('authorColon') }} {{ this.info.author }}
-        </div>
+        </v-chip>
         <!-- copyright -->
-        <div v-if="this.info.copyright" class="rss-atom-feed-info-field br-pill-subdued">{{ this.info.copyright }}</div>
+        <v-chip v-if="this.info.copyright" class="ma-1" elevation="2" variant="text">
+          {{ this.info.copyright }}
+        </v-chip>
         <!-- published date -->
-        <div v-if="this.info.publishedDate" class="rss-atom-feed-info-field br-pill-subdued">
+        <v-chip v-if="this.info.publishedDate" class="ma-1" elevation="2" variant="text">
           {{ this.$t('lastPublishedColon') }} {{ this.info.publishedDate }}
-        </div>
-        <!-- description -->
-        <div v-if="this.info.description" class="rss-atom-feed-info-field br-pill-subdued">
-          {{ this.info.description ? this.info.description.value : '' }}
-        </div>
-        <div v-if="!this.sampleEntries || this.sampleEntries.length === 0" class="rss-atom-feed-info-field br-pill-subdued">
-          <span class="link fa fa-refresh" @click="this.$emit('refreshFeed')" /> 
-          {{ this.$t('refreshThisFeed') }}
-        </div>
-        <!-- categories -->
-        <div v-if="this.info.categories && this.info.categories.length > 0" class="rss-atom-feed-info-field pill-container">
-          <button v-for="category of this.info.categories" :key="category"
-            :class="filterSupport ? 'br-pill accessible-button' : 'br-pill-subdued'"
-            :title="filterSupport ? this.$t('toggleCategoryFilter') : category"
-            @click="updateFeedFilter('category', category)"
-            :disabled="!filterSupport">
-            {{ category }}
-          </button>
-        </div>
-        <!-- various informational pills -->
-        <div v-if="this.info.docs || this.info.encoding || this.info.managingEditor || this.info.webMaster" class="rss-atom-feed-info-field pill-container">
-          <!-- docs -->
-          <button v-if="this.info.docs" 
-            :class="filterSupport ? 'br-pill accessible-button' : 'br-pill-subdued'"
-            :title="filterSupport ? this.$t('toggleDocStringFilter') : this.info.docs"
-            @click="updateFeedFilter('docs', this.info.docs)"
-            :disabled="!filterSupport">
-            {{ this.info.docs }}
-          </button>
-          <!-- encoding -->
-          <button v-if="this.info.encoding" 
-            :class="filterSupport ? 'br-pill accessible-button' : 'br-pill-subdued'"
-            :title="filterSupport ? this.$t('toggleEncodingFilter') : this.info.encoding"
-            @click="updateFeedFilter('encoding', this.info.encoding)"
-            :disabled="!filterSupport">
-            {{ this.info.encoding }}
-          </button>
-          <!-- managing editor -->
-          <button v-if="this.info.managingEditor" 
-            :class="filterSupport ? 'br-pill accessible-button' : 'br-pill-subdued'"
-            :title="filterSupport ? this.$t('toggleManagingEditorFilter') : this.info.managingEditor"
-            @click="updateFeedFilter('managingEditor', this.info.managingEditor)"
-            :disabled="!filterSupport">
-            {{ this.$t('managingEditorColon') }} {{ this.info.managingEditor }}
-          </button>
-          <!-- web master -->
-          <button v-if="this.info.webMaster" 
-            :class="filterSupport ? 'br-pill accessible-button' : 'br-pill-subdued'"
-            :title="filterSupport ? this.$t('toggleWebmasterFilter') : this.info.webMaster"
-            @click="updateFeedFilter('webMaster', this.info.webMaster)"
-            :disabled="!filterSupport">
-            {{ this.$t('webmasterColon') }} {{ this.info.webMaster }}
-          </button>
-        </div>
+        </v-chip>
+        <v-chip v-for="category of this.info.categories" :key="category"
+          elevation="2" variant="text"
+          :title="filterSupport ? this.$t('toggleCategoryFilter') : category"
+          @click.stop="updateFeedFilter('category', category)"
+          :disabled="!filterSupport">
+          {{ category }}
+        </v-chip>
+        <!-- docs -->
+        <v-chip v-if="this.info.docs" 
+          elevation="2" variant="text"
+          :title="filterSupport ? this.$t('toggleDocStringFilter') : this.info.docs"
+          @click.stop="updateFeedFilter('docs', this.info.docs)"
+          :disabled="!filterSupport">
+          {{ this.info.docs }}
+        </v-chip>
+        <!-- encoding -->
+        <v-chip v-if="this.info.encoding" 
+          elevation="2" variant="text"
+          :title="filterSupport ? this.$t('toggleEncodingFilter') : this.info.encoding"
+          @click.stop="updateFeedFilter('encoding', this.info.encoding)"
+          :disabled="!filterSupport">
+          {{ this.info.encoding }}
+        </v-chip>
+        <!-- managing editor -->
+        <v-chip v-if="this.info.managingEditor" 
+          elevation="2" variant="text"
+          :title="filterSupport ? this.$t('toggleManagingEditorFilter') : this.info.managingEditor"
+          @click.stop="updateFeedFilter('managingEditor', this.info.managingEditor)"
+          :disabled="!filterSupport">
+          {{ this.$t('managingEditorColon') }} {{ this.info.managingEditor }}
+        </v-chip>
+        <!-- web master -->
+        <v-chip v-if="this.info.webMaster" 
+          elevation="2" variant="text"
+          :title="filterSupport ? this.$t('toggleWebmasterFilter') : this.info.webMaster"
+          @click.stop="updateFeedFilter('webMaster', this.info.webMaster)"
+          :disabled="!filterSupport">
+          {{ this.$t('webmasterColon') }} {{ this.info.webMaster }}
+        </v-chip>
         <!-- HTTP status -->
-        <div v-if="this.info.httpStatusCode" class="rss-atom-feed-info-field br-pill-subdued">
+        <v-chip v-if="this.httpStatusCode" class="ma-1" 
+          variant="text">
           {{ this.$t('httpStatus', { 
-            httpStatusCode: this.info.httpStatusCode, 
-            httpStatusMessage: this.info.httpStatusMessage 
+            httpStatusCode: this.httpStatusCode, 
+            httpStatusMessage: this.httpStatusMessage 
           }) }}
-        </div>
+        </v-chip>
         <!-- HTTP redirect status -->
-        <div v-if="this.info.redirectHttpStatusCode" class="rss-atom-feed-info-field br-pill-subdued">
+        <v-chip v-if="this.info.redirectHttpStatusCode" class="ma-1" 
+          elevation="2" variant="text">
           {{ this.$t('redirectedTo', { 
               redirectFeedUrl: this.info.redirectFeedUrl, 
               redirectHttpStatusCode: this.info.redirectHttpStatusCode, 
               redirectHttpStatusMessage: this.info.redirectHttpStatusMessage
             }) }}
-        </div>
+        </v-chip>
         <!-- URL is upgradable -->
-        <div v-if="this.info.isUrlUpgradable === true" class="rss-atom-feed-info-field br-pill-subdued">
+        <v-chip v-if="this.info.isUrlUpgradable === true" class="ma-1" 
+          elevation="2" variant="text">
           {{ this.$t('feedAlsoAvailableInHttps') }}
-        </div>
-        <!-- error -->
-        <div v-if="this.info.error" class="rss-atom-feed-info-field br-pill-subdued error">
-          {{ this.info.error }}
-        </div>
-        <!-- show/hide sample entries -->
-        <div class="rss-atom-feed-info-field pill-container" v-show="this.sampleEntries">
-          <button v-if="this.info.sampleEntries" 
-            class="br-pill accessible-button rss-atom-url-row-button"
-            :title="this.$t('sampleEntries')"
-            @click="this.showSampleEntries = !this.showSampleEntries">
-            {{ this.$t('sampleEntries') }}  &nbsp; <span class="fa" :class="this.showSampleEntries ? 'fa-compress' : 'fa-expand'" />
-          </button>
-        </div>
-        <!-- sample entries -->
-        <div class="rss-atom-feed-info-field rss-atom-feed-info-sample" v-show="this.showSampleEntries" v-for="sampleEntry in this.sampleEntries" :key="sampleEntry.postTitle">
-          <!-- sample entry thumbnail -->
-          <div class="sample-entry-thumbnail" v-if="this.hasThumbnail(sampleEntry.postMedia)">
-            <button class="link"
-              @click.stop="sampleEntry.showDetails = !sampleEntry.showDetails">
-              <img class="sample-entry-thumbnail-img" 
-                :src="sampleEntry.postMedia.postMediaMetadata.thumbnails[0].url" />
-            </button>
-          </div>
-          <!-- sample entry verbiage (link, description, publish timestamp, etc.) -->
-          <div class="sample-entry-verbiage">
-            <!-- post title -->
-            <div class="rss-atom-feed-info-field rss-atom-feed-info-title">
-              <a class="link"
-                :href="sampleEntry.postUrl" 
-                :style="this.disabled ? 'pointer-events: none' : ''" 
-                target="_blank">
-                {{ sampleEntry.postTitle.value }} <span class="rss-atom-feed-info-published" v-if="sampleEntry.publishTimestamp">({{ sampleEntry.publishTimestamp }})</span>
-              </a>
-            </div>
-            <!-- post desc -->
-            <div class="rss-atom-feed-info-field" v-if="sampleEntry.postDesc">
-              <div v-if="this.isHtmlContent(sampleEntry.postDesc)"
-                  class='post-html-frame' 
-                  v-html="sampleEntry.postDesc.value" frameborder="0" />
-              <div v-else
-                class='post-text-frame'>
-                {{ sampleEntry.postDesc.value }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- show/hide recommended feeds -->
-        <div class="rss-atom-feed-info-field pill-container" v-show="this.recommendedFeeds.length > 0">
-          <button v-if="this.info.feedRecommendationInfo" 
-            class="br-pill accessible-button rss-atom-url-row-button"
-            :title="this.$t('recommendedFeeds')"
-            @click="this.showRecommendedFeeds = !this.showRecommendedFeeds">
-            {{ this.$t('recommendedFeeds') }} &nbsp; <span class="fa" :class="this.showRecommendedFeeds ? 'fa-compress' : 'fa-expand'" />
-          </button>
-        </div>
-        <!-- recommended feeds -->
-        <div class="rss-atom-feed-info-field" v-show="this.showRecommendedFeeds && this.recommendedFeeds.length > 0" v-for="recommendedFeed in this.recommendedFeeds" :key="recommendedFeed">
-          <div class="br-pill-subdued">
-            <button class="link" 
-              @click.stop="this.$emit('followRecommendation', recommendedFeed)">
-              {{ recommendedFeed }}
-            </button>
-          </div>
-        </div>
-        <!-- show/hide query metrics -->
-        <div class="rss-atom-feed-info-field pill-container" v-show="this.usefulFeedMetrics.length > 0">
-          <button v-if="this.info.feedMetrics" 
-            class="br-pill accessible-button rss-atom-url-row-button"
-            :title="this.$t('queryMetrics')"
-            @click="this.showQueryMetrics = !this.showQueryMetrics">
-            {{ this.$t('queryMetrics') }} &nbsp; <span class="fa fa-expand"  :class="this.showQueryMetrics ? 'fa-compress' : 'fa-expand'" />
-          </button>
-        </div>
-        <!-- query metrics -->
-        <div class="rss-atom-feed-info-field br-pill-subdued" v-show="this.showQueryMetrics && this.usefulFeedMetrics.length > 0" 
-          v-for="queryMetric in this.usefulFeedMetrics" :key="queryMetric">
-          <div v-if="queryMetric.importTimestamp">
-            {{ this.$t('importedNArticlesAt', { n: queryMetric.persistCt, at: queryMetric.importTimestamp }) }}
-          </div>
-          <!-- HTTP status -->
-          <div v-if="queryMetric.httpStatusCode">
-            {{ this.$t('httpStatus', { 
-              httpStatusCode: queryMetric.httpStatusCode, 
-              httpStatusMessage: queryMetric.httpStatusMessage 
-            }) }}
-          </div>
-          <!-- HTTP redirect status -->
-          <div v-if="queryMetric.redirectHttpStatusCode">
-            {{ this.$t('redirectedTo', { 
-                redirectFeedUrl: queryMetric.redirectFeedUrl, 
-                redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
-                redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
-              }) }}
-          </div>
-          <!-- error -->
-          <div v-if="queryMetric.queryExceptionTypeMessage" class="error">
-            {{ queryMetric.queryExceptionTypeMessage }}
-          </div>
+        </v-chip>
+      </v-chip-group>
+    </v-card-text>
+    <v-divider />
+    <v-card-actions class="flex-wrap">
+      <v-btn @click.stop="this.cardMode = (this.cardMode === 'QUERY_METRICS' ? null : 'QUERY_METRICS')"
+        size="small"
+        :append-icon="this.cardMode === 'QUERY_METRICS' ? 'fa-compress' : 'fa-expand'"
+        :title="this.$t('queryMetrics')"
+        :text="this.$t('queryMetrics')" 
+        :disabled="!this.info.feedMetrics"/>
+      <v-btn v-if="this.recommendedFeeds" @click.stop="this.cardMode = (this.cardMode === 'RECOMMENDED_FEEDS' ? null : 'RECOMENDED_FEEDS')"
+        size="small"
+        :append-icon="this.cardMode === 'RECOMMENDED_FEEDS' ? 'fa-compress' : 'fa-expand'"
+        :title="this.$t('recommendedFeeds')"
+        :text="this.$t('recommendedFeeds')" 
+        :disabled="!this.info.feedRecommendationInfo"/>
+      <slot name="additional" />
+    </v-card-actions>
+    <!-- similar feeeds -->
+    <v-expand-transition>
+      <div v-if="this.cardMode === 'RECOMMENDED_FEEDS'">
+        <div class="ma-1" v-for="recommendedFeed in this.recommendedFeeds" :key="recommendedFeed">
+          <v-btn @click.stop="this.$emit('followRecommendation', recommendedFeed)"
+            :text="recommendedFeed" />
         </div>
       </div>
-    </div>
-  </div>
+    </v-expand-transition>
+    <!-- RSS feed metrics -->
+    <v-expand-transition>
+      <v-table v-if="this.cardMode === 'QUERY_METRICS'" 
+        class="ma-4 overflow-auto" 
+        style="white-space: norwap;"
+        fixed-header>
+        <thead style="text-align: left;white-space: nowrap;">
+          <th class="pa-1">{{ this.$t('timestamp') }}</th>
+          <th class="pa-1">{{ this.$t('message') }}</th>
+          <th class="pa-1">{{ this.$t('httpStatusLabel') }}</th>
+          <th class="pa-1">{{ this.$t('httpRedirect') }}</th>
+          <th class="pa-1">{{ this.$t('error')}}</th>
+        </thead>
+        <tbody style="text-align: left;white-space: nowrap;">
+          <tr v-for="queryMetric in this.usefulFeedMetrics" :key="queryMetric">
+            <td class="pa-1">
+              {{ queryMetric.importTimestamp }}
+            </td>
+            <td class="pa-1">
+              {{ this.$t('importedNArticles', { n: queryMetric.persistCt }) }}
+            </td>
+            <!-- HTTP status -->
+            <td class="pa-1">
+              {{ this.$t('httpStatus', { 
+                httpStatusCode: queryMetric.httpStatusCode, 
+                httpStatusMessage: queryMetric.httpStatusMessage 
+              }) }}
+            </td>
+            <!-- HTTP redirect status -->
+            <td class="pa-1">
+              {{ queryMetric.redirectFeedUrl ? 
+              this.$t('redirectedTo', { 
+                  redirectFeedUrl: queryMetric.redirectFeedUrl, 
+                  redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
+                  redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
+                }) : this.$t('NONE') }}
+            </td>
+            <!-- error -->
+            <td  class="pa-1" :class="{ 'error': queryMetric.queryExceptionTypeMessage }">
+              {{ queryMetric.queryExceptionTypeMessage ? 
+                queryMetric.queryExceptionTypeMessage : this.$t('NONE') }}
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-expand-transition>
+    <!-- auth -->
+  </v-card>
 </template>
 
 <script>
 export default {
   name: "RssAtomFeedInfo",
-  props: [ "filterSupport", "info", "theme", "disabled" ],
+  props: [ "filterSupport", "info", "theme" ],
   computed: {
-    sampleEntries: function() {
-      return this.info.sampleEntries ? this.info.sampleEntries.slice(0, 10) : null;
+    httpStatusCode: function() {
+      let s = this.info.httpStatusCode;
+      if (s) {
+        return s;
+      }
+      let feedMetrics = this.info.feedMetrics;
+      if (feedMetrics && feedMetrics.length > 0) {
+        let mostRecentMetric = feedMetrics[0];
+        return mostRecentMetric.httpStatusCode;
+      }
+      return null;
+    },
+    httpStatusMessage: function() {
+      let s = this.info.httpStatusMessage;
+      if (s) {
+        return s;
+      }
+      let feedMetrics = this.info.feedMetrics;
+      if (feedMetrics && feedMetrics.length > 0) {
+        let mostRecentMetric = feedMetrics[0];
+        return mostRecentMetric.httpStatusMessage;
+      }
+      return null;
     },
     recommendedFeeds: function() {
-      return this.info.feedRecommendationInfo ? this.info.feedRecommendationInfo.recommendedUrls : [];
+      return this.info.feedRecommendationInfo ? this.info.feedRecommendationInfo.recommendedUrls : null;
     },
     usefulFeedMetrics: function() {
-      return this.info.feedMetrics ? this.info.feedMetrics.filter(f => f.persistCt > 0) : [];
+      return this.info.feedMetrics ? this.info.feedMetrics.filter(f => f.persistCt > 0) : null;
+    },
+    hasChips: function() {
+      return this.info.author || 
+        this.info.copyright ||
+        this.info.publishedDate || 
+        this.info.categories || 
+        this.info.docs || 
+        this.info.encoding || 
+        this.info.managingEditor || 
+        this.info.webMaster || 
+        this.httpStatusCode || 
+        this.info.redirectHttpStatusCode || 
+        this.info.isUrlUpgradable === true;
     }
   },
-  emits: [ "updateFilter", "refreshFeed", "followRecommendation" ],
+  emits: [ "updateFilter", "followRecommendation" ],
   methods: {
     isHtmlContent(contentObj) {
       return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;
@@ -252,181 +258,9 @@ export default {
   },
   data() {
     return {
-      showSampleEntries: false,
-      showRecommendedFeeds: false,
-      showQueryMetrics: false,
+      showSubscriptionDetails: true,
+      cardMode: null,
     }
   }
 }
 </script>
-
-<style scoped>
-.rss-atom-feed-info {
-  display: inline-flex;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-.rss-atom-feed-info-field {
-  margin-bottom: .44rem;
-  overflow-wrap: anywhere;
-}
-
-.rss-atom-feed-info-field > a {
-  color: v-bind('theme.subduedmessage');
-  text-decoration: none;
-}
-
-.rss-atom-feed-info-field > a:hover, .rss-atom-feed-info-field > a:focus-visible {
-  color: v-bind('theme.highlightedmessage');
-}
-
-.rss-atom-feed-info-field:last-of-type {
-  margin-bottom: unset !important;
-}
-
-.rss-atom-feed-info-title {
-  font-weight: bold;
-}
-
-.rss-atom-feed-info-published {
-  font-weight: normal;
-}
-
-.left {
-  padding-right: .44rem;
-}
-
-.right {
-  padding-left: .125rem;
-  width: 100%;
-  overflow-y: auto;
-}
-
-.rss-atom-feed-info-sample {
-  color: v-bind('theme.subduedmessage');
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: .44rem;
-}
-
-.rss-atom-feed-info-image {
-  border-radius: 4px;
-  height: auto;
-  width: 128px;
-  object-fit: scale-down;
-  max-height: 128px;
-  max-width: 128px;
-  min-height: 32px;
-  min-width: 32px;
-}
-
-.link {
-  text-decoration: none;
-  color: v-bind('theme.subduedmessage');
-  cursor: pointer;
-  border: 1px solid transparent;
-  user-select: none;
-  background-color: transparent;
-  text-align: start;
-}
-
-.link:hover, .link:focus-visible {
-  text-decoration: underline;
-  color: v-bind('theme.highlightedmessage');
-}
-
-.sample-entry-thumbnail {
-}
-
-.sample-entry-thumbnail-img {
-  border-radius: 4px;
-  max-width: 140px;
-  max-height: 140px;
-  object-fit: scale-down;
-  background-color: currentColor;
-}
-
-.sample-entry-verbiage {
-  width: 100%;
-  overflow-y: auto;
-}
-
-.pill-container {
-  border: 1px solid transparent;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .44rem;
-}
-
-/** has references */
-.br-pill {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  cursor: pointer;
-  border-radius: 4px;
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  padding: .44rem .75rem;
-  user-select: none;
-  display: block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-/** has references */
-.br-pill:hover, .br-pill:focus-visible {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonhighlight') !important;
-}
-
-.br-pill-subdued {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  cursor: unset;
-  border-radius: 4px;
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.normalmessage');
-  padding: .44rem 1.25rem;
-  user-select: none;
-  font-size: smaller;
-}
-
-.error {
-}
-
-.post-html-frame > * {
-  object-fit: scale-down;
-}
-
-.post-text-frame {
-  display: block;
-  overflow: auto;
-  font-family: serif;
-  font-size: larger;
-}
-
-.rss-atom-url-row-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus-visible {
-  background: v-bind('theme.buttonhighlight');
-}
-
-.rss-atom-url-row-button:disabled {
-  cursor: auto;
-}
-
-.rss-atom-url-row-button:hover:disabled {
-  background-color: unset;
-}
-</style>

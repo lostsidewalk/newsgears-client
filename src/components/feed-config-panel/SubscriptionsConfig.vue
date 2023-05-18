@@ -1,189 +1,152 @@
 <template>
-  <div class="feed-config-field">
-
-    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-
-    <!-- label -->
-    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls">
-      <label>{{ this.$t('addANewSubscription') }}</label>
-    </div>
-
+  <v-sheet align="left" justify="center">
     <!-- add RSS/ATOM feed from URL -->
-    <!-- TODO: (refactor) extract component -->
-    <div class="rss-atom-url-wrapper">
-      <!-- url input field w/refresh and delete buttons -->
-      <div class="rss-atom-url-row">
-        <!-- label -->
-        <label>{{ this.$t('feedUrl') }}</label>
+    <v-card>
+      <v-card-title class="pa-4">{{ this.$t('addANewSubscription') }}</v-card-title>
+      <v-divider />
+      <v-card-text>
         <!-- text field -->
-        <input type="text"
+        <v-text-field type="text"
           autofocus
+          :label="this.$t('feedUrl')"
           v-model="newRssAtomUrl.feedUrl"
-          :disabled="disabled || inTransit"
-          placeholder="Feed URL" />
-        <!-- buttons (discovery, auth, subscribe) -->
-        <div class="rss-atom-url-row-buttons">
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="this.refreshRssAtomUrlInfo(newRssAtomUrl)"
-            :disabled="disabled || inTransit || !newRssAtomUrl.feedUrl"
-            :title="this.$t('discovery')">
-            <span class="fa fa-refresh" /> &nbsp; {{ this.$t('discovery') }}
-          </button>
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="this.showNewFeedDetails = !this.showNewFeedDetails"
-            :disabled="disabled || inTransit"
-            :title="this.$t('auth')">
-            <span class="fa fa-expand" /> &nbsp; {{ this.$t('auth') }}
-          </button>
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="addNewRssAtomUrl"
-            :disabled="disabled || inTransit || !newRssAtomUrl.feedUrl"
-            :title="this.$t('subscribe')">
-            <span class="fa fa-plus" /> &nbsp; {{ this.$t('subscribe') }}
-          </button>
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="this.addNewRssAtomUrl(true)"
-            :disabled="disabled || inTransit || !newRssAtomUrl.feedUrl"
-            :title="this.$t('subscribeAndClose')">
-            <span class="fa fa-plus" /> &nbsp; {{ this.$t('subscribeAndClose') }}
-          </button>
-        </div>
-      </div>
-      <!-- credentials -->
-      <label v-if="showNewFeedDetails">{{ this.$t("credentialsUseMessage") }}</label>
-      <div class="rss-atom-url-row" v-if="showNewFeedDetails">
-        <!-- username label -->
-        <label>{{ this.$t("username") }}</label>
+          :placeholder="this.$t('feedUrl')" />
+        <v-text-field type="text" readonly variant="plain">
+          {{ this.$t("credentialsUseMessage") }}
+        </v-text-field>
         <!-- username text field -->
-        <input type="text"
+        <v-text-field type="text"
+          :label="this.$t('username')"
           v-model="newRssAtomUrl.username"
-          :disabled="disabled || inTransit"
-          :placeholder="this.$t('username')"
-          style="margin-bottom: .75rem" />
-        <!-- password label -->
-        <label>{{ this.$t("password") }}</label>
+          :placeholder="this.$t('username')" />
         <!-- password text field -->
-        <input type="password"
+        <v-text-field type="password"
+          :label="this.$t('password')"
           v-model="newRssAtomUrl.password"
-          :disabled="disabled || inTransit"
           :placeholder="this.$t('password')" />
-      </div>
-      <RssAtomFeedInfo v-if="newRssAtomUrl.discoveryUrl || newRssAtomUrl.error"
-        :info="newRssAtomUrl"
-        :disabled="disabled || inTransit"
-        :theme="theme"
-        :filterSupport="false"
-        @followRecommendation="followRecommendation" />
-    </div>
+        <RssAtomFeedInfo v-if="newRssAtomUrl.discoveryUrl || newRssAtomUrl.error"
+          :info="newRssAtomUrl"
+          :theme="theme"
+          :filterSupport="false"
+          @followRecommendation="followRecommendation">
+          <template v-slot:additional>
+            <v-btn @click="addNewRssAtomUrl"
+              size="small"
+              prepend-icon="fa-plus"
+              :loading="addNewInTransit"
+              :title="this.$t('subscribe')"
+              :text="this.$t('subscribe')" />
+          </template>
+        </RssAtomFeedInfo>
+      </v-card-text>
+      <v-divider />
+      <!-- buttons (discovery, auth, subscribe) -->
+      <v-card-actions>
+        <v-btn @click="this.refreshRssAtomUrlInfo(newRssAtomUrl)"
+          size="small"
+          prepend-icon="fa-refresh"
+          :loading="discoveryInTransit"
+          :disabled="!newRssAtomUrl.feedUrl"
+          :title="this.$t('discovery')"
+          :text="this.$t('discovery')" />
+      </v-card-actions>
+    </v-card>
+    <!-- -->
+    <!-- manage existing RSS/ATOM feed subscriptions -->
+    <!-- -->
+    <v-card v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
+      <v-card-title class="pa-4">{{ this.$t('yourSubscriptions') }}</v-card-title>
+      <v-divider />
+      <v-card-text>
+        <RssAtomFeedInfo v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx" 
+          class="mb-4" elevation="6"
+          :info="rssAtomUrl"
+          :theme="theme"
+          :filterSupport="false"
+          @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" 
+          @followRecommendation="followRecommendation">
+          <template v-slot:additional>
+            <v-btn @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails" 
+              size="small"
+              prepend-icon="fa-expand"
+              :title="this.$t('auth')"
+              :text="this.$t('auth')" />
+            <v-btn @click="this.deleteRssAtomUrl(rssAtomUrl.id)"
+              size="small"
+              prepend-icon="fa-trash"
+              :loading="deleteInTransit"
+              :title="this.$t('unsubscribe')"
+              :text="this.$t('unsubscribe')" />
+          </template>
+        </RssAtomFeedInfo>
+          <!-- TODO: make this a modal dialogs -->
+          <!-- <v-label v-if="rssAtomUrl.showDetails">{{ this.$t("credentialsUseMessage") }}</v-label> -->
+          <!-- <div v-if="rssAtomUrl.showDetails">
+            <v-label>{{ this.$t('username') }}</v-label>
+            <v-text-field type="text" v-model="rssAtomUrl.username"
+              :placeholder="this.$t('username')" style="margin-bottom: 0.75rem" />
+            <v-label>{{ this.$t('password') }}</v-label>
+            <v-text-field type="password" v-model="rssAtomUrl.password"
+              :placeholder="this.$t('password')" />
+            <div>
+              <v-btn class="rss-atom-url-row-button accessible-button"
+                density="comfortable"
+                variant="tonal"
+                @click="this.updateRssAtomUrlAuth(rssAtomUrl)"
+                prepend-icon="fa-save"
+                :loading=updateAuthInTransit" 
+                text="Update auth" />
+            </div>
+          </div> -->
+      </v-card-text>
+    </v-card>
+  </v-sheet>
 
-    <div class="rss-atom-url-label" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
-      <label>{{ this.$t('yourSubscriptions') }}</label>
-    </div>
+  <!-- TODO: replace pagination -->
 
-    <!-- all subscriptions pagination -->
-    <div class="subscription-filter-buttons" v-if="needsPagination()">
-      <!-- first page button-->
-      <button :title="this.$t('first')" 
-        :aria-label="this.$t('first')"
-        class="subscription-filter-button accessible-button" 
-        @click="firstPage">
-        <span class="fa fa-angle-double-left"/>
-      </button>
-      <!-- previous page button -->
-      <button :title="this.$t('previous')" 
-        :aria-label="this.$t('previous')" 
-        class="subscription-filter-button accessible-button" 
-        @click="previousPage">
-        <span class="fa fa-angle-left"/>
-      </button>
-      <!-- next page button -->
-      <button :title="this.$t('next')" 
-        :aria-label="this.$t('next')" 
-        class="subscription-filter-button accessible-button" 
-        @click="nextPage">
-        <span class="fa fa-angle-right"/>
-      </button>
-      <!-- last page button-->
-      <button :title="this.$t('last')" 
-        :aria-label="this.$t('last')" 
-        class="subscription-filter-button accessible-button" 
-        @click="lastPage">
-        <span class="fa fa-angle-double-right"/>
-      </button>
-    </div>
+  <!-- all subscriptions pagination -->
+  <!-- <div class="subscription-filter-buttons" v-if="needsPagination()">
+    <v-btn :title="this.$t('first')" 
+      :aria-label="this.$t('first')"
+      class="subscription-filter-button accessible-button" 
+      density="compact"
+      variant="tonal"
+      @click="firstPage"
+      icon="fa-angle-double-left" />
+    <v-btn :title="this.$t('previous')" 
+      :aria-label="this.$t('previous')" 
+      class="subscription-filter-button accessible-button" 
+      density="compact"
+      variant="tonal"
+      @click="previousPage"
+      icon="fa-angle-left" />
+    <v-btn :title="this.$t('next')" 
+      :aria-label="this.$t('next')" 
+      class="subscription-filter-button accessible-button" 
+      density="compact"
+      variant="tonal"
+      @click="nextPage"
+      icon="fa-angle-right" />
+    <v-btn :title="this.$t('last')" 
+      :aria-label="this.$t('last')" 
+      class="subscription-filter-button accessible-button" 
+      density="compact"
+      variant="tonal"
+      @click="lastPage"
+      icon="fa-angle-double-right" />
+  </div> -->
 
-    <!-- 'your subscriptions' -->
-    <div class="rss-atom-url-wrapper" v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx">
-      <!-- url input field w/refresh and delete buttons -->
-      <div class="rss-atom-url-row">
-        <label>
-          {{ this.$t('feedUrl') }}
-        </label>
-        <input :ref="'rssAtomUrlRow_' + idx" type="text" v-model="rssAtomUrl.feedUrl"
-          :disabled="disabled || inTransit"
-          readonly="true"
-          placeholder="Feed URL" />
-        <div class="rss-atom-url-row-buttons">
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="this.refreshRssAtomUrlInfo(rssAtomUrl)" 
-            :disabled="disabled || inTransit"
-            :title="this.$t('discovery')">
-            <span class="fa fa-refresh"/> &nbsp; {{ this.$t('discovery') }}
-          </button>
-          <button class="rss-atom-url-row-button accessible-button" 
-            @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails" 
-            :disabled="disabled || inTransit"
-            :title="this.$t('auth')">
-            <span class="fa fa-expand"/> &nbsp; {{ this.$t('auth') }}
-          </button>
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="this.deleteRssAtomUrl(rssAtomUrl.id)"
-            :disabled="disabled || inTransit"
-            :title="this.$t('unsubscribe')">
-            <span class="fa fa-trash" /> &nbsp; {{  this.$t('unsubscribe') }}
-          </button>
-        </div>
-      </div>
-      <label v-if="rssAtomUrl.showDetails">{{ this.$t("credentialsUseMessage") }}</label>
-      <div class="rss-atom-url-row" v-if="rssAtomUrl.showDetails">
-        <label>{{ this.$t('username') }}</label>
-        <input type="text" v-model="rssAtomUrl.username"
-          :disabled="disabled || inTransit"
-          :placeholder="this.$t('username')" style="margin-bottom: 0.75rem" />
-        <label>{{ this.$t('password') }}</label>
-        <input type="password" v-model="rssAtomUrl.password"
-          :disabled="disabled || inTransit"
-          :placeholder="this.$t('password')" />
-        <div class="rss-atom-url-row-buttons">
-          <button class="rss-atom-url-row-button accessible-button"
-            @click="this.updateRssAtomUrlAuth(rssAtomUrl)"
-            :disabled="disabled || inTransit">
-            <span class="fa fa-save" /> &nbsp; Update auth
-          </button>
-        </div>
-      </div>
-      <RssAtomFeedInfo :ref="'rss-atom-url-info-' + rssAtomUrl.id"
-        :info="rssAtomUrl"
-        :disabled="disabled || inTransit"
-        :theme="theme"
-        :filterSupport="false"
-        @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" 
-        @followRecommendation="followRecommendation" />
-    </div>
-  </div>
 </template>
 
 <script>
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
 import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
 
 export default {
   name: "SubscriptionsConfig",
   components: {
-    NavbarFixedHeader,
     RssAtomFeedInfo,
   },
-  props: [ "rssAtomFeedUrls", "feedId", "disabled", "theme", "baseUrl" ],
+  props: [ "rssAtomFeedUrls", "feedId", "theme", "baseUrl" ],
   computed: {
     totalPages: function() {
       if (this.rssAtomFeedUrls) {
@@ -198,9 +161,7 @@ export default {
     "addRssAtomUrl",
     "deleteRssAtomUrl",
     "updateRssAtomUrlAuth",
-    "authError",
     "updateServerMessage",
-    "dismiss",
   ],
   methods: {
     // 
@@ -262,8 +223,8 @@ export default {
       this.currentPage = this.totalPages - 1;
     },
     // make POST call to feed controller/query definitions endpoint 
-    addNewRssAtomUrl(dismiss) {
-      this.inTransit = true;
+    addNewRssAtomUrl() {
+      this.addNewInTransit = true;
       console.log("subscription-config: pushing new subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -297,23 +258,19 @@ export default {
             this.setLastServerMessage(this.$t('subscriptionAdded'));
           }
         }).catch((error) => {
-          dismiss = false;
           this.handleServerError(error); 
         }).finally(() => {
-          this.inTransit = false;
+          this.addNewInTransit = false;
           clearTimeout(timeoutId);
-          if (dismiss) {
-            this.$emit('dismiss');
-          }
         });
       }).catch((error) => {
         this.handleServerError(error); 
-        this.inTransit = false;
+        this.addNewInTransit = false;
       });
     },
     // make DELETE call to feed controller/query definitions endpoint 
     deleteRssAtomUrl(id) {
-      this.inTransit = true;
+      this.deleteInTransit = true;
       console.log("subscription-config: deleteing subscription..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -343,12 +300,12 @@ export default {
         }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
-          this.inTransit = false;
+          this.deleteInTransit = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
-        this.inTransit = false;
+        this.deleteInTransit = false;
       });
     },
     // make PUT call to feed controller/query definitions endpoint 
@@ -359,7 +316,7 @@ export default {
         console.error(error);
         return;
       }
-      this.inTransit = true;
+      this.updateAuthInTransit = true;
       console.log("subscription-config: pushing updated subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -394,12 +351,12 @@ export default {
         }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
-          this.inTransit = false;
+          this.updateAuthInTransit = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
-        this.inTransit = false;
+        this.updateAuthInTransit = false;
       });
     },
     // 
@@ -407,40 +364,12 @@ export default {
     // 
     refreshRssAtomUrlInfo(r) {
       if (r.feedUrl) {
-        r.title = null;
-        r.description = null;
-        r.author = null;
-        r.categories = null;
-        r.copyright = null;
-        r.docs = null;
-        r.encoding = null;
-        r.feedType = null;
-        r.generator = null;
-        r.icon = null;
-        r.image = null;
-        r.language = null;
-        r.link = null;
-        r.managingEditor = null;
-        r.publishedDate = null;
-        r.styleSheet = null;
-        r.supportedTypes = null;
-        r.webMaster = null;
-        r.sampleEntries = null;
-        r.feedRecommendationInfo = null;
-        r.discoveryUrl = null;
-        r.httpStatusCode = null;
-        r.httpStatusMessage = null;
-        r.redirectFeedUrl = null;
-        r.redirectHttpStatusCode = null;
-        r.redirectHttpStatusMessage = null;
-        r.error = null;
-        r.discoveryUrl = null;
         this.doDiscovery(r);
       }
     },
     doDiscovery(r) {
       if (r.feedUrl && r.feedUrl !== r.discoveryUrl) {
-        this.inTransit = true;
+        this.discoveryInTransit = true;
         this.$auth.getTokenSilently().then((token) => {
           const controller = new AbortController();
           const requestOptions = {
@@ -520,11 +449,12 @@ export default {
             }
           })
           .finally(() => {
-            this.inTransit = false;
+            this.discoveryInTransit = false;
             clearTimeout(timeoutId);
           });
         }).catch((error) => {
-          this.handleAuthError(error);
+          this.handleServerError(error);
+          this.discoveryInTransit = false;
         });
       }
     },
@@ -539,20 +469,8 @@ export default {
       this.refreshRssAtomUrlInfo(this.newRssAtomUrl);
     },
     // 
-    toggleBrowseCollections() {
-      if (this.showBrowseCollections) {
-        this.cancelBrowseCollections();
-      } else {
-        this.showBrowseCollections();
-      }
-    },
-    // 
     // misc 
     //
-    handleAuthError(error) {
-      this.$emit('authError', error);
-      this.inTransit = false;
-    },
     focus() {
       if (document.activeElement) {
         document.activeElement.blur();
@@ -564,199 +482,16 @@ export default {
       itemsPerPage: 10,
       currentPage: 0,
       itemCount: 0,
-      showNewFeedDetails: false,
       mode: "ADD_FROM_URL",
       //
       newFeedDiscoveryError: null,
       newRssAtomUrl: {},
       //
-      inTransit: false,
+      addNewInTransit: false,
+      deleteInTransit: false,
+      updateAuthInTransit: false,
+      discoveryInTransit: false,
     }
   }
 }
 </script>
-
-<style scoped>
-.feed-config-field {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  text-align: left;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  padding: .75rem;
-  border-radius: 4px;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  overflow-x: auto;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.feed-config-field label {
-  font-size: smaller;
-}
-
-.feed-config-field > input, .feed-config-field > textarea {
-  padding: .44rem;
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.normalmessage');
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: .125rem;
-  resize: none;
-}
-
-.feed-config-field input:hover, .feed-config-field textarea:hover, 
-.feed-config-field input:focus-visible, .feed-config-field textarea:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.feed-config-field input:disabled, .feed-config-field textarea:disabled {
-  cursor: auto;
-}
-
-.rss-atom-url-label {
-  padding-left: 0.56rem;
-  margin-bottom: 0.75rem;
-}
-
-.rss-atom-url-wrapper:last-of-type {
-  margin-bottom: 0rem;
-}
-
-.rss-atom-url-wrapper {
-  background-color: v-bind('theme.sectionbrighterhighlight');
-  padding: .75rem;
-  margin-bottom: .75rem;
-  border-radius: 4px;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  contain: content;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  row-gap: .44rem;
-}
-
-.rss-atom-url-wrapper input {
-  width: inherit;
-  border-radius: 4px;
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.normalmessage');
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-}
-
-.rss-atom-url-wrapper input:hover, .rss-atom-url-wrapper input:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background-color: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.rss-atom-url-row {
-  text-align: left;
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  margin-top: .125rem;
-  resize: none;
-  width: 100%;
-}
-
-.rss-atom-url-row input {
-  padding: .44rem;
-  border: 1px solid v-bind('theme.fieldborder');
-  background-color: v-bind('theme.fieldbackground');
-  color: v-bind('theme.normalmessage');
-  border-radius: 4px 0px 0px 3px;
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  margin-top: .125rem;
-  width: 100%;
-}
-
-.rss-atom-url-row input:hover, .rss-atom-url-row > input:focus-visible {
-  border: 1px solid v-bind('theme.fieldborderhighlight');
-  background: v-bind('theme.fieldbackgroundhighlight');
-  color: v-bind('theme.fieldcolorhighlight');
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.rss-atom-url-row > input:read-only:hover, .rss-atom-url-row > input:read-only:focus-visible {
-  background: unset;
-  cursor: auto;
-}
-
-.rss-atom-url-row-buttons {
-  padding-top: .75rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-}
-
-.rss-atom-url-row-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.rss-atom-url-row-button:hover, .rss-atom-url-row-button:focus-visible {
-  background: v-bind('theme.buttonhighlight');
-}
-
-.rss-atom-url-row-button:disabled {
-  cursor: auto;
-}
-
-.rss-atom-url-row-button:hover:disabled {
-  background-color: unset;
-}
-
-.subscription-filter-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-  text-align: left;
-  align-items: baseline;
-  justify-content: flex-start;
-  margin-top: .125rem;
-  margin-bottom: .75rem;
-  resize: none;
-}
-
-.subscription-filter-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.subscription-filter-button:hover, .subscription-filter-button:focus-visible {
-  background: v-bind('theme.buttonhighlight');
-}
-
-.subscription-filter-button:disabled {
-  cursor: auto;
-}
-
-.subscription-filter-button:hover:disabled {
-  background-color: unset;
-}
-
-.subscription-filter-button:last-child {
-  border-radius: 0px 3px 3px 0px;
-}
-</style>

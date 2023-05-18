@@ -1,67 +1,37 @@
 <template>
-  <div class="feed-config-field" v-auto-animate>
-    <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-    <label v-if="label">
-      <span v-if="required" class="required">*</span>
-      {{ label }}
-    </label>
-    <input
-      class="feed-image-select"
-      type="file"
-      accept="image/*"
-      ref="selectFeedImage"
-      @change="selectFeedImage"
-      :disabled="disabled || inTransit" />
-    <label for="feed-image-select" class="feed-image-select-label">
-      <img v-if="modelValue" 
-        class="feed-image" 
+  <v-card variant="text">
+    <v-card-title v-if="label">
+      <v-label>{{ label }}</v-label>
+    </v-card-title>
+    <v-card-text for="feed-image-select" class="feed-image-select-label">
+      <v-file-input clearable
+        accept="image/*"
+        @change="selectFeedImage"
+        :loading="selectFeedImageInTransit" 
+        v-model="this.feedImages"
+        :error-messages="this.feedImageUploadErrors" />
+      <v-img v-if="modelValue" class="mt-2" 
         :src="'data:image/png;base64,' + modelValue" 
         :title="this.$t('clickToChangeQueueImage')"
         :alt="this.$t('queueLogoImage')" 
-        height="140" />
-      <img v-else 
-        class="feed-image"
+        height="140" 
+        max-width="140" max-height="140" />
+      <v-img v-else class="mt-2"
         src="feedgears.png"
         :title="this.$t('clickToAddQueueImage')"
         :alt="this.$t('queueLogoImage')" 
-        height="140" />
-    </label>
-    <div class="feed-image-buttons">
-      <button :disabled="disabled || inTransit || !modelValue" 
-        class="feed-image-clear" 
-        click="removeFeedImage">
-        <span class="fa fa-trash-o" />
-      </button>
-      <button :disabled="disabled || inTransit" 
-        class="feed-image-randomize" 
-        @click="randomizeFeedImage">
-        <span class="fa fa-paw" />
-      </button>
-    </div>
-    <div class="feed-image-upload-errors" v-if="this.feedImageUploadErrors.length > 0">
-      <div class="error feed-image-upload-error" v-for="error in this.feedImageUploadErrors" :key="error">
-        {{ error }}
-      </div>
-    </div>
-  </div>
+        height="140" 
+        max-width="140" max-height="140" />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-
 export default {
   name: "FeedConfigImageField",
-  props: [ "baseUrl", "label", "required", "disabled", "theme", "modelValue" ],
-  components: {
-    NavbarFixedHeader,
-  },
+  props: [ "baseUrl", "label", "required", "theme", "modelValue" ],
   emits: [ "authError", "update:modelValue" ],
   methods: {
-    //
-    handleAuthError(error) {
-      this.$emit('authError', error);
-      this.inTransit = false;
-    },
     handleFeedImageUploadError(error) {
       console.error(error);
       if (error.name === 'TypeError') {
@@ -75,10 +45,11 @@ export default {
     selectFeedImage() {
       let prevFeedImgSrc = this.modelValue;
       this.feedImageUploadErrors.splice();
-      let file = this.$refs.selectFeedImage.files[0];
+      let file = this.feedImages[0];
+      console.log("here, file=" + file);
       let formData = new FormData();
       formData.append("file", file);
-      this.inTransit = true;
+      this.selectFeedImageInTransit = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -101,143 +72,42 @@ export default {
             throw new Error(this.$t('unableToUseThisImage'));
           }
         }).then((data) => {
-          this.feedImageUploadErrors = data.errors;
-          if (this.feedImageUploadErrors && this.feedImageUploadErrors.length > 0) {
-            console.error(this.feedImageUploadErrors); // TODO: (defect) fix this 
-          } else {
-            this.$emit('update:modelValue', data.imgSrc);
+          if (!data.imgSrc) {
+            if (data.errors) {
+              this.feedImageUploadErrors = data.errors;
+            } else {
+              this.feedImageUploadErrors = ['Fuck'];
+              // no errors 
+            }
+            this.feedImages.splice(0);
           }
+          this.$emit('update:modelValue', data.imgSrc);
         }).catch((error) => {
           this.handleFeedImageUploadError(error);
           this.$emit('update:modelValue', prevFeedImgSrc);
         })
         .finally(() => {
-          this.inTransit = false;
           clearTimeout(timeoutId);
+          this.selectFeedImageInTransit = false;
         })
       }).catch((error) => {
-        this.handleAuthError(error);
+        this.$emit('authError', error);
+        this.selectFeedImageInTransit = false;
       })
     },
     removeFeedImage() {
       this.$emit('update:modelValue', null);
-      this.$refs.selectFeedImage.value = '';
-    },
-    randomizeFeedImage() {
-      let prevFeedImgSrc = this.modelValue;
-      this.feedImageUploadErrors.splice(0, this.feedImageUploadErrors.length);
-      this.inTransit = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'GET',
-          headers: { 
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/feeds/thumbnail/random", requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? response.json() : {};
-          } else { // framework is rejecting the request 
-            throw new Error(this.$t('unableToFetchAnImage'));
-          }
-        }).then((data) => {
-          this.$emit('update:modelValue', data.imgSrc);
-        }).catch((error) => {
-          this.handleFeedImageUploadError(error);
-          this.$emit('update:modelValue', prevFeedImgSrc);
-        }).finally(() => {
-          this.inTransit = false;
-          clearTimeout(timeoutId);
-        })
-      }).catch((error) => {
-        this.handleAuthError(error);
-      });
+      this.feedImages.splice(0);
     },
   },
   data() {
     return {
       feedImageUploadErrors: [],
+      feedImages: [],
       // 
-      inTransit: false,
+      selectFeedImageInTransit: false,
+      randomizeFeedImageInTransit: false,
     }
   }
 }
 </script>
-
-<style scoped>
-.feed-config-field {
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  text-align: left;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  padding: .75rem;
-  border-radius: 4px;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  overflow-x: auto;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.feed-config-field label {
-  font-size: smaller;
-}
-
-.feed-image {
-  border: 1px solid transparent;
-  border-radius: 4px;
-  width: 140px;
-  height: 140px;
-  max-width: 140px;
-  max-height: 140px;
-  display: inline-block; 
-  background-size: cover; 
-  background-position: center center;
-  background-repeat: no-repeat;
-  align-self: stretch;
-  object-fit: scale-down;
-  background-color: currentColor;
-}
-
-.feed-image-select {
-  display: none;
-}
-
-.feed-image-select-label {
-  display: inline-block;
-  width: fit-content;
-  height: fit-content;
-  cursor: pointer;
-}
-
-.feed-image-buttons {
-  margin: 1px;
-  display: flex;gap: .44rem
-}
-
-.feed-image-clear, .feed-image-randomize {
-  color: v-bind('theme.buttonfg');
-  background-color: v-bind('theme.buttonbg');
-  border: 1px solid v-bind('theme.buttonborder');
-  z-index: 3;
-  border-radius: 4px;
-  width: fit-content;
-}
-
-.feed-image-upload-errors {
-  background-color: v-bind('theme.sectionnegativehighlight');
-  padding: .75rem;
-  margin-top: .75rem;
-  border-radius: 4px;
-}
-
-.feed-image-upload-error {
-  width: 100%;
-}
-</style>

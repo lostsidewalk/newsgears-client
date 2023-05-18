@@ -1,177 +1,129 @@
 <template>
-  <div class="modal-container" v-if="this.showModal">
-    <div class="modal-body">
-      <NavbarFixedHeader :theme="theme" :inTransit="inTransit" />
-      <div class="modal-actions">
-        <!-- button panel -->
-        <div class="feed-config-button-wrapper">
-          <!-- 'dismiss' button -->
-          <button class="feed-config-button accessible-button"
-            @click="dismissFeedConfig"
-            :disabled="disabled || inTransit">
-            {{ this.$t('dismiss') }}
-          </button>
-          <!-- save/update button -->
-          <button v-show="this.selectedTab === 'QUEUE_PROPERTIES'"
-            class="feed-config-button accessible-button"
-            @click="saveFeedConfig"
-            :disabled="disabled || inTransit || v$.$invalid"
-            :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : this.feed.id ? this.$t('updateThisQueue') : this.$t('saveThisQueue')">
-            {{ this.feed.id ? this.$t("update") : this.$t("save") }}
-          </button>
-          <!-- save/update and close button -->
-          <button v-show="this.selectedTab === 'QUEUE_PROPERTIES'"
-            class="feed-config-button accessible-button"
-            @click="saveFeedConfigAndDismiss"
-            :disabled="disabled || inTransit || v$.$invalid"
-            :title="v$.$invalid ? this.$t('fillOutAllRequiredFields') : this.feed.id ? this.$t('updateThisQueueAndClose') : this.$t('saveThisQueueAndClose')">
-            {{ this.feed.id ? this.$t("updateAndClose") : this.$t("saveAndClose") }}
-          </button>
-        </div>
-        <TabHeader :tabModel="tabModel" 
-          :selectedTab="selectedTab" 
-          :disabled="disabled || inTransit" 
-          :theme="theme" 
-          @selectTab="this.selectedTab = $event" />
-        <!-- tab panel -->
-        <div class="tabbed-panel">
-          <!-- tab 1: subscription config, collection browser, catalog search -->
-          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SUBSCRIPTION_CONFIG'">
-            <!-- subscriptions config -->
-            <SubscriptionsConfig
-              ref="subscriptionsConfig"
-              :baseUrl="baseUrl"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :rssAtomFeedUrls="this.rssAtomFeedUrls" 
-              :feedId="this.feed.id"
-              @addRssAtomUrl="addRssAtomUrl" 
-              @deleteRssAtomUrl="deleteRssAtomUrl" 
-              @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
-              @authError="handleAuthError" 
-              @updateServerMessage="setLastServerMessage" 
-              @dismiss="dismissFeedConfig" /> 
-          </div>
-          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'BROWSE_COLLECTIONS'">
-            <!-- collections browser -->
-            <FeedCollectionsBrowser
-              :baseUrl="baseUrl" 
-              :disabled="disabled || inTransit"
-              :theme="theme"
-              :rssAtomFeedUrls="this.rssAtomFeedUrls"
-              :feedId="this.feed.id"
-              @addRssAtomUrl="addRssAtomUrl" 
-              @addRssAtomUrls="addRssAtomUrls" 
-              @authError="handleAuthError" 
-              @updateServerMessage="setLastServerMessage" 
-              @dismiss="dismissFeedConfig" />
-          </div>
-          <div class="tab" v-if="this.feed.id" v-show="this.selectedTab === 'SEARCH_CATALOG'">
-            <!-- catalog search -->
-            <FeedCatalogSearch
-              :disabled="disabled || inTransit"
-              :theme="theme"
-              :rssAtomFeedUrls="this.rssAtomFeedUrls"
-              @addCatalogFeed="addCatalogFeed"
-              @deleteRssAtomUrl="deleteRssAtomUrl" />
-          </div>
-          <!-- tab 2: queue properties -->
-          <div class="tab" v-show="this.selectedTab === 'QUEUE_PROPERTIES'">
-            <!-- TODO: (refactor) extract component -->
-            <!-- feed ident -->
-            <FeedConfigTextField 
-              ref="feedIdent"
-              :label="this.$t('queueIdentifier')"
-              :required="true"
-              :placeholder="this.$t('queueIdentifier')" 
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.feedIdent.$model" 
-              :errorValue="v$.feedIdent.$errors"
-              :helpText="this.$t('queueIdentifierHelpText')"
-              @update:modelValue="v$.feedIdent.$model = $event" />
-            <!-- feed title -->
-            <FeedConfigTextField 
-              :label="this.$t('queueTitle')"
-              :required="false"
-              :placeholder="this.$t('queueTitle')" 
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.feedTitle.$model" 
-              :errorValue="v$.feedTitle.$errors"
-              :helpText="this.$t('queueTitleHelpText')"
-              @update:modelValue="v$.feedTitle.$model = $event" />
-            <!-- feed image -->
-            <FeedConfigImageField 
-              :label="this.$t('queueImage')"
-              :required="false"
-              :baseUrl="baseUrl"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="this.feedImgSrc"
-              @authError="handleAuthError"
-              @update:modelValue="this.feedImgSrc = $event" />
-            <!-- feed description -->
-            <FeedConfigTextField 
-              :label="this.$t('queueDescription')"
-              :required="false"
-              :placeholder="this.$t('queueDescription')"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.feedDescription.$model" 
-              :errorValue="v$.feedDescription.$errors" 
-              :helpText="this.$t('queueDescriptionHelpText')"
-              @update:modelValue="v$.feedDescription.$model = $event" />
-            <!-- feed generator -->
-            <FeedConfigTextField 
-              :label="this.$t('queueFeedGenerator')"
-              :required="false"
-              :placeholder="this.$t('queueFeedGenerator')"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.feedGenerator.$model" 
-              :errorValue="v$.feedGenerator.$errors"
-              :helpText="this.$t('queueFeedGeneratorHelpText')"
-              @update:modelValue="v$.feedGenerator.$model = $event" />
-            <!-- feed copyright -->
-            <FeedConfigTextField 
-              :label="this.$t('queueFeedCopyright')"
-              :required="false"
-              :placeholder="this.$t('queueFeedCopyright')"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.feedCopyright.$model" 
-              :errorValue="v$.feedCopyright.$errors" 
-              :helpText="this.$t('queueFeedCopyrightHelpText')"
-              @update:modelValue="v$.feedCopyright.$model = $event" />
-            <!-- feed language -->
-            <FeedConfigTextField 
-              :label="this.$t('queueFeedLanguage')"
-              :required="false"
-              :placeholder="this.$t('queueFeedLanguage')"
-              :disabled="disabled || inTransit" 
-              :theme="theme" 
-              :modelValue="v$.feedLanguage.$model" 
-              :errorValue="v$.feedLanguage.$errors" 
-              :helpText="this.$t('queueFeedLanguageHelpText')"
-              @update:modelValue="v$.feedLanguage.$model = $event" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <v-card>
+    <v-card-title class="text-center pa-4">
+      <h3 class="view-header-no-count">
+        <v-icon icon="fa-rss"/>
+        {{ this.$t('queueSettings') }}
+      </h3>
+    </v-card-title>
+    <v-divider />
+    <v-card-text>
+      <!-- tab panel -->
+      <v-tabs v-model="this.selectedTab">
+        <!-- tab 1: subscription config -->
+        <v-tab key="SUBSCRIPTIONS" value="SUBSCRIPTIONS">
+          SUBSCRIPTIONS
+        </v-tab>
+        <!-- tab 4: queue properties -->
+        <v-tab key="QUEUE_PROPERTIES" value="QUEUE_PROPERTIES">
+          QUEUE PROPERTIES 
+        </v-tab>
+      </v-tabs>
+      <v-window v-model="this.selectedTab">
+        <v-window-item key="SUBSCRIPTIONS" value="SUBSCRIPTIONS">
+          <!-- subscription config -->
+          <SubscriptionsConfig
+            v-if="this.feed"
+            ref="subscriptionsConfig"
+            :baseUrl="baseUrl"
+            :theme="theme" 
+            :rssAtomFeedUrls="this.rssAtomFeedUrls" 
+            :feedId="this.feed.id"
+            @addRssAtomUrl="addRssAtomUrl" 
+            @deleteRssAtomUrl="deleteRssAtomUrl" 
+            @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
+            @authError="handleAuthError" 
+            @updateServerMessage="setLastServerMessage" /> 
+        </v-window-item>
+        <v-window-item key="QUEUE_PROPERTIES" value="QUEUE_PROPERTIES">
+          <!-- feed ident -->
+          <FeedConfigTextField 
+            :label="this.$t('queueIdentifier')"
+            :required="true"
+            :placeholder="this.$t('queueIdentifier')" 
+            :theme="theme" 
+            :modelValue="v$.feedIdent.$model" 
+            :errorValue="v$.feedIdent.$errors"
+            :helpText="this.$t('queueIdentifierHelpText')"
+            @update:modelValue="v$.feedIdent.$model = $event" />
+          <!-- feed title -->
+          <FeedConfigTextField 
+            :label="this.$t('queueTitle')"
+            :required="false"
+            :placeholder="this.$t('queueTitle')" 
+            :theme="theme" 
+            :modelValue="v$.feedTitle.$model" 
+            :errorValue="v$.feedTitle.$errors"
+            :helpText="this.$t('queueTitleHelpText')"
+            @update:modelValue="v$.feedTitle.$model = $event" />
+          <!-- feed image -->
+          <FeedConfigImageField 
+            :label="this.$t('queueImage')"
+            :required="false"
+            :baseUrl="baseUrl"
+            :theme="theme" 
+            :modelValue="this.feedImgSrc"
+            @authError="handleAuthError"
+            @update:modelValue="this.feedImgSrc = $event" />
+          <!-- feed description -->
+          <FeedConfigTextField 
+            :label="this.$t('queueDescription')"
+            :required="false"
+            :placeholder="this.$t('queueDescription')"
+            :theme="theme" 
+            :modelValue="v$.feedDescription.$model" 
+            :errorValue="v$.feedDescription.$errors" 
+            :helpText="this.$t('queueDescriptionHelpText')"
+            @update:modelValue="v$.feedDescription.$model = $event" />
+          <!-- feed generator -->
+          <FeedConfigTextField 
+            :label="this.$t('queueFeedGenerator')"
+            :required="false"
+            :placeholder="this.$t('queueFeedGenerator')"
+            :theme="theme" 
+            :modelValue="v$.feedGenerator.$model" 
+            :errorValue="v$.feedGenerator.$errors"
+            :helpText="this.$t('queueFeedGeneratorHelpText')"
+            @update:modelValue="v$.feedGenerator.$model = $event" />
+          <!-- feed copyright -->
+          <FeedConfigTextField 
+            :label="this.$t('queueFeedCopyright')"
+            :required="false"
+            :placeholder="this.$t('queueFeedCopyright')"
+            :theme="theme" 
+            :modelValue="v$.feedCopyright.$model" 
+            :errorValue="v$.feedCopyright.$errors" 
+            :helpText="this.$t('queueFeedCopyrightHelpText')"
+            @update:modelValue="v$.feedCopyright.$model = $event" />
+          <!-- feed language -->
+          <FeedConfigTextField 
+            :label="this.$t('queueFeedLanguage')"
+            :required="false"
+            :placeholder="this.$t('queueFeedLanguage')"
+            :theme="theme" 
+            :modelValue="v$.feedLanguage.$model" 
+            :errorValue="v$.feedLanguage.$errors" 
+            :helpText="this.$t('queueFeedLanguageHelpText')"
+            @update:modelValue="v$.feedLanguage.$model = $event" />
+        </v-window-item>
+      </v-window>
+    </v-card-text>
+    <v-divider />
+    <!-- button panel -->
+    <v-card-actions>
+      <!-- 'dismiss' button -->
+      <v-btn @click="dismissFeedConfig"
+        :text="this.$t('dismiss')" />
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-import NavbarFixedHeader from '@/components/layout/NavbarFixedHeader.vue';
-import TabHeader from '@/components/layout/TabHeader.vue';
 import FeedConfigTextField from '@/components/feed-config-panel/FeedConfigTextField.vue';
 import FeedConfigImageField from '@/components/feed-config-panel/FeedConfigImageField.vue';
 import { required, maxLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import SubscriptionsConfig from '@/components/feed-config-panel/SubscriptionsConfig.vue';
-import FeedCollectionsBrowser from '@/components/feed-config-panel/FeedCollectionsBrowser.vue';
-import FeedCatalogSearch from '@/components/feed-config-panel/FeedCatalogSearch.vue';
 
 
 export default {
@@ -182,19 +134,13 @@ export default {
     }
   },
   components: {
-    NavbarFixedHeader,
-    TabHeader,
     FeedConfigTextField,
     FeedConfigImageField,
     SubscriptionsConfig,
-    FeedCollectionsBrowser,
-    FeedCatalogSearch,
   },
   props: [
     "baseUrl", 
-    "disabled", 
     "theme", 
-    "rssAtomFeedCatalog",
   ],
   computed: {
     tabModel: function() {
@@ -206,20 +152,10 @@ export default {
           icon: "feed",
         });
         arr.push({
-          name: "BROWSE_COLLECTIONS",
-          description: this.$t('browseFeedCollections'),
-          icon: "list",
-        });
-        arr.push({
           name: "QUEUE_PROPERTIES",
           description: this.$t('queueProperties'),
           icon: "list",
         });
-        // {
-        //   name: "CATALOG_SEARCH",
-        //   description: this.$t('searchFeedCatalog'),
-        //   icon: "search",
-        // },
       }
       return arr;
     }
@@ -251,9 +187,9 @@ export default {
   data() {
     return {
       // 
-      showModal: false,
+      tabs: null,
       // 
-      inTransit: false, 
+      showModal: false,
       // queue properties 
       feed: null,
       feedId: null,
@@ -271,17 +207,12 @@ export default {
     };
   },
   methods: {
-    // modal control methods 
-
     // setup is called to initialize the panel for either a create or update operation 
     setup(feed) {
       this.feed = feed;
       this.setupFeed();
       this.clearModel();
       this.showModal = true;
-      this.$nextTick(() => {
-        this.$refs.feedIdent.focus();
-      });
     },
     // this is called on callback when a feed is successfully created; 
     // it enables the user to start adding subscriptions to newly created queue 
@@ -289,7 +220,6 @@ export default {
       if (this.feed) {
         this.feed.id = feedId;
       }
-      this.selectedTab = 'SUBSCRIPTION_CONFIG';
       this.$nextTick(() => {
         this.$refs.subscriptionsConfig.focus();
       });
@@ -297,7 +227,6 @@ export default {
     setupQuickAdd(feed) {
       this.feed = feed;
       this.setupFeed();
-      this.selectedTab = 'SUBSCRIPTION_CONFIG';
       this.showModal = true;
       this.$nextTick(() => {
         this.$refs.subscriptionsConfig.focus();
@@ -351,10 +280,6 @@ export default {
     dismissFeedConfig() {
       this.$emit('dismiss'); 
     },
-    // TODO: not yet implemented 
-    addCatalogFeed(source) {
-      console.log("add catalog feed, source=" + JSON.stringify(source));
-    },
     addRssAtomUrl(source) {
       if (!this.rssAtomFeedUrls) {
         this.rssAtomFeedUrls = [];
@@ -396,10 +321,6 @@ export default {
       
       this.$emit('refreshFeedDefinition', this.feed.id);
     },
-    // TODO: not yet implemented 
-    addRssAtomUrls(source) {
-      console.log("adding collection from source: " + JSON.stringify(source));
-    },
     deleteRssAtomUrl(id) {
       let deleteIdx = -1;
       for (let i = 0; i < this.rssAtomFeedUrls.length; i++) {
@@ -435,123 +356,17 @@ export default {
         this.$emit('refreshFeedDefinition', this.feed.id);
       }
     },
-    // 
+    // TODO: not yet implemented 
     clearModel() {
-      if (this.feedId) {
-        this.selectedTab = 'SUBSCRIPTION_CONFIG';
-      } else {
-        this.selectedTab = 'QUEUE_PROPERTIES';
-      }
     }
   }
 }
 </script>
 
 <style scoped>
-.modal-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  height: stretch;
-  overflow-y: auto;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-body {
-  color: v-bind('theme.normalmessage');
-  text-align: left;
-  width: 100%;
-  height: fit-content;
-}
-
-.modal-actions {
-  padding: .56rem;
-}
-
-.feed-config-button-wrapper {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: center;
-  align-items: center;
-  gap: .5rem;
-  margin-bottom: 1rem;
-}
-
-.feed-config-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: left;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.feed-config-button:disabled {
-  cursor: auto;
-}
-
-.feed-config-button:hover, .feed-config-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight');
-}
-
-.feed-config-button:hover:disabled {
-  background-color: unset;
-}
-
-.tabbed-panel {
-  padding: .75rem;
-  border: 1px solid v-bind('theme.sectionbordercolor');
-  border-radius: 3px;
-  margin-bottom: 1rem;
-  box-shadow: 0px 1px 2px 0px v-bind('theme.lightshadow');
-  background-color: v-bind('theme.sectionhighlight');
-}
-
-.tab {
-  display: grid;
-  contain: content;
-}
-
-@keyframes load {
-    0% {
-        width: 0%;
-    }
-
-    87.5% {
-        width: 100%;
-    }
-}
-
-@keyframes turn {
-    0% {
-        transform: rotateY(0deg);
-    }
-
-    6.25%,
-    50% {
-        transform: rotateY(180deg);
-    }
-
-    56.25%,
-    100% {
-        transform: rotateY(360deg);
-    }
-}
-
-@keyframes bounce {
-
-    0%,
-    100% {
-        top: .75rem;
-    }
-
-    12.5% {
-        top: 30px;
-    }
+.view-header-no-count {
+  font-family: "Russo One", system-ui, sans-serif;
+  font-weight: bold;
+  font-size: larger;
 }
 </style>

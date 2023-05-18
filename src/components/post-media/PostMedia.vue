@@ -1,33 +1,31 @@
 <template>
-  <div style="display: block; overflow: auto;">
-    <label class="post-info-label-small">{{ this.$t('media') }}</label>
-    <div>
+  <v-card variant="flat" align="left" justify="left">
+    <v-card-title class="pa-4">{{ this.$t('media') }}</v-card-title>
+    <v-card-subtitle v-if="isUseableMetadata(this.media.postMediaMetadata)">
       <!-- top-level metadata -->
-      <PostMediaMetadata v-if="isUseableMetadata(this.media.postMediaMetadata)" 
-        :metadata="this.media.postMediaMetadata" 
+      <PostMediaMetadata :metadata="this.media.postMediaMetadata" 
         :theme="theme" />
-      <!-- top-level contents array -->
-      <div v-if="this.media.postMediaContents && this.showContents" style="display: flex;flex-direction: row">
-        <PostMediaContent v-for="(mc,idx) of this.media.postMediaContents" :key="mc" 
-          :ref="'postMediaContent_' + idx"
-          :mediaContent="mc" 
-          :showContentOnLoad="idx === 0"
-          :theme="theme" 
-          @playing="onMediaContentPlaying(idx)" 
-          @audioPlay="this.$emit('audioPlay', $event)" />
-      </div>
+    </v-card-subtitle>
+    <!-- top-level contents array -->
+    <v-sheet v-if="this.media.postMediaContents && this.showContents">
+      <PostMediaContent v-for="(mc,idx) of this.media.postMediaContents" :key="mc" 
+        :ref="'postMediaContent_' + idx"
+        :mediaContent="mc" 
+        :showContentOnLoad="idx === 0"
+        :theme="theme" 
+        @playing="onMediaContentPlaying(idx)" 
+        @audioPlay="this.$emit('audioPlay', $event)" />
+    </v-sheet>
       <!-- top-level media-groups array -->
-      <div v-if="this.media.postMediaGroups && this.showContents">
-        <PostMediaGroup v-for="(mg,idx) of this.media.postMediaGroups" :key="mg" 
-          :ref="'postMediaGroup_' + idx"
-          :mediaGroup="mg" 
-          :inTransit="inTransit" 
-          :theme="theme" 
-          @playing="onMediaGroupPlaying(idx)" 
-          @audioPlay="this.$emit('audioPlay', $event)" />
-      </div>
-    </div>
-  </div>
+    <v-sheet v-if="this.media.postMediaGroups && this.showContents">
+      <PostMediaGroup v-for="(mg,idx) of this.media.postMediaGroups" :key="mg" 
+        :ref="'postMediaGroup_' + idx"
+        :mediaGroup="mg" 
+        :theme="theme" 
+        @playing="onMediaGroupPlaying(idx)" 
+        @audioPlay="this.$emit('audioPlay', $event)" />
+    </v-sheet>
+  </v-card>
 </template>
 
 <script>
@@ -37,7 +35,7 @@ import PostMediaGroup from './PostMediaGroup.vue';
 
 export default {
   name: "PostMedia",
-  props: [ "media", "inTransit", "theme" ],
+  props: [ "media", "theme" ],
   emits: [ "playing" ],
   components: {
     PostMediaMetadata,
@@ -106,10 +104,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.post-info-label-small {
-  max-width: fit-content;
-  color: v-bind('theme.subduedmessage');
-}
-</style>

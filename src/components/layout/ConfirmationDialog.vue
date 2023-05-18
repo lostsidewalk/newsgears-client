@@ -1,99 +1,28 @@
 <template>
-  <div class="modal-container" v-show="showModal" v-auto-animate>
-    <div class="modal-body">
-      <h3>{{ prompt }}</h3>
-      <div class="modal-actions">
-        <button class="modal-button accessible-button" ref="confirmButton" @click="confirm" accesskey="c" :disabled="disabled">
-          {{ this.$t('confirm') }}
-        </button>
-        <button class="modal-button accessible-button" @click.stop="this.$emit('cancel')" :disabled="disabled">
-          {{ this.$t('cancel') }} 
-        </button>
-      </div>
-    </div>
-  </div>
+  <v-card class="ma-4">
+    <v-card-title class="pa-4">{{ prompt }}</v-card-title>
+    <v-divider />
+    <v-card-actions>
+      <v-btn @click="confirm" 
+        autofocus 
+        accesskey="c" 
+        :text="this.$t('confirm')" />
+      <v-btn @click.stop="this.$emit('cancel')" 
+        :text="this.$t('cancel')" />
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 
 export default {
   name: "ConfirmationDialog",
-  props: ["prompt", "disabled", "theme"],
+  props: ["prompt", "theme"],
   emits: ["confirm", "cancel"],
   methods: {
     confirm() {
       this.$emit('confirm');
     },
-    show() {
-      this.showModal = true;
-      this.$nextTick(() => {
-        this.$refs.confirmButton.focus();
-      });
-    },
-    hide() {
-      this.showModal = false;
-    }
   },
-  data() {
-    return {
-      showModal: false
-    }
-  }
 }
 </script>
-
-<style scoped>
-.modal-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  overflow-y: auto;
-  z-index: 99999;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-body {
-  background: v-bind('theme.appbg');
-  color: v-bind('theme.normalmessage');
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  padding-top: 2rem;
-  padding-left: .125rem;
-  padding-right: .125rem;
-  padding-bottom: 1rem;
-  box-shadow: 3px 3px 3px v-bind('theme.darkshadow');
-}
-
-.modal-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 2.5rem;
-  justify-content: center;
-  padding-top: .75rem;
-}
-
-.modal-button {
-  border: 1px solid v-bind('theme.buttonborder');
-  background-color: v-bind('theme.buttonbg');
-  color: v-bind('theme.buttonfg');
-  box-shadow: 1px 1px 1px v-bind('theme.darkshadow');
-  padding: .44rem 1.25rem;
-  cursor: pointer;
-  float: right;
-  border-radius: 4px;
-  margin: .56rem;
-  text-align: center;
-}
-
-.modal-button:hover, .modal-button:focus-visible {
-  background-color: v-bind('theme.buttonhighlight') !important;
-}
-</style>

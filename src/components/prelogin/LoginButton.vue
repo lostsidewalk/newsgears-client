@@ -1,24 +1,15 @@
 <template>
-  <v-btn id="login" depressed outlined black
-    class="login-button"
-    :disabled="disabled"
-    @click="this.$router.push('/app')">
-    {{ this.$t('login') }}
-  </v-btn>
+  <v-btn @click="this.$router.push('/app')"
+    id="login"
+    size="small"
+    :title="this.$t('login')"
+    append-icon="fa-sign-in"
+    :text="this.$t('login')" />
 </template>
 
 <script>
 export default {
   name: "LoginButton",
-  props: [ "disabled", "theme" ],
+  props: [ "theme" ],
 }
 </script>
-
-<style scoped>
-.login-button {
-  max-width: 256px;
-  min-height: 3rem;
-  padding: .75rem 1rem;
-  font-weight: bold;
-}
-</style>

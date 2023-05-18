@@ -1,9 +1,12 @@
 <template>
-  <div>
-    <PostMediaMetadata v-if="isUseableMetadata(this.mediaGroup.postMediaMetadata)" 
-      :theme="theme" 
-      :metadata="this.mediaGroup.postMediaMetadata" />
-    <div v-if="this.mediaGroup.postMediaContents && this.showContents" class="post-media-group-contents">
+  <v-card variant="flat" align="left" justify="left">
+    <v-card-subtitle v-if="isUseableMetadata(this.mediaGroup.postMediaMetadata)">
+      <!-- metadata -->
+      <PostMediaMetadata 
+        :theme="theme" 
+        :metadata="this.mediaGroup.postMediaMetadata" />
+    </v-card-subtitle>
+    <v-sheet v-if="this.mediaGroup.postMediaContents && this.showContents">
       <PostMediaContent v-for="(mc,idx) of this.mediaGroup.postMediaContents" :key="mc" 
         :ref="'postMediaContent_' + idx"
         :mediaContent="mc" 
@@ -11,8 +14,8 @@
         :theme="theme" 
         @playing="this.$emit('playing')" 
         @audioPlay="this.$emit('audioPlay', $event)" />
-    </div>
-  </div>
+    </v-sheet>
+  </v-card>
 </template>
 
 <script>
@@ -21,7 +24,7 @@ import PostMediaContent from './PostMediaContent.vue';
 
 export default {
   name: "PostMediaGroup",
-  props: [ "mediaGroup", "inTransit", "theme" ],
+  props: [ "mediaGroup", "theme" ],
   emits: [ "playing" ],
   components: {
     PostMediaMetadata,
@@ -49,11 +52,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.post-media-group-contents {
-  display: grid;
-  grid-auto-flow: column;
-  gap: 3rem;
-}
-</style>
