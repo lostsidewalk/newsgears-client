@@ -117,6 +117,7 @@
         <SettingsPanel 
           class="rounded"
           :baseUrl="this.baseUrl"
+          @dismiss="this.showSettingsPanel = false"
           @updateServerMessage="setLastServerMessage" />
       </v-dialog>
 
@@ -387,7 +388,23 @@ export default {
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {
       if (isAuthenticated) {
-        this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
+        const storedFeeds = localStorage.getItem('feeds');
+        if (storedFeeds) {
+          this.feeds = JSON.parse(storedFeeds);
+        }
+        const storedQueues = localStorage.getItem('inboundQueuesByFeed');
+        if (storedQueues) {
+          this.inboundQueuesByFeed = JSON.parse(storedQueues);
+        }
+        if (this.feeds.length > 0 && this.inboundQueuesByFeed) {
+          if (!this.selectedFeedId) {
+            this.setSelectedFeedId(this.feeds[0].id);
+          } else {
+            this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+          }
+        } else {
+          this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
+        }
       }
     }
   },
@@ -437,7 +454,6 @@ export default {
       atBottomOfPage: false,
       // feed material 
       feeds: [], // all feeds 
-      queryDefinitionImagesById: {}, // all query definition images (by Id)
       selectedFeedId: null, // currently selected feed Id 
       previousFeedId: null, // previously selected feed Id 
       // queue material 
@@ -798,11 +814,12 @@ export default {
                 rawPosts.push(p);
                 ct++;
               }
-              this.stagingCt = ct;
-              console.log("post-feed: staging post refresh complete, ct=" + this.stagingCt);
+              console.log("post-feed: staging post refresh complete, ct=" + ct);
             }
           })
         ];
+
+        let queryDefinitionImagesById = {};
         if (fetchFeedDefinitions) {
           const feedDefinitionRefreshController = new AbortController();
           feedDefinitionRefreshTimeoutId = setTimeout(() => feedDefinitionRefreshController.abort(), 5000);
@@ -832,7 +849,6 @@ export default {
             })
             .then((data) => {
               // clear queryDefinitionImagesById 
-              this.queryDefinitionImagesById = {};
               // populate feeds and queryDefinitionImagesById
               let feedDefinitionData = data.feedDefinitions; // all feed definition data objects 
               let queryDefinitionData = data.queryDefinitions; // all query definition data objects 
@@ -846,8 +862,7 @@ export default {
                   if (qd) {
                     for (let j = 0; j < qd.length; j++) {
                       let wrapper = qd[j];
-                      // console.log("queryDefinition id=" + wrapper.queryDefinition.id + ", queryTitle=" + wrapper.queryDefinition.queryTitle + ", queryDefinitionImageUrl=" + wrapper.queryDefinitionImageUrl);
-                      this.queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
+                      queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
                     }
                   }
                   // parse feed definition export config (if present) 
@@ -866,6 +881,8 @@ export default {
                     this.feeds.push(fd);
                   }
                 }
+                // update feeds localStorage 
+                localStorage.setItem('feeds', JSON.stringify(this.feeds));
               }
             })
           );
@@ -895,7 +912,7 @@ export default {
           for (let i = 0; i < rawPosts.length; i++) {
             let post = rawPosts[i];
             // set the post subscription image property 
-            post.sourceImgUrl = this.queryDefinitionImagesById[post.queryId];
+            post.sourceImgUrl = queryDefinitionImagesById[post.queryId];
             if (!post.sourceImgUrl) {
               post.sourceImgUrl =  'rss_logo.svg';
             }
@@ -928,6 +945,8 @@ export default {
               });
             }            
           }
+          // update queues localStorage 
+          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
           // set selected feed Id and inbound queue 
           if (this.feeds.length > 0 && !this.selectedFeedId) {
             // TODO: (enhancement) should be a configurable 'default' feed 
@@ -1062,11 +1081,17 @@ export default {
           }
           p.postPubStatus = null;
           // update the feed last deployed timestamp 
+          let updateLocalStorage = false;
           for (let i = 0; i < this.feeds.length; i++) {
               if (this.feeds[i].id === result.feedId) {
                 this.feeds[i].lastDeployed = data.timestamp;
+                updateLocalStorage = true;
                 break;
               }
+          }
+          if (updateLocalStorage) {
+            // update feeds localStorage 
+            localStorage.setItem('feeds', JSON.stringify(this.feeds));
           }
         }).catch((error) => {
           this.handleServerError(error);
@@ -1150,6 +1175,8 @@ export default {
             this.feeds.push(f);
             feedIds.push(f.id);
           }
+          // update feeds localStorage 
+          localStorage.setItem('feeds', JSON.stringify(this.feeds));
           this.setLastServerMessage(feeds.length + " " + this.$t('nQueuesCreated'));
           this.$refs.opmlUploadPanel.hide();
           this.showOpmlUploadPanel = false;
@@ -1232,7 +1259,11 @@ export default {
           } else {
             let created = data[0].feedDefinition;
             this.feeds.push(created);
+            // update feeds localStorage 
+            localStorage.setItem('feeds', JSON.stringify(this.feeds));
             this.inboundQueuesByFeed[created.id] = { values: [] };
+            // update queues localStorage 
+            localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
             this.$refs.feedConfigPanel.setupSubscriptionConfig(created.id);
             this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
             this.setSelectedFeedId(created.id);
@@ -1272,6 +1303,11 @@ export default {
     // 
     // delete queue 
     // 
+    deleteSelectedFeed() {
+      document.activeElement.blur();
+      this.feedIdToDelete = this.selectedFeedId;
+      this.showFeedDeleteConfirmation = true;
+    },
     deleteFeed(feedId) {
       document.activeElement.blur();
       this.feedIdToDelete = feedId;
@@ -1304,6 +1340,8 @@ export default {
         }).then((data) => {
           console.log("post-feed: deleted feedId=" + this.feedIdToDelete);
           delete this.inboundQueuesByFeed[this.feedIdToDelete];
+          // update queues localStorage 
+          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
           let idxToSplice = -1;
           for (let i = 0; i < this.feeds.length; i++) {
             if (this.feeds[i].id === this.feedIdToDelete) {
@@ -1314,6 +1352,8 @@ export default {
           if (idxToSplice > -1) {
             let nextFeedId = this.feeds.length > idxToSplice + 1 ? this.feeds[idxToSplice + 1].id : null;
             this.feeds.splice(idxToSplice, 1);
+            // update feeds localStorage 
+            localStorage.setItem('feeds', JSON.stringify(this.feeds));
             if (this.selectedFeedId === this.feedIdToDelete) {
               this.setSelectedFeedId(nextFeedId); // TODO: (enhancement) should be a configurable 'default' feed 
             }
@@ -1383,6 +1423,8 @@ export default {
             p.postReadStatus = 'READ';
             p.isReadLater = false;
           });
+          // update queue localStorage
+          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
           this.setLastServerMessage(data.message);
         }).catch((error) => {
           this.handleServerError(error);
@@ -1532,21 +1574,21 @@ export default {
           return;
         }
         // 
-        // SHIFT + E KEY 
+        // SHIFT + E KEY (CONFIGURE SELECTED QUEUE)
         // 
         if (event.key === 'E' && event.shiftKey === true) {
           this.configureFeed(this.selectedFeedId);
           event.stopPropagation();
           event.preventDefault();
         // 
-        // SHFIT + S KEY 
+        // SHFIT + S KEY (QUICK-ADD TO SELECTED QUEUE)
         // 
         } else if (event.key === 'S' && event.shiftKey === true) {
           this.rssAtomUrlQuickAdd();
           event.stopPropagation();
           event.preventDefault();
         // 
-        // SLASH KEY 
+        // SLASH KEY (SEARCH SELECTED QUEUE)
         // 
         } else if (event.key === '/') {
           this.$nextTick(() => {
@@ -1565,44 +1607,51 @@ export default {
           event.stopPropagation();
           event.preventDefault();
         // 
-        // SHIFT + L KEY 
+        // SHIFT + L KEY (TOGGLE QUEUE FILTER MODE)
         // 
         } else if (event.key === 'L' && event.shiftKey) {
           this.toggleFeedFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
         // 
-        // SHIFT + H KEY 
+        // SHIFT + H KEY (TOGGLE QUEUE FILTER MODE)
         // 
         } else if (event.key === 'H' && event.shiftKey) {
           this.toggleFeedFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
         // 
-        // SHIFT + T KEY 
+        // SHIFT + T KEY (TOGGLE QUEUE FILTER MODE)
         // 
         } else if (event.key === 'T' && event.shiftKey) {
           this.toggleFeedFilterMode('PUBLISHED');
           event.stopPropagation();
           event.preventDefault();
         // 
-        // SHIFT + A KEY 
+        // SHIFT + A KEY (MARK QUEUE AS READ)
         // 
         } else if (event.key === 'A' && event.shiftKey === true) {
           this.markSelectedFeedAsRead();
           event.stopPropagation();
           event.preventDefault();
+        // 
+        // SHIFT + D KEY (DELETE QUEUE) 
+        // 
+        } else if (event.key === 'D' && event.shiftKey === true) {
+          this.deleteSelectedFeed();
+          event.stopPropagation();
+          event.preventDefault();
         }
       }
       // 
-      // SHIFT + R KEY 
+      // SHIFT + R KEY (REFRESH QUEUES)
       // 
       if (event.key === 'R' && event.shiftKey === true) {
         this.refreshFeeds(null, true);
         event.stopPropagation();
         event.preventDefault();
       // 
-      // SHIFT + Q KEY 
+      // SHIFT + Q KEY (NEW QUEUE)
       // 
       } else if (event.key === 'Q' && event.shiftKey === true) {
         this.newFeed();

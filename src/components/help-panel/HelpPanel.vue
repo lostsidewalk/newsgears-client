@@ -98,6 +98,10 @@ export default {
             key: "SHIFT + A", // key handler when queue is selected 
           },
           {
+            label: this.$t('deleteSelectedQueue'),
+            key: "SHIFT + D", // key handler when queue is selected 
+          },
+          {
             label: this.$t('addSubscriptionToSelectedQueue'),
             key: "SHIFT + S", // key handler when queue is selected 
           },

@@ -70,7 +70,7 @@
       <v-card v-if="authProvider === 'LOCAL'" elevation="6" class="mb-4 pa-1"
         :class="{ error: v$.emailAddress.$errors.length }">
         <v-card-title class="pa-4">
-          CARD TITLE 
+          {{ this.$t('emailAddress') }}
         </v-card-title>
         <v-divider />
         <v-card-text>
@@ -184,7 +184,7 @@
       </v-card>
       <!-- checkout -->
       <v-card v-if="!this.subscription" elevation="6" class="mb-4 pa-1">
-        <v-card-item title="CARD TITLE" :subtitle="this.$t('pleaseConsiderSubscribing')" />
+        <v-card-item :title="this.$t('supportFeedGears')" :subtitle="this.$t('pleaseConsiderSubscribing')" />
         <v-divider />
         <v-card-actions>
           <v-btn id="checkout" 
@@ -196,7 +196,8 @@
     </v-card-text>
     <v-divider />
     <v-card-actions>
-      DISMISS
+      <v-btn @click="this.$emit('dismiss')"
+        :text="this.$t('dismiss')" />
     </v-card-actions>
   </v-card>
 </template>
@@ -222,7 +223,7 @@ export default {
     }
   },
   props: [ "baseUrl", "theme" ],
-  emits: ["updateServerMessage"],
+  emits: [ "updateServerMessage", "dismiss" ],
   validations() {
     return {
       username: { 

@@ -109,10 +109,8 @@
       </v-window>
     </v-card-text>
     <v-divider />
-    <!-- button panel -->
     <v-card-actions>
-      <!-- 'dismiss' button -->
-      <v-btn @click="dismissFeedConfig"
+      <v-btn @click="this.$emit('dismiss')"
         :text="this.$t('dismiss')" />
     </v-card-actions>
   </v-card>
@@ -276,9 +274,6 @@ export default {
     saveFeedConfigAndDismiss() {
       this.saveFeedConfig();
       this.$emit('dismiss');
-    },
-    dismissFeedConfig() {
-      this.$emit('dismiss'); 
     },
     addRssAtomUrl(source) {
       if (!this.rssAtomFeedUrls) {
