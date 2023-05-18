@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import PostMediaMetadata from './PostMediaMetadata.vue';
-import PostMediaContent from './PostMediaContent.vue';
+import PostMediaMetadata from '@/components/post-media/PostMediaMetadata.vue';
+import PostMediaContent from '@/components/post-media/PostMediaContent.vue';
 
 export default {
   name: "PostMediaGroup",

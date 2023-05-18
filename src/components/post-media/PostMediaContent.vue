@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import PostMediaMetadata from './PostMediaMetadata.vue';
+import PostMediaMetadata from '@/components/post-media/PostMediaMetadata.vue';
 
 export default {
   name: "PostMediaContent",

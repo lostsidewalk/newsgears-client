@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import FeedDetails from './FeedDetails.vue';
+import FeedDetails from '@/components/post-feed/FeedDetails.vue';
 
 export default {
   name: "FeedSelectButton",

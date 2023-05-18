@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import PostMediaCommunity from './PostMediaCommunity.vue';
+import PostMediaCommunity from '@/components/post-media/PostMediaCommunity.vue';
 
 export default {
   name: "PostMediaMetadata",

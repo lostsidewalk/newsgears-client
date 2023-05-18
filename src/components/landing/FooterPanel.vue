@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import PrivacyPolicyPanel from '../privacy-policy-panel/PrivacyPolicyPanel.vue';
+import PrivacyPolicyPanel from '@/components/privacy-policy-panel/PrivacyPolicyPanel.vue';
 
 export default {
   name: "FooterPanel",
