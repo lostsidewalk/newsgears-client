@@ -1,34 +1,61 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" align="center">
-        <h1 class="logotext">FeedGears RSS</h1>
+      <v-col
+        cols="12"
+        align="center"
+      >
+        <h1 class="logotext">
+          FeedGears RSS
+        </h1>
       </v-col>
-      <v-col cols="12" align="center">
-        <i class="fa fa-rss fa-5x"></i>
+      <v-col
+        cols="12"
+        align="center"
+      >
+        <i class="fa fa-rss fa-5x" />
       </v-col>
-      <v-col cols="12" align="center">
+      <v-col
+        cols="12"
+        align="center"
+      >
         <h2 class="logosubtext fancy">
-          {{ this.$t('whatIsFeedGears') }}
+          {{ $t('whatIsFeedGears') }}
         </h2>
       </v-col>
-      <v-col cols="12" align="center">
+      <v-col
+        cols="12"
+        align="center"
+      >
         <h2 class="logosubduedtext fancy">
-          {{ this.$t('whyIsFeedGearsFree') }} 
+          {{ $t('whyIsFeedGearsFree') }} 
         </h2>
       </v-col>
     </v-row>
 
     <v-divider class="mt-8" />
 
-    <v-row justify="center" v-if="!this.$auth.$isAuthenticated" class="mt-8">
-      <v-col cols="12" sm="10">
-        <SignUpButton :theme="theme" />
+    <v-row
+      v-if="!$auth.$isAuthenticated"
+      justify="center"
+      class="mt-8"
+    >
+      <v-col
+        cols="12"
+        sm="10"
+      >
+        <SignUpButton />
       </v-col>
     </v-row>
-    <v-row justify="center" v-if="!this.$auth.$isAuthenticated">
-      <v-col cols="12" sm="10">
-        <GoogleAuthButton :theme="theme" />
+    <v-row
+      v-if="!$auth.$isAuthenticated"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="10"
+      >
+        <GoogleAuthButton />
       </v-col>
     </v-row>
   </v-container>
@@ -40,11 +67,10 @@ import GoogleAuthButton from '@/components/prelogin/GoogleAuthButton.vue';
 
 export default {
   name: "BannerPanel",
-  props: ["theme"],
   components: { 
     SignUpButton, 
     GoogleAuthButton,
-  }
+  },
 }
 </script>
 

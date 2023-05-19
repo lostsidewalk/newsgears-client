@@ -1,15 +1,25 @@
 <template>
   <v-container>
     <!-- row -->
-    <v-row align="center" justify="center">
+    <v-row
+      align="center"
+      justify="center"
+    >
       <!-- col -->
-      <v-col cols="12" sm="10">
+      <v-col
+        cols="12"
+        sm="10"
+      >
         <v-hover v-slot="{ isHovering, props }">
-          <v-card  :elevation="isHovering ? 7 : 6" 
-            v-bind="props">
-            <v-img class="reader-image" 
-              :src="'reader_global_news_' + this.$theme.currentTheme.ident + '.png'" 
-              :alt="this.$t('queuePageScreenshot')" />
+          <v-card
+            :elevation="isHovering ? 7 : 6" 
+            v-bind="props"
+          >
+            <v-img
+              class="reader-image" 
+              :src="'reader_global_news_' + ($vuetify.theme.dark ? 'dark' : 'light') + '.png'" 
+              :alt="$t('queuePageScreenshot')"
+            />
           </v-card>
         </v-hover>
       </v-col>
@@ -20,6 +30,5 @@
 <script>
 export default {
   name: "DemoPanel",
-  props: [ "theme" ],
 }
 </script>
