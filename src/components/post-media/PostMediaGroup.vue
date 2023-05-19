@@ -1,19 +1,27 @@
 <template>
-  <v-card variant="flat" align="left" justify="left">
-    <v-card-subtitle v-if="isUseableMetadata(this.mediaGroup.postMediaMetadata)">
+  <v-card
+    variant="flat"
+    align="left"
+    justify="left"
+  >
+    <v-card-subtitle v-if="isUseableMetadata(mediaGroup.postMediaMetadata)">
       <!-- metadata -->
       <PostMediaMetadata 
         :theme="theme" 
-        :metadata="this.mediaGroup.postMediaMetadata" />
+        :metadata="mediaGroup.postMediaMetadata"
+      />
     </v-card-subtitle>
-    <v-sheet v-if="this.mediaGroup.postMediaContents && this.showContents">
-      <PostMediaContent v-for="(mc,idx) of this.mediaGroup.postMediaContents" :key="mc" 
+    <v-sheet v-if="mediaGroup.postMediaContents && showContents">
+      <PostMediaContent
+        v-for="(mc,idx) of mediaGroup.postMediaContents"
+        :key="mc" 
         :ref="'postMediaContent_' + idx"
-        :mediaContent="mc" 
-        :showContentOnLoad="idx === 0"
+        :media-content="mc" 
+        :show-content-on-load="idx === 0"
         :theme="theme" 
-        @playing="this.$emit('playing')" 
-        @audioPlay="this.$emit('audioPlay', $event)" />
+        @playing="$emit('playing')" 
+        @audioPlay="$emit('audioPlay', $event)"
+      />
     </v-sheet>
   </v-card>
 </template>
@@ -24,11 +32,18 @@ import PostMediaContent from '@/components/post-media/PostMediaContent.vue';
 
 export default {
   name: "PostMediaGroup",
-  props: [ "mediaGroup", "theme" ],
-  emits: [ "playing" ],
   components: {
     PostMediaMetadata,
     PostMediaContent,
+  },
+  props: {
+    mediaGroup: { type: Object, required: true },
+  },
+  emits: [ "playing" ],
+  data() {
+    return {
+      showContents: true,
+    }
   },
   methods: {
     pause() {
@@ -44,11 +59,6 @@ export default {
     isUseableMetadata(metadata) {
       return metadata.thumbnails && metadata.thumbnails.length > 0;
     },
-  },
-  data() {
-    return {
-      showContents: true,
-    }
   }
 }
 </script>

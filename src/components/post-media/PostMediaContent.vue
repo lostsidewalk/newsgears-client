@@ -1,39 +1,105 @@
 <template>
-  <v-card variant="flat" align="left" justify="left">
+  <v-card
+    variant="flat"
+    align="left"
+    justify="left"
+  >
     <v-card-subtitle v-if="hasUseableMetadata()">
       <!-- metadata -->
       <PostMediaMetadata 
         :theme="theme" 
-        :metadata="this.mediaContent.metadata" />
+        :metadata="mediaContent.metadata"
+      />
     </v-card-subtitle>
     <!-- reference -->
     <v-card-text>
       <v-chip-group>
-        <v-chip v-if="this.mediaContent.audioChannels" variant="text">{{ this.$t('audioChannelsColon')}} {{ this.mediaContent.audioChannels }}</v-chip>
-        <v-chip v-if="this.mediaContent.bitRate" variant="text">{{ this.$t('bitRateColon') }} {{ this.mediaContent.bitRate }}</v-chip>
-        <v-chip v-if="this.mediaContent.duration" variant="text">{{ this.$t('durationColon') }} {{ this.mediaContent.duration }}</v-chip>
-        <v-chip v-if="this.mediaContent.expression" variant="text">{{ this.$t('expressionColon') }} {{ this.mediaContent.expression }}</v-chip>
-        <v-chip v-if="this.mediaContent.fileSize" variant="text">{{ this.$t('fileSizeColon') }} {{ this.mediaContent.fileSize }}</v-chip>
-        <v-chip v-if="this.mediaContent.frameRate" variant="text">{{ this.$t('frameRateColon') }} {{ this.mediaContent.frameRate }}</v-chip>
-        <v-chip v-if="this.mediaContent.height" variant="text">{{ this.$t('heightColon') }} {{ this.mediaContent.height }}</v-chip>
-        <v-chip v-if="this.mediaContent.width" variant="text">{{ this.$t('widthColon') }} {{ this.mediaContent.width }}</v-chip>
-        <v-chip v-if="this.mediaContent.language" variant="text">{{ this.$t('languageColon') }} {{ this.mediaContent.language }}</v-chip>
-        <v-chip v-if="this.mediaContent.samplingRate" variant="text">{{ this.$t('samplingRateColon') }} {{ this.mediaContent.samplingRate }}</v-chip>
+        <v-chip
+          v-if="mediaContent.audioChannels"
+          variant="text"
+        >
+          {{ $t('audioChannelsColon') }} {{ mediaContent.audioChannels }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.bitRate"
+          variant="text"
+        >
+          {{ $t('bitRateColon') }} {{ mediaContent.bitRate }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.duration"
+          variant="text"
+        >
+          {{ $t('durationColon') }} {{ mediaContent.duration }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.expression"
+          variant="text"
+        >
+          {{ $t('expressionColon') }} {{ mediaContent.expression }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.fileSize"
+          variant="text"
+        >
+          {{ $t('fileSizeColon') }} {{ mediaContent.fileSize }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.frameRate"
+          variant="text"
+        >
+          {{ $t('frameRateColon') }} {{ mediaContent.frameRate }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.height"
+          variant="text"
+        >
+          {{ $t('heightColon') }} {{ mediaContent.height }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.width"
+          variant="text"
+        >
+          {{ $t('widthColon') }} {{ mediaContent.width }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.language"
+          variant="text"
+        >
+          {{ $t('languageColon') }} {{ mediaContent.language }}
+        </v-chip>
+        <v-chip
+          v-if="mediaContent.samplingRate"
+          variant="text"
+        >
+          {{ $t('samplingRateColon') }} {{ mediaContent.samplingRate }}
+        </v-chip>
       </v-chip-group>
-      <vue-plyr ref="player" v-if="isVideo()" v-show="this.showContents">
-        <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
-          <iframe class="w-100" style="border: 0px;"
+      <vue-plyr
+        v-if="isVideo()"
+        v-show="showContents"
+        ref="player"
+      >
+        <div
+          class="plyr__video-embed"
+          data-plyr-config="{ autoplay: false, autopause: true }"
+        >
+          <iframe
+            class="w-100"
+            style="border: 0px;"
             allowfullscreen
             allowtransparency
-            :src="this.mediaContent.reference.uri">
-          </iframe>
+            :src="mediaContent.reference.uri"
+          />
         </div>
       </vue-plyr>
-      <img v-else-if="this.showContents"
-        :src="this.mediaContent.reference.uri"
+      <img
+        v-else-if="showContents"
+        :src="mediaContent.reference.uri"
         class="post-media-content-image" 
         tabindex="0" 
-        :alt="this.$t('postMediaContentImage')" />
+        :alt="$t('postMediaContentImage')"
+      >
     </v-card-text>
   </v-card>
 </template>
@@ -43,10 +109,18 @@ import PostMediaMetadata from '@/components/post-media/PostMediaMetadata.vue';
 
 export default {
   name: "PostMediaContent",
-  props: [ "mediaContent", "showContentOnLoad", "theme" ],
-  emits: [ "playing", "audioPlay" ],
   components: {
     PostMediaMetadata,
+  },
+  props: {
+    mediaContent: { type: Object, required: true },
+    showContentOnLoad: { type: Boolean, default: false },
+  },
+  emits: [ "playing", "audioPlay" ],
+  data() {
+    return {
+      showContents: this.showContentOnLoad, 
+    }
   },
   mounted() {
     if (this.isVideo()) {
@@ -79,11 +153,6 @@ export default {
     //       this.inTransit = false;
     //     })
     // }
-  },
-  data() {
-    return {
-      showContents: this.showContentOnLoad, 
-    }
   }
 }
 </script>
