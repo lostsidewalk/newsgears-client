@@ -3,25 +3,38 @@
     <v-card-title v-if="label">
       <v-label>{{ label }}</v-label>
     </v-card-title>
-    <v-card-text for="feed-image-select" class="feed-image-select-label">
-      <v-file-input clearable
+    <v-card-text
+      for="feed-image-select"
+      class="feed-image-select-label"
+    >
+      <v-file-input
+        v-model="feedImages"
+        clearable
         accept="image/*"
-        @change="selectFeedImage"
         :loading="selectFeedImageInTransit" 
-        v-model="this.feedImages"
-        :error-messages="this.feedImageUploadErrors" />
-      <v-img v-if="modelValue" class="mt-2" 
+        :error-messages="feedImageUploadErrors"
+        @change="selectFeedImage"
+      />
+      <v-img
+        v-if="modelValue"
+        class="mt-2" 
         :src="'data:image/png;base64,' + modelValue" 
-        :title="this.$t('clickToChangeQueueImage')"
-        :alt="this.$t('queueLogoImage')" 
+        :title="$t('clickToChangeQueueImage')"
+        :alt="$t('queueLogoImage')" 
         height="140" 
-        max-width="140" max-height="140" />
-      <v-img v-else class="mt-2"
+        max-width="140"
+        max-height="140"
+      />
+      <v-img
+        v-else
+        class="mt-2"
         src="feedgears.png"
-        :title="this.$t('clickToAddQueueImage')"
-        :alt="this.$t('queueLogoImage')" 
+        :title="$t('clickToAddQueueImage')"
+        :alt="$t('queueLogoImage')" 
         height="140" 
-        max-width="140" max-height="140" />
+        max-width="140"
+        max-height="140"
+      />
     </v-card-text>
   </v-card>
 </template>
@@ -29,8 +42,22 @@
 <script>
 export default {
   name: "FeedConfigImageField",
-  props: [ "baseUrl", "label", "required", "theme", "modelValue" ],
+  props: {
+    baseUrl: { type: String, required: true },
+    label: { type: String, required: true },
+    required: { type: Boolean, default: false },
+    modeValue: { type: String, required: true },
+  },
   emits: [ "authError", "update:modelValue" ],
+  data() {
+    return {
+      feedImageUploadErrors: [],
+      feedImages: [],
+      // 
+      selectFeedImageInTransit: false,
+      randomizeFeedImageInTransit: false,
+    }
+  },
   methods: {
     handleFeedImageUploadError(error) {
       console.error(error);
@@ -99,15 +126,6 @@ export default {
       this.$emit('update:modelValue', null);
       this.feedImages.splice(0);
     },
-  },
-  data() {
-    return {
-      feedImageUploadErrors: [],
-      feedImages: [],
-      // 
-      selectFeedImageInTransit: false,
-      randomizeFeedImageInTransit: false,
-    }
   }
 }
 </script>
