@@ -1,203 +1,298 @@
 <template>
-  <v-card :disabled="this.inTransit">
+  <v-card :disabled="inTransit">
     <v-card-title class="text-center pa-4">
       <h3 class="view-header-no-count">
         <v-icon icon="fa-user" />
-        {{ this.$t('accountSettings') }}
+        {{ $t('accountSettings') }}
       </h3>
     </v-card-title>
     <v-divider />
     <v-card-text v-if="isLoaded">
       <!-- profile -->
-      <v-card elevation="6" class="mb-4 pa-1">
-        <v-card-item :title="authProvider !== 'LOCAL' ? authProviderUsername : username" :subtitle="emailAddress" />
+      <v-card
+        elevation="6"
+        class="mb-4 pa-1"
+      >
+        <v-card-item
+          :title="authProvider !== 'LOCAL' ? authProviderUsername : username"
+          :subtitle="emailAddress"
+        />
         <v-divider />
         <v-card-text class="d-flex flex-row">
           <!-- profile image -->
-          <v-img v-if="authProviderProfileImgUrl" 
+          <v-img
+            v-if="authProviderProfileImgUrl" 
             :src="authProviderProfileImgUrl" 
             referrerpolicy="no-referrer" 
             class="profile-img" 
-            :alt="this.$t('oAuth2ProfileImage')" 
+            :alt="$t('oAuth2ProfileImage')" 
             height="96" 
             max-height="96" 
-            max-width="96" />
-          <v-img v-else src="feedgears.png" 
+            max-width="96"
+          />
+          <v-img
+            v-else
+            src="feedgears.png" 
             referrerpolicy="no-referrer" 
             class="profile-img" 
-            :alt="this.$t('defaultOAuth2ProfileImage')" 
+            :alt="$t('defaultOAuth2ProfileImage')" 
             height="96" 
             max-height="96" 
-            max-width="96" />
+            max-width="96"
+          />
         </v-card-text>
         <v-card-actions>
           <!-- deactivate account button -->
-          <v-btn v-if="!this.showDeactivateUser && !this.showResetPassword" 
-            @click="this.showDeactivateUser = true" 
-            :text="this.$t('deactivateYourAccount')" />
+          <v-btn
+            v-if="!showDeactivateUser && !showResetPassword" 
+            :text="$t('deactivateYourAccount')" 
+            @click="showDeactivateUser = true"
+          />
           <!-- download your data button-->
-          <v-btn v-if="this.showDeactivateUser" 
-            @click="exportOpml()"
+          <v-btn
+            v-if="showDeactivateUser" 
             :loading="exportOpmlInTransit"
-            :text="this.$t('downloadYourData')" />
+            :text="$t('downloadYourData')"
+            @click="exportOpml()"
+          />
           <!-- permanently delete your account button -->
-          <v-btn v-if="this.showDeactivateUser" 
-            @click="finalizeDeactivation()"
+          <v-btn
+            v-if="showDeactivateUser" 
             :loading="finalizeDeactivationInTransit"
-            :text="this.$t('permanentlyDeleteYourAccount')" />
+            :text="$t('permanentlyDeleteYourAccount')"
+            @click="finalizeDeactivation()"
+          />
           <!-- cancel (deactivate account) button -->
-          <v-btn v-if="this.showDeactivateUser" id="cancelDeactivateAccount" 
-            @click="this.showDeactivateUser = false" 
-            :text="this.$t('cancel')" />
-          <v-btn v-if="this.showResetPassword" 
-            @click="initPasswordReset()"
+          <v-btn
+            v-if="showDeactivateUser"
+            id="cancelDeactivateAccount" 
+            :text="$t('cancel')" 
+            @click="showDeactivateUser = false"
+          />
+          <v-btn
+            v-if="showResetPassword" 
             :loading="initPasswordResetInTransit"
-            :text="this.$t('sendPasswordResetEmail')" />
+            :text="$t('sendPasswordResetEmail')"
+            @click="initPasswordReset()"
+          />
           <!-- reset password button (local) -->
-          <v-btn v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
+          <v-btn
+            v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser" 
             id="resetPassword" 
-            @click="resetPassword()" 
-            :loading="resetPasswordInTransit"
-            :text="this.$t('resetPassword')" />
+            :loading="resetPasswordInTransit" 
+            :text="$t('resetPassword')"
+            @click="resetPassword()"
+          />
           <!-- cancel (reset password) -->
-          <v-btn v-if="this.showResetPassword" 
+          <v-btn
+            v-if="showResetPassword" 
             id="cancelResetPassword" 
-            @click="this.showResetPassword = false" 
-            :text="this.$t('cancel')" />
+            :text="$t('cancel')" 
+            @click="showResetPassword = false"
+          />
         </v-card-actions>
       </v-card>
       <!-- email address (local) -->
-      <v-card v-if="authProvider === 'LOCAL'" elevation="6" class="mb-4 pa-1"
-        :class="{ error: v$.emailAddress.$errors.length }">
+      <v-card
+        v-if="authProvider === 'LOCAL'"
+        elevation="6"
+        class="mb-4 pa-1"
+        :class="{ error: v$.emailAddress.$errors.length }"
+      >
         <v-card-title class="pa-4">
-          {{ this.$t('emailAddress') }}
+          {{ $t('emailAddress') }}
         </v-card-title>
         <v-divider />
         <v-card-text>
-          <v-text-field name="email" 
-            :label="this.$t('emailAddressColon')"
-            type="text" 
-            v-model="v$.emailAddress.$model" />
-          <div class="settings-errors" v-for="(error, index) of v$.emailAddress.$errors" :key="index">
-            <div class="settings-error-message">{{ error.$message }}</div>
+          <v-text-field
+            v-model="v$.emailAddress.$model" 
+            name="email"
+            :label="$t('emailAddressColon')" 
+            type="text"
+          />
+          <div
+            v-for="(error, index) of v$.emailAddress.$errors"
+            :key="index"
+            class="settings-errors"
+          >
+            <div class="settings-error-message">
+              {{ error.$message }}
+            </div>
           </div>
         </v-card-text>
         <v-divider />
         <v-card-actions>
           <!-- apply changes button (local) -->
-          <v-btn v-if="authProvider === 'LOCAL' && !this.showResetPassword && !this.showDeactivateUser" 
+          <v-btn
+            v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser" 
             id="updateAccount" 
-            @click="updateAccount()" 
-            :disabled="v$.$invalid"
+            :disabled="v$.$invalid" 
             :loading="updateAccountInTransit"
-            :text="this.$t('applyChanges')" />
+            :text="$t('applyChanges')"
+            @click="updateAccount()"
+          />
         </v-card-actions>
       </v-card>
       <!-- email notifications -->
-      <v-card elevation="6" class="mb-4 pa-1">
+      <v-card
+        elevation="6"
+        class="mb-4 pa-1"
+      >
         <v-card-item 
-          :title="this.$t('emailNotifications')" 
-          :subtitle="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled) ? 
-            this.$t('emailNotificationsAreDisabled') : 
-            this.$t('emailNotificationsAreEnabled')" />
+          :title="$t('emailNotifications')" 
+          :subtitle="frameworkConfig && isTrue(frameworkConfig.notifications.disabled) ? 
+            $t('emailNotificationsAreDisabled') : 
+            $t('emailNotificationsAreEnabled')"
+        />
         <v-divider />
         <v-card-actions>
-          <v-checkbox id="enableAccountAlerts" 
-            name="enableAccountAlerts" 
-            :label="this.$t('enableAccountAlertsNotifications')"
+          <v-checkbox
+            id="enableAccountAlerts" 
             v-model="enableAccountAlerts" 
-            :disabled="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)" />
-          <v-checkbox id="enableProductNotifications" 
-            name="enableProductNotifications" 
-            :label="this.$t('enableProductNotifications')"
+            name="enableAccountAlerts"
+            :label="$t('enableAccountAlertsNotifications')" 
+            :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)"
+          />
+          <v-checkbox
+            id="enableProductNotifications" 
             v-model="enableProductNotifications" 
-            :disabled="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)" />
+            name="enableProductNotifications"
+            :label="$t('enableProductNotifications')" 
+            :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)"
+          />
         </v-card-actions>
         <v-divider />
         <v-card-actions>
           <!-- update notification preferences button -->
-          <v-btn id="updateNotificationPreferences" 
-            @click="updateNotificationPreferences()" 
-            :disabled="this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)"
+          <v-btn
+            id="updateNotificationPreferences" 
+            :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)" 
             :loading="updateNotificationPreferencesInTransit"
-            :text="this.$t('updateNotificationPreferences')" />
+            :text="$t('updateNotificationPreferences')"
+            @click="updateNotificationPreferences()"
+          />
           <!-- toggle (all) notifications button -->
           <v-btn 
-            @click="toggleNotifications()" 
-            :loading="toggleNotificationsInTransit"
-            :text="(this.frameworkConfig && this.isTrue(this.frameworkConfig.notifications.disabled)) ? this.$t('enableSelectedNotifications') : this.$t('disableSelectedNotifications')" />
+            :loading="toggleNotificationsInTransit" 
+            :text="(frameworkConfig && isTrue(frameworkConfig.notifications.disabled)) ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
+            @click="toggleNotifications()"
+          />
         </v-card-actions>
       </v-card>
       <!-- subscription -->
-      <v-card v-if="this.subscription" elevation="6" class="mb-4 pa-1">
-        <v-card-item title="CARD TITLE" :subtitle="this.$t('subscriptionStatus', { 
+      <v-card
+        v-if="subscription"
+        elevation="6"
+        class="mb-4 pa-1"
+      >
+        <v-card-item
+          title="CARD TITLE"
+          :subtitle="$t('subscriptionStatus', { 
             status: getSubscrpitionStatus(), 
             started: getSubscriptionStarted() 
-          })" />
+          })"
+        />
         <v-divider />
         <v-card-text>
-          <p v-if="isCanceled()">{{ this.$t('yourSubscriptionWasCanceled') }}</p>
+          <p v-if="isCanceled()">
+            {{ $t('yourSubscriptionWasCanceled') }}
+          </p>
 
           <div v-if="isActive()">
-            <v-label for="subscription-current-period">{{ this.$t('currentPeriod') }}</v-label>
-            <v-text-field name="subscription-current-period" type="text" 
-              :placeholder="getSubscriptionCurrentPeriod()" />
+            <v-label for="subscription-current-period">
+              {{ $t('currentPeriod') }}
+            </v-label>
+            <v-text-field
+              name="subscription-current-period"
+              type="text" 
+              :placeholder="getSubscriptionCurrentPeriod()"
+            />
           </div>
 
           <div v-if="hasEnded()">
-            <v-label for="subscription-ended-at">{{ this.$t('endedAt') }}</v-label>
-            <v-text-field name="subscription-ended-at" type="text" 
-              :placeholder="getSubscriptionEndedAt()" />
+            <v-label for="subscription-ended-at">
+              {{ $t('endedAt') }}
+            </v-label>
+            <v-text-field
+              name="subscription-ended-at"
+              type="text" 
+              :placeholder="getSubscriptionEndedAt()"
+            />
           </div>
 
           <div v-if="isCanceled()">
-            <v-label for="subscription-ended-at">{{ this.$t('willEndAt') }}</v-label>
-            <v-text-field name="subscription-ended-at" type="text" 
-              :placeholder="getSubscriptionCurrentPeriodEnd()" />
+            <v-label for="subscription-ended-at">
+              {{ $t('willEndAt') }}
+            </v-label>
+            <v-text-field
+              name="subscription-ended-at"
+              type="text" 
+              :placeholder="getSubscriptionCurrentPeriodEnd()"
+            />
           </div>
 
           <div v-if="hasLastInvoice()">
-            <v-label>{{ this.$t('mostRecentInvoice') }} ({{ getLastInvoiceCreated() }})</v-label>
-            <v-label>{{ this.$t('statusColon') }} {{ getLastInvoiceStatus() }}</v-label> 
-            <v-label>{{ this.$t('amountDueColon') }} {{ getAmountDue() }}</v-label>
-            <v-label>{{ this.$t('amountPaidColon') }} {{ getAmountPaid() }}</v-label>
-            <v-label>{{ this.$t('amountRemainingColon') }} {{ getAmountRemaining() }}</v-label>
-            <v-label>{{ this.$t('customerEmailAddressColon') }} {{ getCustomerEmailAddress() }}</v-label>
-            <v-label>{{ this.$t('customerNameColon') }} {{ getCustomerName() }}</v-label>
-            <v-label>{{ this.$t('invoiceUrlColon') }} <a :href="getHostedInvoiceUrl()" target="_blank">{{ this.$t('clckHere') }}</a></v-label>
-            <v-label>{{ this.$t('productColon') }} {{ getProductDescription() }}</v-label>
+            <v-label>{{ $t('mostRecentInvoice') }} ({{ getLastInvoiceCreated() }})</v-label>
+            <v-label>{{ $t('statusColon') }} {{ getLastInvoiceStatus() }}</v-label> 
+            <v-label>{{ $t('amountDueColon') }} {{ getAmountDue() }}</v-label>
+            <v-label>{{ $t('amountPaidColon') }} {{ getAmountPaid() }}</v-label>
+            <v-label>{{ $t('amountRemainingColon') }} {{ getAmountRemaining() }}</v-label>
+            <v-label>{{ $t('customerEmailAddressColon') }} {{ getCustomerEmailAddress() }}</v-label>
+            <v-label>{{ $t('customerNameColon') }} {{ getCustomerName() }}</v-label>
+            <v-label>
+              {{ $t('invoiceUrlColon') }} <a
+                :href="getHostedInvoiceUrl()"
+                target="_blank"
+              >{{ $t('clckHere') }}</a>
+            </v-label>
+            <v-label>{{ $t('productColon') }} {{ getProductDescription() }}</v-label>
           </div>
         </v-card-text>
         <v-divider />
         <v-card-actions>
-              <v-btn v-if="this.subscription && !isCanceled()"
-                id="cancelSubscription" 
-                @click="cancelSubscription()" 
-                :loading="cancelSubscriptionInTransit"
-                :text="this.$t('cancelSubscription')" />
-              <v-btn v-if="this.subscription && isCanceled()"
-                id="resumeSubscription" 
-                @click="resumeSubscription()" 
-                :loading="resumeSubscriptionInTransit"
-                :text="this.$t('resumeSubscription')" />
+          <v-btn
+            v-if="subscription && !isCanceled()"
+            id="cancelSubscription" 
+            :loading="cancelSubscriptionInTransit" 
+            :text="$t('cancelSubscription')"
+            @click="cancelSubscription()"
+          />
+          <v-btn
+            v-if="subscription && isCanceled()"
+            id="resumeSubscription" 
+            :loading="resumeSubscriptionInTransit" 
+            :text="$t('resumeSubscription')"
+            @click="resumeSubscription()"
+          />
         </v-card-actions>
       </v-card>
       <!-- checkout -->
-      <v-card v-if="!this.subscription" elevation="6" class="mb-4 pa-1">
-        <v-card-item :title="this.$t('supportFeedGears')" :subtitle="this.$t('pleaseConsiderSubscribing')" />
+      <v-card
+        v-if="!subscription"
+        elevation="6"
+        class="mb-4 pa-1"
+      >
+        <v-card-item
+          :title="$t('supportFeedGears')"
+          :subtitle="$t('pleaseConsiderSubscribing')"
+        />
         <v-divider />
         <v-card-actions>
-          <v-btn id="checkout" 
-            @click="submitOrder" 
-            :loading="submitOrderInTransit"
-            :text="this.$t('checkout')" />
+          <v-btn
+            id="checkout" 
+            :loading="submitOrderInTransit" 
+            :text="$t('checkout')"
+            @click="submitOrder"
+          />
         </v-card-actions>
       </v-card>
     </v-card-text>
     <v-divider />
     <v-card-actions>
-      <v-btn @click="this.$emit('dismiss')"
-        :text="this.$t('dismiss')" />
+      <v-btn
+        :text="$t('dismiss')"
+        @click="$emit('dismiss')"
+      />
     </v-card-actions>
   </v-card>
 </template>
@@ -217,13 +312,15 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 export default {
   name: "SettingsPanel",
+  props: {
+    baseUrl: { type: String, required: true },
+  },
+  emits: [ "updateServerMessage", "dismiss" ],
   setup() {
     return {
       v$: useVuelidate(),
     }
   },
-  props: [ "baseUrl", "theme" ],
-  emits: [ "updateServerMessage", "dismiss" ],
   validations() {
     return {
       username: { 
@@ -234,9 +331,6 @@ export default {
         maxLength: maxLength(512),
       },
     }
-  },
-  mounted() {
-    this.refreshSettings();
   },
   data() {
     return {
@@ -285,6 +379,9 @@ export default {
       // currently selected tab
       selectedTab: 'SETTINGS',
     }
+  },
+  mounted() {
+    this.refreshSettings();
   },
   methods: {
     // 
