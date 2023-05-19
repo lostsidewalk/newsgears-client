@@ -17,6 +17,8 @@ export default {
       LoginButton, 
       DisplayModeButton, 
     },
-    props: [ "baseUrl", "theme" ],
+    props: {
+      baseUrl: { type: String, required: true },
+    },
 }
 </script>

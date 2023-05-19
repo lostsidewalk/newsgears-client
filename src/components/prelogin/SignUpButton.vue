@@ -1,16 +1,17 @@
 <template>
-  <v-btn @click="this.$router.push('/register')"
+  <v-btn
     elevation="1"
     class="signup-button flex-grow-1"
     variant="tonal"
-    prepend-icon="fa-user" 
-    :text="this.$t('createAnAccount')" />
+    prepend-icon="fa-user"
+    :text="$t('createAnAccount')" 
+    @click="$router.push('/register')"
+  />
 </template>
 
 <script>
 export default {
   name: "SignUpButton",
-  props: [ "theme" ],
 }
 </script>
 

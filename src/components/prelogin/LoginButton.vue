@@ -1,15 +1,16 @@
 <template>
-  <v-btn @click="this.$router.push('/app')"
+  <v-btn
     id="login"
     size="small"
-    :title="this.$t('login')"
+    :title="$t('login')"
     append-icon="fa-sign-in"
-    :text="this.$t('login')" />
+    :text="$t('login')"
+    @click="$router.push('/app')"
+  />
 </template>
 
 <script>
 export default {
   name: "LoginButton",
-  props: [ "theme" ],
 }
 </script>
