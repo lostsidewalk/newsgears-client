@@ -19,7 +19,7 @@
         variant="text"
         prepend-icon="fa-code-fork"
         :text="$t('devBlog')" 
-        @click.prevent="window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank')"
+        @click.prevent="devBlog"
       />
       <v-btn
         size="small"
@@ -54,28 +54,28 @@
         variant="text" 
         prepend-icon="fa-twitter"
         :text="$t('twitter')"
-        @click.prevent="window.open('https://twitter.com/lostsidewalkllc', '_blank')"
+        @click.prevent="twitter"
       />
       <v-btn
         size="small"
         variant="text" 
         prepend-icon="fa-github"
         :text="$t('github')" 
-        @click.prevent="window.open('https://github.com/lostsidewalk', '_blank')"
+        @click.prevent="github"
       />
       <v-btn
         size="small"
         variant="text" 
         prepend-icon="fa-twitch"
         :text="$t('twitch')" 
-        @click.prevent="window.open('https://twitch.tv/elderscrollsjesus', '_blank')"
+        @click.prevent="twitch"
       />
       <v-btn
         size="small"
         variant="text" 
         prepend-icon="fa-comments-o"
         :text="$t('discord')" 
-        @click.prevent="window.open('https://discord.gg/7nyY89UrNw', '_blank')"
+        @click.prevent="discord"
       />
       <v-col
         cols="9"
@@ -107,8 +107,23 @@ export default {
     }
   },
   methods: {
+    devBlog() {
+      window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank');
+    },
     sendSupportMail() {
       window.open('mailto:support@feedgears.com', '_blank');
+    },
+    twitter() {
+      window.open('https://twitter.com/lostsidewalkllc', '_blank');
+    },
+    github() {
+      window.open('https://github.com/lostsidewalk', '_blank');
+    },
+    twitch() {
+      window.open('https://twitch.tv/elderscrollsjesus', '_blank');
+    },
+    discord() {
+      window.open('https://discord.gg/7nyY89UrNw', '_blank');
     }
   }
 }
