@@ -1,10 +1,12 @@
 <template>
-  <v-btn @click="toggleTheme" 
-    size="small"
-    accesskey="l" 
-    :icon="this.$vuetify.theme.dark ? 'fa-moon-o' : 'fa-lightbulb-o'" 
-    :title="this.$t('switchMode')"
-    :aria-label="this.$t('switchModeAriaLabel')" />
+  <v-btn
+    size="small" 
+    accesskey="l"
+    :icon="$vuetify.theme.dark ? 'fa-moon-o' : 'fa-lightbulb-o'" 
+    :title="$t('switchMode')" 
+    :aria-label="$t('switchModeAriaLabel')"
+    @click="toggleTheme"
+  />
 </template>
 
 <script>

@@ -1,16 +1,17 @@
 <template>
-  <v-btn @click="this.goBack()" 
-    size="small"
-    accesskey="b" 
-    :title="this.$t('goBack')"
+  <v-btn
+    size="small" 
+    accesskey="b"
+    :title="$t('goBack')" 
     prepend-icon="fa-arrow-left"
-    :text="this.$t('goBack')" />
+    :text="$t('goBack')"
+    @click="goBack()"
+  />
 </template>
 
 <script>
 export default {
   name: "GoBack",
-  props: [ "theme" ],
   methods: {
     goBack() {
       this.$router.back();

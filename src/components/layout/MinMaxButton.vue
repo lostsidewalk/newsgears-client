@@ -1,14 +1,18 @@
 <template>
-  <v-btn @click="this.$emit('toggle')" 
-    size="x-small"
-    :title="this.show ? this.$t('collapseThisPanel') : this.$t('restoreThisPanel')"
-    :icon="this.show ? 'fa-compress' : 'fa-expand'" />
+  <v-btn
+    size="x-small" 
+    :title="show ? $t('collapseThisPanel') : $t('restoreThisPanel')"
+    :icon="show ? 'fa-compress' : 'fa-expand'"
+    @click="$emit('toggle')"
+  />
 </template>
 
 <script>
 export default {
   name: "MinMaxButton",
-  props: [ "theme", "show" ],
+  props: {
+    show: { type: Boolean, default: false }
+  },
   emits: [ "toggle" ],
 }
 </script>
