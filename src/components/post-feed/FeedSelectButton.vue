@@ -1,7 +1,9 @@
 <template>
-  <v-card :variant="variant"
-    :value="feed.value" 
-    :key="feed.value">
+  <v-card
+    :key="feed.value"
+    :variant="variant" 
+    :value="feed.value"
+  >
     <!-- feed name -->
     <v-card-title>
       {{ feed.label }}
@@ -10,19 +12,35 @@
       {{ feed.description }}
     </v-card-subtitle>
     <v-card-text>
-      <v-img v-if="feed.imgSrc" 
+      <v-img
+        v-if="feed.imgSrc" 
         class="feed-image"
         :src="'data:image/png;base64,' + feed.imgSrc" 
-        :alt="this.$t('queueLogoImage')" 
-        max-height="32" max-width="32" width="32" />
+        :alt="$t('queueLogoImage')" 
+        max-height="32"
+        max-width="32"
+        width="32"
+      />
       <v-chip-group>
-        <v-chip label variant="text">
-          <v-icon start icon="fa-eye" /> 
-          {{ this.inboundCount }}
+        <v-chip
+          label
+          variant="text"
+        >
+          <v-icon
+            start
+            icon="fa-eye"
+          /> 
+          {{ inboundCount }}
         </v-chip>
-        <v-chip label variant="text">
-          <v-icon start icon="fa-star" /> 
-          {{ this.publishedCount }}
+        <v-chip
+          label
+          variant="text"
+        >
+          <v-icon
+            start
+            icon="fa-star"
+          /> 
+          {{ publishedCount }}
         </v-chip>
       </v-chip-group>
     </v-card-text>
@@ -32,30 +50,37 @@
         <v-row dense>
           <v-col>
             <!-- add/manage subscriptions -->
-            <v-btn @click.stop="this.$emit('manageSubscriptions')" block
+            <v-btn
+              block
               variant="tonal"
               size="small"
-              :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? this.$t('manageSubscriptions') : this.$t('addSubscriptions')" />
+              :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
+              @click.stop="$emit('manageSubscriptions')"
+            />
           </v-col>
           <v-col>
             <!-- show/hide feed details -->
-            <v-btn @click.stop="this.showMoreInformation = !this.showMoreInformation" block
+            <v-btn
+              block
               variant="tonal"
               size="small"
-              :text="this.showMoreInformation ? this.$t('hideMoreInfo') : this.$t('showMoreInfo')" />
+              :text="showMoreInformation ? $t('hideMoreInfo') : $t('showMoreInfo')"
+              @click.stop="showMoreInformation = !showMoreInformation"
+            />
           </v-col>
         </v-row>
       </v-container>
     </v-card-actions>
     <v-expand-transition>
       <FeedDetails 
-          v-if="this.showMoreInformation"
-          :rssAtomFeedUrls="feed.rssAtomFeedUrls" 
-          :jsonPubUrl="this.feedUrl + '/feed/json/' + feed.transportIdent" 
-          :rssPubUrl="this.feedUrl + '/feed/rss/' + feed.transportIdent" 
-          :atomPubUrl="this.feedUrl + '/feed/atom/' + feed.transportIdent" 
-          :theme="theme" 
-          @updatePostFeedFilter="$event => this.$emit('updatePostFeedFilter', $event)" />
+        v-if="showMoreInformation"
+        :rss-atom-feed-urls="feed.rssAtomFeedUrls" 
+        :json-pub-url="feedUrl + '/feed/json/' + feed.transportIdent" 
+        :rss-pub-url="feedUrl + '/feed/rss/' + feed.transportIdent" 
+        :atom-pub-url="feedUrl + '/feed/atom/' + feed.transportIdent" 
+        :theme="theme" 
+        @updatePostFeedFilter="$event => $emit('updatePostFeedFilter', $event)"
+      />
     </v-expand-transition>
   </v-card>
 </template>
@@ -68,7 +93,13 @@ export default {
   components: {
     FeedDetails,
   },
-  props: [ "feed", "feedUrl", "inboundCount", "publishedCount", "theme", "variant" ],
+  props: {
+    feed: { type: Object, required: true },
+    feedUrl: { type: String, required: true },
+    inboundCount: { type: Number, required: true },
+    publishedCount: { type: Number, required: true },
+    variant: { type: String, default: null },
+  },
   emits: [ "selectFeed", "manageSubscriptions", "updatePostFeedFilter" ],
   data() {
     return {

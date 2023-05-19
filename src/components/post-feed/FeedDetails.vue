@@ -1,51 +1,67 @@
 <template>
   <v-sheet>
-    <v-card class="ma-4" v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
+    <v-card
+      v-if="rssAtomFeedUrls && rssAtomFeedUrls.length > 0"
+      class="ma-4"
+    >
       <!-- subscriptions label -->
       <v-card-title>
-        {{ this.$t('subscriptions') }}
+        {{ $t('subscriptions') }}
       </v-card-title>
       <!-- subscriptions -->
       <v-divider />
       <v-list>
-        <v-list-item v-for="rssAtomFeedUrl of this.rssAtomFeedUrls" :key="rssAtomFeedUrl"
+        <v-list-item
+          v-for="rssAtomFeedUrl of rssAtomFeedUrls"
+          :key="rssAtomFeedUrl"
           class="ma-2 pa-2"
-          :title="rssAtomFeedUrl.title ? rssAtomFeedUrl.title : rssAtomFeedUrl.feedUrl">
-          <template v-slot:subtitle>
+          :title="rssAtomFeedUrl.title ? rssAtomFeedUrl.title : rssAtomFeedUrl.feedUrl"
+        >
+          <template #subtitle>
             {{ rssAtomFeedUrl.feedUrl }}
             <v-divider class="mb-1 mt-1" />
           </template>
-          <template v-slot:prepend>
+          <template #prepend>
             <!-- feed logo image -->
-            <v-img v-if="rssAtomFeedUrl.image" 
+            <v-img
+              v-if="rssAtomFeedUrl.image" 
               class="ma-2"
               :src="rssAtomFeedUrl.image.url"
-              :alt="this.$t('feedLogoImage')" 
+              :alt="$t('feedLogoImage')" 
               width="48" 
               max-width="48"
-              max-height="48" /> 
+              max-height="48"
+            /> 
             <!-- RSS logo -->
-            <v-img v-else 
+            <v-img
+              v-else 
               src="rss_logo.svg" 
-              :alt="this.$t('rssLogo')" 
+              :alt="$t('rssLogo')" 
               width="48" 
               max-width="48"
-              max-height="48" /> 
+              max-height="48"
+            /> 
           </template>
           <v-list-item-action>
             <!-- TODO: click here should go to subscriptions config -> RSS feed metrics for this sub -->
-            <v-btn size="x-small" class="mr-2"
+            <v-btn
+              size="x-small"
+              class="mr-2"
               variant="outlined"
               :text="buildImportCtMessage(rssAtomFeedUrl.feedMetrics)" 
-              :title="buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)" />
-            <v-btn size="x-small" class="border-0"
+              :title="buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)"
+            />
+            <v-btn
+              size="x-small"
+              class="border-0"
               variant="outlined"
               icon="fa-filter"
-              @click.stop="this.$emit('updatePostFeedFilter', {
+              @click.stop="$emit('updatePostFeedFilter', {
                 name: 'subscription', 
                 feedId: rssAtomFeedUrl.feedId,
                 value: rssAtomFeedUrl.title,
-              })" />
+              })"
+            />
           </v-list-item-action>
         </v-list-item>
       </v-list>
@@ -53,22 +69,37 @@
     <v-card class="ma-4">
       <!-- publications label -->
       <v-card-title>
-        {{ this.$t('publications') }}
+        {{ $t('publications') }}
       </v-card-title>
       <v-divider />
       <v-card-actions>
         <v-btn-group>
-          <v-btn label
-            :href="this.jsonPubUrl" >
-            <v-icon start icon="fa-link" /> JSON
+          <v-btn
+            label
+            :href="jsonPubUrl"
+          >
+            <v-icon
+              start
+              icon="fa-link"
+            /> JSON
           </v-btn>
-          <v-btn label
-            :href="this.rssPubUrl" >
-            <v-icon start icon="fa-link" /> RSS
+          <v-btn
+            label
+            :href="rssPubUrl"
+          >
+            <v-icon
+              start
+              icon="fa-link"
+            /> RSS
           </v-btn>
-          <v-btn label
-            :href="this.atomPubUrl">
-            <v-icon start icon="fa-link" /> ATOM
+          <v-btn
+            label
+            :href="atomPubUrl"
+          >
+            <v-icon
+              start
+              icon="fa-link"
+            /> ATOM
           </v-btn>
         </v-btn-group>
       </v-card-actions>
@@ -79,7 +110,12 @@
 <script>
 export default {
   name: "FeedDetails",
-  props: ["rssAtomFeedUrls", "jsonPubUrl", "rssPubUrl", "atomPubUrl", "theme"],
+  props: {
+    rssAtomFeedUrls: { type: Array, required: true },
+    jsonPubUrl: { type: String, required: true },
+    rssPubUrl: { type: String, required: true },
+    atomPubUrl: { type: String, required: true },
+  },
   emits: ["updatePostFeedFilter"], 
   methods: {
     // shown on hover 
