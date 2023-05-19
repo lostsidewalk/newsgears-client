@@ -1,110 +1,153 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ this.$t('feedGearsPrivacyPolicy') }}
+      {{ $t('feedGearsPrivacyPolicy') }}
     </v-card-title>
     <v-divider />
     <v-card-text>
       <!-- section -->
       <v-sheet>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('whatInformationDoWeCollect') }}
+            {{ $t('whatInformationDoWeCollect') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('whatWeCollectSummary') }}
+            {{ $t('whatWeCollectSummary') }}
           </v-card-subtitle>
           <v-card-text>
-            {{ this.$t('whatWeCollectDetails') }}
+            {{ $t('whatWeCollectDetails') }}
           </v-card-text>
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('whatWeCollectImportantDetails') }}
+            {{ $t('whatWeCollectImportantDetails') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('whatWeCollectFurtherDetails') }}
+            {{ $t('whatWeCollectFurtherDetails') }}
           </v-card-subtitle>
           <v-card-text>
-            {{ this.$t('someCollectionIsAutomatic') }} {{ this.$t('automaticCollectionDetails') }}
+            {{ $t('someCollectionIsAutomatic') }} {{ $t('automaticCollectionDetails') }}
           </v-card-text>
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('howDoWeProcess') }}
+            {{ $t('howDoWeProcess') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('howDoWeProcessSummary') }}
+            {{ $t('howDoWeProcessSummary') }}
           </v-card-subtitle>
           <v-card-text />
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('socialLogins') }}
+            {{ $t('socialLogins') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('socialLoginsSummary') }}
+            {{ $t('socialLoginsSummary') }}
           </v-card-subtitle>
           <v-card-text>
-            {{ this.$t('socialLoginsDetails') }}
+            {{ $t('socialLoginsDetails') }}
           </v-card-text>
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('internationalInformationTransfers') }}
+            {{ $t('internationalInformationTransfers') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('internationalInformationTransfersSummary') }}
+            {{ $t('internationalInformationTransfersSummary') }}
           </v-card-subtitle>
           <v-card-text>
-            {{ this.$t('internationalInformationTransfersDetails') }} {{ this.$t('internationalInformationTransfersDetailsFurther') }}
+            {{ $t('internationalInformationTransfersDetails') }} {{ $t('internationalInformationTransfersDetailsFurther') }}
           </v-card-text>
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('whatAreYourPrivacyRights') }}
+            {{ $t('whatAreYourPrivacyRights') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('yourPrivacyRightsSummary') }}
+            {{ $t('yourPrivacyRightsSummary') }}
           </v-card-subtitle>
           <v-card-text>
-            {{ this.$t('yourPrivacyRightsDetails') }}
+            {{ $t('yourPrivacyRightsDetails') }}
           </v-card-text>
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('yourConsent') }}
+            {{ $t('yourConsent') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('yourConsentSummary') }}
+            {{ $t('yourConsentSummary') }}
           </v-card-subtitle>
           <v-card-text />
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('doWeMakeUpdates') }}
+            {{ $t('doWeMakeUpdates') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('doWeMakeUpdatesSummary') }}
+            {{ $t('doWeMakeUpdatesSummary') }}
           </v-card-subtitle>
           <v-card-text />
         </v-card>
-        <v-card elevation="6" class="ma-4" variant="tonal">
+        <v-card
+          elevation="6"
+          class="ma-4"
+          variant="tonal"
+        >
           <v-card-title class="pa-4">
-            {{ this.$t('howCanYouContactUs') }}
+            {{ $t('howCanYouContactUs') }}
           </v-card-title>
           <v-card-subtitle>
-            {{ this.$t('contactUsWithQuestionsViaEmail') }} 
+            {{ $t('contactUsWithQuestionsViaEmail') }} 
           </v-card-subtitle>
           <v-card-actions>
-            <v-btn type="text" @click="sendSupportMail">support@feedgears.com</v-btn>
+            <v-btn
+              type="text"
+              @click="sendSupportMail"
+            >
+              support@feedgears.com
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-sheet>
     </v-card-text>
     <v-card-actions>
-      <v-btn @click="this.$emit('dismiss')" 
-        :text="this.$t('dismiss')" />
+      <v-btn
+        :text="$t('dismiss')" 
+        @click="$emit('dismiss')"
+      />
     </v-card-actions>
   </v-card> 
 </template>
@@ -114,8 +157,15 @@ export default {
   name: "PrivacyPolicyPanel",
   components: {
   },
-  props: ["baseUrl"],
+  props: {
+    baseUrl: { type: String, required: true },
+  },
   emits: ["dismiss"],
+  data() {
+    return {
+      serverMessages: [],
+    };
+  },
   methods: {
     sendSupportMail() {
       window.open('mailto:support@feedgears.com', '_blank');
@@ -158,11 +208,6 @@ export default {
     clearLastServerMessage() {
       this.serverMessages.pop();
     },
-  },
-  data() {
-    return {
-      serverMessages: [],
-    };
   },
 };
 </script>
