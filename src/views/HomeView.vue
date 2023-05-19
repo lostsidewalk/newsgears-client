@@ -408,7 +408,7 @@ export default {
       currentPage: 0,
       itemCount: 0,
       // queue filter material 
-      inboundQueueFilter: null, // user-supplied filter text (lunrjs query expression) 
+      inboundQueueFilter: '', // user-supplied filter text (lunrjs query expression) 
       feedFilterModes: [], // currently selected filter modes 
       // queue sorting material 
       inboundQueueSortOrder: 'DSC',
@@ -808,7 +808,7 @@ export default {
       if (f.name === "subscription") {
         if (f.feedId !== this.selectedFeedId) {
           this.setSelectedFeedId(f.feedId);
-          this.inboundQueueFilter = null;
+          this.inboundQueueFilter = '';
           this.$nextTick(() => {
             this.addSubscriptionToFeedFilter(f.value);
           })

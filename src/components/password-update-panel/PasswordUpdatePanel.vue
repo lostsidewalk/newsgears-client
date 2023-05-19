@@ -122,8 +122,8 @@ export default {
     return {
       step: null,
       // new password/new password confirmed 
-      newPassword: null,
-      newPasswordConfirmed: null,
+      newPassword: '',
+      newPasswordConfirmed: '',
       showPrivacyPolicy: false,
       // server response/initiating action 
       serverMessage: null,
@@ -161,8 +161,8 @@ export default {
     //
     clearData() {
       // reset all fields 
-      this.newPassword = null;
-      this.newPasswordConfirmed = null;
+      this.newPassword = '';
+      this.newPasswordConfirmed = '';
       this.clearServerResponse();
     },
     clearServerResponse() {

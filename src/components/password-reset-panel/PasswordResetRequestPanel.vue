@@ -131,8 +131,8 @@ export default {
     return {
       step: null,
       // username/email address 
-      username: null,
-      email: null,
+      username: '',
+      email: '',
       showPrivacyPolicy: false,
       // server response
       serverMessage: null,
@@ -170,8 +170,8 @@ export default {
     //
     clearData() {
       // reset all fields 
-      this.username = null;
-      this.email = null;
+      this.username = '';
+      this.email = '';
       this.clearServerResponse();
     },
     clearServerResponse() {

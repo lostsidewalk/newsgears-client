@@ -135,9 +135,9 @@ export default {
   data() {
     return {
       step: null,
-      username: null,
-      email: null,
-      password: null,
+      username: '',
+      email: '',
+      password: '',
       userType: null,
       showPrivacyPolicy: false,
       // server response 
@@ -187,9 +187,9 @@ export default {
     //
     clearData() {
       // reset all fields 
-      this.username = null;
-      this.email = null;
-      this.password = null;
+      this.username = '';
+      this.email = '';
+      this.password = '';
       this.clearServerResponse();
     },
     clearServerResponse() {
