@@ -157,9 +157,6 @@ export default {
   name: "PrivacyPolicyPanel",
   components: {
   },
-  props: {
-    baseUrl: { type: String, required: true },
-  },
   emits: ["dismiss"],
   data() {
     return {

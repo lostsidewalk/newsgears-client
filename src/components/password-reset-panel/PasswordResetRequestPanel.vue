@@ -74,16 +74,13 @@
                           <AuthPanelLink
                             :to="'/app'"
                             :message="$t('alreadyHaveAnAccount')"
-                            :theme="theme"
                           />
                           <AuthPanelLink
                             :to="'/register'"
                             :message="$t('registerHere')"
-                            :theme="theme"
                           />
                           <AuthServerResponse
                             :server-message="serverMessage"
-                            :theme="theme"
                           />
                           <v-btn
                             variant="text"

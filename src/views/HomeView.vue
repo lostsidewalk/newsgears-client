@@ -1,66 +1,111 @@
 <template>
   <v-app>
-    <VueAnnouncer />
-
-    <v-app-bar v-if="!this.$auth.$isAuthenticated" app location="top" :scrol-behavior="'elevate'">
-      <template v-slot:title>
+    <v-app-bar
+      v-if="!$auth.$isAuthenticated"
+      app
+      location="top"
+      :scrol-behavior="'elevate'"
+    >
+      <template #title>
         <span class="view-header-no-count">
           FeedGears RSS
         </span>
       </template>
-      <template v-slot:prepend>
+      <template #prepend>
         <v-app-bar-nav-icon icon="fa-rss" />
       </template>
       <v-toolbar-items>
-        <GoBack :theme="theme" />
+        <GoBack />
       </v-toolbar-items>
     </v-app-bar>
 
-    <v-main v-if="!this.$auth.$isAuthenticated">
-      <AuthPanel ref="authentication" :theme="theme" />
+    <v-main v-if="!$auth.$isAuthenticated">
+      <v-container>
+        <v-row>
+          <v-col
+            cols="12"
+            align="center"
+          >
+            <h2 class="logotext">
+              FeedGears RSS
+            </h2>
+          </v-col>
+          <v-col
+            cols="12"
+            align="center"
+          >
+            <i class="fa fa-rss fa-3x" />
+          </v-col>
+          <v-col
+            cols="12"
+            align="center"
+          >
+            <h3 class="logosubtext fancy">
+              {{ $t('whatIsFeedGears') }}
+            </h3>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <v-divider class="mt-8" />
+
+      <AuthPanel ref="authentication" />
       <v-divider /> 
-      <FooterPanel :theme="theme" app />
+      <FooterPanel
+        
+        app
+      />
     </v-main>
 
-    <v-main v-show="this.$auth.$isAuthenticated">
-      
-      <v-progress-linear :indeterminate="this.inTransit || this.refreshFeedsInTransit" />
+    <v-main v-show="$auth.$isAuthenticated">
+      <v-progress-linear :indeterminate="inTransit || refreshFeedsInTransit" />
 
-      <v-app-bar app :location="'top'">
-        <template v-slot:title>
+      <v-app-bar
+        app
+        :location="'top'"
+      >
+        <template #title>
           <span class="view-header-no-count">
             FeedGears RSS
           </span>
         </template>
-        <template v-slot:prepend>
-          <v-app-bar-nav-icon @click.stop="this.showQueueDashboard = !this.showQueueDashboard" 
-            icon="fa-rss" />
+        <template #prepend>
+          <v-app-bar-nav-icon
+            icon="fa-rss" 
+            @click.stop="showQueueDashboard = !showQueueDashboard"
+          />
         </template>
-        <ControlPanel :baseUrl="baseUrl" 
-          ref="controlPanel"
-          :showSettingsPanel="showSettingsPanel"
-          :showHelpPanel="showHelpPanel"
-          :theme="theme" 
-          @showSettings="this.showSettingsPanel = !this.showSettingsPanel"
-          @showHelp="this.showHelpPanel = !this.showHelpPanel"
+        <ControlPanel
+          ref="controlPanel" 
+          :base-url="baseUrl"
+          :show-settings-panel="showSettingsPanel"
+          :show-help-panel="showHelpPanel"
+           
+          @showSettings="showSettingsPanel = !showSettingsPanel"
+          @showHelp="showHelpPanel = !showHelpPanel"
           @cancelSettings="cancelSettings"
           @updateServerMessage="setLastServerMessage" 
-          @toggleDistractions="toggleDistractions">
-          <template v-slot:additional>
+          @toggleDistractions="toggleDistractions"
+        >
+          <template #additional>
             <!-- upload OPML button -->
-            <v-btn @click.stop="uploadOpml" 
-              size="small"
-              accesskey="m" 
-              :title="this.$t('uploadOPML')"
+            <v-btn
+              size="small" 
+              accesskey="m"
+              :title="$t('uploadOPML')" 
               append-icon="fa-file"
-              :text="this.$t('uploadOPML')" />
+              :text="$t('uploadOPML')"
+              @click.stop="uploadOpml"
+            />
             <!-- new queue button -->
-            <v-btn @click.stop="newFeed" 
-              size="small"
-              accesskey="n" 
-              :title="this.$t('createNewQueue')"
+            <v-btn
+              size="small" 
+              accesskey="n"
+              :title="$t('createNewQueue')" 
               append-icon="fa-plus"
-              :text="this.$t('createNewQueue')" />
+              :text="$t('createNewQueue')"
+              @click.stop="newFeed"
+            />
           </template>
         </ControlPanel>
         <!-- TODO: finish this -->
@@ -69,112 +114,158 @@
         </template> -->
       </v-app-bar>
 
-      <v-navigation-drawer app v-model="this.showQueueDashboard"
+      <v-navigation-drawer
+        v-model="showQueueDashboard"
+        app
         class="w-25 overflow-y-visible"
         elevation="12" 
-        temporary>
+        temporary
+      >
         <v-sheet>
-          <v-hover v-slot="{ isHovering, props }" v-for="feed in filteredFeedIdentOptions" :key="feed.id">
+          <v-hover
+            v-for="feed in filteredFeedIdentOptions"
+            v-slot="{ isHovering, props }"
+            :key="feed.id"
+          >
             <FeedSelectButton 
               variant="flat"
               :elevation="isHovering ? 12 : 0"
               :feed="feed" 
-              :feedUrl="this.feedUrl"
-              :inboundCount="this.countInboundQueue(feed.id)" 
-              :publishedCount="this.countOutboundQueue(feed.id)" 
+              :feed-url="feedUrl"
+              :inbound-count="countInboundQueue(feed.id)" 
+              :published-count="countOutboundQueue(feed.id)" 
               class="ma-4"
-              :class="this.selectedFeedId === feed.id ? 'selected-feed' : ''"
-              :theme="theme" 
+              :class="selectedFeedId === feed.id ? 'selected-feed' : ''"
+               
               v-bind="props"
-              @click.stop="$event => { this.setSelectedFeedId(feed.id); }"
-              @selectFeed="$event => { this.setSelectedFeedId(feed.id); this.showQueueDashboard = false; }" 
-              @manageSubscriptions="this.configureFeed(feed.id)" 
-              @updatePostFeedFilter="updatePostFeedFilter" />
+              @click.stop="$event => { setSelectedFeedId(feed.id); }"
+              @selectFeed="$event => { setSelectedFeedId(feed.id); showQueueDashboard = false; }" 
+              @manageSubscriptions="configureFeed(feed.id)" 
+              @updatePostFeedFilter="updatePostFeedFilter"
+            />
           </v-hover>
         </v-sheet>
       </v-navigation-drawer>
 
       <audio id="post-feed-audio" />
 
-      <v-dialog v-model="this.showFeedDeleteConfirmation" width="100%" scrollable>
+      <v-dialog
+        v-model="showFeedDeleteConfirmation"
+        width="100%"
+        scrollable
+      >
         <ConfirmationDialog 
-          :theme="theme"
-          @confirm="performFeedDelete" 
+          
+          :prompt="$t('confirmDeleteQueue')" 
+          @confirm="performFeedDelete"
           @cancel="cancelFeedDelete"
-          :prompt="this.$t('confirmDeleteQueue')" />
+        />
       </v-dialog>
 
-      <v-dialog v-model="this.showFeedMarkAsReadConfirmation" width="100%" scrollable>
+      <v-dialog
+        v-model="showFeedMarkAsReadConfirmation"
+        width="100%"
+        scrollable
+      >
         <ConfirmationDialog 
           class="rounded"
-          :theme="theme"
-          @confirm="performFeedMarkAsRead" 
+          
+          :prompt="$t('confirmMarkQueueAsRead')" 
+          @confirm="performFeedMarkAsRead"
           @cancel="cancelFeedMarkAsRead"
-          :prompt="this.$t('confirmMarkQueueAsRead')" />
+        />
       </v-dialog>
 
-      <v-dialog v-model="this.showSettingsPanel" fullscreen scrollable>
+      <v-dialog
+        v-model="showSettingsPanel"
+        fullscreen
+        scrollable
+      >
         <SettingsPanel 
           class="rounded"
-          :baseUrl="this.baseUrl"
-          @dismiss="this.showSettingsPanel = false"
-          @updateServerMessage="setLastServerMessage" />
+          :base-url="baseUrl"
+          @dismiss="showSettingsPanel = false"
+          @updateServerMessage="setLastServerMessage"
+        />
       </v-dialog>
 
-      <v-dialog v-model="this.showHelpPanel" fullscreen scrollable>
+      <v-dialog
+        v-model="showHelpPanel"
+        fullscreen
+        scrollable
+      >
         <HelpPanel 
           class="overflow-auto rounded"
-          :theme="theme" />
+        />
       </v-dialog>
 
-      <v-dialog v-model="this.showFeedConfigPanel" fullscreen scrollable>
-        <FeedConfigPanel ref="feedConfigPanel"
-          :theme="theme"
-          :baseUrl="baseUrl" 
+      <v-dialog
+        v-model="showFeedConfigPanel"
+        fullscreen
+        scrollable
+      >
+        <FeedConfigPanel
+          ref="feedConfigPanel"
+          
+          :base-url="baseUrl" 
           @saveOrUpdate="createOrUpdateFeed"
           @dismiss="dismissCreateOrUpdateFeed"
           @authError="handleServerError" 
           @updateServerMessage="setLastServerMessage" 
-          @refreshFeedDefinition="$event => this.refreshFeeds([$event], true)" />
+          @refreshFeedDefinition="$event => refreshFeeds([$event], true)"
+        />
       </v-dialog>
 
-      <v-dialog v-model="this.showOpmlUploadPanel" fullscreen scrollable>
-        <OpmlUploadPanel ref="opmlUploadPanel"
-          :theme="theme"
-          :baseUrl="baseUrl" 
+      <v-dialog
+        v-model="showOpmlUploadPanel"
+        fullscreen
+        scrollable
+      >
+        <OpmlUploadPanel
+          ref="opmlUploadPanel"
+          
+          :base-url="baseUrl" 
           @finalizeUpload="createOpmlFeeds"
           @cancel="cancelOpmlUpload"
-          @authError="handleServerError" />
+          @authError="handleServerError"
+        />
       </v-dialog>
 
       <v-container class="post-feed-container d-flex flex-column flex-grow-1 rounded mt-4">
         <!-- feed filter  -->
-        <FeedFilter v-if="this.selectedFeedId"
+        <FeedFilter
+          v-if="selectedFeedId"
           class="rounded-0" 
-          :class="{ 'mb-4': this.filteredInboundQueue.length > 0 }"
-          :inboundQueueFilter="this.inboundQueueFilter"
-          :inboundQueueSortOrder="this.inboundQueueSortOrder"
-          :queueLength="this.filteredInboundQueue.length"
-          :queueName="this.getSelectedFeed().title"
-          :allFilterPills="this.allFilterPills"
-          :theme="theme" 
+          :class="{ 'mb-4': filteredInboundQueue.length > 0 }"
+          :inbound-queue-filter="inboundQueueFilter"
+          :inbound-queue-sort-order="inboundQueueSortOrder"
+          :queue-length="filteredInboundQueue.length"
+          :queue-name="getSelectedFeed().title"
+          :all-filter-pills="allFilterPills"
+           
           @toggleSortOrder="toggleInboundQueueSortOrder"
-          @refreshFeeds="this.refreshFeeds(null, true)"
-          @markAsRead="this.markFeedAsRead(this.selectedFeedId)"
-          @update:modelValue="this.inboundQueueFilter = $event" />
+          @refreshFeeds="refreshFeeds(null, true)"
+          @markAsRead="markFeedAsRead(selectedFeedId)"
+          @update:modelValue="inboundQueueFilter = $event"
+        />
 
         <!-- post feed audio controller -->
-        <PostFeedAudio ref="postFeedAudio" v-if="this.selectedFeedId" />
+        <PostFeedAudio
+          v-if="selectedFeedId"
+          ref="postFeedAudio"
+        />
 
         <!-- inbound queue -->
-        <PostItem v-for="post in this.filteredInboundQueue" :key="post.id" 
-          :post="post"
-          :id="'post_' + post.id"
+        <PostItem
+          v-for="post in filteredInboundQueue"
+          :id="'post_' + post.id" 
+          :key="post.id"
           :ref="'post_' + post.id"
-          :theme="theme" 
-          :baseUrl="baseUrl"
-          :compact="this.layoutMode === 'TABLE'"
-          :sharingOptions="sharingOptions"
+          :post="post"
+           
+          :base-url="baseUrl"
+          :compact="layoutMode === 'TABLE'"
+          :sharing-options="sharingOptions"
           class="ma-4"
           @openPostUrl="openPostUrl(post.id)"
           @updatePostReadStatus="updatePostReadStatus"
@@ -182,7 +273,8 @@
           @updatePostFeedFilter="updatePostFeedFilter" 
           @playing="onMediaPlaying" 
           @audioPlay="onAudioPlay" 
-          @share="$event => this.share($event.sharingOption, $event.post)" />
+          @share="$event => share($event.sharingOption, $event.post)"
+        />
       </v-container>
     </v-main>
   </v-app>
@@ -273,8 +365,55 @@ export default {
     // dashboard 
     FeedSelectButton,
     FooterPanel
-},
-  props: ["baseUrl", "feedUrl"],
+  },
+  props: {
+    baseUrl: { type: String, required: true },
+    feedUrl: { type: String, required: true },
+  },
+  data() {
+    return {
+      theme: this.$theme.currentTheme,
+      serverMessages: [],
+      inTransit: false,
+      refreshFeedsInTransit: false,
+      // reactive window (inner) width 
+      windowWidth: window.innerWidth,
+      // operating mode 
+      feedIdToDelete: null, 
+      feedIdToMarkAsRead: null,
+      // show the queue dashboard (t/f) 
+      showQueueDashboard: false,
+      // show the feed config modal (t/f) 
+      showFeedConfigPanel: false,
+      configuredFeedId: null, 
+      // show the OPML config modal (t/f) 
+      showOpmlUploadPanel: false,
+      // show the help modal (t/f) 
+      showSettingsPanel: false,
+      showHelpPanel: false,
+      // 
+      showFeedDeleteConfirmation: false,
+      showFeedMarkAsReadConfirmation: false,
+      // 
+      atBottomOfPage: false,
+      // feed material 
+      feeds: [], // all feeds 
+      selectedFeedId: null, // currently selected feed Id 
+      previousFeedId: null, // previously selected feed Id 
+      // queue material 
+      inboundQueuesByFeed: {}, // all queues 
+      inboundQueue: { values: [] }, // inbound queue for the currently selected feed  
+      // queue pagination material 
+      itemsPerPage: 100,
+      currentPage: 0,
+      itemCount: 0,
+      // queue filter material 
+      inboundQueueFilter: null, // user-supplied filter text (lunrjs query expression) 
+      feedFilterModes: [], // currently selected filter modes 
+      // queue sorting material 
+      inboundQueueSortOrder: 'DSC',
+    };
+  },
   computed: {
     // 
     totalPages: function() {
@@ -425,50 +564,6 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener("keydown", this.keyHandler);
-  },
-  data() {
-    return {
-      theme: this.$theme.currentTheme,
-      serverMessages: [],
-      inTransit: false,
-      refreshFeedsInTransit: false,
-      // reactive window (inner) width 
-      windowWidth: window.innerWidth,
-      // operating mode 
-      feedIdToDelete: null, 
-      feedIdToMarkAsRead: null,
-      // show the queue dashboard (t/f) 
-      showQueueDashboard: false,
-      // show the feed config modal (t/f) 
-      showFeedConfigPanel: false,
-      configuredFeedId: null, 
-      // show the OPML config modal (t/f) 
-      showOpmlUploadPanel: false,
-      // show the help modal (t/f) 
-      showSettingsPanel: false,
-      showHelpPanel: false,
-      // 
-      showFeedDeleteConfirmation: false,
-      showFeedMarkAsReadConfirmation: false,
-      // 
-      atBottomOfPage: false,
-      // feed material 
-      feeds: [], // all feeds 
-      selectedFeedId: null, // currently selected feed Id 
-      previousFeedId: null, // previously selected feed Id 
-      // queue material 
-      inboundQueuesByFeed: {}, // all queues 
-      inboundQueue: { values: [] }, // inbound queue for the currently selected feed  
-      // queue pagination material 
-      itemsPerPage: 100,
-      currentPage: 0,
-      itemCount: 0,
-      // queue filter material 
-      inboundQueueFilter: null, // user-supplied filter text (lunrjs query expression) 
-      feedFilterModes: [], // currently selected filter modes 
-      // queue sorting material 
-      inboundQueueSortOrder: 'DSC',
-    };
   },
   methods: {
     setLastServerMessage(messageObj) {
@@ -1699,9 +1794,7 @@ body {
   font-weight: bold;
   font-size: larger;
 }
-</style>
 
-<style>
 /** has references */
 .v-navigation-drawer__content {
  overflow-y: scroll !important;
@@ -1711,5 +1804,20 @@ body {
 .post-feed-container {
   background-color: ghostwhite;
   border: 1px solid;
+}
+</style>
+
+<style scoped>
+.logotext {
+  font-family: 'Russo One';
+}
+
+.logosubtext {
+  font-size: 1.5rem;
+}
+
+.fancy {
+  font-family: 'Merriweather';
+  font-weight: bold;
 }
 </style>

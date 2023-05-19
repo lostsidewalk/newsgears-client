@@ -1,46 +1,60 @@
 <template>
   <v-app>
-    <v-app-bar app location="top" :scrol-behavior="'elevate'">
-      <template v-slot:title>
+    <v-app-bar
+      app
+      location="top"
+      :scrol-behavior="'elevate'"
+    >
+      <template #title>
         <span class="view-header-no-count">
           FeedGears RSS
         </span>
       </template>
-      <template v-slot:prepend>
+      <template #prepend>
         <v-app-bar-nav-icon icon="fa-rss" />
       </template>
-      <PreLoginNavbarButtons :baseUrl="baseUrl" :theme="theme"/>
+      <PreLoginNavbarButtons
+        :base-url="baseUrl"
+      />
     </v-app-bar>
 
     <v-main>
       <!-- container -->
-      <BannerPanel :theme="theme" />
+      <BannerPanel />
 
       <!-- container -->
-      <DemoPanel :theme="theme" /> 
+      <DemoPanel /> 
 
       <v-divider /> 
 
       <v-container>
         <!-- sheet -->
-        <FeaturesPanel :theme="theme" class="ma-4" /> 
+        <FeaturesPanel
+          
+          class="ma-4"
+        /> 
 
         <v-divider class="mt-8 mb-8" /> 
 
         <!-- card -->
-        <FAQPanel :theme="theme" class="ma-4" />
+        <FAQPanel
+          
+          class="ma-4"
+        />
 
         <v-divider class="mt-8 mb-8" /> 
 
         <!-- card -->
-        <VideoPanel :theme="theme" class="ma-4" />
+        <VideoPanel
+          
+          class="ma-4"
+        />
       </v-container>
 
       <v-divider /> 
       
-      <FooterPanel :theme="theme" />
+      <FooterPanel />
     </v-main>
-
   </v-app>
 </template>
   
@@ -64,7 +78,9 @@ export default {
     VideoPanel,
     FooterPanel, 
   },
-  props: ["baseUrl"],
+  props: {
+    baseUrl: { type: String, required: true },
+  },
   data() {
     return {
       theme: this.$theme.currentTheme,

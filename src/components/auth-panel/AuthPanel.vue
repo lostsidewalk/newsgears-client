@@ -71,23 +71,19 @@
                             <!-- google button -->
                             <GoogleAuthButton 
                               class="ma-4"
-                              :theme="theme" 
                               :tooltip="$t('login')"
                             />
                           </div>
                           <AuthPanelLink
                             :to="'/pw_reset'"
                             :message="$t('accountRecoveryHere')"
-                            :theme="theme"
                           />
                           <AuthPanelLink
                             :to="'/register'"
                             :message="$t('registerHere')"
-                            :theme="theme"
                           />
                           <AuthServerResponse
                             :server-message="serverMessage"
-                            :theme="theme"
                           />
                           <v-btn
                             variant="text"
@@ -102,7 +98,6 @@
                             scrollable
                           >
                             <PrivacyPolicyPanel
-                              :theme="theme"
                               @dismiss="showPrivacyPolicy = false"
                             />
                           </v-dialog>

@@ -22,7 +22,6 @@
       <PostMediaCommunity
         class="pa-2 w-100"
         :community="metadata.community"
-        :theme="theme"
       />
     </v-card-actions>
   </v-card>

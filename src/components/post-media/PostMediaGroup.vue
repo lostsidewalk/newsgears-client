@@ -7,7 +7,7 @@
     <v-card-subtitle v-if="isUseableMetadata(mediaGroup.postMediaMetadata)">
       <!-- metadata -->
       <PostMediaMetadata 
-        :theme="theme" 
+         
         :metadata="mediaGroup.postMediaMetadata"
       />
     </v-card-subtitle>
@@ -18,7 +18,7 @@
         :ref="'postMediaContent_' + idx"
         :media-content="mc" 
         :show-content-on-load="idx === 0"
-        :theme="theme" 
+         
         @playing="$emit('playing')" 
         @audioPlay="$emit('audioPlay', $event)"
       />

@@ -1,36 +1,64 @@
 <template>
   <v-app>
-    <v-app-bar app location="top" :scrol-behavior="'elevate'">
-      <template v-slot:title>
+    <v-app-bar
+      app
+      location="top"
+      :scrol-behavior="'elevate'"
+    >
+      <template #title>
         <span class="view-header-no-count">
           FeedGears RSS
         </span>
       </template>
-      <template v-slot:prepend>
+      <template #prepend>
         <v-app-bar-nav-icon icon="fa-rss" />
       </template>
-      <ControlPanel :baseUrl="baseUrl" 
-          :theme="theme" 
-          @updateServerMessage="setLastServerMessage">
-          <template v-slot:additional>
-            <GoBack :theme="theme" />
-          </template>
+      <ControlPanel
+        :base-url="baseUrl" 
+           
+        @updateServerMessage="setLastServerMessage"
+      >
+        <template #additional>
+          <GoBack />
+        </template>
       </ControlPanel>
     </v-app-bar>
 
     <v-main>
-      <!-- container -->
-      <BannerPanel :theme="theme" />
+      <v-row>
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <h2 class="logotext">
+            FeedGears RSS
+          </h2>
+        </v-col>
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <i class="fa fa-rss fa-3x" />
+        </v-col>
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <h3 class="logosubtext fancy">
+            {{ $t('whatIsFeedGears') }}
+          </h3>
+        </v-col>
+      </v-row>
 
-      <v-divider /> 
+      <v-divider class="mt-8" />
 
       <v-container>
-        {{ this.$t('thankYouForYourOrder') }}
+        {{ $t('thankYouForYourOrder') }}
       </v-container>
 
       <v-divider />
 
-      <FooterPanel :theme="theme" app />
+      <FooterPanel app />
     </v-main>
   </v-app>
 </template>
@@ -38,7 +66,6 @@
 <script>
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
-import BannerPanel from "@/components/landing/BannerPanel.vue";
 import FooterPanel from "@/components/landing/FooterPanel.vue";
 
 export default {
@@ -46,10 +73,17 @@ export default {
   components: {
     ControlPanel,
     GoBack,
-    BannerPanel,
     FooterPanel,
-},
-  props: ["baseUrl"],
+  },
+  props: {
+    baseUrl: { type: String, required: true },
+  },
+  data() {
+    return {
+      theme: this.$theme.currentTheme,
+      serverMessages: [],
+    };
+  },
   methods: {
     setLastServerMessage(messageObj) {
       this.$notification.requestPermission().then(p => {
@@ -90,11 +124,20 @@ export default {
       this.serverMessages.pop();
     },
   },
-  data() {
-    return {
-      theme: this.$theme.currentTheme,
-      serverMessages: [],
-    };
-  },
 };
 </script>
+
+<style scoped>
+.logotext {
+  font-family: 'Russo One';
+}
+
+.logosubtext {
+  font-size: 1.5rem;
+}
+
+.fancy {
+  font-family: 'Merriweather';
+  font-weight: bold;
+}
+</style>

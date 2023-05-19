@@ -1,34 +1,40 @@
 <template>
   <v-app>
-    <v-app-bar app location="top" :scrol-behavior="'elevate'">
-      <template v-slot:title>
+    <v-app-bar
+      app
+      location="top"
+      :scrol-behavior="'elevate'"
+    >
+      <template #title>
         <span class="view-header-no-count">
           FeedGears RSS
         </span>
       </template>
-      <template v-slot:prepend>
+      <template #prepend>
         <v-app-bar-nav-icon icon="fa-rss" />
       </template>
       <v-toolbar-items>
-        <GoBack :theme="theme" />
+        <GoBack />
       </v-toolbar-items>
     </v-app-bar>
 
     <v-main>
       <!-- container -->
-      <BannerPanel :theme="theme" />
+      <BannerPanel />
 
       <v-divider /> 
 
       <v-container>
-        {{ this.$t('inDevelopment') }}
+        {{ $t('inDevelopment') }}
       </v-container>
 
       <v-divider /> 
       
-      <FooterPanel :theme="theme" app />
+      <FooterPanel
+        
+        app
+      />
     </v-main>
-
   </v-app>
 </template>
 
@@ -44,7 +50,15 @@ export default {
     BannerPanel,
     FooterPanel,
   },
-  props: ["baseUrl"],
+  props: {
+    baseUrl: { type: String, required: true },
+  },
+  data() {
+    return {
+      theme: this.$theme.currentTheme,
+      serverMessages: [],
+    };
+  },
   methods: {
     setLastServerMessage(messageObj) {
       this.$notification.requestPermission().then(p => {
@@ -84,12 +98,6 @@ export default {
     clearLastServerMessage() {
       this.serverMessages.pop();
     },
-  },
-  data() {
-    return {
-      theme: this.$theme.currentTheme,
-      serverMessages: [],
-    };
   },
 };
 </script>

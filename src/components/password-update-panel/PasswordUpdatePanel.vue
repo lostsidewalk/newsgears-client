@@ -74,7 +74,6 @@
                           </div>
                           <AuthServerResponse
                             :server-message="serverMessage"
-                            :theme="theme"
                           />
                           <v-btn
                             variant="text"

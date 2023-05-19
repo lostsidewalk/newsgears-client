@@ -1,27 +1,21 @@
 <template>
   <v-toolbar-items class="flex-row-reverse">
     <!-- logout button, don't disable -->
-    <LogoutButton
-      v-if="$auth.$isAuthenticated"
-      :theme="theme"
-    />
+    <LogoutButton v-if="$auth.$isAuthenticated" />
     <!-- settings button -->
     <SettingsButton
       v-if="$auth.$isAuthenticated"
-      :theme="theme"
       :expanded="showSettingsPanel"
       @showSettings="$emit('showSettings')"
     />
     <!-- help button, don't disable -->
     <HelpButton
       :expanded="showHelpPanel"
-      :theme="theme"
       @showHelp="$emit('showHelp')"
     />
     <!-- display mode switch, don't disable -->
     <DisplayModeButton />
     <ToggleDistractionsButton
-      :theme="theme"
       @toggleDistractions="$emit('toggleDistractions')"
     />
     <slot name="additional" />

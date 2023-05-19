@@ -92,7 +92,7 @@
         <PostMedia
           v-if="post.postMedia"
           ref="postMedia"
-          :theme="theme" 
+           
           class="ma-4"
           :media="post.postMedia" 
           @playing="onMediaPlaying" 
@@ -101,7 +101,7 @@
         <!-- post itunes -->
         <PostITunes
           v-if="post.postITunes"
-          :theme="theme" 
+           
           :i-tunes="post.postITunes" 
           @playFirstEnclosure="onPlayFirstEnclosure"
         />
@@ -111,7 +111,7 @@
             v-for="(enclosure, i) in post.enclosures"
             :key="enclosure"
             :ref="'postEnclosure_' + i"
-            :theme="theme"
+            
             :enclosure="enclosure" 
             @playing="onEnclosurePlaying(i)" 
             @audioPlay="onAudioPlay"

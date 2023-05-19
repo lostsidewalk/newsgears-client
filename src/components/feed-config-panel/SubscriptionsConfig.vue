@@ -1,87 +1,118 @@
 <template>
-  <v-sheet align="left" justify="center">
+  <v-sheet
+    align="left"
+    justify="center"
+  >
     <!-- add RSS/ATOM feed from URL -->
     <v-card>
-      <v-card-title class="pa-4">{{ this.$t('addANewSubscription') }}</v-card-title>
+      <v-card-title class="pa-4">
+        {{ $t('addANewSubscription') }}
+      </v-card-title>
       <v-divider />
       <v-card-text>
         <!-- text field -->
-        <v-text-field type="text"
-          autofocus
-          :label="this.$t('feedUrl')"
+        <v-text-field
           v-model="newRssAtomUrl.feedUrl"
-          :placeholder="this.$t('feedUrl')" />
-        <v-text-field type="text" readonly variant="plain">
-          {{ this.$t("credentialsUseMessage") }}
+          type="text"
+          autofocus
+          :label="$t('feedUrl')"
+          :placeholder="$t('feedUrl')"
+        />
+        <v-text-field
+          type="text"
+          readonly
+          variant="plain"
+        >
+          {{ $t("credentialsUseMessage") }}
         </v-text-field>
         <!-- username text field -->
-        <v-text-field type="text"
-          :label="this.$t('username')"
+        <v-text-field
           v-model="newRssAtomUrl.username"
-          :placeholder="this.$t('username')" />
+          type="text"
+          :label="$t('username')"
+          :placeholder="$t('username')"
+        />
         <!-- password text field -->
-        <v-text-field type="password"
-          :label="this.$t('password')"
+        <v-text-field
           v-model="newRssAtomUrl.password"
-          :placeholder="this.$t('password')" />
-        <RssAtomFeedInfo v-if="newRssAtomUrl.discoveryUrl || newRssAtomUrl.error"
+          type="password"
+          :label="$t('password')"
+          :placeholder="$t('password')"
+        />
+        <RssAtomFeedInfo
+          v-if="newRssAtomUrl.discoveryUrl || newRssAtomUrl.error"
           :info="newRssAtomUrl"
-          :theme="theme"
-          :filterSupport="false"
-          @followRecommendation="followRecommendation">
-          <template v-slot:additional>
-            <v-btn @click="addNewRssAtomUrl"
+          
+          :filter-support="false"
+          @followRecommendation="followRecommendation"
+        >
+          <template #additional>
+            <v-btn
               size="small"
               prepend-icon="fa-plus"
               :loading="addNewInTransit"
-              :title="this.$t('subscribe')"
-              :text="this.$t('subscribe')" />
+              :title="$t('subscribe')"
+              :text="$t('subscribe')"
+              @click="addNewRssAtomUrl"
+            />
           </template>
         </RssAtomFeedInfo>
       </v-card-text>
       <v-divider />
       <!-- buttons (discovery, auth, subscribe) -->
       <v-card-actions>
-        <v-btn @click="this.refreshRssAtomUrlInfo(newRssAtomUrl)"
+        <v-btn
           size="small"
           prepend-icon="fa-refresh"
           :loading="discoveryInTransit"
           :disabled="!newRssAtomUrl.feedUrl"
-          :title="this.$t('discovery')"
-          :text="this.$t('discovery')" />
+          :title="$t('discovery')"
+          :text="$t('discovery')"
+          @click="refreshRssAtomUrlInfo(newRssAtomUrl)"
+        />
       </v-card-actions>
     </v-card>
     <!-- -->
     <!-- manage existing RSS/ATOM feed subscriptions -->
     <!-- -->
-    <v-card v-if="this.rssAtomFeedUrls && this.rssAtomFeedUrls.length > 0">
-      <v-card-title class="pa-4">{{ this.$t('yourSubscriptions') }}</v-card-title>
+    <v-card v-if="rssAtomFeedUrls && rssAtomFeedUrls.length > 0">
+      <v-card-title class="pa-4">
+        {{ $t('yourSubscriptions') }}
+      </v-card-title>
       <v-divider />
       <v-card-text>
-        <RssAtomFeedInfo v-for="(rssAtomUrl, idx) in this.getCurrentPage(this.rssAtomFeedUrls)" :key="idx" 
-          class="mb-4" elevation="6"
+        <RssAtomFeedInfo
+          v-for="(rssAtomUrl, idx) in getCurrentPage(rssAtomFeedUrls)"
+          :key="idx" 
+          class="mb-4"
+          elevation="6"
           :info="rssAtomUrl"
-          :theme="theme"
-          :filterSupport="false"
-          @refreshFeed="this.refreshRssAtomUrlInfo(rssAtomUrl)" 
-          @followRecommendation="followRecommendation">
-          <template v-slot:additional>
-            <v-btn @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails" 
-              size="small"
+          
+          :filter-support="false"
+          @refreshFeed="refreshRssAtomUrlInfo(rssAtomUrl)" 
+          @followRecommendation="followRecommendation"
+        >
+          <template #additional>
+            <v-btn
+              size="small" 
               prepend-icon="fa-expand"
-              :title="this.$t('auth')"
-              :text="this.$t('auth')" />
-            <v-btn @click="this.deleteRssAtomUrl(rssAtomUrl.id)"
+              :title="$t('auth')"
+              :text="$t('auth')"
+              @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails"
+            />
+            <v-btn
               size="small"
               prepend-icon="fa-trash"
               :loading="deleteInTransit"
-              :title="this.$t('unsubscribe')"
-              :text="this.$t('unsubscribe')" />
+              :title="$t('unsubscribe')"
+              :text="$t('unsubscribe')"
+              @click="deleteRssAtomUrl(rssAtomUrl.id)"
+            />
           </template>
         </RssAtomFeedInfo>
-          <!-- TODO: make this a modal dialogs -->
-          <!-- <v-label v-if="rssAtomUrl.showDetails">{{ this.$t("credentialsUseMessage") }}</v-label> -->
-          <!-- <div v-if="rssAtomUrl.showDetails">
+        <!-- TODO: make this a modal dialogs -->
+        <!-- <v-label v-if="rssAtomUrl.showDetails">{{ this.$t("credentialsUseMessage") }}</v-label> -->
+        <!-- <div v-if="rssAtomUrl.showDetails">
             <v-label>{{ this.$t('username') }}</v-label>
             <v-text-field type="text" v-model="rssAtomUrl.username"
               :placeholder="this.$t('username')" style="margin-bottom: 0.75rem" />
@@ -135,7 +166,6 @@
       @click="lastPage"
       icon="fa-angle-double-right" />
   </div> -->
-
 </template>
 
 <script>
@@ -146,7 +176,33 @@ export default {
   components: {
     RssAtomFeedInfo,
   },
-  props: [ "rssAtomFeedUrls", "feedId", "theme", "baseUrl" ],
+  props: {
+    rssAtomFeedUrls: { type: Array, required: true },
+    feedId: { type: Number, required: true },
+    baseUrl: { type: String, required: true },
+  },
+  emits: [
+    "addRssAtomUrl",
+    "deleteRssAtomUrl",
+    "updateRssAtomUrlAuth",
+    "updateServerMessage",
+  ],
+  data() {
+    return {
+      itemsPerPage: 10,
+      currentPage: 0,
+      itemCount: 0,
+      mode: "ADD_FROM_URL",
+      //
+      newFeedDiscoveryError: null,
+      newRssAtomUrl: {},
+      //
+      addNewInTransit: false,
+      deleteInTransit: false,
+      updateAuthInTransit: false,
+      discoveryInTransit: false,
+    }
+  },
   computed: {
     totalPages: function() {
       if (this.rssAtomFeedUrls) {
@@ -157,12 +213,6 @@ export default {
       return 0;
     },
   },
-  emits: [
-    "addRssAtomUrl",
-    "deleteRssAtomUrl",
-    "updateRssAtomUrlAuth",
-    "updateServerMessage",
-  ],
   methods: {
     // 
     // server error 
@@ -476,22 +526,6 @@ export default {
         document.activeElement.blur();
       }
     },
-  },
-  data() {
-    return {
-      itemsPerPage: 10,
-      currentPage: 0,
-      itemCount: 0,
-      mode: "ADD_FROM_URL",
-      //
-      newFeedDiscoveryError: null,
-      newRssAtomUrl: {},
-      //
-      addNewInTransit: false,
-      deleteInTransit: false,
-      updateAuthInTransit: false,
-      discoveryInTransit: false,
-    }
   }
 }
 </script>

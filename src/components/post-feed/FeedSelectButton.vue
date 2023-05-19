@@ -78,7 +78,7 @@
         :json-pub-url="feedUrl + '/feed/json/' + feed.transportIdent" 
         :rss-pub-url="feedUrl + '/feed/rss/' + feed.transportIdent" 
         :atom-pub-url="feedUrl + '/feed/atom/' + feed.transportIdent" 
-        :theme="theme" 
+         
         @updatePostFeedFilter="$event => $emit('updatePostFeedFilter', $event)"
       />
     </v-expand-transition>

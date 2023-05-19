@@ -10,8 +10,7 @@
     <v-card-subtitle v-if="isUseableMetadata(media.postMediaMetadata)">
       <!-- top-level metadata -->
       <PostMediaMetadata
-        :metadata="media.postMediaMetadata" 
-        :theme="theme"
+        :metadata="media.postMediaMetadata"
       />
     </v-card-subtitle>
     <!-- top-level contents array -->
@@ -22,7 +21,7 @@
         :ref="'postMediaContent_' + idx"
         :media-content="mc" 
         :show-content-on-load="idx === 0"
-        :theme="theme" 
+         
         @playing="onMediaContentPlaying(idx)" 
         @audioPlay="$emit('audioPlay', $event)"
       />
@@ -34,7 +33,7 @@
         :key="mg" 
         :ref="'postMediaGroup_' + idx"
         :media-group="mg" 
-        :theme="theme" 
+         
         @playing="onMediaGroupPlaying(idx)" 
         @audioPlay="$emit('audioPlay', $event)"
       />

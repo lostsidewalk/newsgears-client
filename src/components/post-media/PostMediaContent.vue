@@ -7,7 +7,7 @@
     <v-card-subtitle v-if="hasUseableMetadata()">
       <!-- metadata -->
       <PostMediaMetadata 
-        :theme="theme" 
+         
         :metadata="mediaContent.metadata"
       />
     </v-card-subtitle>

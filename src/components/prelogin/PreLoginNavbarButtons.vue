@@ -3,7 +3,7 @@
     <!-- display mode switch -->
     <DisplayModeButton />
     <!-- login button -->
-    <LoginButton :theme="theme" />
+    <LoginButton />
   </v-toolbar-items>
 </template>
 

@@ -79,16 +79,13 @@
                           <AuthPanelLink
                             :to="'/app'"
                             :message="$t('alreadyHaveAnAccount')"
-                            :theme="theme"
                           />
                           <AuthPanelLink
                             :to="'/pw_reset'"
                             :message="$t('accountRecoveryHere')"
-                            :theme="theme"
                           />
                           <AuthServerResponse
                             :server-message="serverMessage"
-                            :theme="theme"
                           />
                           <v-btn
                             variant="text"
