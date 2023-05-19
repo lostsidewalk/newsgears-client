@@ -2,84 +2,133 @@
   <v-card>
     <v-card-title class="text-center pa-4">
       <h3 class="view-header-no-count">
-        <v-icon icon="fa-user"/>
-        {{ this.$t('opmlUpload') }}
+        <v-icon icon="fa-user" />
+        {{ $t('opmlUpload') }}
       </h3>
     </v-card-title>
     <v-divider />
     <v-card-text>
-      <input type="file" ref="fileInput" multiple @change="eventHandler" style="display: none;" />
+      <input
+        ref="fileInput"
+        type="file"
+        multiple
+        style="display: none;"
+        @change="eventHandler"
+      >
       <!-- continue/finalize button -->
       <v-container>
-        <v-row class="align-center" v-if="!atStep2">
-          <v-col cols=3>
-            <v-btn @click="this.errors = []; this.$refs.fileInput.click()" 
-              block
+        <v-row
+          v-if="!atStep2"
+          class="align-center"
+        >
+          <v-col cols="3">
+            <v-btn
+              block 
               autofocus
-              :disabled="atStep2" 
-              :title="this.$t('selectAnOpmlFile')"
-              :text="this.$t('addAnOpmlFile')" />
+              :disabled="atStep2"
+              :title="$t('selectAnOpmlFile')" 
+              :text="$t('addAnOpmlFile')"
+              @click="errors = []; $refs.fileInput.click()"
+            />
           </v-col>
-          <v-col cols=9>
-            {{ this.$t('addOneOrMoreFilesToUpload') }}
+          <v-col cols="9">
+            {{ $t('addOneOrMoreFilesToUpload') }}
           </v-col>
         </v-row>
         <v-row class="align-center">
-          <v-col cols=3>
-            <v-btn @click="this.feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()" 
-              autofocus
+          <v-col cols="3">
+            <v-btn
+              autofocus 
               block
-              :disabled="!this.files.length" 
-              :loading="uploadInTransit"
-              :title="this.feedConfigRequests.length > 0 ? this.$t('finalizeUpload') : (this.files.length ? this.$t('continue') : this.$t('addAtLeastOneFile'))"
-              :text="this.feedConfigRequests.length > 0 ? this.$t('finalizeUpload') : this.$t('continueToStep2')" />
+              :disabled="!files.length"
+              :loading="uploadInTransit" 
+              :title="feedConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continue') : $t('addAtLeastOneFile'))"
+              :text="feedConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
+              @click="feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
+            />
           </v-col>
-          <v-col cols=9>
-            {{ this.$t('clickHereWHenYourFilesAreStaged') }}
+          <v-col cols="9">
+            {{ $t('clickHereWHenYourFilesAreStaged') }}
           </v-col>
         </v-row>
       </v-container>
-      <v-list class="mt-4" v-if="!atStep2">
-        <v-list-subheader>{{ this.$t('opmlFiles') }}</v-list-subheader>
-        <v-list-item v-for="file of this.files" :key="file.id">
-          <template v-slot:prepend>
+      <v-list
+        v-if="!atStep2"
+        class="mt-4"
+      >
+        <v-list-subheader>{{ $t('opmlFiles') }}</v-list-subheader>
+        <v-list-item
+          v-for="file of files"
+          :key="file.id"
+        >
+          <template #prepend>
             <v-list-item-action start>
-              <v-btn variant="text"
-                :title="this.$t('previewThisFile')" 
-                :text="file.file.name" />
+              <v-btn
+                variant="text"
+                :title="$t('previewThisFile')" 
+                :text="file.file.name"
+              />
             </v-list-item-action>
           </template>
-          <template v-slot:append>
+          <template #append>
             <v-list-item-action end>
-              <v-btn v-if="!atStep2" 
-                @click="this.feedConfigRequests = []; this.errors=[]; deleteOpmlFile(file)" 
-                variant="tonal"
-                prepend-icon="fa-trash" 
-                :text="this.$t('delete')" />
+              <v-btn
+                v-if="!atStep2" 
+                variant="tonal" 
+                prepend-icon="fa-trash"
+                :text="$t('delete')" 
+                @click="feedConfigRequests = []; errors=[]; deleteOpmlFile(file)"
+              />
             </v-list-item-action>
           </template>
         </v-list-item>
-        <v-list-item v-if="this.files.length === 0">
-          {{  this.$t('selectAtLeastOneFile') }}
+        <v-list-item v-if="files.length === 0">
+          {{ $t('selectAtLeastOneFile') }}
         </v-list-item>
       </v-list>
       <v-card class="mt-2">
-        <v-card-item v-if="this.errors.length > 0" :subtitle="this.$t('opmlFilesContainErrors')" />
-        <v-card-text v-for="error in this.errors" :key="error">
-          <v-alert type="error" theme="dark" :title="this.$t('error')" :text="error"  />
+        <v-card-item
+          v-if="errors.length > 0"
+          :subtitle="$t('opmlFilesContainErrors')"
+        />
+        <v-card-text
+          v-for="error in errors"
+          :key="error"
+        >
+          <v-alert
+            type="error"
+            theme="dark"
+            :title="$t('error')"
+            :text="error"
+          />
         </v-card-text>
       </v-card>
-      <v-card class="mt-2" v-if="this.feedConfigRequests.length > 0" variant="text">
-        <v-card-title class="text-center pa-2" align="left" justify="left">
-          {{ this.$t('weWillCreateTheFollowingSubscriptions') }}
+      <v-card
+        v-if="feedConfigRequests.length > 0"
+        class="mt-2"
+        variant="text"
+      >
+        <v-card-title
+          class="text-center pa-2"
+          align="left"
+          justify="left"
+        >
+          {{ $t('weWillCreateTheFollowingSubscriptions') }}
         </v-card-title>
-        <v-card-text v-for="f in this.feedConfigRequests" :key="f.ident">
+        <v-card-text
+          v-for="f in feedConfigRequests"
+          :key="f.ident"
+        >
           <v-list>
             <v-list-subheader>
               {{ f.title + (f.description ? (' (' + f.description + ')'): '') }}
             </v-list-subheader>
             <v-divider />
-            <v-list-item class="opml-upload-summary-message-url" v-for="r in f.rssAtomFeedUrls" :key="r">
+            <v-list-item
+              v-for="r in f.rssAtomFeedUrls"
+              :key="r"
+              class="opml-upload-summary-message-url"
+            >
               {{ r.feedUrl }}
             </v-list-item>
           </v-list>
@@ -88,11 +137,15 @@
     </v-card-text>
     <v-divider />
     <v-card-actions>
-      <v-btn v-if="atStep2" 
-        @click="returnToStep1" 
-        :text="this.$t('goBack')" />
-      <v-btn @click="cancelOpmlUpload" 
-        :text="this.$t('cancel')" />
+      <v-btn
+        v-if="atStep2" 
+        :text="$t('goBack')" 
+        @click="returnToStep1"
+      />
+      <v-btn
+        :text="$t('cancel')" 
+        @click="cancelOpmlUpload"
+      />
     </v-card-actions>
   </v-card>
 </template>
@@ -100,7 +153,9 @@
 <script>
 export default {
   name: "OpmlUploadPanel",
-  props: [ "baseUrl", "theme" ],
+  props: { 
+    baseUrl: { type: String, required: true } 
+  },
   emits: [ "finalizeUpload", "cancel", "authError" ],
   data() {
     return {
