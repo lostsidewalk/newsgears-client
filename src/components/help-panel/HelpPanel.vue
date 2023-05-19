@@ -1,46 +1,67 @@
 <template>
   <v-card>
     <v-card-title class="text-center pa-4">
-      {{ this.$t('feedGearsHelp') }}
+      {{ $t('feedGearsHelp') }}
     </v-card-title>
     <v-divider />
     <v-card-text>
       <!-- global -->
-      <v-card elevation="6" class="mb-4 pa-1">
+      <v-card
+        elevation="6"
+        class="mb-4 pa-1"
+      >
         <v-card-title>
-          {{ this.$t('globalShortcutKeys') }}
+          {{ $t('globalShortcutKeys') }}
         </v-card-title>
         <v-divider />
         <v-card-text class="d-flex flex-row flex-wrap">
-          <v-hover v-slot="{ isHovering, props }" v-for="desc in this.helpModel.fromAnywhere" :key="desc">
-            <v-card  :elevation="isHovering ? 7 : 6" class="ma-4" 
+          <v-hover
+            v-for="desc in helpModel.fromAnywhere"
+            v-slot="{ isHovering, props }"
+            :key="desc"
+          >
+            <v-card
+              :elevation="isHovering ? 7 : 6"
+              class="ma-4" 
               max-width="320" 
               v-bind="props"
-              variant="tonal">
-              <v-card-title class="pa-4">
-                {{  desc.label }}
-              </v-card-title>
-              <v-divider />
-              <v-card-text>
-                <v-btn variant="tonal" 
-                  :prepend-icon="desc.icon" 
-                  :text="desc.key" />
-              </v-card-text>
-            </v-card>
-          </v-hover>
-          <v-hover v-slot="{ isHovering, props }" v-for="desc in this.helpModel.aQueueIsSelected" :key="desc">
-            <v-card  :elevation="isHovering ? 7 : 6" class="ma-4" 
-              max-width="320" 
-              v-bind="props"
-              variant="tonal">
+              variant="tonal"
+            >
               <v-card-title class="pa-4">
                 {{ desc.label }}
               </v-card-title>
               <v-divider />
               <v-card-text>
-                <v-btn variant="tonal" 
+                <v-btn
+                  variant="tonal" 
                   :prepend-icon="desc.icon" 
-                  :text="desc.key" />
+                  :text="desc.key"
+                />
+              </v-card-text>
+            </v-card>
+          </v-hover>
+          <v-hover
+            v-for="desc in helpModel.aQueueIsSelected"
+            v-slot="{ isHovering, props }"
+            :key="desc"
+          >
+            <v-card
+              :elevation="isHovering ? 7 : 6"
+              class="ma-4" 
+              max-width="320" 
+              v-bind="props"
+              variant="tonal"
+            >
+              <v-card-title class="pa-4">
+                {{ desc.label }}
+              </v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-btn
+                  variant="tonal" 
+                  :prepend-icon="desc.icon" 
+                  :text="desc.key"
+                />
               </v-card-text>
             </v-card>
           </v-hover>
@@ -54,7 +75,6 @@
 <script>
 export default {
   name: "HelpPanel",
-  props: ["theme"],
   data() {
     return {
       helpModel: {
