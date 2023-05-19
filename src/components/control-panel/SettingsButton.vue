@@ -1,17 +1,21 @@
 <template>
-  <v-btn @click="this.$emit('showSettings')"     
-    size="small"
-    accesskey="t" 
-    :title="this.$t('settings')"
-    :aria-label="this.$t('goToSettingsAriaLabel')"
-    :append-icon="this.expanded ? 'fa-compress' : 'fa-expand'"
-    :text="this.$t('settings')" />
+  <v-btn
+    size="small"     
+    accesskey="t"
+    :title="$t('settings')" 
+    :aria-label="$t('goToSettingsAriaLabel')"
+    :append-icon="expanded ? 'fa-compress' : 'fa-expand'"
+    :text="$t('settings')"
+    @click="$emit('showSettings')"
+  />
 </template>
 
 <script>
 export default {
   name: "SettingsButton", 
-  props: [ "theme", "expanded" ],
+  props: { 
+    expanded: { type: Boolean, default: false }
+  },
   emits: [ "showSettings" ],
 }
 </script>

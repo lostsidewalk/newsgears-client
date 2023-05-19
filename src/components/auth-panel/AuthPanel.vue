@@ -142,8 +142,8 @@ export default {
   data() {
     return {
       step: null,
-      username: null,
-      password: null,
+      username: '',
+      password: '',
       showPrivacyPolicy: false,
       // server response
       serverMessage: null,

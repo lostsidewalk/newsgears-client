@@ -20,7 +20,7 @@ export default {
     label: { type: String, required: true },
     type: { type: String, default: null },
     placeholder: { type: String, default: null },
-    modelValue: { type: String, default: null },
+    modelValue: { type: String, required: true },
   },
   emits: [ "update:modelValue" ],
 };

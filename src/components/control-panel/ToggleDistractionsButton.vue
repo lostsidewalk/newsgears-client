@@ -1,16 +1,17 @@
 <template>
-  <v-btn @click.stop="this.$emit('toggleDistractions')" 
-    size="small"
-    accesskey="z" 
-    :title="this.$t('toggleDistractions')"
-    :aria-label="this.$t('toggleDistractionsAriaLabel')"
-    icon="fa-arrows-alt" />
+  <v-btn
+    size="small" 
+    accesskey="z"
+    :title="$t('toggleDistractions')" 
+    :aria-label="$t('toggleDistractionsAriaLabel')"
+    icon="fa-arrows-alt"
+    @click.stop="$emit('toggleDistractions')"
+  />
 </template>
 
 <script>
 export default {
   name: "ToggleDistractionsButton",
-  props: [ "theme" ],
   emits: [ "toggleDistractions" ],
 }
 </script>

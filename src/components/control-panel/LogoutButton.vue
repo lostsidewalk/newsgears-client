@@ -1,17 +1,18 @@
 <template>
-  <v-btn @click="logout" 
+  <v-btn
     id="logout" 
-    size="small"
-    accesskey="o" 
-    :title="this.$t('logout')"
+    size="small" 
+    accesskey="o"
+    :title="$t('logout')" 
     append-icon="fa-sign-out"
-    :text="this.$t('logout')" />
+    :text="$t('logout')"
+    @click="logout"
+  />
 </template>
 
 <script>
 export default {
   name: "LogoutButton",
-  props: [ "theme" ],
   methods: {
     logout() {
       this.$auth.logout()

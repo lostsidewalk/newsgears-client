@@ -1,22 +1,29 @@
 <template>
   <v-toolbar-items class="flex-row-reverse">
     <!-- logout button, don't disable -->
-    <LogoutButton v-if="this.$auth.$isAuthenticated"
-      :theme="theme" />
+    <LogoutButton
+      v-if="$auth.$isAuthenticated"
+      :theme="theme"
+    />
     <!-- settings button -->
-    <SettingsButton v-if="this.$auth.$isAuthenticated"
+    <SettingsButton
+      v-if="$auth.$isAuthenticated"
       :theme="theme"
-      :expanded="this.showSettingsPanel"
-      @showSettings="this.$emit('showSettings')" />
+      :expanded="showSettingsPanel"
+      @showSettings="$emit('showSettings')"
+    />
     <!-- help button, don't disable -->
-    <HelpButton :expanded="this.showHelpPanel"
+    <HelpButton
+      :expanded="showHelpPanel"
       :theme="theme"
-      @showHelp="this.$emit('showHelp')" />
+      @showHelp="$emit('showHelp')"
+    />
     <!-- display mode switch, don't disable -->
     <DisplayModeButton />
     <ToggleDistractionsButton
       :theme="theme"
-      @toggleDistractions="this.$emit('toggleDistractions')" />
+      @toggleDistractions="$emit('toggleDistractions')"
+    />
     <slot name="additional" />
   </v-toolbar-items>
 </template>
@@ -37,7 +44,10 @@ export default {
     ToggleDistractionsButton,
     HelpButton,
   },
-  props: ["showSettingsPanel", "showHelpPanel", "baseUrl", "theme"],
+  props: {
+    showSettingsPanel: { type: Boolean, default: false },
+    showHelpPanel: { type: Boolean, default: false },
+  },
   emits: [
     "updateServerMessage",
     "toggleDistractions",
@@ -45,15 +55,15 @@ export default {
     "showHelp",
     "cancelSettings",
   ],
+  data() {
+    return {};
+  },
   methods: {
     setLastServerMessage(message) {
       if (message) {
         this.$emit("updateServerMessage", message);
       }
     },
-  },
-  data() {
-    return {};
   },
 };
 </script>
