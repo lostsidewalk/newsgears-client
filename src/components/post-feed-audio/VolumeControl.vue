@@ -1,20 +1,25 @@
 <template>
   <div class="volume-control">
     <v-range-slider
-        v-model="volume"
-        height="4px"
-        width="64px"
-        class="volume-slider"
-        step="0.5" min="1" max="100"
-        :style="volumeStyle" 
-        :prepend-icon="volumeIcon" />
+      v-model="volume"
+      height="4px"
+      width="64px"
+      class="volume-slider"
+      step="0.5"
+      min="1"
+      max="100"
+      :style="volumeStyle" 
+      :prepend-icon="volumeIcon"
+    />
   </div>
 </template>
 
 <script>
 export default {
   name: "VolumeControl",
-  props: [ "value" ],
+  props: {
+    value: { type: Number, required: true }
+  },
   computed: {
     volume: {
       get() {

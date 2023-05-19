@@ -1,26 +1,42 @@
 <template>
-  <div class="audio-player-container"
-    v-if="this.url"
+  <div
+    v-if="url"
+    class="audio-player-container"
     :style="{
-        '--buffered-width': `${(this.bufferedAmount / this.duration) * 100}%`,
-        '--played-width': `${(this.currentTime / this.duration) * 100}%`
-      }">
-    {{ this.details ? this.details.title : '' }}
+      '--buffered-width': `${(bufferedAmount / duration) * 100}%`,
+      '--played-width': `${(currentTime / duration) * 100}%`
+    }"
+  >
+    {{ details ? details.title : '' }}
     <div class="audio-player-buttons">
-      <v-icon @click="togglePlay" :icon="(state === 'play' ? 'fa-pause' : 'fa-play')" tabindex="0" />
-      <v-icon @click="stopPlaying" icon="fa-stop" tabindex="0" />
+      <v-icon
+        :icon="(state === 'play' ? 'fa-pause' : 'fa-play')"
+        tabindex="0"
+        @click="togglePlay"
+      />
+      <v-icon
+        icon="fa-stop"
+        tabindex="0"
+        @click="stopPlaying"
+      />
     </div>
     <div class="audio-player-progress">
       <span class="time">{{ currentTimePosition }}</span>
-      <input v-if="fileType !== 2"
-          type="range"
-          class="seek-slider"
-          :max="duration"
-          :value="currentTime"
-          @change="changeCurrentTime" />
-      <span v-if="fileType !== 2" id="duration" class="time">{{ maxTimePosition }}</span>
+      <input
+        v-if="fileType !== 2"
+        type="range"
+        class="seek-slider"
+        :max="duration"
+        :value="currentTime"
+        @change="changeCurrentTime"
+      >
+      <span
+        v-if="fileType !== 2"
+        id="duration"
+        class="time"
+      >{{ maxTimePosition }}</span>
     </div>
-    <VolumeControl v-model:value="volume" />
+    <VolumeControl v-model="volume" />
   </div>
 </template>
 
@@ -41,8 +57,10 @@ const calculateTime = (secs) => {
 
 export default {
   name: "PostFeedAudio",
-  props: [ "src" ],
   components: {VolumeControl},
+  props: {
+    src: { type: String, required: true },
+  },
   data() {
     return {
       ended: false,
@@ -62,6 +80,36 @@ export default {
       playerObj: null,
       corsRetry: false,
     }
+  },
+  computed: {
+    player() {
+      return this.playerObj;
+    },
+    currentTimePosition() {
+      if (!this.currentTime) {
+        return '0:00';
+      }
+      return calculateTime(this.currentTime);
+    },
+    maxTimePosition() {
+      if (!this.duration) {
+        return '0:00';
+      }
+      return calculateTime(this.duration);
+    },
+    source() {
+      return {
+        url: this.url, 
+        type: 'audio/mpeg'
+      }
+    },
+  },
+  watch: {
+    volume (v) {
+      if (v !== this.player.volume * 100) {
+        this.player.volume = v / 100;
+      }
+    },
   },
   created() {
     this.playerObj = document.getElementById('post-feed-audio');
@@ -179,36 +227,6 @@ export default {
           this.volume = this.player.volume * 100
         }
       })
-    },
-  },
-  computed: {
-    player() {
-      return this.playerObj;
-    },
-    currentTimePosition() {
-      if (!this.currentTime) {
-        return '0:00';
-      }
-      return calculateTime(this.currentTime);
-    },
-    maxTimePosition() {
-      if (!this.duration) {
-        return '0:00';
-      }
-      return calculateTime(this.duration);
-    },
-    source() {
-      return {
-        url: this.url, 
-        type: 'audio/mpeg'
-      }
-    },
-  },
-  watch: {
-    volume (v) {
-      if (v !== this.player.volume * 100) {
-        this.player.volume = v / 100;
-      }
     },
   }
 }
