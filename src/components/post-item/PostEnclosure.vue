@@ -2,18 +2,26 @@
   <div class="post-enclosure">
     <img 
       v-if="isImage()" 
-      :src="this.enclosure.url"
+      :src="enclosure.url"
       class="post-enclosure-image" 
       tabindex="0" 
-      :alt="this.$t('postEnclosureImage')" />
-    <div v-else-if="isVideo()" class="post-enclosure-image">
+      :alt="$t('postEnclosureImage')"
+    >
+    <div
+      v-else-if="isVideo()"
+      class="post-enclosure-image"
+    >
       <vue-plyr ref="player">
-        <div class="plyr__video-embed" data-plyr-config='{ autoplay: false, autopause: true }'>
-          <iframe style="border: 0px; width:100%;"
+        <div
+          class="plyr__video-embed"
+          data-plyr-config="{ autoplay: false, autopause: true }"
+        >
+          <iframe
+            style="border: 0px; width:100%;"
             allowfullscreen
             allowtransparency
-            :src="this.enclosure.url">
-        </iframe>
+            :src="enclosure.url"
+          />
         </div>
       </vue-plyr>        
     </div>
@@ -23,7 +31,9 @@
 <script>
 export default {
   name: "PostEnclosure",
-  props: [ "enclosure", "theme" ],
+  props: {
+    enclosure: { type: Object, required: true },
+  },
   emits: [ "playing", "audioPlay" ],
   mounted() {
     if (this.isVideo()) {

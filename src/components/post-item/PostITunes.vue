@@ -1,28 +1,77 @@
 <template>
   <div class="post-itunes-content">
-    <v-btn v-if="this.iTunes.imageUri" 
-      @click="this.$emit('playFirstEnclosure', this.iTunes)"
+    <v-btn
+      v-if="iTunes.imageUri" 
       size="small"
-      variant="tonal">
-      <v-img :src="this.iTunes.imageUri" 
+      variant="tonal"
+      @click="$emit('playFirstEnclosure', iTunes)"
+    >
+      <v-img
+        :src="iTunes.imageUri" 
         tabindex="0" 
-        :alt="this.$t('postITunesImage')" 
-        max-height="140" max-width="140" width="140" />
+        :alt="$t('postITunesImage')" 
+        max-height="140"
+        max-width="140"
+        width="140"
+      />
     </v-btn>
     <div class="d-flex flex-row flex-auto flex-wrap">
-      <v-btn @click="this.$emit('playFirstEnclosure', this.iTunes)" 
-        variant="tonal"
+      <v-btn
+        variant="tonal" 
         size="x-small"
-        icon="fa-headphones" />
+        icon="fa-headphones"
+        @click="$emit('playFirstEnclosure', iTunes)"
+      />
       <v-chip-group>
-        <v-chip v-if="this.iTunes.title" variant="text">{{ this.iTunes.title }}</v-chip>
-        <v-chip v-if="this.iTunes.subTitle" variant="text">{{ this.iTunes.subTitle }}</v-chip>
-        <v-chip v-if="this.iTunes.author" variant="text">{{ this.iTunes.author }}</v-chip>
-        <v-chip v-if="this.iTunes.explicit" variant="text">{{ this.$t('explicit')}}</v-chip>
-        <v-chip v-if="this.iTunes.epiosodeType" variant="text"> {{ this.$t('episodeType', { episodeType: this.iTunes.epiosodeType }) }}</v-chip>
-        <v-chip v-for="keyword of this.iTunes.keywords" :key="keyword" variant="text">{{ keyword }}</v-chip>
-        <v-chip v-if="this.iTunes.closeCaptioned === true" variant="text">{{ this.$t('closedCaptioned') }}</v-chip>
-        <v-chip v-if="this.iTunes.summary" variant="text">{{ this.iTunes.summary }}</v-chip>
+        <v-chip
+          v-if="iTunes.title"
+          variant="text"
+        >
+          {{ iTunes.title }}
+        </v-chip>
+        <v-chip
+          v-if="iTunes.subTitle"
+          variant="text"
+        >
+          {{ iTunes.subTitle }}
+        </v-chip>
+        <v-chip
+          v-if="iTunes.author"
+          variant="text"
+        >
+          {{ iTunes.author }}
+        </v-chip>
+        <v-chip
+          v-if="iTunes.explicit"
+          variant="text"
+        >
+          {{ $t('explicit') }}
+        </v-chip>
+        <v-chip
+          v-if="iTunes.epiosodeType"
+          variant="text"
+        >
+          {{ $t('episodeType', { episodeType: iTunes.epiosodeType }) }}
+        </v-chip>
+        <v-chip
+          v-for="keyword of iTunes.keywords"
+          :key="keyword"
+          variant="text"
+        >
+          {{ keyword }}
+        </v-chip>
+        <v-chip
+          v-if="iTunes.closeCaptioned === true"
+          variant="text"
+        >
+          {{ $t('closedCaptioned') }}
+        </v-chip>
+        <v-chip
+          v-if="iTunes.summary"
+          variant="text"
+        >
+          {{ iTunes.summary }}
+        </v-chip>
       </v-chip-group>
     </div>
   </div>
@@ -31,7 +80,9 @@
 <script>
 export default {
   name: "PostITunes",
-  props: ["iTunes", "theme"],
+  props: {
+    iTunes: { type: Object, required: true },
+  },
   emits: ["playFirstEnclosure"],
 }
 </script>
