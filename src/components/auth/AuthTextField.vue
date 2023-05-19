@@ -7,7 +7,8 @@
     :placeholder="placeholder"
     :value="modelValue"
     :type="type ? type : 'text'"
-    @input="this.$emit('update:modelValue', $event.target.value)" />
+    @input="$emit('update:modelValue', $event.target.value)"
+  />
 </template>
 
 <script>
@@ -15,7 +16,12 @@
 export default {
   name: "AuthTextField",
   components: { },
-  props: [ "label", "placeholder", "type", "theme", "modelValue" ],
+  props: {
+    label: { type: String, required: true },
+    type: { type: String, default: null },
+    placeholder: { type: String, default: null },
+    modelValue: { type: String, default: null },
+  },
   emits: [ "update:modelValue" ],
 };
 </script>

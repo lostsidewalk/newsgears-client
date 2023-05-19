@@ -3,15 +3,30 @@
     elevation="1"
     variant="tonal"
     class="auth-button"
+    :loading="inTransit"
     @click="onClick()"
-    :text="label"
-    :loading="inTransit" />
+  >
+    {{ label }}
+    <v-tooltip
+      v-if="tooltip"
+      location="start"
+      activator="parent"
+      open-delay="2000"
+    >
+      {{ tooltip }}
+    </v-tooltip>
+  </v-btn>
 </template>
   
 <script>
 export default {
   name: "AuthButton",
-  props: [ "label", "subLabel", "inTransit", "theme" ],
+  props: {
+    label: { type: String, required: true },
+    subLabel: { type: String, default: null },
+    tooltip: { type: String, default: null },
+    inTransit: { type: Boolean, default: false },
+  },
   methods: {
     onClick() {
       this.$emit("clicked");
@@ -27,4 +42,3 @@ export default {
   flex-grow: 1;
 }
 </style>
-
