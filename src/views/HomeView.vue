@@ -264,9 +264,9 @@
         />
         <v-label
           v-if="selectedFeedId"
-          class="ma-2"
+          class="ma-2 font-weight-bold"
         >
-          Selected queue: {{ getSelectedFeed().title }}
+          {{ getSelectedFeed().title }}
         </v-label>
       </v-container>
       <!-- divider -->
