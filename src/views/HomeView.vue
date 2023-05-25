@@ -92,14 +92,6 @@
         app
       >
         <!-- feed filter  -->
-        <!-- help buton -->
-        <v-btn
-          :size="xs ? 'x-small' : 'small'" 
-          :title="$t('toggleSortOrder')" 
-          :aria-label="$t('toggleSortOrder')" 
-          :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
-          @click="showFilterHelp = !showFilterHelp"
-        />
         <FeedFilter
           :inbound-queue-filter="inboundQueueFilter"
           :inbound-queue-sort-order="inboundQueueSortOrder"
@@ -111,21 +103,29 @@
           @update:modelValue="inboundQueueFilter = $event"
           @toggleFeedFilterPills="showFeedFilterPills = !showFeedFilterPills"
         />
+        <!-- help buton -->
+        <v-btn
+          :size="xs ? 'x-small' : 'small'" 
+          :title="$t('toggleSortOrder')" 
+          :aria-label="$t('toggleSortOrder')" 
+          :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
+          @click="showFilterHelp = !showFilterHelp"
+        />
       </v-app-bar>
       <!-- app bar (filter pills) -->
-      <v-app-bar
-        v-show="selectedFeedId && allFilterPills.length > 0"
-        v-model="showFeedFilterPills"
-        :scroll-behavior="'hide'"
-        app
-      >
-        <FeedFilterPills :filter-pills="allFilterPills" />
-      </v-app-bar>
+      <v-expand-transition>
+        <v-app-bar
+          v-if="selectedFeedId && allFilterPills.length > 0 && showFeedFilterPills"
+          app
+        >
+          <FeedFilterPills :filter-pills="allFilterPills" />
+        </v-app-bar>
+      </v-expand-transition>
       <!-- navigation drawer / left side -->
       <v-navigation-drawer
         v-model="showQueueDashboard"
         app
-        class="overflow-y-visible"
+        :location="'end'"
         :class="xs ? 'w-100' : 'w-50'"
         elevation="12" 
         temporary
@@ -1782,12 +1782,6 @@ body {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;
-}
-
-/** has references */
-.v-navigation-drawer__content {
- overflow-y: scroll !important;
- overflow-x: auto !important;
 }
 
 .post-feed-container {
