@@ -1,5 +1,8 @@
 <template>
-  <v-toolbar-items class="flex-row-reverse flex-wrap">
+  <v-toolbar-items
+    class="flex-row-reverse flex-wrap"
+    style="justify-content: space-around;align-content: space-around;"
+  >
     <!-- logout button, don't disable -->
     <LogoutButton v-if="$auth.$isAuthenticated" />
     <!-- settings button -->
