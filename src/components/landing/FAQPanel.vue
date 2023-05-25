@@ -1,75 +1,98 @@
 <template>
   <v-card elevation="6">
-    <v-card-title class="question-verbiage pa-4">
-      What is RSS/ATOM?
+    <v-card-title class="question-verbiage text-center pa-4">
+      {{ $t('whatIsRSS') }}
     </v-card-title>
     <v-divider />
     <v-card-text
       class="answer"
       align="left"
     >
-      <v-img
-        class="mb-4"
-        src="the_power_of_rss.gif"
-        max-height="512"
-      />
+      <p class="mb-2">
+        {{ $t('rssIs') }}
+      </p>
+      
+      <p class="mb-2">
+        {{ $t('rssAllows') }}
+      </p>
+      
+      <p class="mb-2">
+        {{ $t('feedGearsIs') }}
+      </p>
+      
+      <p class="mb-2">
+        {{ $t('overTheYears') }}
 
-      <p class="mb-2">
-        RSS (Really Simple Syndication) is a web feed format used for publishing frequently updated content such as blog entries, news headlines, audio, and video. It was first introduced by Netscape in 1999 as an XML-based format for syndicating content from news sites and blogs.
+        <v-list density="compact">
+          <v-list-item><a href="https://www.rssboard.org/rss-0-9-0">RSS 0.90</a></v-list-item>
+          <v-list-item><a href="https://www.rssboard.org/rss-0-9-1-netscape">RSS 0.91</a></v-list-item>
+          <v-list-item><a href="https://web.resource.org/rss/1.0/">RSS 1.0</a></v-list-item>
+          <v-list-item><a href="https://www.rssboard.org/rss-specification">RSS 2.0</a></v-list-item>
+          <v-list-item><a href="http://www.aaronsw.com/2002/rss30">RSS 3.0</a></v-list-item>
+        </v-list>
+
+        {{ $t('eachVersionAdded') }}
       </p>
       
       <p class="mb-2">
-        RSS allows users to subscribe to content feeds using a web feed reader or aggregator, which can automatically retrieve and display new content from multiple sources in a single location. This makes it easier for users to stay up-to-date on their favorite websites and content creators without having to manually check each site for updates.
+        {{ $t('atomOTOH') }}
       </p>
       
       <p class="mb-2">
-        FeedGears is both an RSS aggregator and an RSS reader.
+        {{ $t('keyDifferences') }}
       </p>
       
       <p class="mb-2">
-        Over the years, RSS has evolved and several versions of the protocol have been released, including 
-        <a href="https://www.rssboard.org/rss-0-9-0">RSS 0.90</a>, 
-        <a href="https://www.rssboard.org/rss-0-9-1-netscape">RSS 0.91</a>, 
-        <a href="https://web.resource.org/rss/1.0/">RSS 1.0</a>, 
-        <a href="https://www.rssboard.org/rss-specification">RSS 2.0</a>, and 
-        <a href="http://www.aaronsw.com/2002/rss30">RSS 3.0</a>. Each version added new features and functionality, such as support for multimedia content and enclosures.
+        {{ $t('overallRoles') }}
       </p>
       
-      <p class="mb-2">
-        <a href="http://www.atomenabled.org/">Atom</a>, on the other hand, is a similar web feed format that was introduced in 2003 as an alternative to RSS. Like RSS, Atom is an XML-based format that allows publishers to syndicate content such as blog posts, news articles, and podcasts.
-      </p>
-      
-      <p class="mb-2">
-        One of the key differences between RSS and Atom is that Atom is a standardized format, while RSS has multiple versions and variations. Additionally, Atom is designed to be more extensible and flexible than RSS, allowing for easier customization and support for additional metadata.
-      </p>
-      
-      <p class="mb-2">
-        Overall, RSS and Atom have played an important role in the evolution of web content syndication and have helped to make it easier for users to access and consume the content they care about.
-      </p>
-      
-      <ul class="ma-2">
-        <li><a href="https://aboutfeeds.com/">About Feeds</a></li>
-        <li><a href="https://en.wikipedia.org/wiki/RSS">Wikipedia: RSS</a></li>
-        <li><a href="https://meganesulli.com/blog/how-rss-works">An Intro to RSS Feeds</a></li>
-        <li><a href="https://www.youneedfeeds.com/">You Need Feeds</a></li>
-        <li><a href="https://huey.xyz/posts/2021-07-18-rss">Why you should consider using RSS</a></li>
-        <li><a href="https://ncase.me/rss/">Back to the Future with RSS</a></li>
-      </ul>
-      
-      <ul class="ma-2">
-        <li><a href="https://www.ruanyifeng.com/blog/2006/01/rss.html">如何使用 RSS</a></li>
-        <li><a href="https://xuchi.name/117/">RSS 是干什么的？</a></li>
-        <li><a href="https://mp.weixin.qq.com/s/KKPO3otk5LBeLMQTtlqHvg">RSS 订阅傻瓜式教程</a></li>
-        <li><a href="https://sspai.com/post/56198">RSS - 高效率的阅读方式</a></li>
-        <li><a href="https://zhuanlan.zhihu.com/p/109813899">RSS 工具和应用场景</a></li>
-      </ul>
+      <v-list density="compact">
+        <v-list-item><a href="https://aboutfeeds.com/">About Feeds</a></v-list-item>
+        <v-list-item><a href="https://en.wikipedia.org/wiki/RSS">Wikipedia: RSS</a></v-list-item>
+        <v-list-item><a href="https://meganesulli.com/blog/how-rss-works">An Intro to RSS Feeds</a></v-list-item>
+        <v-list-item><a href="https://www.youneedfeeds.com/">You Need Feeds</a></v-list-item>
+        <v-list-item><a href="https://huey.xyz/posts/2021-07-18-rss">Why you should consider using RSS</a></v-list-item>
+        <v-list-item><a href="https://ncase.me/rss/">Back to the Future with RSS</a></v-list-item>
+      </v-list>
     </v-card-text>
+    <v-card-actions>
+      <v-dialog v-model="showVideo">
+        <VideoPanel @dismiss="showVideo = false" />
+      </v-dialog>
+      <v-btn
+        prepend-icon="fa-file-video-o"
+        text="RSS Made Easy"
+        @click="showVideo = true"
+      />
+      <v-dialog v-model="showImage">
+        <ImagePanel @dismiss="showImage = false" />
+      </v-dialog>
+      <v-btn
+        prepend-icon="fa-file-image-o"
+        text="With And Without RSS"
+        @click="showImage = true"
+      />
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import VideoPanel from '@/components/landing/VideoPanel.vue';
+import ImagePanel from '@/components/landing/ImagePanel.vue';
+
+
 export default {
   name: "FAQPanel",
+  components: {
+    VideoPanel,
+    ImagePanel,
+  },
+  data() {
+    return {
+      showVideo: false,
+      showImage: false,
+    }
+  }
 }
 </script>
 

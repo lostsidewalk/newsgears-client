@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="6">
-    <v-card-title class="question-verbiage pa-4">
-      RSS Made Easy
+    <v-card-title class="question-verbiage text-center pa-4">
+      {{ $t('rssMadeEasy') }}
     </v-card-title>
     <v-divider />
     <v-card-text
@@ -19,12 +19,21 @@
         </div>
       </vue-plyr>
     </v-card-text>
+    <v-card-actions>
+      <v-btn
+        :size="xs ? 'x-small' : 'small'" 
+        density="comfortable"
+        :text="$t('dismiss')"
+        @click="$emit('dismiss')"
+      />
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
 export default {
   name: "VideoPanel",
+  emits: ["dismiss"],
 }
 </script>
 

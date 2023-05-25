@@ -1,5 +1,5 @@
 <template>
-  <v-card :disabled="inTransit">
+  <v-card :disabled="isLoading">
     <v-card-title class="text-center pa-4">
       <h3 class="view-header-no-count">
         <v-icon icon="fa-user" />
@@ -44,49 +44,56 @@
         <v-card-actions>
           <!-- deactivate account button -->
           <v-btn
-            v-if="!showDeactivateUser && !showResetPassword" 
+            v-if="!showDeactivateUser && !showResetPassword"
+            density="comfortable" 
             :text="$t('deactivateYourAccount')" 
             @click="showDeactivateUser = true"
           />
           <!-- download your data button-->
           <v-btn
-            v-if="showDeactivateUser" 
-            :loading="exportOpmlInTransit"
+            v-if="showDeactivateUser"
+            density="comfortable" 
+            :loading="exportOpmlIsLoading"
             :text="$t('downloadYourData')"
             @click="exportOpml()"
           />
           <!-- permanently delete your account button -->
           <v-btn
-            v-if="showDeactivateUser" 
-            :loading="finalizeDeactivationInTransit"
+            v-if="showDeactivateUser"
+            density="comfortable" 
+            :loading="finalizeDeactivationIsLoading"
             :text="$t('permanentlyDeleteYourAccount')"
             @click="finalizeDeactivation()"
           />
           <!-- cancel (deactivate account) button -->
           <v-btn
             v-if="showDeactivateUser"
-            id="cancelDeactivateAccount" 
+            id="cancelDeactivateAccount"
+            density="comfortable" 
             :text="$t('cancel')" 
             @click="showDeactivateUser = false"
           />
           <v-btn
-            v-if="showResetPassword" 
-            :loading="initPasswordResetInTransit"
+            v-if="showResetPassword"
+            density="comfortable" 
+            :loading="initPasswordResetIsLoading"
             :text="$t('sendPasswordResetEmail')"
             @click="initPasswordReset()"
           />
           <!-- reset password button (local) -->
           <v-btn
-            v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser" 
+            v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser"
             id="resetPassword" 
-            :loading="resetPasswordInTransit" 
+            density="comfortable" 
+            :loading="resetPasswordIsLoading" 
             :text="$t('resetPassword')"
             @click="resetPassword()"
           />
           <!-- cancel (reset password) -->
           <v-btn
-            v-if="showResetPassword" 
+            v-if="showResetPassword"
             id="cancelResetPassword" 
+            density="comfortable" 
             :text="$t('cancel')" 
             @click="showResetPassword = false"
           />
@@ -97,7 +104,6 @@
         v-if="authProvider === 'LOCAL'"
         elevation="6"
         class="mb-4 pa-1"
-        :class="{ error: v$.emailAddress.$errors.length }"
       >
         <v-card-title class="pa-4">
           {{ $t('emailAddress') }}
@@ -105,29 +111,22 @@
         <v-divider />
         <v-card-text>
           <v-text-field
-            v-model="v$.emailAddress.$model" 
+            v-model="emailAddress"
+            variant="solo-filled" 
             name="email"
             :label="$t('emailAddressColon')" 
             type="text"
+            :hint="$t('emailAddressHint')"
           />
-          <div
-            v-for="(error, index) of v$.emailAddress.$errors"
-            :key="index"
-            class="settings-errors"
-          >
-            <div class="settings-error-message">
-              {{ error.$message }}
-            </div>
-          </div>
         </v-card-text>
         <v-divider />
         <v-card-actions>
           <!-- apply changes button (local) -->
           <v-btn
-            v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser" 
+            v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser"
             id="updateAccount" 
-            :disabled="v$.$invalid" 
-            :loading="updateAccountInTransit"
+            density="comfortable" 
+            :loading="updateAccountIsLoading"
             :text="$t('applyChanges')"
             @click="updateAccount()"
           />
@@ -165,15 +164,17 @@
         <v-card-actions>
           <!-- update notification preferences button -->
           <v-btn
-            id="updateNotificationPreferences" 
+            id="updateNotificationPreferences"
+            density="comfortable" 
             :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)" 
-            :loading="updateNotificationPreferencesInTransit"
+            :loading="updateNotificationPreferencesIsLoading"
             :text="$t('updateNotificationPreferences')"
             @click="updateNotificationPreferences()"
           />
           <!-- toggle (all) notifications button -->
           <v-btn 
-            :loading="toggleNotificationsInTransit" 
+            density="comfortable"
+            :loading="toggleNotificationsIsLoading" 
             :text="(frameworkConfig && isTrue(frameworkConfig.notifications.disabled)) ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
             @click="toggleNotifications()"
           />
@@ -203,6 +204,7 @@
               {{ $t('currentPeriod') }}
             </v-label>
             <v-text-field
+              variant="solo-filled"
               name="subscription-current-period"
               type="text" 
               :placeholder="getSubscriptionCurrentPeriod()"
@@ -214,6 +216,7 @@
               {{ $t('endedAt') }}
             </v-label>
             <v-text-field
+              variant="solo-filled"
               name="subscription-ended-at"
               type="text" 
               :placeholder="getSubscriptionEndedAt()"
@@ -225,6 +228,7 @@
               {{ $t('willEndAt') }}
             </v-label>
             <v-text-field
+              variant="solo-filled"
               name="subscription-ended-at"
               type="text" 
               :placeholder="getSubscriptionCurrentPeriodEnd()"
@@ -252,15 +256,17 @@
         <v-card-actions>
           <v-btn
             v-if="subscription && !isCanceled()"
-            id="cancelSubscription" 
-            :loading="cancelSubscriptionInTransit" 
+            id="cancelSubscription"
+            density="comfortable" 
+            :loading="cancelSubscriptionIsLoading" 
             :text="$t('cancelSubscription')"
             @click="cancelSubscription()"
           />
           <v-btn
             v-if="subscription && isCanceled()"
-            id="resumeSubscription" 
-            :loading="resumeSubscriptionInTransit" 
+            id="resumeSubscription"
+            density="comfortable" 
+            :loading="resumeSubscriptionIsLoading" 
             :text="$t('resumeSubscription')"
             @click="resumeSubscription()"
           />
@@ -279,8 +285,9 @@
         <v-divider />
         <v-card-actions>
           <v-btn
-            id="checkout" 
-            :loading="submitOrderInTransit" 
+            id="checkout"
+            density="comfortable" 
+            :loading="submitOrderIsLoading" 
             :text="$t('checkout')"
             @click="submitOrder"
           />
@@ -290,6 +297,7 @@
     <v-divider />
     <v-card-actions>
       <v-btn
+        density="comfortable"
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -298,9 +306,6 @@
 </template>
 
 <script>
-import { maxLength, email } from '@vuelidate/validators';
-import useVuelidate from '@vuelidate/core';
-
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
 }
@@ -316,22 +321,6 @@ export default {
     baseUrl: { type: String, required: true },
   },
   emits: [ "updateServerMessage", "dismiss" ],
-  setup() {
-    return {
-      v$: useVuelidate(),
-    }
-  },
-  validations() {
-    return {
-      username: { 
-        maxLength: maxLength(512),
-      },
-      emailAddress: { 
-        email, 
-        maxLength: maxLength(512),
-      },
-    }
-  },
   data() {
     return {
       account: null,
@@ -340,18 +329,17 @@ export default {
       forceLogout: false,
       // 
       isLoaded: false,
-      inTransit: true, // top-level 
-      exportOpmlInTransit: false,
-      finalizeDeactivationInTransit: false,
-      initPasswordResetInTransit: false,
-      resetPasswordInTransit: false,
-      updateAccountInTransit: false,
-      updateNotificationPreferencesInTransit: false,
-      toggleNotificationsInTransit: false,
-      cancelSubscriptionInTransit: false,
-      resumeSubscriptionInTransit: false,
-      submitOrderInTransit: false,
-      serverMessages: [],
+      isLoading: true, // top-level 
+      exportOpmlIsLoading: false,
+      finalizeDeactivationIsLoading: false,
+      initPasswordResetIsLoading: false,
+      resetPasswordIsLoading: false,
+      updateAccountIsLoading: false,
+      updateNotificationPreferencesIsLoading: false,
+      toggleNotificationsIsLoading: false,
+      cancelSubscriptionIsLoading: false,
+      resumeSubscriptionIsLoading: false,
+      submitOrderIsLoading: false,
       // 
       showModal: false,
       tabModel: [
@@ -424,7 +412,7 @@ export default {
           }
         }
       };
-      this.updateNotificationPreferencesInTransit = true;
+      this.updateNotificationPreferencesIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -470,11 +458,11 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.updateNotificationPreferencesInTransit = false;
+          this.updateNotificationPreferencesIsLoading = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.updateNotificationPreferencesInTransit = false;
+        this.updateNotificationPreferencesIsLoading = false;
       });
     },
     toggleNotifications() {
@@ -488,7 +476,7 @@ export default {
           }
         }
       };
-      this.toggleNotificationsInTransit = true;
+      this.toggleNotificationsIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -534,18 +522,18 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.toggleNotificationsInTransit = false;
+          this.toggleNotificationsIsLoading = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.toggleNotificationsInTransit = false;
+        this.toggleNotificationsIsLoading = false;
       });
     },
     updateAccount() {
       let newSettings = {
         emailAddress: this.emailAddress
       };
-      this.updateAccountInTransit = true;
+      this.updateAccountIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -590,17 +578,17 @@ export default {
             this.setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.updateAccountInTransit = false;
+          this.updateAccountIsLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.updateAccountInTransit = false;
+        this.updateAccountIsLoading = false;
       });
     },
     // 
     toLocalDate(epochTime) {
-      return new Date(epochTime * 1000).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
+      return new Date(epochTime * 1000).toLocaleDateString();
     },
     toLocalCurrency(amount) {
       return currencyFormatter.format(amount / 100);
@@ -668,7 +656,7 @@ export default {
     //
     // fetch framework config from /settings  
     refreshSettings() {
-      this.inTransit = true; // top-level
+      this.isLoading = true; // top-level
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -718,7 +706,7 @@ export default {
           this.handleServerError(error);
           this.isLoaded = false;
         }).finally(() => {
-          this.inTransit = false; // top-level 
+          this.isLoading = false; // top-level 
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
@@ -727,7 +715,7 @@ export default {
       });
     },
     exportOpml() {
-      this.exportOpmlInTransit = true;
+      this.exportOpmlIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -770,15 +758,15 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.exportOpmlInTransit = false;
+          this.exportOpmlIsLoading = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.exportOpmlInTransit = false;
+        this.exportOpmlIsLoading = false;
       });
     },
     finalizeDeactivation() {
-      this.finalizeDeactivationInTransit = true;
+      this.finalizeDeactivationIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -812,19 +800,19 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.finalizeDeactivationInTransit = false;
+          this.finalizeDeactivationIsLoading = false;
           this.forceLogout = true;
           this.$auth.tearDownLoggedInSession();
           this.$router.push("/app");
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.finalizeDeactivationInTransit = false;
+        this.finalizeDeactivationIsLoading = false;
       });
     },
     initPasswordReset() {
       this.showResetPassword = false;
-      this.initPasswordResetInTransit = true;
+      this.initPasswordResetIsLoading = true;
       this.$auth
         .pwResetWithSupplied(this.account.username, this.account.emailAddress)
         .then(() => {
@@ -834,11 +822,11 @@ export default {
           this.setLastServerMessage(error);
         })
         .finally(() => {
-          this.initPasswordResetInTransit = false;
+          this.initPasswordResetIsLoading = false;
         });
     },
     submitOrder() {
-      this.submitOrderInTransit = true;
+      this.submitOrderIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -875,15 +863,15 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.submitOrderInTransit = false;
+          this.submitOrderIsLoading = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.submitOrderInTransit = false;
+        this.submitOrderIsLoading = false;
       });
     },
     cancelSubscription() {
-      this.cancelSubscriptionInTransit = true;
+      this.cancelSubscriptionIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -923,15 +911,15 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.cancelSubscriptionInTransit = false;
+          this.cancelSubscriptionIsLoading = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.cancelSubscriptionInTransit = false;
+        this.cancelSubscriptionIsLoading = false;
       });
     },
     resumeSubscription() {
-      this.resumeSubscriptionInTransit = true;
+      this.resumeSubscriptionIsLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -970,11 +958,11 @@ export default {
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.resumeSubscriptionInTransit = false;
+          this.resumeSubscriptionIsLoading = false;
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.resumeSubscriptionInTransit = false;
+        this.resumeSubscriptionIsLoading = false;
       });
     },
     cancelSettings() {

@@ -3,6 +3,7 @@
     :key="feed.value"
     :variant="variant" 
     :value="feed.value"
+    :ripple="false"
   >
     <!-- feed name -->
     <v-card-title>
@@ -12,19 +13,11 @@
       {{ feed.description }}
     </v-card-subtitle>
     <v-card-text>
-      <v-img
-        v-if="feed.imgSrc" 
-        class="feed-image"
-        :src="'data:image/png;base64,' + feed.imgSrc" 
-        :alt="$t('queueLogoImage')" 
-        max-height="32"
-        max-width="32"
-        width="32"
-      />
       <v-chip-group>
         <v-chip
           label
           variant="text"
+          :ripple="false"
         >
           <v-icon
             start
@@ -35,6 +28,7 @@
         <v-chip
           label
           variant="text"
+          :ripple="false"
         >
           <v-icon
             start
@@ -53,17 +47,17 @@
             <v-btn
               block
               variant="tonal"
-              size="small"
+              :size="xs ? 'x-small' : 'small'" 
               :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
               @click.stop="$emit('manageSubscriptions')"
             />
           </v-col>
-          <v-col>
+          <v-col v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0">
             <!-- show/hide feed details -->
             <v-btn
               block
               variant="tonal"
-              size="small"
+              :size="xs ? 'x-small' : 'small'" 
               :text="showMoreInformation ? $t('hideMoreInfo') : $t('showMoreInfo')"
               @click.stop="showMoreInformation = !showMoreInformation"
             />
@@ -104,6 +98,11 @@ export default {
   data() {
     return {
       showMoreInformation: false,
+    }
+  },
+  computed: {
+    xs: function() {
+      return this.$vuetify.display.xs;
     }
   }
 }

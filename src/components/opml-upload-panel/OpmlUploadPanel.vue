@@ -15,43 +15,41 @@
         style="display: none;"
         @change="eventHandler"
       >
+      <v-alert
+        v-if="shouldShowAlert('uploadOpmlHere')"
+        closable
+        variant="outlined"
+        border="top"
+        icon="fa-question-circle"
+        :text="$t('uploadOpmlHere')"
+        class="ma-4"
+        @click.close="dismissAlert('uploadOpmlHere')"
+      />
       <!-- continue/finalize button -->
-      <v-container>
-        <v-row
-          v-if="!atStep2"
-          class="align-center"
-        >
-          <v-col cols="3">
-            <v-btn
-              block 
-              autofocus
-              :disabled="atStep2"
-              :title="$t('selectAnOpmlFile')" 
-              :text="$t('addAnOpmlFile')"
-              @click="errors = []; $refs.fileInput.click()"
-            />
-          </v-col>
-          <v-col cols="9">
-            {{ $t('addOneOrMoreFilesToUpload') }}
-          </v-col>
-        </v-row>
-        <v-row class="align-center">
-          <v-col cols="3">
-            <v-btn
-              autofocus 
-              block
-              :disabled="!files.length"
-              :loading="uploadInTransit" 
-              :title="feedConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continue') : $t('addAtLeastOneFile'))"
-              :text="feedConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
-              @click="feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
-            />
-          </v-col>
-          <v-col cols="9">
-            {{ $t('clickHereWHenYourFilesAreStaged') }}
-          </v-col>
-        </v-row>
-      </v-container>
+      <v-row
+        v-if="!atStep2"
+        class="align-center ma-4"
+      >
+        <v-btn
+          density="comfortable"
+          autofocus
+          :disabled="atStep2"
+          :title="$t('selectAnOpmlFile')" 
+          :text="$t('addAnOpmlFile')"
+          @click="errors = []; $refs.fileInput.click()"
+        />
+      </v-row>
+      <v-row class="align-center ma-4">
+        <v-btn
+          density="comfortable"
+          autofocus 
+          :disabled="!files.length"
+          :loading="uploadIsLoading" 
+          :title="feedConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continue') : $t('addAtLeastOneFile'))"
+          :text="feedConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
+          @click="feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
+        />
+      </v-row>
       <v-list
         v-if="!atStep2"
         class="mt-4"
@@ -64,6 +62,7 @@
           <template #prepend>
             <v-list-item-action start>
               <v-btn
+                density="comfortable"
                 variant="text"
                 :title="$t('previewThisFile')" 
                 :text="file.file.name"
@@ -73,7 +72,8 @@
           <template #append>
             <v-list-item-action end>
               <v-btn
-                v-if="!atStep2" 
+                v-if="!atStep2"
+                density="comfortable" 
                 variant="tonal" 
                 prepend-icon="fa-trash"
                 :text="$t('delete')" 
@@ -138,11 +138,13 @@
     <v-divider />
     <v-card-actions>
       <v-btn
-        v-if="atStep2" 
+        v-if="atStep2"
+        density="comfortable" 
         :text="$t('goBack')" 
         @click="returnToStep1"
       />
       <v-btn
+        density="comfortable"
         :text="$t('cancel')" 
         @click="cancelOpmlUpload"
       />
@@ -167,10 +169,16 @@ export default {
       errors: [],
       feedConfigRequests: [],
       // 
-      uploadInTransit: false,
+      uploadIsLoading: false,
     }
   },
   methods: {
+    shouldShowAlert(alertName) {
+      return !localStorage.getItem(alertName); 
+    },
+    dismissAlert(alertName) {
+      localStorage.setItem(alertName, new Date().toISOString())
+    },
     //
     eventHandler(event) {
       this.addFiles(event.target.files)
@@ -216,7 +224,7 @@ export default {
     },
     continueOpmlUpload() {
       console.log("opml-upload-panel: continue upload of OPML files=" + JSON.stringify(this.files));
-      this.uploadInTransit = true;
+      this.uploadIsLoading = true;
       this.errors.splice(0);
       this.$auth.getTokenSilently().then((token) => {
         // form data 
@@ -265,12 +273,12 @@ export default {
             this.errors.push(error.message);
           }
         }).finally(() => {
-          this.uploadInTransit = false;
+          this.uploadIsLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.$emit('authError', error);
-        this.uploadInTransit = false;
+        this.uploadIsLoading = false;
       });
     },
     cancelOpmlUpload() {

@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="mt-10"
+            class="mt-10 mb-10"
             v-bind="props"
             variant="outlined"
           >
@@ -29,9 +29,9 @@
                     <!-- card-text -->
                     <v-card-text class="mt-12 mb-12">
                       <!-- banner (large) -->
-                      <h4 class="text-center mt-4 mb-4">
-                        {{ $t('loginToYourAccount') }}
-                      </h4>
+                      <div class="text-h5 text-center mt-4 mb-4 fancy">
+                        {{ $t("loginToFeedGears") }}
+                      </div>
                       <!-- row -->
                       <v-row
                         align="center"
@@ -43,33 +43,33 @@
                           sm="8"
                         >
                           <!-- username -->
-                          <AuthTextField 
+                          <AuthTextField
                             class="mt-4 mb-4"
-                            :label="$t('username')" 
-                            :placeholder="$t('username')" 
-                            :model-value="username" 
-                            @update:modelValue="username = $event" 
+                            :label="$t('username')"
+                            :placeholder="$t('username')"
+                            :model-value="username"
+                            @update:modelValue="username = $event"
                           />
                           <!-- password -->
                           <AuthTextField
                             type="password"
                             class="mt-4 mb-4"
-                            :label="$t('password')" 
-                            :placeholder="$t('password')" 
-                            :model-value="password" 
+                            :label="$t('password')"
+                            :placeholder="$t('password')"
+                            :model-value="password"
                             @update:modelValue="password = $event"
                           />
                           <div class="d-flex flex-row flex-wrap">
                             <!-- submit button -->
-                            <AuthButton 
+                            <AuthButton
                               class="ma-4"
                               :label="$t('login')"
                               :tooltip="$t('login')"
-                              :in-transit="loginInTransit"
+                              :in-transit="loginIsLoading"
                               @clicked="login"
                             />
                             <!-- google button -->
-                            <GoogleAuthButton 
+                            <GoogleAuthButton
                               class="ma-4"
                               :tooltip="$t('login')"
                             />
@@ -82,14 +82,12 @@
                             :to="'/register'"
                             :message="$t('registerHere')"
                           />
-                          <AuthServerResponse
-                            :server-message="serverMessage"
-                          />
+                          <AuthServerResponse :server-message="serverMessage" />
                           <v-btn
                             variant="text"
                             class="mt-4 mb-4 pa-2"
-                            block 
-                            :text="$t('privacyPolicy')" 
+                            block
+                            :text="$t('privacyPolicy')"
                             @click="showPrivacyPolicy = !showPrivacyPolicy"
                           />
                           <v-dialog
@@ -102,7 +100,7 @@
                             />
                           </v-dialog>
                         </v-col>
-                      </v-row>  
+                      </v-row>
                     </v-card-text>
                   </v-col>
                 </v-row>
@@ -116,13 +114,12 @@
 </template>
 
 <script>
-import AuthTextField from '@/components/auth/AuthTextField.vue';
-import AuthButton from '@/components/auth/AuthButton.vue'
-import GoogleAuthButton from '@/components/prelogin/GoogleAuthButton.vue';
-import AuthPanelLink from '@/components/auth/AuthPanelLink.vue';
-import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
-import PrivacyPolicyPanel from '@/components/privacy-policy-panel/PrivacyPolicyPanel.vue';
-
+import AuthTextField from "@/components/auth/AuthTextField.vue";
+import AuthButton from "@/components/auth/AuthButton.vue";
+import GoogleAuthButton from "@/components/layout/GoogleAuthButton.vue";
+import AuthPanelLink from "@/components/auth/AuthPanelLink.vue";
+import AuthServerResponse from "@/components/auth/AuthServerResponse.vue";
+import PrivacyPolicyPanel from "@/components/privacy-policy-panel/PrivacyPolicyPanel.vue";
 
 export default {
   name: "AuthPanel",
@@ -137,61 +134,69 @@ export default {
   data() {
     return {
       step: null,
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       showPrivacyPolicy: false,
       // server response
       serverMessage: null,
-      // 
-      loginInTransit: false,
-    }
+      //
+      loginIsLoading: false,
+    };
   },
   mounted() {
     if (this.$route.query.error) {
-      this.serverMessage = this.$t('unableToCompleteYourRequest');
+      this.serverMessage = this.$t("unableToCompleteYourRequest");
     }
   },
   methods: {
     login() {
       if (!this.username && !this.password) {
-        this.serverMessage = this.$t('usernameAndPasswordAreRequired');
+        this.serverMessage = this.$t("usernameAndPasswordAreRequired");
         return;
       }
       if (this.username && !this.password) {
-        this.serverMessage = this.$t('usernameIsRequired');
+        this.serverMessage = this.$t("usernameIsRequired");
         return;
       }
       if (!this.username && this.password) {
-        this.serverMessage = this.$t('passwordIsRequired');
+        this.serverMessage = this.$t("passwordIsRequired");
         return;
       }
 
-      this.loginInTransit = true;
+      this.loginIsLoading = true;
       this.$auth
-          .loginWithSupplied(this.username, this.password, false)
-          .then(() => {
-            this.clearData();
-          }).catch((error) => {
-            this.serverMessage = error;
-            if (!this.serverMessage) {
-              this.serverMessage = this.$t('somethingHorribleHappened');
-            }
-          }).finally(() => {
-            this.loginInTransit = false;
-          });
+        .loginWithSupplied(this.username, this.password, false)
+        .then(() => {
+          this.clearData();
+        })
+        .catch((error) => {
+          this.serverMessage = error;
+          if (!this.serverMessage) {
+            this.serverMessage = this.$t("somethingHorribleHappened");
+          }
+        })
+        .finally(() => {
+          this.loginIsLoading = false;
+        });
     },
     //
     //
     //
     clearData() {
-      // reset all fields 
+      // reset all fields
       this.username = null;
       this.password = null;
       this.clearServerResponse();
     },
     clearServerResponse() {
       this.serverMessage = null;
-    }
-  }
-}
+    },
+  },
+};
 </script>
+
+<style scoped>
+.fancy {
+  font-family: "Russo One" !important;
+}
+</style>

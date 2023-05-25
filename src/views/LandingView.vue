@@ -13,9 +13,12 @@
       <template #prepend>
         <v-app-bar-nav-icon icon="fa-rss" />
       </template>
-      <PreLoginNavbarButtons
-        :base-url="baseUrl"
-      />
+      <v-toolbar-items>
+        <!-- display mode switch -->
+        <DisplayModeButton />
+        <!-- login button -->
+        <LoginButton />
+      </v-toolbar-items>
     </v-app-bar>
 
     <v-main>
@@ -28,24 +31,8 @@
       <v-divider /> 
 
       <v-container>
-        <!-- sheet -->
-        <FeaturesPanel
-          
-          class="ma-4"
-        /> 
-
-        <v-divider class="mt-8 mb-8" /> 
-
         <!-- card -->
         <FAQPanel
-          
-          class="ma-4"
-        />
-
-        <v-divider class="mt-8 mb-8" /> 
-
-        <!-- card -->
-        <VideoPanel
           
           class="ma-4"
         />
@@ -59,32 +46,26 @@
 </template>
   
 <script>
-import PreLoginNavbarButtons from '@/components/prelogin/PreLoginNavbarButtons.vue';
-import BannerPanel from '@/components/landing/BannerPanel.vue';
+import LoginButton from '@/components/landing/LoginButton.vue';
 import DemoPanel from '@/components/landing/DemoPanel.vue';
-import FeaturesPanel from '@/components/landing/FeaturesPanel.vue';
 import FAQPanel from '@/components/landing/FAQPanel.vue';
-import VideoPanel from '@/components/landing/VideoPanel.vue';
-import FooterPanel from '@/components/landing/FooterPanel.vue';
+
+import BannerPanel from '@/components/banner-panel/BannerPanel.vue';
+import DisplayModeButton from '@/components/layout/DisplayModeButton.vue';
+import FooterPanel from '@/components/footer-panel/FooterPanel.vue';
 
 export default {
   name: "LandingView",
   components: {
-    PreLoginNavbarButtons,
-    BannerPanel, 
+    LoginButton,
     DemoPanel, 
-    FeaturesPanel, 
     FAQPanel,
-    VideoPanel,
+    BannerPanel, 
+    DisplayModeButton,
     FooterPanel, 
   },
   props: {
     baseUrl: { type: String, required: true },
-  },
-  data() {
-    return {
-      theme: this.$theme.currentTheme,
-    };
   },
   mounted() {
     this.$auth.getTokenSilently()
@@ -96,7 +77,7 @@ export default {
           console.log("landing: not authenticated on mount");
         }
     });
-  },
+  }
 };
 </script>
   

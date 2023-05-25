@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="mt-10"
+            class="mt-10 mb-10"
             v-bind="props"
             variant="outlined"
           >
@@ -67,7 +67,7 @@
                             <AuthButton
                               class="ma-4"
                               :label="$t('submit')"
-                              :in-transit="pwResetInTransit"
+                              :in-transit="pwResetIsLoading"
                               @clicked="submitPwReset()"
                             />
                           </div>
@@ -83,6 +83,7 @@
                             :server-message="serverMessage"
                           />
                           <v-btn
+                            density="comfortable"
                             variant="text"
                             class="mt-4 mb-4 pa-2"
                             block 
@@ -91,8 +92,7 @@
                           />
                           <v-dialog
                             v-model="showPrivacyPolicy"
-                            width="75%"
-                            height="75%"
+                            fullscreen
                             scrollable
                           >
                             <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
@@ -137,7 +137,7 @@ export default {
       // server response
       serverMessage: null,
       // 
-      pwResetInTransit: false,
+      pwResetIsLoading: false,
     }
   },
   methods: {
@@ -151,7 +151,7 @@ export default {
         return;
       }
 
-      this.pwResetInTransit = true;
+      this.pwResetIsLoading = true;
       this.$auth
           .pwResetWithSupplied(this.username, this.email)
           .then(() => {
@@ -162,7 +162,7 @@ export default {
             this.serverMessage = error;
           })
           .finally(() => {
-            this.pwResetInTransit = false;
+            this.pwResetIsLoading = false;
           });
     },
     //

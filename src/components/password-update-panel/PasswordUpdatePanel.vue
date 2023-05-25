@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="mt-10"
+            class="mt-10 mb-10"
             v-bind="props"
             variant="outlined"
           >
@@ -68,7 +68,7 @@
                             <!-- submit button -->
                             <AuthButton
                               :label="$t('submit')"
-                              :in-transit="pwUpdateInTransit"
+                              :in-transit="pwUpdateIsLoading"
                               @clicked="submitPwUpdate()"
                             />
                           </div>
@@ -76,6 +76,7 @@
                             :server-message="serverMessage"
                           />
                           <v-btn
+                            density="comfortable"
                             variant="text"
                             class="mt-4 mb-4 pa-2"
                             block 
@@ -84,8 +85,7 @@
                           />
                           <v-dialog
                             v-model="showPrivacyPolicy"
-                            width="75%"
-                            height="75%"
+                            fullscreen
                             scrollable
                           >
                             <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
@@ -128,7 +128,7 @@ export default {
       // server response/initiating action 
       serverMessage: null,
       // 
-      pwUpdateInTransit: false,
+      pwUpdateIsLoading: false,
     }
   },
   methods: {
@@ -142,7 +142,7 @@ export default {
         return;
       }
 
-      this.pwUpdateInTransit = true;
+      this.pwUpdateIsLoading = true;
       this.$auth
           .pwUpdateWithSupplied(this.newPassword, this.newPasswordConfirmed)
           .then(() => {
@@ -153,7 +153,7 @@ export default {
             this.serverMessage = error;
           })
           .finally(() => {
-            this.pwUpdateInTransit = false;
+            this.pwUpdateIsLoading = false;
           });
     },
     //

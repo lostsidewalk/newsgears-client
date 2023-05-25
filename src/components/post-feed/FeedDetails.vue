@@ -1,7 +1,6 @@
 <template>
   <v-sheet>
     <v-card
-      v-if="rssAtomFeedUrls && rssAtomFeedUrls.length > 0"
       class="ma-4"
     >
       <!-- subscriptions label -->
@@ -10,16 +9,29 @@
       </v-card-title>
       <!-- subscriptions -->
       <v-divider />
+      <v-alert
+        v-if="shouldShowAlert('theseAreYourSubscriptions')"
+        closable
+        variant="outlined"
+        border="top"
+        icon="fa-question-circle"
+        :text="$t('theseAreYourSubscriptions')"
+        class="ma-4"
+        @click.close="dismissAlert('theseAreYourSubscriptions')"
+      />
       <v-list>
         <v-list-item
           v-for="rssAtomFeedUrl of rssAtomFeedUrls"
           :key="rssAtomFeedUrl"
           class="ma-2 pa-2"
-          :title="rssAtomFeedUrl.title ? rssAtomFeedUrl.title : rssAtomFeedUrl.feedUrl"
         >
+          <template #title>
+            <v-label class="ml-2 clickable">
+              {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title : rssAtomFeedUrl.feedUrl }}
+            </v-label>
+          </template>
           <template #subtitle>
-            {{ rssAtomFeedUrl.feedUrl }}
-            <v-divider class="mb-1 mt-1" />
+            <v-divider class="ml-2 mb-1 mt-1" />
           </template>
           <template #prepend>
             <!-- feed logo image -->
@@ -35,6 +47,7 @@
             <!-- RSS logo -->
             <v-img
               v-else 
+              class="ma-2"
               src="rss_logo.svg" 
               :alt="$t('rssLogo')" 
               width="48" 
@@ -42,8 +55,8 @@
               max-height="48"
             /> 
           </template>
-          <v-list-item-action>
-            <!-- TODO: click here should go to subscriptions config -> RSS feed metrics for this sub -->
+          <v-list-item-action class="ml-2">
+            <!-- TODO: (enhancement) click here should go to subscriptions config -> RSS feed metrics for this sub -->
             <v-btn
               size="x-small"
               class="mr-2"
@@ -72,9 +85,20 @@
         {{ $t('publications') }}
       </v-card-title>
       <v-divider />
+      <v-alert
+        v-if="shouldShowAlert('theseAreYourPublications')"
+        closable
+        variant="outlined"
+        border="top"
+        icon="fa-question-circle"
+        :text="$t('theseAreYourPublications')"
+        class="ma-4"
+        @click.close="dismissAlert('theseAreYourPublications')"
+      />
       <v-card-actions>
         <v-btn-group>
           <v-btn
+            density="comfortable"
             label
             :href="jsonPubUrl"
           >
@@ -84,6 +108,7 @@
             /> JSON
           </v-btn>
           <v-btn
+            density="comfortable"
             label
             :href="rssPubUrl"
           >
@@ -93,6 +118,7 @@
             /> RSS
           </v-btn>
           <v-btn
+            density="comfortable"
             label
             :href="atomPubUrl"
           >
@@ -118,12 +144,18 @@ export default {
   },
   emits: ["updatePostFeedFilter"], 
   methods: {
+    shouldShowAlert(alertName) {
+      return !localStorage.getItem(alertName); 
+    },
+    dismissAlert(alertName) {
+      localStorage.setItem(alertName, new Date().toISOString())
+    },
     // shown on hover 
     buildMetricStatusMessage(feedMetrics) {
       if (feedMetrics) {
         let m = this.getMostRecentMetric(feedMetrics);
         // 
-        let metricStatusMessage = this.$t('importerRanAt', { importTimestamp: m.importTimestamp }); // 'Importer ran at ' + m.importTimestamp;
+        let metricStatusMessage = this.$t('importerRanAt', { importTimestamp: this.formatTimestamp(m.importTimestamp) }); // 'Importer ran at ' + m.importTimestamp;
         // add the persist ct to the metric status message 
         if (m.persistCt > 0) {
           metricStatusMessage = metricStatusMessage + '\n' + this.$t('nNewArticlesSaved', { n: m.persistCt }); // m.persistCt + ' new articles saved';;
@@ -165,7 +197,7 @@ export default {
       if (m) {
         return '+' + (m.persistCt > 0 ? m.persistCt : 0);
       }
-      return '';
+      return '-';
     },
     getMostRecentMetric(feedMetrics) {
       if (feedMetrics) {
@@ -174,6 +206,23 @@ export default {
         })[0];
       }
     },
+    formatTimestamp(timestamp) {
+      if (!timestamp) {
+        return null;
+      }
+      try {
+        let d = new Date(Date.parse(timestamp));
+        return d.toLocaleString();
+      } catch (error) {
+        console.debug("Unable to format timestamp due to: " + error);
+      }
+    }
   },
 }
 </script>
+
+<style scoped>
+.clickable:hover {
+  cursor: pointer;
+}
+</style>

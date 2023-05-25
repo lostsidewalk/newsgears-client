@@ -1,17 +1,22 @@
 <template>
   <v-card class="ma-4">
-    <v-card-title class="pa-4">
-      {{ prompt }}
+    <v-card-title class="text-center pa-4">
+      {{ $t('pleaseConfirm') }}
     </v-card-title>
+    <v-card-subtitle>
+      {{ prompt }}
+    </v-card-subtitle>
     <v-divider />
     <v-card-actions>
       <v-btn
+        density="comfortable"
         autofocus 
         accesskey="c" 
         :text="$t('confirm')" 
         @click="confirm"
       />
       <v-btn
+        density="comfortable"
         :text="$t('cancel')" 
         @click.stop="$emit('cancel')"
       />
@@ -20,7 +25,6 @@
 </template>
 
 <script>
-
 export default {
   name: "ConfirmationDialog",
   props: {

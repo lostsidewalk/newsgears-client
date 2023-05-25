@@ -6,8 +6,8 @@
   >
     <v-card-subtitle v-if="isUseableMetadata(mediaGroup.postMediaMetadata)">
       <!-- metadata -->
-      <PostMediaMetadata 
-         
+      <PostMediaMetadata
+        class="ma-2 pa-2"
         :metadata="mediaGroup.postMediaMetadata"
       />
     </v-card-subtitle>
@@ -17,18 +17,14 @@
         :key="mc" 
         :ref="'postMediaContent_' + idx"
         :media-content="mc" 
-        :show-content-on-load="idx === 0"
-         
-        @playing="$emit('playing')" 
-        @audioPlay="$emit('audioPlay', $event)"
       />
     </v-sheet>
   </v-card>
 </template>
 
 <script>
-import PostMediaMetadata from '@/components/post-media/PostMediaMetadata.vue';
-import PostMediaContent from '@/components/post-media/PostMediaContent.vue';
+import PostMediaMetadata from '@/components/post/PostMediaMetadata.vue';
+import PostMediaContent from '@/components/post/PostMediaContent.vue';
 
 export default {
   name: "PostMediaGroup",
@@ -39,7 +35,6 @@ export default {
   props: {
     mediaGroup: { type: Object, required: true },
   },
-  emits: [ "playing" ],
   data() {
     return {
       showContents: true,

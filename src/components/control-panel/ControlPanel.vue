@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar-items class="flex-row-reverse">
+  <v-toolbar-items class="flex-row-reverse flex-wrap">
     <!-- logout button, don't disable -->
     <LogoutButton v-if="$auth.$isAuthenticated" />
     <!-- settings button -->
@@ -15,9 +15,6 @@
     />
     <!-- display mode switch, don't disable -->
     <DisplayModeButton />
-    <ToggleDistractionsButton
-      @toggleDistractions="$emit('toggleDistractions')"
-    />
     <slot name="additional" />
   </v-toolbar-items>
 </template>
@@ -26,7 +23,6 @@
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import LogoutButton from "@/components/control-panel/LogoutButton.vue";
 import SettingsButton from "@/components/control-panel/SettingsButton.vue";
-import ToggleDistractionsButton from "@/components/control-panel/ToggleDistractionsButton.vue";
 import HelpButton from "@/components/control-panel/HelpButton.vue";
 
 export default {
@@ -35,7 +31,6 @@ export default {
     LogoutButton,
     SettingsButton,
     DisplayModeButton,
-    ToggleDistractionsButton,
     HelpButton,
   },
   props: {
@@ -44,10 +39,8 @@ export default {
   },
   emits: [
     "updateServerMessage",
-    "toggleDistractions",
     "showSettings",
     "showHelp",
-    "cancelSettings",
   ],
   data() {
     return {};

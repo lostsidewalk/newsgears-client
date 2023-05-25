@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    size="small"     
+    :size="xs ? 'x-small' : 'small'"      
     accesskey="t"
     :title="$t('settings')" 
     :aria-label="$t('goToSettingsAriaLabel')"
@@ -17,5 +17,10 @@ export default {
     expanded: { type: Boolean, default: false }
   },
   emits: [ "showSettings" ],
+  computed: {
+    xs: function() {
+      return this.$vuetify.display.xs;
+    }
+  },
 }
 </script>

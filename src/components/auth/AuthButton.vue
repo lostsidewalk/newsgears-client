@@ -1,10 +1,10 @@
 <template>
-  <v-btn 
+  <v-btn
     elevation="1"
     variant="tonal"
     class="auth-button"
-    :loading="inTransit"
-    @click="onClick()"
+    :loading="isLoading"
+    @click="$emit('clicked')"
   >
     {{ label }}
     <v-tooltip
@@ -17,7 +17,7 @@
     </v-tooltip>
   </v-btn>
 </template>
-  
+
 <script>
 export default {
   name: "AuthButton",
@@ -25,12 +25,7 @@ export default {
     label: { type: String, required: true },
     subLabel: { type: String, default: null },
     tooltip: { type: String, default: null },
-    inTransit: { type: Boolean, default: false },
-  },
-  methods: {
-    onClick() {
-      this.$emit("clicked");
-    },
+    isLoading: { type: Boolean, default: false },
   },
 };
 </script>

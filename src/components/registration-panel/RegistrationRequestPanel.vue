@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="mt-10"
+            class="mt-10 mb-10"
             v-bind="props"
             variant="outlined"
           >
@@ -72,7 +72,7 @@
                             <AuthButton
                               class="ma-4"
                               :label="$t('submit')"
-                              :in-transit="registrationInTransit"
+                              :in-transit="registrationIsLoading"
                               @clicked="submitRegistration()"
                             />
                           </div>
@@ -96,8 +96,7 @@
                           />
                           <v-dialog
                             v-model="showPrivacyPolicy"
-                            width="75%"
-                            height="75%"
+                            fullscreen
                             scrollable
                           >
                             <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
@@ -143,7 +142,7 @@ export default {
       // server response 
       serverMessage: null,
       // 
-      registrationInTransit: false,
+      registrationIsLoading: false,
     }
   },
   methods: {
@@ -158,7 +157,7 @@ export default {
         return;
       }
 
-      this.registrationInTransit = true;
+      this.registrationIsLoading = true;
       this.$auth
         .registerWithSupplied(this.username, this.email, this.password, this.userType)
         .then((response) => {
@@ -172,14 +171,14 @@ export default {
             this.serverMessage = error;
           })
           .finally(() => {
-            this.registrationInTransit = false;
+            this.registrationIsLoading = false;
           });
         })
         .catch((error) => {
           this.serverMessage = error;
         })
         .finally(() => {
-          this.registrationInTransit = false;
+          this.registrationIsLoading = false;
         });
     },
     //

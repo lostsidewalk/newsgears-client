@@ -5,76 +5,78 @@
     </v-card-title>
     <v-divider />
     <v-card-text>
-      <!-- global -->
+      <!-- shortcut keys -->
       <v-card
         elevation="6"
-        class="mb-4 pa-1"
+        class="mb-4"
       >
         <v-card-title>
           {{ $t('globalShortcutKeys') }}
         </v-card-title>
         <v-divider />
         <v-card-text class="d-flex flex-row flex-wrap">
-          <v-hover
-            v-for="desc in helpModel.fromAnywhere"
-            v-slot="{ isHovering, props }"
-            :key="desc"
-          >
-            <v-card
-              :elevation="isHovering ? 7 : 6"
-              class="ma-4" 
-              max-width="320" 
-              v-bind="props"
-              variant="tonal"
-            >
-              <v-card-title class="pa-4">
-                {{ desc.label }}
-              </v-card-title>
-              <v-divider />
-              <v-card-text>
-                <v-btn
-                  variant="tonal" 
-                  :prepend-icon="desc.icon" 
-                  :text="desc.key"
-                />
-              </v-card-text>
-            </v-card>
-          </v-hover>
-          <v-hover
-            v-for="desc in helpModel.aQueueIsSelected"
-            v-slot="{ isHovering, props }"
-            :key="desc"
-          >
-            <v-card
-              :elevation="isHovering ? 7 : 6"
-              class="ma-4" 
-              max-width="320" 
-              v-bind="props"
-              variant="tonal"
-            >
-              <v-card-title class="pa-4">
-                {{ desc.label }}
-              </v-card-title>
-              <v-divider />
-              <v-card-text>
-                <v-btn
-                  variant="tonal" 
-                  :prepend-icon="desc.icon" 
-                  :text="desc.key"
-                />
-              </v-card-text>
-            </v-card>
-          </v-hover>
+          <v-table class="overflow-auto flex-grow-1">
+            <thead style="text-align: left;white-space: nowrap;">
+              <th class="pa-1">
+                {{ $t('key') }}
+              </th>
+              <th class="pa-1">
+                {{ $t('action') }}
+              </th>
+            </thead>
+            <tbody>
+              <tr
+                v-for="desc in helpModel.fromAnywhere"
+                :key="desc"
+              >
+                <td class="pa-1">
+                  <v-btn
+                    density="comfortable"
+                    variant="tonal" 
+                    :prepend-icon="desc.icon" 
+                    :text="desc.key"
+                  />
+                </td>
+                <td class="pa-1">
+                  {{ desc.label }}
+                </td>
+              </tr>
+              <tr
+                v-for="desc in helpModel.aQueueIsSelected"
+                :key="desc"
+              >
+                <td class="pa-1">
+                  <v-btn
+                    density="comfortable"
+                    variant="tonal" 
+                    :prepend-icon="desc.icon" 
+                    :text="desc.key"
+                  />
+                </td>
+                <td class="pa-1">
+                  {{ desc.label }}
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
         </v-card-text>
       </v-card>
-      <!-- queue selected -->
     </v-card-text>
+    <v-card-actions>
+      <v-btn
+        :size="xs ? 'x-small' : 'small'" 
+        density="comfortable"
+        :text="$t('dismiss')"
+        @click="$emit('dismiss')"
+      />
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
 export default {
   name: "HelpPanel",
+  emits: ["dismiss"],
   data() {
     return {
       helpModel: {
@@ -94,10 +96,6 @@ export default {
           {
             label: this.$t('uploadOPML'),
             key: "ALT + M", // global accel 
-          },
-          {
-            label: this.$t('toggleDistractions'),
-            key: "ALT + Z", // global accel 
           },
           {
             label: this.$t('createNewQueue'),

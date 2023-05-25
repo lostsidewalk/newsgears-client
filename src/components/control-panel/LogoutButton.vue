@@ -1,7 +1,7 @@
 <template>
   <v-btn
     id="logout" 
-    size="small" 
+    :size="xs ? 'x-small' : 'small'"  
     accesskey="o"
     :title="$t('logout')" 
     append-icon="fa-sign-out"
@@ -13,6 +13,11 @@
 <script>
 export default {
   name: "LogoutButton",
+  computed: {
+    xs: function() {
+      return this.$vuetify.display.xs;
+    }
+  },
   methods: {
     logout() {
       this.$auth.logout()
@@ -22,6 +27,6 @@ export default {
         console.log("logout complete");
       });
     }
-  }
+  },
 }
 </script>

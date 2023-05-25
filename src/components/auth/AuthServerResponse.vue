@@ -12,8 +12,8 @@
 <script>
 export default {
   name: "AuthServerResponse",
-  props: { 
-    serverMessage: { type: String, default: '' } 
-  }
-}
+  props: {
+    serverMessage: { type: String, default: "" },
+  },
+};
 </script>

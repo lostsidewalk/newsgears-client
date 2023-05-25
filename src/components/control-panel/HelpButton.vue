@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    size="small" 
+    :size="xs ? 'x-small' : 'small'" 
     accesskey="h"
     :title="$t('help')" 
     :append-icon="expanded ? 'fa-compress' : 'fa-expand'"
@@ -16,5 +16,10 @@ export default {
     expanded: { type: Boolean, default: false }
   },
   emits: [ "showHelp" ],
+  computed: {
+    xs: function() {
+      return this.$vuetify.display.xs;
+    }
+  },
 }
 </script>

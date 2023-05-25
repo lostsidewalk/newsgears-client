@@ -4,172 +4,207 @@
     justify="center"
   >
     <!-- add RSS/ATOM feed from URL -->
-    <v-card>
+    <v-card
+      class="ma-4"
+      elevation="6"
+    >
       <v-card-title class="pa-4">
         {{ $t('addANewSubscription') }}
       </v-card-title>
       <v-divider />
+      <v-alert
+        v-if="shouldShowAlert('addANewSubscriptionHere')"
+        closable
+        variant="outlined"
+        border="top"
+        icon="fa-question-circle"
+        :text="$t('addANewSubscriptionHere')"
+        class="ma-4"
+        @click.close="dismissAlert('addANewSubscriptionHere')"
+      />
       <v-card-text>
         <!-- text field -->
         <v-text-field
           v-model="newRssAtomUrl.feedUrl"
+          variant="solo-filled"
           type="text"
           autofocus
           :label="$t('feedUrl')"
           :placeholder="$t('feedUrl')"
-        />
-        <v-text-field
-          type="text"
-          readonly
-          variant="plain"
+        >
+          <template #append>
+            <v-btn
+              variant="tonal"
+              :size="xs ? 'x-small' : 'small'" 
+              prepend-icon="fa-refresh"
+              :loading="discoveryIsLoading"
+              :disabled="!newRssAtomUrl.feedUrl"
+              :title="$t('discovery')"
+              :text="$t('discovery')"
+              @click="refreshRssAtomUrlInfo(newRssAtomUrl)"
+            />
+          </template>
+        </v-text-field>
+        <v-alert
+          type="info"
+          closable
+          :variant="newRssAtomUrl.feedUrl ? 'tonal' : 'outlined'"
+          class="mb-4"
         >
           {{ $t("credentialsUseMessage") }}
-        </v-text-field>
+        </v-alert>
         <!-- username text field -->
         <v-text-field
           v-model="newRssAtomUrl.username"
+          variant="solo-filled"
           type="text"
           :label="$t('username')"
           :placeholder="$t('username')"
+          :disabled="!newRssAtomUrl.feedUrl"
         />
         <!-- password text field -->
         <v-text-field
           v-model="newRssAtomUrl.password"
+          variant="solo-filled"
           type="password"
           :label="$t('password')"
           :placeholder="$t('password')"
+          :disabled="!newRssAtomUrl.feedUrl"
         />
         <RssAtomFeedInfo
-          v-if="newRssAtomUrl.discoveryUrl || newRssAtomUrl.error"
+          v-if="newRssAtomUrl.discoveryUrl && !newRssAtomUrl.error"
+          elevation="6"
           :info="newRssAtomUrl"
-          
-          :filter-support="false"
           @followRecommendation="followRecommendation"
         >
           <template #additional>
             <v-btn
-              size="small"
+              :size="xs ? 'x-small' : 'small'" 
               prepend-icon="fa-plus"
-              :loading="addNewInTransit"
+              :loading="addNewIsLoading"
               :title="$t('subscribe')"
               :text="$t('subscribe')"
               @click="addNewRssAtomUrl"
             />
           </template>
         </RssAtomFeedInfo>
+        <v-alert
+          v-if="newRssAtomUrl.error"
+          type="error"
+        >
+          {{ newRssAtomUrl.error }}
+        </v-alert>
       </v-card-text>
-      <v-divider />
-      <!-- buttons (discovery, auth, subscribe) -->
-      <v-card-actions>
-        <v-btn
-          size="small"
-          prepend-icon="fa-refresh"
-          :loading="discoveryInTransit"
-          :disabled="!newRssAtomUrl.feedUrl"
-          :title="$t('discovery')"
-          :text="$t('discovery')"
-          @click="refreshRssAtomUrlInfo(newRssAtomUrl)"
-        />
-      </v-card-actions>
     </v-card>
-    <!-- -->
+    <!-- divider -->
+    <v-divider class="mt-2 mb-2" />
     <!-- manage existing RSS/ATOM feed subscriptions -->
-    <!-- -->
-    <v-card v-if="rssAtomFeedUrls && rssAtomFeedUrls.length > 0">
+    <v-card
+      v-if="rssAtomFeedUrls && rssAtomFeedUrls.length > 0"
+      class="ma-4"
+      elevation="6"
+    >
       <v-card-title class="pa-4">
         {{ $t('yourSubscriptions') }}
       </v-card-title>
       <v-divider />
-      <v-card-text>
+      <v-alert
+        v-if="shouldShowAlert('manageYourSubscriptionsHere')"
+        closable
+        variant="outlined"
+        border="top"
+        icon="fa-question-circle"
+        :text="$t('manageYourSubscriptionsHere')"
+        class="ma-4"
+        @click.close="dismissAlert('manageYourSubscriptionsHere')"
+      />
+      <v-card-text
+        v-for="(rssAtomUrl, idx) in rssAtomFeedUrls"
+        :key="idx" 
+      >
         <RssAtomFeedInfo
-          v-for="(rssAtomUrl, idx) in getCurrentPage(rssAtomFeedUrls)"
-          :key="idx" 
-          class="mb-4"
           elevation="6"
           :info="rssAtomUrl"
-          
           :filter-support="false"
           @refreshFeed="refreshRssAtomUrlInfo(rssAtomUrl)" 
           @followRecommendation="followRecommendation"
         >
           <template #additional>
             <v-btn
-              size="small" 
+              :size="xs ? 'x-small' : 'small'"  
               prepend-icon="fa-expand"
               :title="$t('auth')"
               :text="$t('auth')"
-              @click="rssAtomUrl.showDetails = !rssAtomUrl.showDetails"
+              @click="configAuth(rssAtomUrl)"
             />
             <v-btn
-              size="small"
+              :size="xs ? 'x-small' : 'small'" 
               prepend-icon="fa-trash"
-              :loading="deleteInTransit"
+              :loading="deleteIsLoading"
               :title="$t('unsubscribe')"
               :text="$t('unsubscribe')"
               @click="deleteRssAtomUrl(rssAtomUrl.id)"
             />
           </template>
         </RssAtomFeedInfo>
-        <!-- TODO: make this a modal dialogs -->
-        <!-- <v-label v-if="rssAtomUrl.showDetails">{{ this.$t("credentialsUseMessage") }}</v-label> -->
-        <!-- <div v-if="rssAtomUrl.showDetails">
-            <v-label>{{ this.$t('username') }}</v-label>
-            <v-text-field type="text" v-model="rssAtomUrl.username"
-              :placeholder="this.$t('username')" style="margin-bottom: 0.75rem" />
-            <v-label>{{ this.$t('password') }}</v-label>
-            <v-text-field type="password" v-model="rssAtomUrl.password"
-              :placeholder="this.$t('password')" />
-            <div>
-              <v-btn class="rss-atom-url-row-button accessible-button"
-                density="comfortable"
-                variant="tonal"
-                @click="this.updateRssAtomUrlAuth(rssAtomUrl)"
-                prepend-icon="fa-save"
-                :loading=updateAuthInTransit" 
-                text="Update auth" />
-            </div>
-          </div> -->
       </v-card-text>
     </v-card>
+    <!-- auto config dialog (existing subscriptions) -->
+    <v-dialog
+      v-model="showAuthConfig"
+      fullscreen
+      scrollable
+    >
+      <v-card>
+        <v-card-title class="pa-4">
+          {{ $t('updateAuth') }}
+        </v-card-title>
+        <v-divider />
+        <v-card-text>
+          <v-alert
+            type="info"
+            :closable="false"
+            variant="outlined"
+            class="mb-4"
+          >
+            {{ $t("credentialsUseMessage") }}
+          </v-alert>
+          <v-text-field
+            v-model="rssAtomUrlToUpdate.username"
+            variant="solo-filled"
+            type="text"
+            :label="$t('username')"
+            :placeholder="$t('username')"
+          />
+          <v-text-field
+            v-model="rssAtomUrlToUpdate.password"
+            variant="solo-filled"
+            type="password"
+            :label="$t('password')"
+            :placeholder="$t('password')"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            density="comfortable"
+            prepend-icon="fa-save"
+            :loading="updateAuthIsLoading"
+            :text="$t('update')" 
+            @click="updateRssAtomUrlAuth(rssAtomUrlToUpdate)"
+          />
+          <v-btn
+            density="comfortable"
+            :text="$t('cancel')"
+            @click="showAuthConfig = false"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-sheet>
-
-  <!-- TODO: replace pagination -->
-
-  <!-- all subscriptions pagination -->
-  <!-- <div class="subscription-filter-buttons" v-if="needsPagination()">
-    <v-btn :title="this.$t('first')" 
-      :aria-label="this.$t('first')"
-      class="subscription-filter-button accessible-button" 
-      density="compact"
-      variant="tonal"
-      @click="firstPage"
-      icon="fa-angle-double-left" />
-    <v-btn :title="this.$t('previous')" 
-      :aria-label="this.$t('previous')" 
-      class="subscription-filter-button accessible-button" 
-      density="compact"
-      variant="tonal"
-      @click="previousPage"
-      icon="fa-angle-left" />
-    <v-btn :title="this.$t('next')" 
-      :aria-label="this.$t('next')" 
-      class="subscription-filter-button accessible-button" 
-      density="compact"
-      variant="tonal"
-      @click="nextPage"
-      icon="fa-angle-right" />
-    <v-btn :title="this.$t('last')" 
-      :aria-label="this.$t('last')" 
-      class="subscription-filter-button accessible-button" 
-      density="compact"
-      variant="tonal"
-      @click="lastPage"
-      icon="fa-angle-double-right" />
-  </div> -->
 </template>
 
 <script>
-import RssAtomFeedInfo from './RssAtomFeedInfo.vue';
+import RssAtomFeedInfo from '@/components/feed-config-panel/RssAtomFeedInfo.vue';
 
 export default {
   name: "SubscriptionsConfig",
@@ -178,7 +213,7 @@ export default {
   },
   props: {
     rssAtomFeedUrls: { type: Array, required: true },
-    feedId: { type: Number, required: true },
+    feedId: { type: Number, required: false, default: null },
     baseUrl: { type: String, required: true },
   },
   emits: [
@@ -189,31 +224,33 @@ export default {
   ],
   data() {
     return {
-      itemsPerPage: 10,
-      currentPage: 0,
-      itemCount: 0,
       mode: "ADD_FROM_URL",
       //
       newFeedDiscoveryError: null,
       newRssAtomUrl: {},
+      // 
+      rssAtomUrlToUpdate: null,
+      showAuthConfig: false,
+      // 
       //
-      addNewInTransit: false,
-      deleteInTransit: false,
-      updateAuthInTransit: false,
-      discoveryInTransit: false,
+      addNewIsLoading: false,
+      deleteIsLoading: false,
+      updateAuthIsLoading: false,
+      discoveryIsLoading: false,
     }
   },
   computed: {
-    totalPages: function() {
-      if (this.rssAtomFeedUrls) {
-        let t = Math.ceil(this.rssAtomFeedUrls.length / this.itemsPerPage);
-        return t;
-      }
-      
-      return 0;
-    },
+    xs: function() {
+      return this.$vuetify.display.xs;
+    }
   },
   methods: {
+    shouldShowAlert(alertName) {
+      return !localStorage.getItem(alertName); 
+    },
+    dismissAlert(alertName) {
+      localStorage.setItem(alertName, new Date().toISOString())
+    },
     // 
     // server error 
     // 
@@ -235,46 +272,10 @@ export default {
       }
     },
     // 
-    // pagination 
+    // invoked by the 'subscribe' button on 'add a new subscription'
     // 
-    needsPagination() {
-      return this.itemCount > this.itemsPerPage;
-    },
-    getCurrentPage(items) {
-      if (!items) {
-        return [];
-      }
-      if (items.length !== this.itemCount) {
-        this.itemCount = items.length; 
-        this.currentPage = 0;
-      }
-      let startIdx = this.currentPage * 10;
-      let endIdx = startIdx + 10;
-      return items.slice(startIdx, endIdx);
-    },
-    firstPage() {
-      this.currentPage = 0;
-    },
-    nextPage() {
-      let n = this.currentPage + 1;
-      if (n === this.totalPages) {
-        n -= 1;
-      }
-      this.currentPage = n;
-    },
-    previousPage() {
-      let p = this.currentPage - 1;
-      if (p < 0) {
-        p = 0;
-      }
-      this.currentPage = p;
-    },
-    lastPage() {
-      this.currentPage = this.totalPages - 1;
-    },
-    // make POST call to feed controller/query definitions endpoint 
     addNewRssAtomUrl() {
-      this.addNewInTransit = true;
+      this.addNewIsLoading = true;
       console.log("subscription-config: pushing new subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -310,17 +311,19 @@ export default {
         }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
-          this.addNewInTransit = false;
+          this.addNewIsLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
-        this.addNewInTransit = false;
+        this.addNewIsLoading = false;
       });
     },
-    // make DELETE call to feed controller/query definitions endpoint 
+    // 
+    // invoked by the 'unsubsribe' button on existing subscriptions 
+    // 
     deleteRssAtomUrl(id) {
-      this.deleteInTransit = true;
+      this.deleteIsLoading = true;
       console.log("subscription-config: deleteing subscription..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -350,15 +353,21 @@ export default {
         }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
-          this.deleteInTransit = false;
+          this.deleteIsLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
-        this.deleteInTransit = false;
+        this.deleteIsLoading = false;
       });
     },
-    // make PUT call to feed controller/query definitions endpoint 
+    // 
+    // invoked by the 'auth' button on existing subscriptions 
+    // 
+    configAuth(rssAtomUrl) {
+      this.rssAtomUrlToUpdate = rssAtomUrl;
+      this.showAuthConfig = true;
+    },
     updateRssAtomUrlAuth(rssAtomUrl) {
       try {
         this.validateRssAtomUrl(rssAtomUrl);
@@ -366,7 +375,7 @@ export default {
         console.error(error);
         return;
       }
-      this.updateAuthInTransit = true;
+      this.updateAuthIsLoading = true;
       console.log("subscription-config: pushing updated subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -401,12 +410,12 @@ export default {
         }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
-          this.updateAuthInTransit = false;
+          this.updateAuthIsLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error); 
-        this.updateAuthInTransit = false;
+        this.updateAuthIsLoading = false;
       });
     },
     // 
@@ -418,8 +427,9 @@ export default {
       }
     },
     doDiscovery(r) {
-      if (r.feedUrl && r.feedUrl !== r.discoveryUrl) {
-        this.discoveryInTransit = true;
+      if (r.feedUrl) {
+        r.error = null;
+        this.discoveryIsLoading = true;
         this.$auth.getTokenSilently().then((token) => {
           const controller = new AbortController();
           const requestOptions = {
@@ -499,17 +509,14 @@ export default {
             }
           })
           .finally(() => {
-            this.discoveryInTransit = false;
+            this.discoveryIsLoading = false;
             clearTimeout(timeoutId);
           });
         }).catch((error) => {
           this.handleServerError(error);
-          this.discoveryInTransit = false;
+          this.discoveryIsLoading = false;
         });
       }
-    },
-    len(str) {
-      return (str !== null && str !== undefined) ? str.length : 0;
     },
     // 
     // recommendation 

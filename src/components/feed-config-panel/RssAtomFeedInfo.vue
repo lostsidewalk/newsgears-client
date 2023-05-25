@@ -1,188 +1,252 @@
 <template>
-  <v-card @click="this.showSubscriptionDetails = !this.showSubscriptionDetails">
+  <v-card>
     <!-- title -->
-    <v-card-title>
-      {{ this.info.title ? this.info.title : this.info.feedUrl }}
+    <v-card-title
+      class="clickable"
+      @click="showSubscriptionDetails = !showSubscriptionDetails"
+    >
+      {{ info.title ? info.title : info.feedUrl }}
     </v-card-title>
     <v-divider />
     <!-- icon -->
-    <v-card-subtitle v-if="this.showSubscriptionDetails">
-      <v-img class="mt-2 rounded h-auto"
-        v-if="this.info.icon" 
-        :src="this.info.icon.url" 
-        :title="this.info.icon.title" 
-        :alt="this.$t('feedLogoImage')" 
+    <v-card-subtitle v-if="showSubscriptionDetails">
+      <v-img
+        v-if="info.icon"
+        class="mt-4 rounded h-auto" 
+        :src="info.icon.url" 
+        :title="info.icon.title" 
+        :alt="$t('feedLogoImage')" 
         width="128" 
         max-width="128"
-        max-height="128" />
-      <v-img class="mt-2 rounded h-auto"
-        v-if="this.info.image && !this.info.icon" 
-        :src="this.info.image.url" 
-        :title="this.info.image.title" 
-        :alt="this.$t('feedLogoImage')" 
+        max-height="128"
+      />
+      <v-img
+        v-if="info.image && !info.icon"
+        class="mt-4 rounded h-auto" 
+        :src="info.image.url" 
+        :title="info.image.title" 
+        :alt="$t('feedLogoImage')" 
         width="128" 
         max-width="128"
-        max-height="128" />
+        max-height="128"
+      />
     </v-card-subtitle>
     <!-- description -->
-    <v-card-text v-if="this.info.description && this.showSubscriptionDetails">
-      {{ this.info.description ? this.info.description.value : '' }}
-    </v-card-text>
-    <!-- error -->
-    <v-divider v-if="this.info.error" />
-    <v-card-text v-if="this.info.error" class="ma-1 error">
-      {{ this.info.error }}
+    <v-card-text v-if="info.description && showSubscriptionDetails">
+      {{ info.description ? info.description.value : '' }}
     </v-card-text>
     <!-- chips -->
-    <v-card-text v-show="this.showSubscriptionDetails">
-      <v-divider v-if="this.hasChips" />
-      <v-chip-group v-if="this.hasChips">
+    <v-card-text v-show="showSubscriptionDetails">
+      <v-chip-group v-if="hasChips">
         <!-- author -->
-        <v-chip v-if="this.info.author" class="ma-1" elevation="2" variant="text">
-          {{ this.$t('authorColon') }} {{ this.info.author }}
+        <v-chip
+          v-if="info.author"
+          class="ma-1"
+          label
+          :ripple="false"
+          variant="text"
+        >
+          {{ $t('authorColon') }} {{ info.author }}
         </v-chip>
         <!-- copyright -->
-        <v-chip v-if="this.info.copyright" class="ma-1" elevation="2" variant="text">
-          {{ this.info.copyright }}
+        <v-chip
+          v-if="info.copyright"
+          class="ma-1"
+          label
+          :ripple="false"
+          variant="text"
+        >
+          {{ info.copyright }}
         </v-chip>
         <!-- published date -->
-        <v-chip v-if="this.info.publishedDate" class="ma-1" elevation="2" variant="text">
-          {{ this.$t('lastPublishedColon') }} {{ this.info.publishedDate }}
+        <v-chip
+          v-if="info.publishedDate"
+          class="ma-1"
+          label
+          :ripple="false"
+          variant="text"
+        >
+          {{ $t('lastPublishedColon') }} {{ formatTimestamp(info.publishedDate) }}
         </v-chip>
-        <v-chip v-for="category of this.info.categories" :key="category"
-          elevation="2" variant="text"
-          :title="filterSupport ? this.$t('toggleCategoryFilter') : category"
-          @click.stop="updateFeedFilter('category', category)"
-          :disabled="!filterSupport">
+        <v-chip
+          v-for="category of info.categories"
+          :key="category"
+          variant="text"
+          label
+          :ripple="false"
+          :title="category"
+        >
           {{ category }}
         </v-chip>
         <!-- docs -->
-        <v-chip v-if="this.info.docs" 
-          elevation="2" variant="text"
-          :title="filterSupport ? this.$t('toggleDocStringFilter') : this.info.docs"
-          @click.stop="updateFeedFilter('docs', this.info.docs)"
-          :disabled="!filterSupport">
-          {{ this.info.docs }}
+        <v-chip
+          v-if="info.docs" 
+          variant="text"
+          label
+          :ripple="false"
+          :title="info.docs"
+        >
+          {{ info.docs }}
         </v-chip>
         <!-- encoding -->
-        <v-chip v-if="this.info.encoding" 
-          elevation="2" variant="text"
-          :title="filterSupport ? this.$t('toggleEncodingFilter') : this.info.encoding"
-          @click.stop="updateFeedFilter('encoding', this.info.encoding)"
-          :disabled="!filterSupport">
-          {{ this.info.encoding }}
+        <v-chip
+          v-if="info.encoding" 
+          variant="text"
+          label
+          :ripple="false"
+          :title="info.encoding"
+        >
+          {{ info.encoding }}
         </v-chip>
         <!-- managing editor -->
-        <v-chip v-if="this.info.managingEditor" 
-          elevation="2" variant="text"
-          :title="filterSupport ? this.$t('toggleManagingEditorFilter') : this.info.managingEditor"
-          @click.stop="updateFeedFilter('managingEditor', this.info.managingEditor)"
-          :disabled="!filterSupport">
-          {{ this.$t('managingEditorColon') }} {{ this.info.managingEditor }}
+        <v-chip
+          v-if="info.managingEditor" 
+          variant="text"
+          label
+          :ripple="false"
+          :title="info.managingEditor"
+        >
+          {{ $t('managingEditorColon') }} {{ info.managingEditor }}
         </v-chip>
         <!-- web master -->
-        <v-chip v-if="this.info.webMaster" 
-          elevation="2" variant="text"
-          :title="filterSupport ? this.$t('toggleWebmasterFilter') : this.info.webMaster"
-          @click.stop="updateFeedFilter('webMaster', this.info.webMaster)"
-          :disabled="!filterSupport">
-          {{ this.$t('webmasterColon') }} {{ this.info.webMaster }}
+        <v-chip
+          v-if="info.webMaster" 
+          variant="text"
+          label
+          :ripple="false"
+          :title="info.webMaster"
+        >
+          {{ $t('webmasterColon') }} {{ info.webMaster }}
         </v-chip>
         <!-- HTTP status -->
-        <v-chip v-if="this.httpStatusCode" class="ma-1" 
-          variant="text">
-          {{ this.$t('httpStatus', { 
-            httpStatusCode: this.httpStatusCode, 
-            httpStatusMessage: this.httpStatusMessage 
+        <v-chip
+          v-if="httpStatusCode"
+          class="ma-1" 
+          variant="text"
+          label
+          :ripple="false"
+        >
+          {{ $t('httpStatus', { 
+            httpStatusCode: httpStatusCode, 
+            httpStatusMessage: httpStatusMessage 
           }) }}
         </v-chip>
         <!-- HTTP redirect status -->
-        <v-chip v-if="this.info.redirectHttpStatusCode" class="ma-1" 
-          elevation="2" variant="text">
-          {{ this.$t('redirectedTo', { 
-              redirectFeedUrl: this.info.redirectFeedUrl, 
-              redirectHttpStatusCode: this.info.redirectHttpStatusCode, 
-              redirectHttpStatusMessage: this.info.redirectHttpStatusMessage
-            }) }}
+        <v-chip
+          v-if="info.redirectHttpStatusCode"
+          class="ma-1" 
+          variant="text"
+          label
+          :ripple="false"
+        >
+          {{ $t('redirectedTo', { 
+            redirectFeedUrl: info.redirectFeedUrl, 
+            redirectHttpStatusCode: info.redirectHttpStatusCode, 
+            redirectHttpStatusMessage: info.redirectHttpStatusMessage
+          }) }}
         </v-chip>
         <!-- URL is upgradable -->
-        <v-chip v-if="this.info.isUrlUpgradable === true" class="ma-1" 
-          elevation="2" variant="text">
-          {{ this.$t('feedAlsoAvailableInHttps') }}
+        <v-chip
+          v-if="info.isUrlUpgradable === true"
+          class="ma-1" 
+          variant="text"
+          label
+          :ripple="false"
+        >
+          {{ $t('feedAlsoAvailableInHttps') }}
         </v-chip>
       </v-chip-group>
     </v-card-text>
     <v-divider />
     <v-card-actions class="flex-wrap">
-      <v-btn @click.stop="this.cardMode = (this.cardMode === 'QUERY_METRICS' ? null : 'QUERY_METRICS')"
-        size="small"
-        :append-icon="this.cardMode === 'QUERY_METRICS' ? 'fa-compress' : 'fa-expand'"
-        :title="this.$t('queryMetrics')"
-        :text="this.$t('queryMetrics')" 
-        :disabled="!this.info.feedMetrics"/>
-      <v-btn v-if="this.recommendedFeeds" @click.stop="this.cardMode = (this.cardMode === 'RECOMMENDED_FEEDS' ? null : 'RECOMENDED_FEEDS')"
-        size="small"
-        :append-icon="this.cardMode === 'RECOMMENDED_FEEDS' ? 'fa-compress' : 'fa-expand'"
-        :title="this.$t('recommendedFeeds')"
-        :text="this.$t('recommendedFeeds')" 
-        :disabled="!this.info.feedRecommendationInfo"/>
+      <v-btn
+        :size="xs ? 'x-small' : 'small'" 
+        :append-icon="cardMode === 'QUERY_METRICS' ? 'fa-compress' : 'fa-expand'"
+        :title="$t('queryMetrics')"
+        :text="$t('queryMetrics')"
+        :disabled="!info.feedMetrics" 
+        @click.stop="showQueryMetrics = true"
+      />
+      <v-dialog
+        v-model="showQueryMetrics"
+        fullscreen
+        scrollable
+      >
+        <v-card>
+          <v-card-title class="pa-4 text-center">
+            {{ $t('queryMetrics') }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ info.title ? info.title : info.url }}
+          </v-card-subtitle>
+          <v-card-text>
+            <v-table
+              class="ma-4 overflow-auto flex-grow-1" 
+              style="white-space: nowrap;"
+              fixed-header
+            >
+              <thead style="text-align: left;white-space: nowrap;">
+                <th class="pa-1">
+                  {{ $t('timestamp') }}
+                </th>
+                <th class="pa-1">
+                  {{ $t('message') }}
+                </th>
+                <th class="pa-1">
+                  {{ $t('httpStatusLabel') }}
+                </th>
+                <th class="pa-1">
+                  {{ $t('httpRedirect') }}
+                </th>
+                <th class="pa-1">
+                  {{ $t('error') }}
+                </th>
+              </thead>
+              <tbody style="text-align: left;white-space: nowrap;">
+                <tr
+                  v-for="queryMetric in usefulFeedMetrics"
+                  :key="queryMetric"
+                >
+                  <td class="pa-1">
+                    {{ formatTimestamp(queryMetric.importTimestamp) }}
+                  </td>
+                  <td class="pa-1">
+                    {{ $t('importedNArticles', { n: queryMetric.persistCt }) }}
+                  </td>
+                  <!-- HTTP status -->
+                  <td class="pa-1">
+                    {{ $t('httpStatus', { 
+                      httpStatusCode: queryMetric.httpStatusCode, 
+                      httpStatusMessage: queryMetric.httpStatusMessage 
+                    }) }}
+                  </td>
+                  <!-- HTTP redirect status -->
+                  <td class="pa-1">
+                    {{ queryMetric.redirectFeedUrl ? 
+                      $t('redirectedTo', { 
+                        redirectFeedUrl: queryMetric.redirectFeedUrl, 
+                        redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
+                        redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
+                      }) : $t('NONE') }}
+                  </td>
+                  <!-- error -->
+                  <td
+                    class="pa-1"
+                    :class="{ 'error': queryMetric.queryExceptionTypeMessage }"
+                  >
+                    {{ queryMetric.queryExceptionTypeMessage ? 
+                      queryMetric.queryExceptionTypeMessage : $t('NONE') }}
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
       <slot name="additional" />
     </v-card-actions>
-    <!-- similar feeeds -->
-    <v-expand-transition>
-      <div v-if="this.cardMode === 'RECOMMENDED_FEEDS'">
-        <div class="ma-1" v-for="recommendedFeed in this.recommendedFeeds" :key="recommendedFeed">
-          <v-btn @click.stop="this.$emit('followRecommendation', recommendedFeed)"
-            :text="recommendedFeed" />
-        </div>
-      </div>
-    </v-expand-transition>
     <!-- RSS feed metrics -->
-    <v-expand-transition>
-      <v-table v-if="this.cardMode === 'QUERY_METRICS'" 
-        class="ma-4 overflow-auto" 
-        style="white-space: norwap;"
-        fixed-header>
-        <thead style="text-align: left;white-space: nowrap;">
-          <th class="pa-1">{{ this.$t('timestamp') }}</th>
-          <th class="pa-1">{{ this.$t('message') }}</th>
-          <th class="pa-1">{{ this.$t('httpStatusLabel') }}</th>
-          <th class="pa-1">{{ this.$t('httpRedirect') }}</th>
-          <th class="pa-1">{{ this.$t('error')}}</th>
-        </thead>
-        <tbody style="text-align: left;white-space: nowrap;">
-          <tr v-for="queryMetric in this.usefulFeedMetrics" :key="queryMetric">
-            <td class="pa-1">
-              {{ queryMetric.importTimestamp }}
-            </td>
-            <td class="pa-1">
-              {{ this.$t('importedNArticles', { n: queryMetric.persistCt }) }}
-            </td>
-            <!-- HTTP status -->
-            <td class="pa-1">
-              {{ this.$t('httpStatus', { 
-                httpStatusCode: queryMetric.httpStatusCode, 
-                httpStatusMessage: queryMetric.httpStatusMessage 
-              }) }}
-            </td>
-            <!-- HTTP redirect status -->
-            <td class="pa-1">
-              {{ queryMetric.redirectFeedUrl ? 
-              this.$t('redirectedTo', { 
-                  redirectFeedUrl: queryMetric.redirectFeedUrl, 
-                  redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
-                  redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
-                }) : this.$t('NONE') }}
-            </td>
-            <!-- error -->
-            <td  class="pa-1" :class="{ 'error': queryMetric.queryExceptionTypeMessage }">
-              {{ queryMetric.queryExceptionTypeMessage ? 
-                queryMetric.queryExceptionTypeMessage : this.$t('NONE') }}
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-    </v-expand-transition>
+    <v-expand-transition />
     <!-- auth -->
   </v-card>
 </template>
@@ -190,7 +254,17 @@
 <script>
 export default {
   name: "RssAtomFeedInfo",
-  props: [ "filterSupport", "info", "theme" ],
+  props: {
+    info: { type: Object, required: true }
+  },
+  emits: [ "followRecommendation" ],
+  data() {
+    return {
+      showSubscriptionDetails: true,
+      showQueryMetrics: false,
+      cardMode: null,
+    }
+  },
   computed: {
     httpStatusCode: function() {
       let s = this.info.httpStatusCode;
@@ -216,9 +290,6 @@ export default {
       }
       return null;
     },
-    recommendedFeeds: function() {
-      return this.info.feedRecommendationInfo ? this.info.feedRecommendationInfo.recommendedUrls : null;
-    },
     usefulFeedMetrics: function() {
       return this.info.feedMetrics ? this.info.feedMetrics.filter(f => f.persistCt > 0) : null;
     },
@@ -234,9 +305,11 @@ export default {
         this.httpStatusCode || 
         this.info.redirectHttpStatusCode || 
         this.info.isUrlUpgradable === true;
+    },
+    xs: function() {
+      return this.$vuetify.display.xs;
     }
   },
-  emits: [ "updateFilter", "followRecommendation" ],
   methods: {
     isHtmlContent(contentObj) {
       return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;
@@ -249,18 +322,25 @@ export default {
           return thumbnails && thumbnails.length > 0;
         }
       }
-
       return false;
     },
-    updateFeedFilter(filterName, filterValue) {
-      this.$emit("updateFilter", { name: filterName, value: filterValue });
-    },
-  },
-  data() {
-    return {
-      showSubscriptionDetails: true,
-      cardMode: null,
+    formatTimestamp(timestamp) {
+      if (!timestamp) {
+        return null;
+      }
+      try {
+        let d = new Date(Date.parse(timestamp));
+        return d.toLocaleString();
+      } catch (error) {
+        console.debug("Unable to format timestamp due to: " + error);
+      }
     }
   }
 }
 </script>
+
+<style scoped>
+.clickable:hover {
+  cursor: pointer;
+}
+</style>

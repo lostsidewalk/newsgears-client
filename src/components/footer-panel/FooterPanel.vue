@@ -2,8 +2,7 @@
   <v-footer elevation="6">
     <v-dialog
       v-model="showPrivacyPolicy"
-      width="75%"
-      height="75%"
+      fullscreen
       scrollable
     >
       <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
@@ -13,65 +12,64 @@
       no-gutters
       cols="9"
     >
-      <!-- TODO: (refactor) extract component -->
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text"
         prepend-icon="fa-code-fork"
         :text="$t('devBlog')" 
         @click.prevent="devBlog"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text"
         prepend-icon="fa-question-circle"
         :text="$t('docs')"
         @click.prevent="$router.push('/docs');"
       />
       <v-btn
-        size="small" 
+        :size="xs ? 'x-small' : 'small'"  
         variant="text" 
         prepend-icon="fa-file-text" 
         :text="$t('privacyPolicy')"
         @click="showPrivacyPolicy = !showPrivacyPolicy"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text" 
         prepend-icon="fa-plug"
         :text="$t('api')"
         @click.prevent="$router.push('/api');"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text" 
         prepend-icon="fa-envelope"
         :text="$t('email')"
         @click.prevent="sendSupportMail"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text" 
         prepend-icon="fa-twitter"
         :text="$t('twitter')"
         @click.prevent="twitter"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text" 
         prepend-icon="fa-github"
         :text="$t('github')" 
         @click.prevent="github"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text" 
         prepend-icon="fa-twitch"
         :text="$t('twitch')" 
         @click.prevent="twitch"
       />
       <v-btn
-        size="small"
+        :size="xs ? 'x-small' : 'small'" 
         variant="text" 
         prepend-icon="fa-comments-o"
         :text="$t('discord')" 
@@ -81,13 +79,15 @@
         cols="9"
         class="text-center mt-4"
       >
-        <div>
+        <div class="copyright">
           {{ $t('copyright') }} <v-icon icon="fa-copyright" /> 2023 <a
             href="https://www.lostsidewalk.com"
             target="_blank"
           >LOST SIDEWALK SOFTWARE LLC</a>
         </div>
-        <div>2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County</div>
+        <div class="copyright">
+          2501 Chatham Rd STE R | Springfield, IL 62704 | Sangamon County
+        </div>
       </v-col>
     </v-row>
   </v-footer>
@@ -104,6 +104,11 @@ export default {
   data() {
     return {
       showPrivacyPolicy: false,
+    }
+  },
+  computed: {
+    xs: function() {
+      return this.$vuetify.display.xs;
     }
   },
   methods: {
@@ -128,3 +133,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.copyright {
+  font-size: small;
+}
+</style>

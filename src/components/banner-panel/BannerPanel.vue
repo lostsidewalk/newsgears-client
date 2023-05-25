@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import SignUpButton from '@/components/prelogin/SignUpButton.vue';
-import GoogleAuthButton from '@/components/prelogin/GoogleAuthButton.vue';
+import SignUpButton from '@/components/layout/SignUpButton.vue';
+import GoogleAuthButton from '@/components/layout/GoogleAuthButton.vue';
 
 export default {
   name: "BannerPanel",

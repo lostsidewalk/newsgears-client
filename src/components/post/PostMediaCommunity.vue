@@ -1,5 +1,8 @@
 <template>
-  <v-card variant="tonal">
+  <v-card
+    color="transparent"
+    elevation="0"
+  >
     <v-card-title v-if="community.postMediaStarRating.average">
       <v-icon
         v-for="i in starCount"

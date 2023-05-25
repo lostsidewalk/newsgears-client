@@ -2,6 +2,7 @@
   <v-text-field
     outlined
     dense
+    variant="solo-filled"
     autocomplete="false"
     :label="label"
     :placeholder="placeholder"
@@ -12,16 +13,15 @@
 </template>
 
 <script>
-
 export default {
   name: "AuthTextField",
-  components: { },
+  components: {},
   props: {
     label: { type: String, required: true },
     type: { type: String, default: null },
     placeholder: { type: String, default: null },
     modelValue: { type: String, required: true },
   },
-  emits: [ "update:modelValue" ],
+  emits: ["update:modelValue"],
 };
 </script>

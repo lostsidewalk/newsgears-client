@@ -3,29 +3,34 @@
     <v-card-title class="text-center pa-4">
       <h3 class="view-header-no-count">
         <v-icon icon="fa-rss" />
-        {{ $t('queueSettings') }}
+        {{ (feed && feed.id) ? $t('queueSettings') : $t('createANewQueue') }}
       </h3>
     </v-card-title>
     <v-divider />
     <v-card-text>
       <!-- tab panel -->
-      <v-tabs v-model="selectedTab">
+      <v-tabs
+        v-if="feed && feed.id"
+        v-model="selectedTab"
+      >
         <!-- tab 1: subscription config -->
         <v-tab
           key="SUBSCRIPTIONS"
           value="SUBSCRIPTIONS"
         >
-          SUBSCRIPTIONS
+          {{ $t('subscriptions') }}
         </v-tab>
-        <!-- tab 4: queue properties -->
+        <!-- tab 2: queue properties -->
         <v-tab
           key="QUEUE_PROPERTIES"
           value="QUEUE_PROPERTIES"
         >
-          QUEUE PROPERTIES 
+          {{ $t('queueProperties') }}
         </v-tab>
       </v-tabs>
+      <!-- config window -->
       <v-window v-model="selectedTab">
+        <!-- subscriptions -->
         <v-window-item
           key="SUBSCRIPTIONS"
           value="SUBSCRIPTIONS"
@@ -44,85 +49,110 @@
             @updateServerMessage="setLastServerMessage"
           /> 
         </v-window-item>
+        <!-- queue properties -->
         <v-window-item
           key="QUEUE_PROPERTIES"
           value="QUEUE_PROPERTIES"
         >
-          <!-- feed ident -->
-          <FeedConfigTextField 
-            :label="$t('queueIdentifier')"
-            :required="true"
-            :placeholder="$t('queueIdentifier')" 
-            :model-value="v$.feedIdent.$model" 
-            :error-value="v$.feedIdent.$errors"
-            :help-text="$t('queueIdentifierHelpText')"
-            @update:modelValue="v$.feedIdent.$model = $event"
-          />
-          <!-- feed title -->
-          <FeedConfigTextField 
-            :label="$t('queueTitle')"
-            :required="false"
-            :placeholder="$t('queueTitle')" 
-            :model-value="v$.feedTitle.$model" 
-            :error-value="v$.feedTitle.$errors"
-            :help-text="$t('queueTitleHelpText')"
-            @update:modelValue="v$.feedTitle.$model = $event"
-          />
-          <!-- feed image -->
-          <FeedConfigImageField 
-            :label="$t('queueImage')"
-            :required="false"
-            :base-url="baseUrl"
-            :model-value="feedImgSrc"
-            @authError="handleAuthError"
-            @update:modelValue="feedImgSrc = $event"
-          />
-          <!-- feed description -->
-          <FeedConfigTextField 
-            :label="$t('queueDescription')"
-            :required="false"
-            :placeholder="$t('queueDescription')"
-            :model-value="v$.feedDescription.$model" 
-            :error-value="v$.feedDescription.$errors" 
-            :help-text="$t('queueDescriptionHelpText')"
-            @update:modelValue="v$.feedDescription.$model = $event"
-          />
-          <!-- feed generator -->
-          <FeedConfigTextField 
-            :label="$t('queueFeedGenerator')"
-            :required="false"
-            :placeholder="$t('queueFeedGenerator')"
-            :model-value="v$.feedGenerator.$model" 
-            :error-value="v$.feedGenerator.$errors"
-            :help-text="$t('queueFeedGeneratorHelpText')"
-            @update:modelValue="v$.feedGenerator.$model = $event"
-          />
-          <!-- feed copyright -->
-          <FeedConfigTextField 
-            :label="$t('queueFeedCopyright')"
-            :required="false"
-            :placeholder="$t('queueFeedCopyright')"
-            :model-value="v$.feedCopyright.$model" 
-            :error-value="v$.feedCopyright.$errors" 
-            :help-text="$t('queueFeedCopyrightHelpText')"
-            @update:modelValue="v$.feedCopyright.$model = $event"
-          />
-          <!-- feed language -->
-          <FeedConfigTextField 
-            :label="$t('queueFeedLanguage')"
-            :required="false"
-            :placeholder="$t('queueFeedLanguage')"
-            :model-value="v$.feedLanguage.$model" 
-            :error-value="v$.feedLanguage.$errors" 
-            :help-text="$t('queueFeedLanguageHelpText')"
-            @update:modelValue="v$.feedLanguage.$model = $event"
-          />
+          <v-sheet>
+            <v-card>
+              <v-card-title class="pa-4">
+                {{ (feed && feed.id) ? $t('updateQueueSettings') : $t('createANewQueue') }}
+              </v-card-title>
+              <v-card-subtitle v-if="(feed && feed.id && feed.description)">
+                {{ feed.description }}
+              </v-card-subtitle>
+              <v-divider class="mb-1 mt-1" />
+              <v-alert
+                v-if="shouldShowAlert('updateQueueSettingsHere')"
+                closable
+                variant="outlined"
+                border="top"
+                icon="fa-question-circle"
+                :text="(feed && feed.id) ? $t('updateQueueSettingsHere') : $t('createANewQueueHere')"
+                class="ma-4"
+                @click.close="dismissAlert('updateQueueSettingsHere')"
+              />
+              <v-card-text>
+                <!-- feed ident -->
+                <FeedConfigTextField
+                  class="mb-4"
+                  :label="$t('queueIdentifier')"
+                  :hint="$t('queueIdentifierHint')"
+                  :required="true"
+                  :placeholder="$t('queueIdentifier')" 
+                  :model-value="feedIdent" 
+                  @update:modelValue="feedIdent = $event"
+                />
+                <!-- feed title -->
+                <FeedConfigTextField 
+                  class="mb-4"
+                  :label="$t('queueTitle')"
+                  :hint="$t('queueTitleHint')"
+                  :required="false"
+                  :placeholder="$t('queueTitle')" 
+                  :model-value="feedTitle" 
+                  @update:modelValue="feedTitle = $event"
+                />
+                <!-- feed description -->
+                <FeedConfigTextField 
+                  class="mb-4"
+                  :label="$t('queueDescription')"
+                  :hint="$t('queueDescriptionHint')"
+                  :required="false"
+                  :placeholder="$t('queueDescription')"
+                  :model-value="feedDescription" 
+                  @update:modelValue="feedDescription = $event"
+                />
+                <!-- feed generator -->
+                <FeedConfigTextField 
+                  class="mb-4"
+                  :label="$t('queueFeedGenerator')"
+                  :hint="$t('queueFeedGeneratorHint')"
+                  :required="false"
+                  :placeholder="$t('queueFeedGenerator')"
+                  :model-value="feedGenerator" 
+                  @update:modelValue="feedGenerator = $event"
+                />
+                <!-- feed copyright -->
+                <FeedConfigTextField 
+                  class="mb-4"
+                  :label="$t('queueFeedCopyright')"
+                  :hint="$t('queueFeedCopyrightHint')"
+                  :required="false"
+                  :placeholder="$t('queueFeedCopyright')"
+                  :model-value="feedCopyright" 
+                  @update:modelValue="feedCopyright = $event"
+                />
+                <!-- feed language -->
+                <FeedConfigTextField 
+                  class="mb-4"
+                  :label="$t('queueFeedLanguage')"
+                  :hint="$t('queueFeedLanguageHint')"
+                  :required="false"
+                  :placeholder="$t('queueFeedLanguage')"
+                  :model-value="feedLanguage" 
+                  @update:modelValue="feedLanguage = $event"
+                />
+              </v-card-text>
+              <v-divider v-if="(!feed || !feed.id)" />
+              <v-card-actions v-if="(!feed || !feed.id)">
+                <v-btn
+                  density="comfortable"
+                  :text="$t('save')"
+                  @click="saveFeedConfig"
+                />
+              </v-card-actions>
+            </v-card>
+          </v-sheet>
         </v-window-item>
       </v-window>
     </v-card-text>
     <v-divider />
     <v-card-actions>
       <v-btn
+        :size="xs ? 'x-small' : 'small'" 
+        density="comfortable"
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -132,9 +162,6 @@
 
 <script>
 import FeedConfigTextField from '@/components/feed-config-panel/FeedConfigTextField.vue';
-import FeedConfigImageField from '@/components/feed-config-panel/FeedConfigImageField.vue';
-import { required, maxLength } from '@vuelidate/validators';
-import useVuelidate from '@vuelidate/core';
 import SubscriptionsConfig from '@/components/feed-config-panel/SubscriptionsConfig.vue';
 
 
@@ -142,18 +169,12 @@ export default {
   name: "FeedConfigPanel",
   components: {
     FeedConfigTextField,
-    FeedConfigImageField,
     SubscriptionsConfig,
   },
   props: {
     baseUrl: { type: String, required: true },
   },
-  emits: [ "saveOrUpdate", "dismiss", "authError", "updateServerMessage", "refreshFeedDefinition" ],
-  setup() {
-    return {
-      v$: useVuelidate()
-    }
-  },
+  emits: [ "save", "dismiss", "authError", "updateServerMessage", "refreshFeedDefinition" ],
   data() {
     return {
       // 
@@ -169,10 +190,7 @@ export default {
       feedGenerator: '',
       feedCopyright: '',
       feedLanguage: '',
-      feedImgSrc: '',
-      // RSS/ATOM feed query properties 
       rssAtomFeedUrls: [],
-      // currently selected tab 
       selectedTab: null,
     };
   },
@@ -181,7 +199,7 @@ export default {
       let arr = [];
       if (this.feed.id) {
         arr.push({
-          name: "SUBSCRIPTION_CONFIG",
+          name: "SUBSCRIPTIONS",
           description: this.$t('rssFeedDiscovery'),
           icon: "feed",
         });
@@ -192,59 +210,35 @@ export default {
         });
       }
       return arr;
+    },
+    xs: function() {
+      return this.$vuetify.display.xs;
     }
-  },
-  validations() {
-    return {
-      feedIdent: { 
-        required,
-        maxLength: maxLength(256),
-      },
-      feedTitle: { 
-        maxLength: maxLength(512),
-      },
-      feedDescription: {
-        maxLength: maxLength(1024),
-      },
-      feedGenerator: { 
-        maxLength: maxLength(512),
-      },
-      feedCopyright: {
-        maxLength: maxLength(1024),
-      },
-      feedLanguage: {
-        maxLength: maxLength(16),
-      },
-    }
+
   },
   methods: {
-    // setup is called to initialize the panel for either a create or update operation 
+    shouldShowAlert(alertName) {
+      return !localStorage.getItem(alertName); 
+    },
+    dismissAlert(alertName) {
+      localStorage.setItem(alertName, new Date().toISOString())
+    },
+    // setup is called to initialize the panel for updates 
     setup(feed) {
       this.feed = feed;
-      this.setupFeed();
-      this.clearModel();
+      // setup feed 
+      this.feedId = this.feed.id;
+      this.feedIdent = this.feed.ident;
+      this.feedTitle = this.feed.title;
+      this.feedDescription = this.feed.description;
+      this.feedGenerator = this.feed.generator;
+      this.feedCopyright = this.feed.copyright;
+      this.feedLanguage = this.feed.language;
+      this.rssAtomFeedUrls = this.feed.rssAtomFeedUrls;
+      this.selectedTab = (feed && feed.id) ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
       this.showModal = true;
-    },
-    // this is called on callback when a feed is successfully created; 
-    // it enables the user to start adding subscriptions to newly created queue 
-    setupSubscriptionConfig(feedId) {
-      if (this.feed) {
-        this.feed.id = feedId;
-      }
-      this.$nextTick(() => {
-        this.$refs.subscriptionsConfig.focus();
-      });
-    },
-    setupQuickAdd(feed) {
-      this.feed = feed;
-      this.setupFeed();
-      this.showModal = true;
-      this.$nextTick(() => {
-        this.$refs.subscriptionsConfig.focus();
-      });
     },
     tearDown() {
-      this.clearModel();
       this.showModal = false;
     },
     // 
@@ -256,18 +250,10 @@ export default {
         this.$emit('updateServerMessage', message);
       }
     },
-    setupFeed() {
-      // setup feed 
-      this.feedId = this.feed.id;
-      this.feedIdent = this.feed.ident;
-      this.feedTitle = this.feed.title;
-      this.feedDescription = this.feed.description;
-      this.feedGenerator = this.feed.generator;
-      this.feedCopyright = this.feed.copyright;
-      this.feedLanguage = this.feed.language;
-      this.feedImgSrc = this.feed.feedImgSrc; 
-      this.rssAtomFeedUrls = this.feed.rssAtomFeedUrls;
-    },
+    // 
+    // invoked when the user saves the feed to complete step 1 
+    // (after step 1 is complete, we transition to an update operation on an existing feed)
+    // 
     saveFeedConfig() {
       let saveObj = {
         ident: this.feedIdent,
@@ -276,17 +262,20 @@ export default {
         generator: this.feedGenerator,
         copyright: this.feedCopyright,
         language: this.feedLanguage,
-        imgSrc: this.feedImgSrc,
-        rssAtomFeedUrls: this.rssAtomFeedUrls,
       };
-      if (this.feedId) {
-        saveObj.id = this.feedId;
-      }
-      this.$emit('saveOrUpdate', saveObj);
+      this.$emit('save', saveObj);
     },
-    saveFeedConfigAndDismiss() {
-      this.saveFeedConfig();
-      this.$emit('dismiss');
+    updateFeedConfig() {
+      let updateObj = {
+        id: this.feed.id,
+        ident: this.feedIdent,
+        title: this.feedTitle,
+        description: this.feedDescription,
+        generator: this.feedGenerator,
+        copyright: this.feedCopyright,
+        language: this.feedLanguage,
+      };
+      this.$emit('update', updateObj);
     },
     addRssAtomUrl(source) {
       if (!this.rssAtomFeedUrls) {
@@ -364,9 +353,6 @@ export default {
         this.$emit('refreshFeedDefinition', this.feed.id);
       }
     },
-    // TODO: not yet implemented 
-    clearModel() {
-    }
   }
 }
 </script>
