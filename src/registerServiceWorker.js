@@ -1,30 +1,32 @@
 /* eslint-disable no-console */
 
-import { register } from 'register-service-worker'
+import { register } from "register-service-worker";
 
 register(`${process.env.BASE_URL}service-worker.js`, {
-  ready () {
+  ready() {
     console.log(
-      'FeedGears is being served from cache by a service worker.\n' +
-      'For more details, visit https://goo.gl/AFskqB'
-    )
+      "FeedGears is being served from cache by a service worker.\n" +
+        "For more details, visit https://goo.gl/AFskqB"
+    );
   },
-  registered () {
-    console.log('Service worker has been registered.')
+  registered() {
+    console.log("Service worker has been registered.");
   },
-  cached () {
+  cached() {
     // console.log('Content has been cached for offline use.')
   },
-  updatefound () {
+  updatefound() {
     // console.log('New content is downloading.')
   },
-  updated () {
-    console.log('New content is available; please refresh.')
+  updated() {
+    console.log("New content is available; please refresh.");
   },
-  offline () {
-    console.log('No internet connection found. FeedGears is running in offline mode.')
+  offline() {
+    console.log(
+      "No internet connection found. FeedGears is running in offline mode."
+    );
   },
-  error (error) {
-    console.error('Error during service worker registration:', error)
-  }
-})
+  error(error) {
+    console.error("Error during service worker registration:", error);
+  },
+});
