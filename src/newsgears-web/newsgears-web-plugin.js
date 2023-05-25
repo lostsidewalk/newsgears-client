@@ -1,24 +1,28 @@
 import axios from "axios";
-import { reactive } from 'vue';
+import { reactive } from "vue";
 
 export default {
   install: (app, options) => {
     console.log("newsgears-web: install");
 
-    // token refresh 
+    // token refresh
     function getTokenSilently() {
       return __getToken();
     }
 
     function __getToken() {
       return new Promise((resolve, reject) => {
-        let isTokenExpired = t => {
-          return Date.now() >= (JSON.parse(atob(t.split('.')[1]))).exp * 1000;
-        }
-        if (!app.config.globalProperties.$auth.$isAuthenticated || !app.config.globalProperties.$auth.$token || isTokenExpired(app.config.globalProperties.$auth.$token)) {
+        let isTokenExpired = (t) => {
+          return Date.now() >= JSON.parse(atob(t.split(".")[1])).exp * 1000;
+        };
+        if (
+          !app.config.globalProperties.$auth.$isAuthenticated ||
+          !app.config.globalProperties.$auth.$token ||
+          isTokenExpired(app.config.globalProperties.$auth.$token)
+        ) {
           axios
             .get(app.config.globalProperties.$currentUserUrl, {
-              withCredentials: true
+              withCredentials: true,
             })
             .then((response) => {
               if (response.status === 200) {
@@ -28,8 +32,10 @@ export default {
                 tearDownLoggedInSession();
                 reject();
               }
-            }).catch((error) => {
-              if (isError(error)) { // test for 401, 403 
+            })
+            .catch((error) => {
+              if (isError(error)) {
+                // test for 401, 403
                 log("*** please re-authenticate ***");
                 tearDownLoggedInSession();
               }
@@ -41,7 +47,7 @@ export default {
       });
     }
 
-    // login methods 
+    // login methods
     function loginWithSupplied(username, password) {
       return __loginWithSupplied(username, password);
     }
@@ -51,12 +57,14 @@ export default {
         log("newsgears-web: login with supplied password and password");
         axios
           .post(
-            app.config.globalProperties.$authUrl, {
-            username: username,
-            password: password
-          }, {
-            withCredentials: true,
-          }
+            app.config.globalProperties.$authUrl,
+            {
+              username: username,
+              password: password,
+            },
+            {
+              withCredentials: true,
+            }
           )
           .then((response) => {
             if (response.status === 200) {
@@ -66,45 +74,27 @@ export default {
               tearDownLoggedInSession();
               reject();
             }
-          }).catch((error) => {
+          })
+          .catch((error) => {
             tearDownLoggedInSession();
             reject(getError(error));
           });
       });
     }
-    // pw reset methods 
+    // pw reset methods
     function pwResetWithSupplied(username, email) {
       return new Promise((resolve, reject) => {
         log("newsgears-web: pw reset init with supplied username and email");
         axios
           .post(
-            app.config.globalProperties.$pwResetUrl, {
-            username: username,
-            email: email
-          }, {
-            withCredentials: true,
-          }).then((response) => {
-            if (response.status === 200) {
-              resolve();
-            } else {
-              reject();
+            app.config.globalProperties.$pwResetUrl,
+            {
+              username: username,
+              email: email,
+            },
+            {
+              withCredentials: true,
             }
-          }).catch((error) => {
-            reject(getError(error));
-          });
-      });
-    }
-    function pwUpdateWithSupplied(newPassword, newPasswordConfirmed) {
-      return new Promise((resolve, reject) => {
-        log("newsgears-web: pw update with supplied password and password (confirmed)");
-        axios
-          .put(
-            app.config.globalProperties.$pwUpdateUrl, {
-            newPassword: newPassword,
-            newPasswordConfirmed: newPasswordConfirmed
-          }, {
-            withCredentials: true,
-          }
           )
           .then((response) => {
             if (response.status === 200) {
@@ -112,25 +102,58 @@ export default {
             } else {
               reject();
             }
-          }).catch((error) => {
+          })
+          .catch((error) => {
             reject(getError(error));
           });
       });
     }
-    // registration methods 
+    function pwUpdateWithSupplied(newPassword, newPasswordConfirmed) {
+      return new Promise((resolve, reject) => {
+        log(
+          "newsgears-web: pw update with supplied password and password (confirmed)"
+        );
+        axios
+          .put(
+            app.config.globalProperties.$pwUpdateUrl,
+            {
+              newPassword: newPassword,
+              newPasswordConfirmed: newPasswordConfirmed,
+            },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            if (response.status === 200) {
+              resolve();
+            } else {
+              reject();
+            }
+          })
+          .catch((error) => {
+            reject(getError(error));
+          });
+      });
+    }
+    // registration methods
     function registerWithSupplied(username, email, password, userType) {
       return new Promise((resolve, reject) => {
-        log("registration with supplied username, email, password, and user type");
+        log(
+          "registration with supplied username, email, password, and user type"
+        );
         axios
           .post(
-            app.config.globalProperties.$registrationUrl, {
-            username: username,
-            email: email,
-            password: password,
-            userType: userType
-          }, {
-            withCredentials: true,
-          }
+            app.config.globalProperties.$registrationUrl,
+            {
+              username: username,
+              email: email,
+              password: password,
+              userType: userType,
+            },
+            {
+              withCredentials: true,
+            }
           )
           .then((response) => {
             if (response.status === 200) {
@@ -138,36 +161,42 @@ export default {
             } else {
               reject();
             }
-          }).catch((error) => {
+          })
+          .catch((error) => {
             reject(getError(error));
           });
       });
     }
-    // logout methods 
+    // logout methods
     function logout() {
       return new Promise((resolve, reject) => {
-        axios.get(app.config.globalProperties.$logoutUrl, {
-          withCredentials: true,
-          headers: {
-            "Authorization": `Bearer ${app.config.globalProperties.$auth.$token}`
-          }
-        }).then(() => {
-          log("logout successful");
-          resolve();
-        }).catch((error) => {
-          reject(getError(error));
-        }).finally(() => {
-          tearDownLoggedInSession();
-        })
+        axios
+          .get(app.config.globalProperties.$logoutUrl, {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${app.config.globalProperties.$auth.$token}`,
+            },
+          })
+          .then(() => {
+            log("logout successful");
+            resolve();
+          })
+          .catch((error) => {
+            reject(getError(error));
+          })
+          .finally(() => {
+            tearDownLoggedInSession();
+          });
       });
     }
-    // session setup/teardown methods 
+    // session setup/teardown methods
     function setupLoggedInSession(data) {
       log("setting up a logged session");
       app.config.globalProperties.$auth.$isAuthenticated = true;
       app.config.globalProperties.$auth.$token = data.authToken;
       app.config.globalProperties.$auth.$user.username = data.username;
-      app.config.globalProperties.$auth.$user.hasSubscription = data.hasSubscription;
+      app.config.globalProperties.$auth.$user.hasSubscription =
+        data.hasSubscription;
     }
     function subscribeLoggedInSession() {
       app.config.globalProperties.$auth.$user.hasSubscription = true;
@@ -181,19 +210,23 @@ export default {
       app.config.globalProperties.$auth.$user.username = null;
       app.config.globalProperties.$auth.$user.hasSubscription = null;
     }
-    // utility methods 
+    // utility methods
     function log(msg) {
       console.log("newsgears-web: " + msg);
     }
     function isError(error) {
-      return error.response && (error.response.status === 403 || error.response.status === 401);
+      return (
+        error.response &&
+        (error.response.status === 403 || error.response.status === 401)
+      );
     }
-    function getError(error) { // test for AxiosError 
+    function getError(error) {
+      // test for AxiosError
       let r = error.response;
       if (r && r.data) {
         let message = r.data.message;
         if (r.data.details) {
-          message = message + ': ' + r.data.details;
+          message = message + ": " + r.data.details;
         }
         return message;
       }
@@ -201,28 +234,39 @@ export default {
     }
 
     const authObj = reactive({
-      'getTokenSilently': getTokenSilently,
-      'loginWithSupplied': loginWithSupplied,
-      'pwResetWithSupplied': pwResetWithSupplied,
-      'pwUpdateWithSupplied': pwUpdateWithSupplied,
-      'registerWithSupplied': registerWithSupplied,
-      'subscribe': subscribeLoggedInSession,
-      'unsubscribe': unsubscribeLoggedInSession,
-      'logout': logout,
-      'tearDownLoggedInSession': tearDownLoggedInSession,
-      'token': null,
-      '$isAuthenticated': options.isAuthenticated === true,
-      '$user': reactive({}),
+      getTokenSilently: getTokenSilently,
+      loginWithSupplied: loginWithSupplied,
+      pwResetWithSupplied: pwResetWithSupplied,
+      pwUpdateWithSupplied: pwUpdateWithSupplied,
+      registerWithSupplied: registerWithSupplied,
+      subscribe: subscribeLoggedInSession,
+      unsubscribe: unsubscribeLoggedInSession,
+      logout: logout,
+      tearDownLoggedInSession: tearDownLoggedInSession,
+      token: null,
+      $isAuthenticated: options.isAuthenticated === true,
+      $user: reactive({}),
     });
 
     // URLs
-    app.config.globalProperties.$currentUserUrl = options.currentUserUrl || (process.env.VUE_APP_FEEDGEARS_API_URL + "/currentuser");
-    app.config.globalProperties.$authUrl = options.authUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/authenticate";
-    app.config.globalProperties.$pwResetUrl = options.pwResetUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_reset";
-    app.config.globalProperties.$pwUpdateUrl = options.pwUpdateUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_update";
-    app.config.globalProperties.$registrationUrl = options.registrationUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/register";
-    app.config.globalProperties.$logoutUrl = options.logoutUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/deauthenticate";
+    app.config.globalProperties.$currentUserUrl =
+      options.currentUserUrl ||
+      process.env.VUE_APP_FEEDGEARS_API_URL + "/currentuser";
+    app.config.globalProperties.$authUrl =
+      options.authUrl ||
+      process.env.VUE_APP_FEEDGEARS_API_URL + "/authenticate";
+    app.config.globalProperties.$pwResetUrl =
+      options.pwResetUrl || process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_reset";
+    app.config.globalProperties.$pwUpdateUrl =
+      options.pwUpdateUrl ||
+      process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_update";
+    app.config.globalProperties.$registrationUrl =
+      options.registrationUrl ||
+      process.env.VUE_APP_FEEDGEARS_API_URL + "/register";
+    app.config.globalProperties.$logoutUrl =
+      options.logoutUrl ||
+      process.env.VUE_APP_FEEDGEARS_API_URL + "/deauthenticate";
 
     app.config.globalProperties.$auth = authObj;
-  }
+  },
 };
