@@ -65,7 +65,7 @@
         >
           <!-- post description (hidden w/no detials) -->
           <v-label>
-            {{ $t("description") }} ({{ "post.postDesc.type" }})
+            {{ $t("description") }} ({{ post.postDesc.type }})
           </v-label>
           <div
             v-if="isHtmlContent(post.postDesc)"
@@ -105,18 +105,23 @@
         <!-- post itunes -->
         <PostITunes
           v-if="post.postITunes"
+          class="ma-4"
           :i-tunes="post.postITunes"
-          @playFirstEnclosure="onPlayFirstEnclosure"
+          @playFirstEnclosure="showFirstEnclosure = true"
         />
         <!-- post enclosures -->
-        <v-card-text v-if="post.enclosures">
+        <v-sheet v-if="post.enclosures">
+          <!-- first enclosure on a dialog -->
+          <v-dialog v-model="showFirstEnclosure">
+            <PostEnclosure :enclosure="post.enclosures[0]" />
+          </v-dialog>
           <PostEnclosure
-            v-for="(enclosure, i) in post.enclosures"
+            v-for="enclosure in post.enclosure"
             :key="enclosure"
-            :ref="'postEnclosure_' + i"
             :enclosure="enclosure"
+            :compact="true"
           />
-        </v-card-text>
+        </v-sheet>
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
         <v-card-text v-if="post.postUrls">
           <v-label>{{ $t("links") }}</v-label>
@@ -309,6 +314,7 @@ export default {
       showPostCategories: false,
       showPostSharing: false,
       showFullPost: !this.collapsed,
+      showFirstEnclosure: false,
     };
   },
   computed: {

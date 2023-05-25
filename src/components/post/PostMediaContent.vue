@@ -97,7 +97,11 @@
       </v-chip-group>
     </v-card-text>
     <v-card-actions style="justify-content: start;">
-      <v-dialog v-model="showContents">
+      <v-dialog
+        v-model="showContents"
+        fullscreen
+        scrollable
+      >
         <vue-plyr v-if="isVideo()">
           <div class="plyr__video-embed">
             <iframe

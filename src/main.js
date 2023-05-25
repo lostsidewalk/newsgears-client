@@ -265,6 +265,7 @@ const i18n = createI18n({
       // iTunes
       explicit: "EXPLÍCITO",
       closedCaptioned: "Subtitulado",
+      episode: "Episodio {episode}",
       episodeType: "Episodio {episodeType}",
       // post media
       media: "MEDIOS DE COMUNICACIÓN",
@@ -704,6 +705,7 @@ const i18n = createI18n({
       // iTunes
       explicit: "EXPLICIT",
       closedCaptioned: "Closed Captioned",
+      episode: "Episode {episode}",
       episodeType: "{episodeType} episode",
       // post media
       media: "MEDIA",
