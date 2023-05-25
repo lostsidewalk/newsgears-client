@@ -16,7 +16,7 @@
             :elevation="isHovering ? 7 : 6"
             class="mt-10 mb-10"
             v-bind="props"
-            variant="outlined"
+            variant="flat"
           >
             <!-- window -->
             <v-window v-model="step">
@@ -29,7 +29,7 @@
                     <!-- card-text -->
                     <v-card-text class="mt-12 mb-12">
                       <!-- banner (large) -->
-                      <div class="text-h5 text-center mt-4 mb-4 fancy">
+                      <div class="text-h5 text-center mt-4 mb-4 logotext">
                         {{ $t("loginToFeedGears") }}
                       </div>
                       <!-- row -->
@@ -196,7 +196,7 @@ export default {
 </script>
 
 <style scoped>
-.fancy {
+.logotext {
   font-family: "Russo One" !important;
 }
 </style>

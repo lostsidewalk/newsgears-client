@@ -27,10 +27,7 @@
       <BannerPanel :show-auth="false" />
 
       <AuthPanel ref="authentication" />
-
-      <FooterPanel
-        app
-      />
+      <FooterPanel app />
     </v-main>
 
     <!-- post-auth main -->

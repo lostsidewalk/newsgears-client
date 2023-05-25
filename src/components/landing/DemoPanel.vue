@@ -12,7 +12,7 @@
       >
         <v-hover v-slot="{ isHovering, props }">
           <v-card
-            :elevation="isHovering ? 7 : 6" 
+            :elevation="isHovering ? 12 : 0" 
             v-bind="props"
           >
             <v-img

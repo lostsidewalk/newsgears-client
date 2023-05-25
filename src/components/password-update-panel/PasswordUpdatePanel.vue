@@ -29,11 +29,11 @@
                     <!-- card-text -->
                     <v-card-text class="mt-12 mb-12">
                       <!-- banner (large) -->
-                      <div class="text-h5 text-center mt-4 mb-4 fancy">
+                      <div class="text-h5 text-center mt-4 mb-4 logotext">
                         {{ $t("passwordReset") }}
                       </div>
                       <!-- banner (small) -->
-                      <div class="text-center mb-4 fancy">
+                      <div class="text-center mb-4">
                         {{ $t('enterAndConfirmNewPw') }}
                       </div>
                       <!-- row -->
@@ -174,8 +174,7 @@ export default {
 
 
 <style scoped>
-.fancy {
-  font-family: 'Merriweather';
-  font-weight: bold;
+.logotext {
+  font-family: 'Russo One';
 }
 </style>

@@ -55,7 +55,7 @@
           value="QUEUE_PROPERTIES"
         >
           <v-sheet>
-            <v-card>
+            <v-card variant="flat">
               <v-card-title class="pa-4">
                 {{ (feed && feed.id) ? $t('updateQueueSettings') : $t('createANewQueue') }}
               </v-card-title>

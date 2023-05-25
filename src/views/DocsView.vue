@@ -30,10 +30,7 @@
 
       <v-divider /> 
       
-      <FooterPanel
-        
-        app
-      />
+      <FooterPanel app />
     </v-main>
   </v-app>
 </template>

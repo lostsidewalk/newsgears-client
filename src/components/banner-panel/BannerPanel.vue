@@ -94,7 +94,7 @@ export default {
 }
 
 .fancy {
-  font-family: 'Merriweather';
+  font-family: 'Merriweather' !important;
   font-weight: bold;
 }
 </style>

@@ -149,7 +149,7 @@
         </RssAtomFeedInfo>
       </v-card-text>
     </v-card>
-    <!-- auto config dialog (existing subscriptions) -->
+    <!-- auth config dialog (existing subscriptions) -->
     <v-dialog
       v-model="showAuthConfig"
       fullscreen
