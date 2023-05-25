@@ -20,6 +20,7 @@
       >
         <template #additional>
           <GoBack />
+          <DisplayModeButton />
         </template>
       </ControlPanel>
     </v-app-bar>
@@ -40,6 +41,7 @@
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
+import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 
 export default {
@@ -48,8 +50,9 @@ export default {
     BannerPanel,
     ControlPanel,
     GoBack,
+    DisplayModeButton,
     FooterPanel,
-  },
+},
   props: {
     baseUrl: { type: String, required: true },
   },

@@ -17,6 +17,7 @@
       </template>
       <v-toolbar-items>
         <GoBack />
+        <DisplayModeButton />
       </v-toolbar-items>
     </v-app-bar>
 
@@ -310,7 +311,8 @@
           >
             <template #additional>
               <v-btn
-                :size="xs ? 'x-small' : 'small'" 
+                ref="nextPostButton" 
+                :size="xs ? 'x-small' : 'small'"
                 accesskey="n"
                 icon="fa-arrow-down"
                 class="ma-1"
@@ -357,6 +359,7 @@
 // components 
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
+import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import AuthPanel from "@/components/auth-panel/AuthPanel.vue";
 import lunr from 'lunr';
 // confirmation modal dialog 
@@ -434,6 +437,7 @@ export default {
   components: {
     BannerPanel,
     GoBack,
+    DisplayModeButton,
     AuthPanel,
     // modal 
     ConfirmationDialog,
@@ -680,7 +684,8 @@ export default {
     // 
     openPost(postId) {
       this.selectedPost = this.getPostFromQueue(postId);
-      this.$nextTick(() => this.showSelectedPost = true);
+      this.showSelectedPost = true;
+      this.$nextTick(() => this.$refs.nextPostButton.$el.focus());
     },
     // 
     //

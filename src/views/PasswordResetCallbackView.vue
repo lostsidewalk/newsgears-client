@@ -15,6 +15,7 @@
       </template>
       <v-toolbar-items>
         <GoBack />
+        <DisplayModeButton />
       </v-toolbar-items>
     </v-app-bar>
 
@@ -33,12 +34,14 @@ import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import PasswordUpdatePanel from "@/components/password-update-panel/PasswordUpdatePanel.vue";
 import FooterPanel from '@/components/footer-panel/FooterPanel.vue';
+import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 
 export default {
   name: "PasswordResetCallbackView",
   components: {
     BannerPanel,
     GoBack,
+    DisplayModeButton,
     PasswordUpdatePanel,
     FooterPanel,
   },

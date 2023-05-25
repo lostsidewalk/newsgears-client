@@ -15,6 +15,7 @@
       </template>
       <v-toolbar-items>
         <GoBack />
+        <DisplayModeButton />
       </v-toolbar-items>
     </v-app-bar>
 
@@ -37,6 +38,7 @@
 <script>
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
+import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 
 export default {
@@ -44,8 +46,9 @@ export default {
   components: {
     BannerPanel,
     GoBack,
+    DisplayModeButton,
     FooterPanel,
-  },
+},
   mounted() {
     this.$auth.getTokenSilently()
       .catch(() => { })
