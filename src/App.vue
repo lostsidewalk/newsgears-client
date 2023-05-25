@@ -10,11 +10,6 @@ export default {
     isLoading() {
       return false;
     },
-  },
-  data() {
-    return {
-      theme: this.$theme.currentTheme,
-    }
   }
 };
 </script>
