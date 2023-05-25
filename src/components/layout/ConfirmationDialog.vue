@@ -3,9 +3,9 @@
     <v-card-title class="text-center pa-4">
       {{ $t('pleaseConfirm') }}
     </v-card-title>
-    <v-card-subtitle>
+    <v-card-text class="text-center">
       {{ prompt }}
-    </v-card-subtitle>
+    </v-card-text>
     <v-divider />
     <v-card-actions>
       <v-btn
