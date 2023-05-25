@@ -30,7 +30,7 @@
     <!-- mark as read button -->
     <v-btn
       :size="xs ? 'x-small' : 'small'" 
-      icon="fa-eye"
+      icon="fa-check-square-o"
       :title="$t('markQueueAsRead')"  
       :aria-label="$t('markQueueAsRead')"
       @click.stop="$emit('markAsRead')"
@@ -38,7 +38,7 @@
     <!-- toggle filter pills button -->
     <v-btn
       :size="xs ? 'x-small' : 'small'" 
-      icon="fa-list"
+      icon="fa-tag"
       :title="$t('toggleFeedFilterPills')"  
       :aria-label="$t('toggleFeedFilterPills')"
       @click.stop="$emit('toggleFeedFilterPills')"

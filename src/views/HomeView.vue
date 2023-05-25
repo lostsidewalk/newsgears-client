@@ -529,7 +529,7 @@ export default {
             }
           } catch (error) {
             if (error instanceof lunr.QueryParseError) {
-              console.debug("lunrjs search query exception due to: " + JSON.stringify(error));
+              // console.debug("lunrjs search query exception due to: " + JSON.stringify(error));
             } else {
               console.error(error);
               throw error;
@@ -968,6 +968,7 @@ export default {
               let feedDefinitionData = data.feedDefinitions; // all feed definition data objects 
               let queryDefinitionData = data.queryDefinitions; // all query definition data objects 
               if (feedDefinitionData) {
+                this.feeds.splice(0);
                 for (let i = 0; i < feedDefinitionData.length; i++) {
                   let fd = feedDefinitionData[i]; // feed definition data for this feed 
                   let qd = queryDefinitionData[fd.id]; // query definitions for this feed 
@@ -982,19 +983,7 @@ export default {
                   }
                   // parse feed definition export config (if present) 
                   fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
-                  // locate the feed to update by id 
-                  let idxToUpdate = -1;
-                  for (let i = 0; i < this.feeds.length; i++) {
-                    if (this.feeds[i].id === fd.id) {
-                      idxToUpdate = i;
-                    }
-                  }
-                  if (idxToUpdate >= 0) {
-                    this.feeds[idxToUpdate] = fd;
-                  } else {
-                    fd.showMoreInformation = false;
-                    this.feeds.push(fd);
-                  }
+                  this.feeds.push(fd);
                 }
                 // update feeds localStorage 
                 localStorage.setItem('feeds', JSON.stringify(this.feeds));
@@ -1087,37 +1076,93 @@ export default {
       }
     },
     rebuildLunrIndexes() {
+      console.log("rebuilding lunrjs indexes...");
       for (let i = 0; i < this.feeds.length; i++) {
         let iq = this.inboundQueuesByFeed[this.feeds[i].id];
         if (iq) {
-          console.log("building lunr index for feedId=" + this.feeds[i].id);
+          const trueStr = this.$t('true');
+          const falseStr = this.$t('false');
           iq.index = lunr(function () {
             this.ref('id')
+            // title 
             this.field('title', {
               extractor: function(doc = {}) {
                 return doc.postTitle ? doc.postTitle.value : null;
-              }
+              },
+              boost: 10,
             });
+            // description 
             this.field('description', {
               extractor: function(doc = {}) {
                 return doc.postDesc ? doc.postDesc.value : null;
               }
             });
+            // feed 
             this.field('feed', {
               extractor: function(doc = {}) {
                 return doc.importerDesc;
-              }
+              },
             });
+            // category 
             this.field('category', {
               extractor: function(doc = {}) {
-                return doc.postCategories ? doc.postCategories : null;
+                return doc.postCategories;
+              }
+            });
+            // author 
+            this.field('author', {
+              extractor: function (doc = {}) {
+                return (doc.authors && doc.authors.length > 0) ? doc.authors[0].name : null;
+              }
+            });
+            // authors
+            this.field('authors', {
+              extractor: function (doc = {}) {
+                return (doc.authors && doc.authors.length > 0) ?
+                  doc.authors.map(function (author) { return author.name; }) : null;
+              }
+            });
+            // contributors
+            this.field('contributors', {
+              extractor: function (doc = {}) {
+                return (doc.contributors && doc.contributors.length > 0) ?
+                  doc.contributors.map(function (contributor) { return contributor.name; }) : null;
+              }
+            });
+            // published
+            this.field('published', {
+              extractor: function (doc = {}) {
+                return doc.publishTimestamp ? doc.publishTimestamp.toString('YYYY-MM-DD') : null;
+              },
+            });
+            // updated
+            this.field('updated', {
+              extractor: function (doc = {}) {
+                return doc.lastUpdatedTimestamp ? doc.lastUpdatedTimestamp.toString('YYYY-MM-DD') : null;
+              }
+            });
+            // contents
+            this.field('contents', {
+              extractor: function (doc = {}) {
+                return (doc.postContents && doc.postContents.length > 0) ? doc.postContents[0].value : null;
+              }
+            })
+            // url
+            this.field('url', {
+              extractor: function (doc = {}) {
+                return doc.postUrl;
               }
             });
             this.field('status', {
-              extractor: function(doc = {}) {
+              extractor: function (doc = {}) {
                 return doc.postReadStatus ? doc.postReadStatus : 'UNREAD';
               }
             });
+            this.field('starred', {
+              extractor: function (doc = {}) {
+                return doc.isPublished ? trueStr : falseStr;
+              }
+            })
             iq.values.forEach(function (doc) {
               this.add(doc)
             }, this)
@@ -1161,6 +1206,7 @@ export default {
           } else if (originator === "togglePostReadLaterStatus") { // NOTE: this happens when the user toggles the 'mark as read-later' button 
             this.onTogglePostReadLaterStatus(result);
           }
+          this.rebuildLunrIndexes();
         }).catch((error) => {
           this.handleServerError(error);
         }).finally(() => {
@@ -1221,6 +1267,7 @@ export default {
             // update feeds localStorage 
             localStorage.setItem('feeds', JSON.stringify(this.feeds));
           }
+          this.rebuildLunrIndexes();
         }).catch((error) => {
           this.handleServerError(error);
         }).finally(() => {
@@ -1367,9 +1414,10 @@ export default {
           this.inboundQueuesByFeed[created.id] = { values: [] };
           // update queues localStorage 
           localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
-          this.$refs.feedConfigPanel.setupSubscriptionConfig(created.id);
+          this.$refs.feedConfigPanel.setup(created);
           this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
           this.setSelectedFeedId(created.id);
+          this.rebuildLunrIndexes();
         }).catch((error) => {
           this.handleServerError(error); 
         }).finally(() => {
@@ -1508,6 +1556,7 @@ export default {
             }
           }
           this.setLastServerMessage(data.message);
+          this.rebuildLunrIndexes();
         }).catch((error) => {
           this.handleServerError(error);
         }).finally(() => {
@@ -1575,6 +1624,7 @@ export default {
           // update queue localStorage
           localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
           this.setLastServerMessage(data.message);
+          this.rebuildLunrIndexes();
         }).catch((error) => {
           this.handleServerError(error);
         }).finally(() => {

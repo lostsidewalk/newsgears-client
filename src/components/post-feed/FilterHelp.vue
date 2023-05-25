@@ -75,6 +75,14 @@
           title="url"
           :subtitle="$t('urlFieldDesc')"
         />
+        <v-list-item
+          title="status"
+          :subtitle="$t('statusFieldDesc')"
+        />
+        <v-list-item
+          title="starred"
+          :subtitle="$t('starredFieldDesc')"
+        />
       </v-list>
 
       <!-- -->
@@ -105,11 +113,11 @@
               <td>{{ $t('searchForArticlesWithWord') }}</td>
             </tr>
             <tr>
-              <td>author:"John Doe"</td>
+              <td>author:Jay*</td>
               <td>{{ $t('searchForArticlesPublishedBy') }}</td>
             </tr>
             <tr>
-              <td>published:[2022-01-01 TO 2022-12-31]</td>
+              <td>published:[2023-01-01 TO 2023-12-31]</td>
               <td>{{ $t('searchForArticlesPublishedBetween') }}</td>
             </tr>
             <tr>
@@ -117,7 +125,7 @@
               <td>{{ $t('searchForArticlesWithWords') }}</td>
             </tr>
             <tr>
-              <td>feed:"Tech News" category:programming</td>
+              <td>category:programming</td>
               <td>{{ $t('searchForArticlesInASpecificFeedAndCategory') }}</td>
             </tr>
           </tbody>

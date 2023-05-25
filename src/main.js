@@ -224,6 +224,8 @@ const i18n = createI18n({
       updatedFieldDesc: "La fecha actualizada del artículo.",
       contentsFieldDesc: "El contenido principal del artículo.",
       urlFieldDesc: "La URL del artículo.",
+      statusFieldDesc: "El estado de lectura del artículo (leído, no leído, leído más tarde).", 
+      starredFieldDesc: "El estado destacado del artículo (verdadero, falso).",
       exampleQueries: "Consultas de ejemplo",
       hereAreSomeExamples:
         "Estos son algunos ejemplos de consultas de búsqueda que puede realizar con la función de filtro de FeedGears:",
@@ -662,9 +664,11 @@ const i18n = createI18n({
       updatedFieldDesc: "The updated date of the article.",
       contentsFieldDesc: "The main content of the article.",
       urlFieldDesc: "The URL of the article.",
+      statusFieldDesc: "The read-status of the article (read, unread, read-later).", 
+      starredFieldDesc: "The starred-status of the article (true, false).",
       exampleQueries: "Example Queries",
       hereAreSomeExamples:
-        "Here are some examples of search queries you can perform using the lunr.js filter function:",
+        "Here are some examples of search queries you can perform using the FeedGears filter function:",
       explanation: "Explanation",
       searchForArticlesWithWord:
         'Search for articles with the word "technology" in the title.',
@@ -678,7 +682,7 @@ const i18n = createI18n({
         "Search for articles in a specific feed and category.",
       advancedQueries: "Advanced Queries",
       inAdditionTo:
-        "In addition to the basic field:value queries, FeedGears supports more advanced search options such as wildcard searches, fuzzy searches, and range searches. You can refer to the lunr.js documentation for more details on these advanced search options.",
+        "In addition to the basic field:value queries, FeedGears supports more advanced search options such as wildcard searches, fuzzy searches, and range searches. You can refer to the FeedGears documentation for more details on these advanced search options.",
       // help panel
       feedGearsHelp: "FeedGears Help",
       dismiss: "Dismiss",

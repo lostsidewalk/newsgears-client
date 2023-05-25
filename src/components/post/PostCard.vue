@@ -193,7 +193,7 @@
         :size="xs ? 'x-small' : 'small'"
         :title="post.isRead ? $t('markPostAsUnread') : $t('markPostAsRead')"
         :aria-label="$t('markPostAsUnread')"
-        :icon="post.isRead ? 'fa-eye' : 'fa-eye-slash'"
+        :icon="post.isRead ? 'fa-check-square-o' : 'fa-eye'"
         @click.stop="togglePostReadStatus"
       />
       <!-- toggle read-later status button -->
