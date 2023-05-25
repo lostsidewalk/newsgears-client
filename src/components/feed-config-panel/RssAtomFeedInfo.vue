@@ -241,6 +241,13 @@
               </tbody>
             </v-table>
           </v-card-text>
+          <v-card-actions>
+            <v-btn
+              density="comfortable"
+              :text="$t('dismiss')"
+              @click="showQueryMetrics = false"
+            />
+          </v-card-actions>
         </v-card>
       </v-dialog>
       <slot name="additional" />
