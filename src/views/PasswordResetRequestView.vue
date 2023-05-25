@@ -19,6 +19,8 @@
     </v-app-bar>
 
     <v-main>
+      <BannerPanel :show-auth="false" />
+
       <PasswordResetRequestPanel />
       
       <FooterPanel app />
@@ -27,6 +29,7 @@
 </template>
 
 <script>
+import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import PasswordResetRequestPanel from "@/components/password-reset-panel/PasswordResetRequestPanel.vue";
 import FooterPanel from '@/components/footer-panel/FooterPanel.vue';
@@ -34,6 +37,7 @@ import FooterPanel from '@/components/footer-panel/FooterPanel.vue';
 export default {
   name: "PasswordResetRequestView",
   components: {
+    BannerPanel,
     GoBack,
     PasswordResetRequestPanel,
     FooterPanel,

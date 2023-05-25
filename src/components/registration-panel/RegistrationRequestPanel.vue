@@ -29,9 +29,9 @@
                     <!-- card-text -->
                     <v-card-text class="mt-12 mb-12">
                       <!-- banner (large) -->
-                      <h4 class="text-center mt-4 mb-4">
-                        {{ $t('accountRegistration') }}
-                      </h4>
+                      <div class="text-h5 text-center mt-4 mb-4 fancy">
+                        {{ $t("accountRegistration") }}
+                      </div>
                       <!-- row -->
                       <v-row
                         align="center"
@@ -197,3 +197,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.fancy {
+  font-family: 'Merriweather';
+  font-weight: bold;
+}
+</style>

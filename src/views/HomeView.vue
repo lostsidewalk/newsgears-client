@@ -24,6 +24,8 @@
     <v-main
       v-show="!$auth.$isAuthenticated"
     >
+      <BannerPanel :show-auth="false" />
+
       <AuthPanel ref="authentication" />
 
       <FooterPanel
@@ -356,6 +358,7 @@
 <script>
 // import debounce from 'lodash.debounce';
 // components 
+import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import AuthPanel from "@/components/auth-panel/AuthPanel.vue";
 import lunr from 'lunr';
@@ -432,6 +435,7 @@ const toLunrToken = function (str) {
 export default {
   name: "HomeView",
   components: {
+    BannerPanel,
     GoBack,
     AuthPanel,
     // modal 
@@ -1786,20 +1790,5 @@ body {
 
 .post-feed-container {
   background-color: transparent;
-}
-</style>
-
-<style scoped>
-.logotext {
-  font-family: 'Russo One';
-}
-
-.logosubtext {
-  font-size: 1.5rem;
-}
-
-.fancy {
-  font-family: 'Merriweather';
-  font-weight: bold;
 }
 </style>

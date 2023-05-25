@@ -30,10 +30,7 @@
 
       <v-divider /> 
       
-      <FooterPanel
-        
-        app
-      />
+      <FooterPanel app />
     </v-main>
   </v-app>
 </template>
@@ -52,6 +49,17 @@ export default {
   },
   props: {
     baseUrl: { type: String, required: true },
+  },
+  mounted() {
+    this.$auth.getTokenSilently()
+      .catch(() => { })
+      .finally(() => {
+        if (this.$auth.$isAuthenticated) {
+          console.log("api-view: authenticated on mount");
+        } else {
+          console.log("api-view: not authenticated on mount");
+        }
+      });
   },
   methods: {
     setLastServerMessage(messageObj) {

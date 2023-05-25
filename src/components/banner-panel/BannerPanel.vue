@@ -33,10 +33,13 @@
       </v-col>
     </v-row>
 
-    <v-divider class="mt-8" />
+    <v-divider
+      v-if="!$auth.$isAuthenticated && showAuth"
+      class="mt-8"
+    />
 
     <v-row
-      v-if="!$auth.$isAuthenticated"
+      v-if="!$auth.$isAuthenticated && showAuth"
       justify="center"
       class="mt-8"
     >
@@ -48,7 +51,7 @@
       </v-col>
     </v-row>
     <v-row
-      v-if="!$auth.$isAuthenticated"
+      v-if="!$auth.$isAuthenticated && showAuth"
       justify="center"
     >
       <v-col
@@ -71,6 +74,9 @@ export default {
     SignUpButton, 
     GoogleAuthButton,
   },
+  props: {
+    showAuth: { type: Boolean, default: true },
+  }
 }
 </script>
 

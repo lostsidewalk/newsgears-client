@@ -25,6 +25,8 @@
     </v-app-bar>
 
     <v-main>
+      <BannerPanel />
+
       <v-container>
         {{ $t('thankYouForYourOrder') }}
       </v-container>
@@ -35,6 +37,7 @@
 </template>
   
 <script>
+import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
@@ -42,12 +45,24 @@ import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 export default {
   name: "OrderConfirmedView",
   components: {
+    BannerPanel,
     ControlPanel,
     GoBack,
     FooterPanel,
   },
   props: {
     baseUrl: { type: String, required: true },
+  },
+  mounted() {
+    this.$auth.getTokenSilently()
+      .catch(() => { })
+      .finally(() => {
+        if (this.$auth.$isAuthenticated) {
+          console.log("order-confirmed-view: authenticated on mount");
+        } else {
+          console.log("order-confirmed-view: not authenticated on mount");
+        }
+      });
   },
   methods: {
     setLastServerMessage(messageObj) {

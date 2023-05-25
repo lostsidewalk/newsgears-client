@@ -53,6 +53,17 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
+  mounted() {
+    this.$auth.getTokenSilently()
+      .catch(() => { })
+      .finally(() => {
+        if (this.$auth.$isAuthenticated) {
+          console.log("docs-view: authenticated on mount");
+        } else {
+          console.log("docs-view: not authenticated on mount");
+        }
+      });
+  },
   methods: {
     setLastServerMessage(messageObj) {
       this.$notification.requestPermission().then(p => {
