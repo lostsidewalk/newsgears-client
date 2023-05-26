@@ -150,7 +150,9 @@ const i18n = createI18n({
       rssFeedDiscovery: "Descubrimiento de fuentes RSS",
       // queue properties
       createANewQueue: "Crear una nueva cola",
+      createANewQueueHere: "Crear una nueva cola aqui...",
       updateQueueSettings: "Actualizar la configuración de la cola",
+      updateQueueSettingsHere: "Actualizar la configuración de la cola...",
       queueIdentifier: "Identificador de cola",
       queueIdentifierHint: "Un nombre corto y único para esta cola. Este valor se generará si no se proporciona. Este valor aparecerá en mensajes de registro y en otros lugares para referirse a esta cola.",
       queueTitle: "Título de la cola",
@@ -165,7 +167,9 @@ const i18n = createI18n({
       queueFeedLanguageHint: "En los artefactos publicados de esta cola, este valor aparece como el valor 'idioma del feed'.",
       // subscription config
       yourSubscriptions: "SUS SUSCRIPCIONES",
+      manageYourSubscriptionsHere: 'Gestiona tus suscripciones aquí...',
       addANewSubscription: "AGREGAR UNA NEUVA SUSCRIPCIÓN",
+      addANewSubscriptionHere: "Añadir una nueva suscripción aquí...",
       feedUrl: "URL de fuente RSS",
       credentialsUseMessage:
         "* Se proporcionarán las siguientes credenciales si esta fuente RSS solicita autenticación.",
@@ -310,6 +314,7 @@ const i18n = createI18n({
       weWillCreateTheFollowingSubscriptions:
         "Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:",
       // post feed
+      thisIsYourQueueDashboard: 'Este es su tablero de colas...',
       confirmDeleteQueue:
         "Confirme que desea eliminar esta cola. Esta acción es irreversible.",
       confirmMarkQueueAsRead:
@@ -600,7 +605,9 @@ const i18n = createI18n({
       rssFeedDiscovery: "RSS Feed Discovery",
       // queue properties
       createANewQueue: "Create a new queue",
+      createANewQueueHere: "Create a new queue here...",
       updateQueueSettings: "UPDATE QUEUE SETTINGS",
+      updateQueueSettingsHere: 'Update queue settings here...',
       queueIdentifier: "Queue identifier",
       queueIdentifierHint: "A short, unique name for this queue. This value will be generated if not provided. This value will appear in log messages and elsewhere to refer to this queue.",
       queueTitle: "Queue title",
@@ -614,8 +621,10 @@ const i18n = createI18n({
       queueFeedLanguage: "Language",
       queueFeedLanguageHint: "In the published artifacts for this queue, this value appears as the 'feed language' value.",
       // subscription config
-      addANewSubscription: "ADD A NEW SUBSCRIPTION",
       yourSubscriptions: "YOUR SUBSCRIPTIONS",
+      manageYourSubscriptionsHere: 'Manage your subscriptions here...',
+      addANewSubscription: "ADD A NEW SUBSCRIPTION",
+      addANewSubscriptionHere: 'Add a new subscription here...',
       feedUrl: "Feed URL",
       credentialsUseMessage:
         "* The following credentials will be supplied if this feed requests authentication.",
@@ -757,6 +766,7 @@ const i18n = createI18n({
       weWillCreateTheFollowingSubscriptions:
         "We will create the following queues from your OPML file(s):",
       // post feed
+      thisIsYourQueueDashboard: 'This is your queue dashboard...',
       confirmDeleteQueue:
         "Please confirm that you want to delete this queue. This action is irreversible.",
       confirmMarkQueueAsRead:

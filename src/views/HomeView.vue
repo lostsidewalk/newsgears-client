@@ -312,7 +312,6 @@
           >
             <template #additional>
               <v-btn
-                ref="nextPostButton" 
                 :size="buttonSize"
                 accesskey="n"
                 icon="fa-arrow-down"
@@ -339,7 +338,7 @@
           <PostListItem
             v-for="post in filteredInboundQueue"
             :id="'post_' + post.id" 
-            :key="post.id"
+            :key="post"
             :post="post"
             :sharing-options="sharingOptions"
             class="ma-4 rounded"
@@ -692,7 +691,6 @@ export default {
     openPost(postId) {
       this.selectedPost = this.getPostFromQueue(postId);
       this.showSelectedPost = true;
-      this.$nextTick(() => this.$refs.nextPostButton.$el.focus());
     },
     // 
     //

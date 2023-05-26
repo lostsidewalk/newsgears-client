@@ -36,7 +36,7 @@
         <slot name="additional" />
       </div>
       <div
-        v-if="!$vuetify.display.md"
+        v-if="$vuetify.display.xs || $vuetify.display.sm"
         class="d-flex"
       >
         <v-menu>

@@ -26,21 +26,17 @@
       <BannerPanel />
 
       <!-- container -->
-      <DemoPanel /> 
+      <DemoPanel class="mb-4" /> 
 
       <v-divider /> 
 
-      <v-container>
-        <!-- card -->
-        <FAQPanel
-          
-          class="ma-4"
-        />
+      <v-container class="mt-4">
+        <FAQPanel />
       </v-container>
 
       <v-divider /> 
       
-      <FooterPanel />
+      <FooterPanel class="mt-4" />
     </v-main>
   </v-app>
 </template>
