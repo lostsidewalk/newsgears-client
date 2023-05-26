@@ -125,7 +125,7 @@
       <v-navigation-drawer
         v-model="showQueueDashboard"
         app
-        :location="'end'"
+        :location="'start'"
         :class="$vuetify.display.xs ? 'w-100' : 'w-50'"
         elevation="12" 
         temporary
