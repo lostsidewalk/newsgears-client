@@ -65,7 +65,7 @@
                               class="ma-4"
                               :label="$t('login')"
                               :tooltip="$t('login')"
-                              :in-transit="loginIsLoading"
+                              :is-loading="loginIsLoading"
                               @clicked="login"
                             />
                             <!-- google button -->

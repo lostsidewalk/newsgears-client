@@ -67,7 +67,7 @@
                             <AuthButton
                               class="ma-4"
                               :label="$t('submit')"
-                              :in-transit="pwResetIsLoading"
+                              :is-loading="pwResetIsLoading"
                               @clicked="submitPwReset()"
                             />
                           </div>

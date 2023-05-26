@@ -1,8 +1,6 @@
 <template>
   <v-card
-    :key="feed.value"
     :variant="variant" 
-    :value="feed.value"
     :ripple="false"
   >
     <!-- feed name -->

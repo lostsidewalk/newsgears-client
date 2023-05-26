@@ -68,7 +68,7 @@
                             <!-- submit button -->
                             <AuthButton
                               :label="$t('submit')"
-                              :in-transit="pwUpdateIsLoading"
+                              :is-loading="pwUpdateIsLoading"
                               @clicked="submitPwUpdate()"
                             />
                           </div>

@@ -72,7 +72,7 @@
                             <AuthButton
                               class="ma-4"
                               :label="$t('submit')"
-                              :in-transit="registrationIsLoading"
+                              :is-loading="registrationIsLoading"
                               @clicked="submitRegistration()"
                             />
                           </div>

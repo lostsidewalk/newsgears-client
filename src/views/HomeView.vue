@@ -144,7 +144,7 @@
           <v-hover
             v-for="feed in filteredFeedIdentOptions"
             v-slot="{ isHovering, props }"
-            :key="feed.id"
+            :key="feed.value"
           >
             <FeedSelectButton 
               variant="flat"
@@ -247,6 +247,7 @@
         <OpmlUploadPanel
           ref="opmlUploadPanel"
           :base-url="baseUrl" 
+          :is-loading="uploadIsLoading"
           @finalizeUpload="createOpmlFeeds"
           @cancel="cancelOpmlUpload"
           @authError="handleServerError"
@@ -468,6 +469,7 @@ export default {
     return {
       selectedItem: null,
       isLoading: false,
+      uploadIsLoading: false,
       refreshFeedsIsLoading: false,
       // reactive window (inner) width 
       windowWidth: window.innerWidth,
@@ -1080,8 +1082,8 @@ export default {
       for (let i = 0; i < this.feeds.length; i++) {
         let iq = this.inboundQueuesByFeed[this.feeds[i].id];
         if (iq) {
-          const trueStr = this.$t('true');
-          const falseStr = this.$t('false');
+          const trueStr = this.$t('trueStr');
+          const falseStr = this.$t('falseStr');
           iq.index = lunr(function () {
             this.ref('id')
             // title 
@@ -1311,7 +1313,7 @@ export default {
     },
     createOpmlFeeds(feeds) {
       let method = 'POST';
-      this.isLoading = true;
+      this.uploadIsLoading = true;
       console.log("post-feed: pushing feeds to remote, ct=" + feeds.length);
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -1355,12 +1357,12 @@ export default {
         .catch((error) => {
           this.handleServerError(error);
         }).finally(() => {
-          this.isLoading = false;
+          this.uploadIsLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.isLoading = false;
+        this.uploadIsLoading = false;
       });
     },
     cancelOpmlUpload() {

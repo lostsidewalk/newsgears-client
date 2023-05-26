@@ -8,6 +8,7 @@
     </v-card-title>
     <v-divider />
     <v-card-text>
+      <!-- file input -->
       <input
         ref="fileInput"
         type="file"
@@ -15,6 +16,7 @@
         style="display: none;"
         @change="eventHandler"
       >
+      <!-- help text -->
       <v-alert
         v-if="shouldShowAlert('uploadOpmlHere')"
         closable
@@ -25,7 +27,7 @@
         class="ma-4"
         @click.close="dismissAlert('uploadOpmlHere')"
       />
-      <!-- continue/finalize button -->
+      <!-- add OPML file button (for step 1) --> 
       <v-row
         v-if="!atStep2"
         class="align-center ma-4"
@@ -39,17 +41,19 @@
           @click="errors = []; $refs.fileInput.click()"
         />
       </v-row>
+      <!-- continue to step 2 / finalize button (for step 2) -->
       <v-row class="align-center ma-4">
         <v-btn
           density="comfortable"
           autofocus 
           :disabled="!files.length"
-          :loading="uploadIsLoading" 
-          :title="feedConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continue') : $t('addAtLeastOneFile'))"
+          :loading="uploadIsLoading || isLoading" 
+          :title="feedConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continueToStep2') : null)"
           :text="feedConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
           @click="feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
         />
       </v-row>
+      <!-- OPML file list -- shows a list of files waiting to upload (step 1) -->
       <v-list
         v-if="!atStep2"
         class="mt-4"
@@ -86,6 +90,7 @@
           {{ $t('selectAtLeastOneFile') }}
         </v-list-item>
       </v-list>
+      <!-- OPML parse errors (if any, shown at step 2) -->
       <v-card class="mt-2">
         <v-card-item
           v-if="errors.length > 0"
@@ -103,6 +108,7 @@
           />
         </v-card-text>
       </v-card>
+      <!-- OPML parse results (if any, shown at step 2)-->
       <v-card
         v-if="feedConfigRequests.length > 0"
         class="mt-2"
@@ -156,6 +162,7 @@
 export default {
   name: "OpmlUploadPanel",
   props: { 
+    isLoading: { type: Boolean, default: false },
     baseUrl: { type: String, required: true } 
   },
   emits: [ "finalizeUpload", "cancel", "authError" ],
