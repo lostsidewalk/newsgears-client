@@ -204,7 +204,7 @@
 </template>
 
 <script>
-import RssAtomFeedInfo from '@/components/feed-config-panel/RssAtomFeedInfo.vue';
+import RssAtomFeedInfo from '@/components/subscription-info/RssAtomFeedInfo.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {

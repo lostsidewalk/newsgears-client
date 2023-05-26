@@ -142,6 +142,8 @@ const i18n = createI18n({
         "REDIRIGIDO A {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable:
         "Las métricas aún no están disponibles para esta fuente RSS.",
+      theseAreYourSubscriptions: "Estas son sus suscripciones...",
+      theseAreYourPublications: "Estas son sus publicaciones...",
       // buttons
       update: "Actualizar",
       save: "Guardar",
@@ -597,6 +599,8 @@ const i18n = createI18n({
       redirectedTo:
         "REDIRECT TO {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable: "Metrics are not yet available for this feed.",
+      theseAreYourSubscriptions: "These are your subscriptions...",
+      theseAreYourPublications: "These are your publications...",
       // buttons
       update: "Update",
       save: "Save",

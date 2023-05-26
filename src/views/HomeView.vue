@@ -155,12 +155,12 @@
               :published-count="countOutboundQueue(feed.id)" 
               class="ma-4"
               :class="selectedFeedId === feed.id ? 'selected-feed' : ''"
-               
               v-bind="props"
               @click.stop="$event => { setSelectedFeedId(feed.id); }"
               @selectFeed="$event => { setSelectedFeedId(feed.id); showQueueDashboard = false; }" 
               @manageSubscriptions="configureFeed(feed.id)" 
               @updatePostFeedFilter="updatePostFeedFilter"
+              @showQueryMetrics="openQueryMetrics"
             />
           </v-hover>
         </v-sheet>
@@ -251,6 +251,18 @@
           @finalizeUpload="createOpmlFeeds"
           @cancel="cancelOpmlUpload"
           @authError="handleServerError"
+        />
+      </v-dialog>
+      <!-- query metrics dialog -->
+      <v-dialog
+        v-model="showQueryMetrics"
+        fullscreen
+        scrollable
+      >
+        <QueryMetrics
+          :title="rssAtomFeedUrlToShow.title"
+          :query-metrics="rssAtomFeedUrlToShow.feedMetrics"
+          @dismiss="showQueryMetrics = false"
         />
       </v-dialog>
       <!-- post feed layout control -->
@@ -368,6 +380,8 @@ import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 import FeedConfigPanel from "@/components/feed-config-panel/FeedConfigPanel.vue";
 // OPML upload panel 
 import OpmlUploadPanel from "@/components/opml-upload-panel/OpmlUploadPanel.vue";
+// query metrics panel 
+import QueryMetrics from '@/components/subscription-info/QueryMetrics.vue';
 // settings 
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
@@ -445,6 +459,7 @@ export default {
     ConfirmationDialog,
     FeedConfigPanel,
     OpmlUploadPanel,
+    QueryMetrics,
     // settings 
     ControlPanel,
     SettingsPanel,
@@ -478,6 +493,9 @@ export default {
       // operating mode 
       feedIdToDelete: null, 
       feedIdToMarkAsRead: null,
+      // show query metrics 
+      rssAtomFeedUrlToShow: null,
+      showQueryMetrics: false, 
       // show notification warning 
       showNotificationWarning: false, 
       // show filter help
@@ -516,7 +534,7 @@ export default {
   },
   computed: {
     isModalShowing: function() {
-      return this.showSettingsPanel || this.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel;
+      return this.showSettingsPanel || this.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showQueryMetrics;
     },
     filteredInboundQueue: function() {
       if (this.inboundQueue) {
@@ -864,6 +882,10 @@ export default {
         this.inboundQueueFilter = ' +category:' + category;
       }
     }, 
+    openQueryMetrics(subscriptionInfo) {
+      this.rssAtomFeedUrlToShow = subscriptionInfo;
+      this.showQueryMetrics = true;
+    },
     // 
     // 
     // 

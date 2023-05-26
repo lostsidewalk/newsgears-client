@@ -172,83 +172,11 @@
         fullscreen
         scrollable
       >
-        <v-card>
-          <v-card-title class="pa-4 text-center">
-            {{ $t('queryMetrics') }}
-          </v-card-title>
-          <v-card-subtitle>
-            {{ info.title ? info.title : info.url }}
-          </v-card-subtitle>
-          <v-card-text>
-            <v-table
-              class="ma-4 overflow-auto flex-grow-1" 
-              style="white-space: nowrap;"
-              fixed-header
-            >
-              <thead style="text-align: left;white-space: nowrap;">
-                <th class="pa-1">
-                  {{ $t('timestamp') }}
-                </th>
-                <th class="pa-1">
-                  {{ $t('message') }}
-                </th>
-                <th class="pa-1">
-                  {{ $t('httpStatusLabel') }}
-                </th>
-                <th class="pa-1">
-                  {{ $t('httpRedirect') }}
-                </th>
-                <th class="pa-1">
-                  {{ $t('error') }}
-                </th>
-              </thead>
-              <tbody style="text-align: left;white-space: nowrap;">
-                <tr
-                  v-for="queryMetric in usefulFeedMetrics"
-                  :key="queryMetric"
-                >
-                  <td class="pa-1">
-                    {{ formatTimestamp(queryMetric.importTimestamp) }}
-                  </td>
-                  <td class="pa-1">
-                    {{ $t('importedNArticles', { n: queryMetric.persistCt }) }}
-                  </td>
-                  <!-- HTTP status -->
-                  <td class="pa-1">
-                    {{ $t('httpStatus', { 
-                      httpStatusCode: queryMetric.httpStatusCode, 
-                      httpStatusMessage: queryMetric.httpStatusMessage 
-                    }) }}
-                  </td>
-                  <!-- HTTP redirect status -->
-                  <td class="pa-1">
-                    {{ queryMetric.redirectFeedUrl ? 
-                      $t('redirectedTo', { 
-                        redirectFeedUrl: queryMetric.redirectFeedUrl, 
-                        redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
-                        redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
-                      }) : $t('NONE') }}
-                  </td>
-                  <!-- error -->
-                  <td
-                    class="pa-1"
-                    :class="{ 'error': queryMetric.queryExceptionTypeMessage }"
-                  >
-                    {{ queryMetric.queryExceptionTypeMessage ? 
-                      queryMetric.queryExceptionTypeMessage : $t('NONE') }}
-                  </td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              :size="buttonSize" 
-              :text="$t('dismiss')"
-              @click="showQueryMetrics = false"
-            />
-          </v-card-actions>
-        </v-card>
+        <QueryMetrics
+          :title="info.title ? info.title : info.url"
+          :query-metrics="usefulFeedMetrics"
+          @dismiss="showQueryMetrics = false"
+        />
       </v-dialog>
       <slot name="additional" />
     </v-card-actions>
@@ -259,10 +187,14 @@
 </template>
 
 <script>
+import QueryMetrics from './QueryMetrics.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "RssAtomFeedInfo",
+  components: {
+    QueryMetrics
+  },
   mixins: [buttonSizeMixin], 
   props: {
     info: { type: Object, required: true }

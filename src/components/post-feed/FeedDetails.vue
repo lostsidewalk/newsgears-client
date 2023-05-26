@@ -1,8 +1,6 @@
 <template>
   <v-sheet>
-    <v-card
-      class="ma-4"
-    >
+    <v-card class="ma-4">
       <!-- subscriptions label -->
       <v-card-title>
         {{ $t('subscriptions') }}
@@ -36,33 +34,33 @@
           <template #prepend>
             <!-- feed logo image -->
             <v-img
-              v-if="rssAtomFeedUrl.image" 
+              v-if="rssAtomFeedUrl.image"
               class="ma-2"
               :src="rssAtomFeedUrl.image.url"
-              :alt="$t('feedLogoImage')" 
-              width="48" 
+              :alt="$t('feedLogoImage')"
+              width="48"
               max-width="48"
               max-height="48"
-            /> 
+            />
             <!-- RSS logo -->
             <v-img
-              v-else 
+              v-else
               class="ma-2"
-              src="rss_logo.svg" 
-              :alt="$t('rssLogo')" 
-              width="48" 
+              src="rss_logo.svg"
+              :alt="$t('rssLogo')"
+              width="48"
               max-width="48"
               max-height="48"
-            /> 
+            />
           </template>
           <v-list-item-action class="ml-2">
-            <!-- TODO: (enhancement) click here should go to subscriptions config -> RSS feed metrics for this sub -->
             <v-btn
               :size="buttonSize"
               class="mr-2"
               variant="outlined"
-              :text="buildImportCtMessage(rssAtomFeedUrl.feedMetrics)" 
+              :text="buildImportCtMessage(rssAtomFeedUrl.feedMetrics)"
               :title="buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)"
+              @click.prevent="hasFeedMetrics(rssAtomFeedUrl) ? openQueryMetrics(rssAtomFeedUrl) : false"
             />
             <v-btn
               :size="buttonSize"
@@ -70,7 +68,7 @@
               variant="outlined"
               icon="fa-filter"
               @click.stop="$emit('updatePostFeedFilter', {
-                name: 'subscription', 
+                name: 'subscription',
                 feedId: rssAtomFeedUrl.feedId,
                 value: rssAtomFeedUrl.title,
               })"
@@ -145,37 +143,37 @@ export default {
     rssPubUrl: { type: String, required: true },
     atomPubUrl: { type: String, required: true },
   },
-  emits: ["updatePostFeedFilter"], 
+  emits: ["updatePostFeedFilter", "showQueryMetrics"],
   methods: {
     shouldShowAlert(alertName) {
-      return !localStorage.getItem(alertName); 
+      return !localStorage.getItem(alertName);
     },
     dismissAlert(alertName) {
-      localStorage.setItem(alertName, new Date().toISOString())
+      localStorage.setItem(alertName, new Date().toISOString());
     },
     // shown on hover 
     buildMetricStatusMessage(feedMetrics) {
       if (feedMetrics) {
         let m = this.getMostRecentMetric(feedMetrics);
         // 
-        let metricStatusMessage = this.$t('importerRanAt', { importTimestamp: this.formatTimestamp(m.importTimestamp) }); // 'Importer ran at ' + m.importTimestamp;
+        let metricStatusMessage = this.$t("importerRanAt", { importTimestamp: this.formatTimestamp(m.importTimestamp) }); // 'Importer ran at ' + m.importTimestamp;
         // add the persist ct to the metric status message 
         if (m.persistCt > 0) {
-          metricStatusMessage = metricStatusMessage + '\n' + this.$t('nNewArticlesSaved', { n: m.persistCt }); // m.persistCt + ' new articles saved';;
+          metricStatusMessage = metricStatusMessage + "\n" + this.$t("nNewArticlesSaved", { n: m.persistCt }); // m.persistCt + ' new articles saved';;
         }
         if (m.archiveCt > 0) {
-          metricStatusMessage = metricStatusMessage + '\n' + this.$t('nArticlesArchived', { n: m.archiveCt }); // m.archiveCt + ' articles archived';
+          metricStatusMessage = metricStatusMessage + "\n" + this.$t("nArticlesArchived", { n: m.archiveCt }); // m.archiveCt + ' articles archived';
         }
         // add the http status code, http status message, redirect status code, redirect status message to the metric status message, if any 
         if (m.httpStatusCode && m.httpStatusCode > 0) {
-          metricStatusMessage = metricStatusMessage + '\n' + this.$t('httpStatus', { 
-            httpStatusCode: m.httpStatusCode, 
-            httpStatusMessage: m.httpStatusMessage 
+          metricStatusMessage = metricStatusMessage + "\n" + this.$t("httpStatus", {
+            httpStatusCode: m.httpStatusCode,
+            httpStatusMessage: m.httpStatusMessage
           });
           if (m.redirectFeedUrl) {
-            metricStatusMessage = metricStatusMessage + '\n' + this.$t('redirectedTo', { 
-              redirectFeedUrl: m.redirectFeedUrl, 
-              redirectHttpStatusCode: m.redirectHttpStatusCode, 
+            metricStatusMessage = metricStatusMessage + "\n" + this.$t("redirectedTo", {
+              redirectFeedUrl: m.redirectFeedUrl,
+              redirectHttpStatusCode: m.redirectHttpStatusCode,
               redirectHttpStatusMessage: m.redirectHttpStatusMessage
             });
           }
@@ -183,12 +181,13 @@ export default {
         // add query exception message, if any 
         if (m.queryExceptionTypeMessage) {
           // TODO: (translation) translate queryExceptionTypeMessage 
-          metricStatusMessage = metricStatusMessage + '\n' + m.queryExceptionTypeMessage;
+          metricStatusMessage = metricStatusMessage + "\n" + m.queryExceptionTypeMessage;
         }
         return metricStatusMessage;
-      } else {
+      }
+      else {
         // default response 
-        return this.$t('metricsNotYetAvailable');
+        return this.$t("metricsNotYetAvailable");
       }
     },
     hasFeedMetrics(rssAtomFeedUrl) {
@@ -198,9 +197,9 @@ export default {
     buildImportCtMessage(feedMetrics) {
       let m = this.getMostRecentMetric(feedMetrics);
       if (m) {
-        return '+' + (m.persistCt > 0 ? m.persistCt : 0);
+        return "+" + (m.persistCt > 0 ? m.persistCt : 0);
       }
-      return '-';
+      return "-";
     },
     getMostRecentMetric(feedMetrics) {
       if (feedMetrics) {
@@ -209,6 +208,9 @@ export default {
         })[0];
       }
     },
+    openQueryMetrics(rssAtomFeedUrl) {
+      this.$emit('showQueryMetrics', rssAtomFeedUrl);
+    },
     formatTimestamp(timestamp) {
       if (!timestamp) {
         return null;
@@ -216,11 +218,12 @@ export default {
       try {
         let d = new Date(Date.parse(timestamp));
         return d.toLocaleString();
-      } catch (error) {
+      }
+      catch (error) {
         console.debug("Unable to format timestamp due to: " + error);
       }
     }
-  },
+  }
 }
 </script>
 
