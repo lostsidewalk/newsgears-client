@@ -59,9 +59,9 @@
             :base-url="baseUrl"
             :show-settings-panel="showSettingsPanel"
             :show-help-panel="showHelpPanel"
+            :show-notification-warning="showNotificationWarning"
             @showSettings="showSettingsPanel = !showSettingsPanel"
             @showHelp="showHelpPanel = !showHelpPanel"
-            @updateServerMessage="setLastServerMessage" 
           >
             <template #additional>
               <!-- upload OPML button -->
@@ -476,6 +476,8 @@ export default {
       // operating mode 
       feedIdToDelete: null, 
       feedIdToMarkAsRead: null,
+      // show notification warning 
+      showNotificationWarning: false, 
       // show filter help
       showFilterHelp: false,
       showFeedFilterPills: false,
@@ -667,19 +669,22 @@ export default {
     dismissAlert(alertName) {
       localStorage.setItem(alertName, new Date().toISOString())
     },
-    setLastServerMessage(messageObj) {
+    setLastServerMessage(message) {
       this.$notification.requestPermission().then(p => {
         if (p === "granted") {
+          this.showNotificationWarning = false;
           this.$notification.show('FeedGears message', {
-           body: messageObj.message
+           body: message
           }, {
             onerror: function() {
-              console.error("unable to show notification, message=" + messageObj.message);
+              console.error("unable to show notification, message=" + message);
             }
           });
+        } else {
+          this.showNotificationWarning = true;
         }
       });
-      this.$announcer.polite(messageObj.message);
+      this.$announcer.polite(message);
     },
     // 
     // open post card in a modal dialog

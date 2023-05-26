@@ -13,33 +13,30 @@
       <template #prepend>
         <v-app-bar-nav-icon icon="fa-rss" />
       </template>
-      <ControlPanel
-        :base-url="baseUrl" 
-           
-        @updateServerMessage="setLastServerMessage"
-      >
-        <template #additional>
-          <GoBack />
-          <DisplayModeButton />
-        </template>
-      </ControlPanel>
+      <v-toolbar-items>
+        <GoBack />
+        <DisplayModeButton />
+      </v-toolbar-items>
     </v-app-bar>
 
     <v-main>
       <BannerPanel />
 
+      <v-divider />
+
       <v-container>
-        {{ $t('thankYouForYourOrder') }}
+        {{ $t("thankYouForYourOrder") }}
       </v-container>
+
+      <v-divider />
 
       <FooterPanel app />
     </v-main>
   </v-app>
 </template>
-  
+
 <script>
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
-import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
@@ -48,14 +45,10 @@ export default {
   name: "OrderConfirmedView",
   components: {
     BannerPanel,
-    ControlPanel,
     GoBack,
     DisplayModeButton,
     FooterPanel,
 },
-  props: {
-    baseUrl: { type: String, required: true },
-  },
   mounted() {
     this.$auth.getTokenSilently()
       .catch(() => { })
@@ -66,22 +59,6 @@ export default {
           console.log("order-confirmed-view: not authenticated on mount");
         }
       });
-  },
-  methods: {
-    setLastServerMessage(messageObj) {
-      this.$notification.requestPermission().then(p => {
-        if (p === "granted") {
-          this.$notification.show('FeedGears message', {
-           body: messageObj.message
-          }, {
-            onerror: function() {
-              console.error("unable to show notification, message=" + messageObj.message);
-            }
-          });
-        }
-      });
-      this.$announcer.polite(messageObj.message);
-    },
-  },
+  }
 };
 </script>

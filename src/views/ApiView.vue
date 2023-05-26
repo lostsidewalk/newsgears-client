@@ -61,21 +61,5 @@ export default {
         }
       });
   },
-  methods: {
-    setLastServerMessage(messageObj) {
-      this.$notification.requestPermission().then(p => {
-        if (p === "granted") {
-          this.$notification.show('FeedGears message', {
-           body: messageObj.message
-          }, {
-            onerror: function() {
-              console.error("unable to show notification, message=" + messageObj.message);
-            }
-          });
-        }
-      });
-      this.$announcer.polite(messageObj.message);
-    },
-  },
 };
 </script>

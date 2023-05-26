@@ -117,15 +117,15 @@ const i18n = createI18n({
       confirm: "Confirmar",
       // go back
       goBack: "Regresa",
-      // navbar button components
+      // control panel 
       login: "Acceso",
       logout: "Cerrar sesión",
       settings: "Ajustes",
       help: "Ayuda",
       switchMode: "Cambiar el modo de visualización",
-      // queue dashboard buttons
       createNewQueue: "Crear cola",
       uploadOPML: "Subir OPML",
+      pleaseEnableNotifications: "Habilite las notificaciones para recibir mensajes de FeedGears.",
       // queue select button
       showMoreInfo: "Mostrar suscripciones",
       hideMoreInfo: "Ocultar suscripciones",
@@ -568,15 +568,15 @@ const i18n = createI18n({
       confirm: "Confirm",
       // go back
       goBack: "Go back",
-      // navbar button components
+      // control panel 
       login: "Login",
       logout: "Logout",
       settings: "Settings",
       help: "Help",
       switchMode: "Switch display mode",
-      // queue dashboard buttons
       createNewQueue: "New queue",
       uploadOPML: "Upload OPML",
+      pleaseEnableNotifications: "Please enable notifications to receive messages from FeedGears.",
       // queue select button
       showMoreInfo: "Show details",
       hideMoreInfo: "Hide details",

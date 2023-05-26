@@ -6,11 +6,24 @@
     <!-- logout button, don't disable -->
     <LogoutButton v-if="$auth.$isAuthenticated" />
     <!-- settings button -->
+    <v-badge
+      v-if="$auth.$isAuthenticated && showNotificationWarning"
+      dot
+      location="top right"
+      color="red"
+    >
+      <SettingsButton
+        :expanded="showSettingsPanel"
+        :title="$t('pleaseEnableNotifications')"
+        @showSettings="$emit('showSettings')"
+      />
+    </v-badge>
     <SettingsButton
-      v-if="$auth.$isAuthenticated"
+      v-else-if="$auth.$isAuthenticated"
       :expanded="showSettingsPanel"
       @showSettings="$emit('showSettings')"
     />
+    
     <!-- help button, don't disable -->
     <HelpButton
       :expanded="showHelpPanel"
@@ -39,21 +52,14 @@ export default {
   props: {
     showSettingsPanel: { type: Boolean, default: false },
     showHelpPanel: { type: Boolean, default: false },
+    showNotificationWarning: { type: Boolean, defualt: false },
   },
   emits: [
-    "updateServerMessage",
     "showSettings",
     "showHelp",
   ],
   data() {
     return {};
-  },
-  methods: {
-    setLastServerMessage(message) {
-      if (message) {
-        this.$emit("updateServerMessage", message);
-      }
-    },
   },
 };
 </script>
