@@ -160,7 +160,7 @@
     <v-divider />
     <v-card-actions class="flex-wrap">
       <v-btn
-        :size="xs ? 'x-small' : 'small'" 
+        :size="buttonSize" 
         :append-icon="cardMode === 'QUERY_METRICS' ? 'fa-compress' : 'fa-expand'"
         :title="$t('queryMetrics')"
         :text="$t('queryMetrics')"
@@ -243,7 +243,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn
-              density="comfortable"
+              :size="buttonSize" 
               :text="$t('dismiss')"
               @click="showQueryMetrics = false"
             />
@@ -259,8 +259,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "RssAtomFeedInfo",
+  mixins: [buttonSizeMixin], 
   props: {
     info: { type: Object, required: true }
   },
@@ -313,9 +316,6 @@ export default {
         this.info.redirectHttpStatusCode || 
         this.info.isUrlUpgradable === true;
     },
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
   },
   methods: {
     isHtmlContent(contentObj) {

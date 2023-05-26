@@ -1,7 +1,7 @@
 <template>
   <v-btn
     id="logout" 
-    :size="xs ? 'x-small' : 'small'"  
+    :size="buttonSize"  
     accesskey="o"
     :title="$t('logout')" 
     append-icon="fa-sign-out"
@@ -11,13 +11,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "LogoutButton",
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
+  mixins: [buttonSizeMixin], 
   methods: {
     logout() {
       this.$auth.logout()

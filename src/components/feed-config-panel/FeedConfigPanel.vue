@@ -138,7 +138,7 @@
               <v-divider v-if="(!feed || !feed.id)" />
               <v-card-actions v-if="(!feed || !feed.id)">
                 <v-btn
-                  density="comfortable"
+                  :size="buttonSize" 
                   :text="$t('save')"
                   @click="saveFeedConfig"
                 />
@@ -151,8 +151,7 @@
     <v-divider />
     <v-card-actions>
       <v-btn
-        :size="xs ? 'x-small' : 'small'" 
-        density="comfortable"
+        :size="buttonSize" 
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -163,14 +162,15 @@
 <script>
 import FeedConfigTextField from '@/components/feed-config-panel/FeedConfigTextField.vue';
 import SubscriptionsConfig from '@/components/feed-config-panel/SubscriptionsConfig.vue';
-
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "FeedConfigPanel",
+  name: "FeedConfigPanel", 
   components: {
     FeedConfigTextField,
     SubscriptionsConfig,
   },
+  mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
   },
@@ -211,10 +211,6 @@ export default {
       }
       return arr;
     },
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-
   },
   methods: {
     shouldShowAlert(alertName) {

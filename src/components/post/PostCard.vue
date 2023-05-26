@@ -195,7 +195,7 @@
       <slot name="additional" />
       <!-- toggle read status button -->
       <v-btn
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="post.isRead ? $t('markPostAsUnread') : $t('markPostAsRead')"
         :aria-label="$t('markPostAsUnread')"
         :icon="post.isRead ? 'fa-check-square-o' : 'fa-eye'"
@@ -203,7 +203,7 @@
       />
       <!-- toggle read-later status button -->
       <v-btn
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="
           post.isReadLater
             ? $t('unmarkPostAsReadLater')
@@ -216,7 +216,7 @@
       <!-- star button -->
       <v-btn
         v-if="!post.isPublished"
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('starThisPost')"
         :aria-label="$t('starThisPost')"
         icon="fa-star-o"
@@ -226,7 +226,7 @@
       <v-btn
         v-if="post.isPublished"
         class="star-colored"
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('unstarThisPost')"
         :aria-label="$t('unstarThisPost')"
         icon="fa-star"
@@ -234,7 +234,7 @@
       />
       <!-- link button -->
       <v-btn
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('openOriginalArticle')"
         :aria-label="$t('openOriginalArticle')"
         icon="fa-link"
@@ -242,7 +242,7 @@
       />
       <v-btn
         v-if="post.postCategories && post.postCategories.length > 0"
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('showPostCategories')"
         :aria-label="$t('showPostCategories')"
         :icon="showPostCategories ? 'fa-compress' : 'fa-tags'"
@@ -252,7 +252,7 @@
         v-for="postCategory in post.postCategories"
         v-show="showPostCategories"
         :key="postCategory"
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('addCategoryToFilter', { postCategory: postCategory })"
         :text="postCategory"
         @click.stop="
@@ -263,7 +263,7 @@
         "
       />
       <v-btn
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('showPostSharing')"
         :aria-label="$t('showPostSharing')"
         :icon="showPostSharing ? 'fa-compress' : 'fa-share-alt'"
@@ -273,7 +273,7 @@
         v-for="sharingOption in sharingOptions"
         v-show="showPostSharing"
         :key="sharingOption"
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         :title="$t('shareWith_' + sharingOption.name)"
         :aria-label="$t('shareWith_' + sharingOption.name + '_ariaLabel')"
         :icon="'fa-' + sharingOption.icon"
@@ -289,6 +289,7 @@
 import PostEnclosure from "@/components/post/PostEnclosure.vue";
 import PostMedia from "@/components/post/PostMedia.vue";
 import PostITunes from "@/components/post/PostITunes.vue";
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "PostCard",
@@ -297,6 +298,7 @@ export default {
     PostMedia,
     PostITunes,
   },
+  mixins: [buttonSizeMixin], 
   props: {
     post: { type: Object, required: true },
     sharingOptions: { type: Array, default: null },
@@ -316,11 +318,6 @@ export default {
       showFullPost: !this.collapsed,
       showFirstEnclosure: false,
     };
-  },
-  computed: {
-    xs: function () {
-      return this.$vuetify.display.xs;
-    },
   },
   methods: {
     isHtmlContent(contentObj) {

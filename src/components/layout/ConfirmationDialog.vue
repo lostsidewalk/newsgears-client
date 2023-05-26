@@ -9,14 +9,14 @@
     <v-divider />
     <v-card-actions>
       <v-btn
-        density="comfortable"
+        :size="buttonSize"
         autofocus 
         accesskey="c" 
         :text="$t('confirm')" 
         @click="confirm"
       />
       <v-btn
-        density="comfortable"
+        :size="buttonSize"
         :text="$t('cancel')" 
         @click.stop="$emit('cancel')"
       />
@@ -25,8 +25,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "ConfirmationDialog",
+  mixins: [buttonSizeMixin],
   props: {
     prompt: { type: String, required: true },
   },

@@ -13,7 +13,7 @@
     />
     <!-- sort direction button -->
     <v-btn
-      :size="xs ? 'x-small' : 'small'"  
+      :size="buttonSize"  
       :title="$t('toggleSortOrder')" 
       :aria-label="$t('toggleSortOrder')" 
       :icon="'fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')"
@@ -21,7 +21,7 @@
     />
     <!-- refresh feed button -->
     <v-btn
-      :size="xs ? 'x-small' : 'small'" 
+      :size="buttonSize" 
       icon="fa-refresh"
       :title="$t('refreshQueues')"
       :aria-label="$t('refreshQueues')"
@@ -29,7 +29,7 @@
     />
     <!-- mark as read button -->
     <v-btn
-      :size="xs ? 'x-small' : 'small'" 
+      :size="buttonSize" 
       icon="fa-check-square-o"
       :title="$t('markQueueAsRead')"  
       :aria-label="$t('markQueueAsRead')"
@@ -37,7 +37,7 @@
     />
     <!-- toggle filter pills button -->
     <v-btn
-      :size="xs ? 'x-small' : 'small'" 
+      :size="buttonSize" 
       icon="fa-tag"
       :title="$t('toggleFeedFilterPills')"  
       :aria-label="$t('toggleFeedFilterPills')"
@@ -47,8 +47,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
-  name: "FeedFilter", 
+  name: "FeedFilter",
+  mixins: [buttonSizeMixin], 
   props: {
     inboundQueueFilter: { type: String, required: true },
     inboundQueueSortOrder: { type: String, required: true },
@@ -60,10 +63,5 @@ export default {
     "markAsRead", 
     "update:modelValue",
   ],
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
 }
 </script>

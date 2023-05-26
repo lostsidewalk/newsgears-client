@@ -45,14 +45,14 @@
           <!-- deactivate account button -->
           <v-btn
             v-if="!showDeactivateUser && !showResetPassword"
-            density="comfortable" 
+            :size="buttonSize"
             :text="$t('deactivateYourAccount')" 
             @click="showDeactivateUser = true"
           />
           <!-- download your data button-->
           <v-btn
             v-if="showDeactivateUser"
-            density="comfortable" 
+            :size="buttonSize"
             :loading="exportOpmlIsLoading"
             :text="$t('downloadYourData')"
             @click="exportOpml()"
@@ -60,7 +60,7 @@
           <!-- permanently delete your account button -->
           <v-btn
             v-if="showDeactivateUser"
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="finalizeDeactivationIsLoading"
             :text="$t('permanentlyDeleteYourAccount')"
             @click="finalizeDeactivation()"
@@ -69,13 +69,13 @@
           <v-btn
             v-if="showDeactivateUser"
             id="cancelDeactivateAccount"
-            density="comfortable" 
+            :size="buttonSize" 
             :text="$t('cancel')" 
             @click="showDeactivateUser = false"
           />
           <v-btn
             v-if="showResetPassword"
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="initPasswordResetIsLoading"
             :text="$t('sendPasswordResetEmail')"
             @click="initPasswordReset()"
@@ -84,7 +84,7 @@
           <v-btn
             v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser"
             id="resetPassword" 
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="resetPasswordIsLoading" 
             :text="$t('resetPassword')"
             @click="resetPassword()"
@@ -93,7 +93,7 @@
           <v-btn
             v-if="showResetPassword"
             id="cancelResetPassword" 
-            density="comfortable" 
+            :size="buttonSize" 
             :text="$t('cancel')" 
             @click="showResetPassword = false"
           />
@@ -125,7 +125,7 @@
           <v-btn
             v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser"
             id="updateAccount" 
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="updateAccountIsLoading"
             :text="$t('applyChanges')"
             @click="updateAccount()"
@@ -165,7 +165,7 @@
           <!-- update notification preferences button -->
           <v-btn
             id="updateNotificationPreferences"
-            density="comfortable" 
+            :size="buttonSize" 
             :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)" 
             :loading="updateNotificationPreferencesIsLoading"
             :text="$t('updateNotificationPreferences')"
@@ -173,7 +173,7 @@
           />
           <!-- toggle (all) notifications button -->
           <v-btn 
-            density="comfortable"
+            :size="buttonSize"
             :loading="toggleNotificationsIsLoading" 
             :text="(frameworkConfig && isTrue(frameworkConfig.notifications.disabled)) ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
             @click="toggleNotifications()"
@@ -257,7 +257,7 @@
           <v-btn
             v-if="subscription && !isCanceled()"
             id="cancelSubscription"
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="cancelSubscriptionIsLoading" 
             :text="$t('cancelSubscription')"
             @click="cancelSubscription()"
@@ -265,7 +265,7 @@
           <v-btn
             v-if="subscription && isCanceled()"
             id="resumeSubscription"
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="resumeSubscriptionIsLoading" 
             :text="$t('resumeSubscription')"
             @click="resumeSubscription()"
@@ -286,7 +286,7 @@
         <v-card-actions>
           <v-btn
             id="checkout"
-            density="comfortable" 
+            :size="buttonSize" 
             :loading="submitOrderIsLoading" 
             :text="$t('checkout')"
             @click="submitOrder"
@@ -297,7 +297,7 @@
     <v-divider />
     <v-card-actions>
       <v-btn
-        density="comfortable"
+        :size="buttonSize"
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -306,6 +306,8 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
 }
@@ -317,6 +319,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 export default {
   name: "SettingsPanel",
+  mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
   },

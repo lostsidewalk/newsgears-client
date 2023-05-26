@@ -120,6 +120,7 @@
         />
       </v-dialog>
       <v-btn
+        :size="buttonSize"
         icon="fa-file-video-o"
         @click="showContents = true"
       />
@@ -129,12 +130,14 @@
 
 <script>
 import PostMediaMetadata from '@/components/post/PostMediaMetadata.vue';
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "PostMediaContent",
   components: {
     PostMediaMetadata,
   },
+  mixins: [buttonSizeMixin],
   props: {
     mediaContent: { type: Object, required: true },
   },

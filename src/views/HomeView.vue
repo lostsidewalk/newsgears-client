@@ -43,7 +43,7 @@
         :location="'top'"
       >
         <template #title>
-          <span class="view-header-no-count d-none d-md-flex">
+          <span class="view-header-no-count d-none d-sm-flex">
             FeedGears RSS
           </span>
         </template>
@@ -66,7 +66,7 @@
             <template #additional>
               <!-- upload OPML button -->
               <v-btn
-                :size="xs ? 'x-small' : 'small'" 
+                :size="buttonSize" 
                 accesskey="m"
                 :title="$t('uploadOPML')" 
                 append-icon="fa-file"
@@ -75,7 +75,7 @@
               />
               <!-- new queue button -->
               <v-btn
-                :size="xs ? 'x-small' : 'small'" 
+                :size="buttonSize" 
                 accesskey="q"
                 :title="$t('createNewQueue')" 
                 append-icon="fa-plus"
@@ -105,7 +105,7 @@
         />
         <!-- help buton -->
         <v-btn
-          :size="xs ? 'x-small' : 'small'" 
+          :size="buttonSize" 
           :title="$t('toggleSortOrder')" 
           :aria-label="$t('toggleSortOrder')" 
           :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
@@ -126,7 +126,7 @@
         v-model="showQueueDashboard"
         app
         :location="'end'"
-        :class="xs ? 'w-100' : 'w-50'"
+        :class="$vuetify.display.xs ? 'w-100' : 'w-50'"
         elevation="12" 
         temporary
       >
@@ -313,7 +313,7 @@
             <template #additional>
               <v-btn
                 ref="nextPostButton" 
-                :size="xs ? 'x-small' : 'small'"
+                :size="buttonSize"
                 accesskey="n"
                 icon="fa-arrow-down"
                 class="ma-1"
@@ -321,7 +321,7 @@
                 @click.stop="selectNextPost"
               />
               <v-btn
-                :size="xs ? 'x-small' : 'small'" 
+                :size="buttonSize" 
                 accesskey="p"
                 icon="fa-arrow-up"
                 class="ma-1"
@@ -386,6 +386,8 @@ import PostListItem from "@/components/post/PostListItem.vue";
 import FeedSelectButton from '@/components/post-feed/FeedSelectButton.vue';
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 // import FeedDetails from '@/components/post-feed/FeedDetails.vue';
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 
 const sharingOptions = [
   {
@@ -461,6 +463,7 @@ export default {
     FeedSelectButton,
     FooterPanel
   },
+  mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
     feedUrl: { type: String, required: true },
@@ -616,9 +619,6 @@ export default {
     showListLayout: function() {
       return this.postFeedLayout === 'LIST';
     },
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
   },
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {

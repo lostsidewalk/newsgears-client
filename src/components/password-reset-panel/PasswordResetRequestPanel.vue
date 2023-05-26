@@ -83,7 +83,7 @@
                             :server-message="serverMessage"
                           />
                           <v-btn
-                            density="comfortable"
+                            :size="buttonSize"
                             variant="text"
                             class="mt-4 mb-4 pa-2"
                             block 

@@ -31,7 +31,7 @@
               >
                 <td class="pa-1">
                   <v-btn
-                    density="comfortable"
+                    :size="buttonSize" 
                     variant="tonal" 
                     :prepend-icon="desc.icon" 
                     :text="desc.key"
@@ -47,7 +47,7 @@
               >
                 <td class="pa-1">
                   <v-btn
-                    density="comfortable"
+                    :size="buttonSize"   
                     variant="tonal" 
                     :prepend-icon="desc.icon" 
                     :text="desc.key"
@@ -64,8 +64,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn
-        :size="xs ? 'x-small' : 'small'" 
-        density="comfortable"
+        :size="buttonSize" 
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -74,9 +73,12 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "HelpPanel",
-  emits: ["dismiss"],
+  mixins: [buttonSizeMixin],
+  emits: ["dismiss"], 
   data() {
     return {
       helpModel: {

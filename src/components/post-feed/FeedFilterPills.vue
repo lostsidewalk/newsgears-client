@@ -8,7 +8,7 @@
         :key="filterPill" 
         elevation="2"
         variant="text"
-        :size="xs ? 'x-small' : 'small'" 
+        :size="buttonSize" 
         :title="filterPill.title"
         @click="filterPill.invoke"
       >
@@ -25,14 +25,12 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
+  mixins: [buttonSizeMixin],
   props: {
     filterPills: { type: Array, required: true },
-  },
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
+  }, 
 }
 </script>

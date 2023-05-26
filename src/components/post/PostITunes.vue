@@ -82,7 +82,7 @@
     <v-card-actions style="justify-content: start;">
       <v-btn
         variant="tonal" 
-        :size="xs ? 'x-small' : 'small'"
+        :size="buttonSize"
         icon="fa-headphones"
         @click="$emit('playFirstEnclosure', iTunes)"
       />
@@ -91,9 +91,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "PostITunes",
+  mixins: [buttonSizeMixin],
   props: {
     iTunes: { type: Object, required: true },
   },
@@ -110,9 +112,6 @@ export default {
       }
       return null;
     },
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
   },
 }
 </script>

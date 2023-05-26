@@ -45,7 +45,7 @@
             <v-btn
               block
               variant="tonal"
-              :size="xs ? 'x-small' : 'small'" 
+              :size="buttonSize" 
               :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
               @click.stop="$emit('manageSubscriptions')"
             />
@@ -55,7 +55,7 @@
             <v-btn
               block
               variant="tonal"
-              :size="xs ? 'x-small' : 'small'" 
+              :size="buttonSize" 
               :text="showMoreInformation ? $t('hideMoreInfo') : $t('showMoreInfo')"
               @click.stop="showMoreInformation = !showMoreInformation"
             />
@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 import FeedDetails from '@/components/post-feed/FeedDetails.vue';
 
 export default {
@@ -85,6 +87,7 @@ export default {
   components: {
     FeedDetails,
   },
+  mixins: [buttonSizeMixin], 
   props: {
     feed: { type: Object, required: true },
     feedUrl: { type: String, required: true },
@@ -98,10 +101,5 @@ export default {
       showMoreInformation: false,
     }
   },
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  }
 }
 </script>

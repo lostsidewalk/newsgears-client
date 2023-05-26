@@ -33,7 +33,7 @@
         class="align-center ma-4"
       >
         <v-btn
-          density="comfortable"
+          :size="buttonSize"
           autofocus
           :disabled="atStep2"
           :title="$t('selectAnOpmlFile')" 
@@ -44,7 +44,7 @@
       <!-- continue to step 2 / finalize button (for step 2) -->
       <v-row class="align-center ma-4">
         <v-btn
-          density="comfortable"
+          :size="buttonSize"
           autofocus 
           :disabled="!files.length"
           :loading="uploadIsLoading || isLoading" 
@@ -66,7 +66,7 @@
           <template #prepend>
             <v-list-item-action start>
               <v-btn
-                density="comfortable"
+                :size="buttonSize"
                 variant="text"
                 :title="$t('previewThisFile')" 
                 :text="file.file.name"
@@ -77,7 +77,7 @@
             <v-list-item-action end>
               <v-btn
                 v-if="!atStep2"
-                density="comfortable" 
+                :size="buttonSize"
                 variant="tonal" 
                 prepend-icon="fa-trash"
                 :text="$t('delete')" 
@@ -145,12 +145,12 @@
     <v-card-actions>
       <v-btn
         v-if="atStep2"
-        density="comfortable" 
+        :size="buttonSize"
         :text="$t('goBack')" 
         @click="returnToStep1"
       />
       <v-btn
-        density="comfortable"
+        :size="buttonSize"
         :text="$t('cancel')" 
         @click="cancelOpmlUpload"
       />
@@ -159,8 +159,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "OpmlUploadPanel",
+  mixins: [buttonSizeMixin],
   props: { 
     isLoading: { type: Boolean, default: false },
     baseUrl: { type: String, required: true } 

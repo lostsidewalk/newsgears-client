@@ -1,38 +1,60 @@
 <template>
-  <v-toolbar-items
-    class="flex-row-reverse flex-wrap"
-    style="justify-content: space-around;align-content: space-around;"
-  >
-    <!-- logout button, don't disable -->
-    <LogoutButton v-if="$auth.$isAuthenticated" />
-    <!-- settings button -->
-    <v-badge
-      v-if="$auth.$isAuthenticated && showNotificationWarning"
-      dot
-      location="top right"
-      color="red"
+  <v-toolbar>
+    <v-toolbar-items
+      class="overflow-auto"
+      style="justify-content: space-around;align-content: space-around;"
     >
+      <!-- logout button, don't disable -->
+      <LogoutButton v-if="$auth.$isAuthenticated" />
+      <!-- settings button -->
+      <v-badge
+        v-if="$auth.$isAuthenticated && showNotificationWarning"
+        dot
+        location="top right"
+        color="red"
+      >
+        <SettingsButton
+          :expanded="showSettingsPanel"
+          :title="$t('pleaseEnableNotifications')"
+          @showSettings="$emit('showSettings')"
+        />
+      </v-badge>
       <SettingsButton
+        v-else-if="$auth.$isAuthenticated"
         :expanded="showSettingsPanel"
-        :title="$t('pleaseEnableNotifications')"
         @showSettings="$emit('showSettings')"
       />
-    </v-badge>
-    <SettingsButton
-      v-else-if="$auth.$isAuthenticated"
-      :expanded="showSettingsPanel"
-      @showSettings="$emit('showSettings')"
-    />
-    
-    <!-- help button, don't disable -->
-    <HelpButton
-      :expanded="showHelpPanel"
-      @showHelp="$emit('showHelp')"
-    />
-    <!-- display mode switch, don't disable -->
-    <DisplayModeButton />
-    <slot name="additional" />
-  </v-toolbar-items>
+      
+      <!-- help button, don't disable -->
+      <HelpButton
+        :expanded="showHelpPanel"
+        @showHelp="$emit('showHelp')"
+      />
+      <!-- display mode switch, don't disable -->
+      <DisplayModeButton />
+      <div class="d-none d-md-flex">
+        <slot name="additional" />
+      </div>
+      <div
+        v-if="!$vuetify.display.md"
+        class="d-flex"
+      >
+        <v-menu>
+          <template #activator="{ props }">
+            <v-btn
+              color="primary"
+              v-bind="props"
+            >
+              ...
+            </v-btn>
+          </template>
+          <v-list>
+            <slot name="additional" />
+          </v-list>
+        </v-menu>
+      </div>
+    </v-toolbar-items>
+  </v-toolbar>
 </template>
 
 <script>

@@ -144,7 +144,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn 
-        density="comfortable"
+        :size="buttonSize"
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -153,9 +153,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "FilterHelp",
+  mixins: [buttonSizeMixin],
   emits: ["dismiss"],
 }
 </script>
-

@@ -58,14 +58,14 @@
           <v-list-item-action class="ml-2">
             <!-- TODO: (enhancement) click here should go to subscriptions config -> RSS feed metrics for this sub -->
             <v-btn
-              size="x-small"
+              :size="buttonSize"
               class="mr-2"
               variant="outlined"
               :text="buildImportCtMessage(rssAtomFeedUrl.feedMetrics)" 
               :title="buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)"
             />
             <v-btn
-              size="x-small"
+              :size="buttonSize"
               class="border-0"
               variant="outlined"
               icon="fa-filter"
@@ -98,7 +98,7 @@
       <v-card-actions>
         <v-btn-group>
           <v-btn
-            density="comfortable"
+            :size="buttonSize"
             label
             :href="jsonPubUrl"
           >
@@ -108,7 +108,7 @@
             /> JSON
           </v-btn>
           <v-btn
-            density="comfortable"
+            :size="buttonSize"
             label
             :href="rssPubUrl"
           >
@@ -118,7 +118,7 @@
             /> RSS
           </v-btn>
           <v-btn
-            density="comfortable"
+            :size="buttonSize"
             label
             :href="atomPubUrl"
           >
@@ -134,8 +134,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "FeedDetails",
+  mixins: [buttonSizeMixin],
   props: {
     rssAtomFeedUrls: { type: Array, required: true },
     jsonPubUrl: { type: String, required: true },

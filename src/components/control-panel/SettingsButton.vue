@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :size="xs ? 'x-small' : 'small'"      
+    :size="buttonSize"
     accesskey="t"
     :title="$t('settings')" 
     :aria-label="$t('goToSettingsAriaLabel')"
@@ -11,16 +11,14 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
-  name: "SettingsButton", 
+  name: "SettingsButton",
+  mixins: [buttonSizeMixin], 
   props: { 
     expanded: { type: Boolean, default: false }
   },
   emits: [ "showSettings" ],
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-btn
     id="login"
-    :size="xs ? 'x-small' : 'small'" 
+    :size="buttonSize" 
     :title="$t('login')"
     append-icon="fa-sign-in"
     :text="$t('login')"
@@ -10,12 +10,10 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "LoginButton",
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
+  mixins: [buttonSizeMixin], 
 }
 </script>

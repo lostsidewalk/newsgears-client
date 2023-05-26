@@ -12,8 +12,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn
-        :size="xs ? 'x-small' : 'small'" 
-        density="comfortable"
+        :size="buttonSize" 
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -22,8 +21,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "ImagePanel",
-  emits: ["dismiss"],
+  mixins: [buttonSizeMixin],
+  emits: ["dismiss"], 
 }
 </script>

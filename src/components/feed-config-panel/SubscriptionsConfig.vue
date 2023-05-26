@@ -35,7 +35,7 @@
           <template #append>
             <v-btn
               variant="tonal"
-              :size="xs ? 'x-small' : 'small'" 
+              :size="buttonSize" 
               prepend-icon="fa-refresh"
               :loading="discoveryIsLoading"
               :disabled="!newRssAtomUrl.feedUrl"
@@ -79,7 +79,7 @@
         >
           <template #additional>
             <v-btn
-              :size="xs ? 'x-small' : 'small'" 
+              :size="buttonSize" 
               prepend-icon="fa-plus"
               :loading="addNewIsLoading"
               :title="$t('subscribe')"
@@ -131,14 +131,14 @@
         >
           <template #additional>
             <v-btn
-              :size="xs ? 'x-small' : 'small'"  
+              :size="buttonSize"  
               prepend-icon="fa-expand"
               :title="$t('auth')"
               :text="$t('auth')"
               @click="configAuth(rssAtomUrl)"
             />
             <v-btn
-              :size="xs ? 'x-small' : 'small'" 
+              :size="buttonSize" 
               prepend-icon="fa-trash"
               :loading="deleteIsLoading"
               :title="$t('unsubscribe')"
@@ -186,14 +186,14 @@
         </v-card-text>
         <v-card-actions>
           <v-btn
-            density="comfortable"
+            :size="buttonSize" 
             prepend-icon="fa-save"
             :loading="updateAuthIsLoading"
             :text="$t('update')" 
             @click="updateRssAtomUrlAuth(rssAtomUrlToUpdate)"
           />
           <v-btn
-            density="comfortable"
+            :size="buttonSize" 
             :text="$t('cancel')"
             @click="showAuthConfig = false"
           />
@@ -205,12 +205,14 @@
 
 <script>
 import RssAtomFeedInfo from '@/components/feed-config-panel/RssAtomFeedInfo.vue';
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "SubscriptionsConfig",
+  name: "SubscriptionsConfig", 
   components: {
     RssAtomFeedInfo,
   },
+  mixins: [buttonSizeMixin],
   props: {
     rssAtomFeedUrls: { type: Array, required: true },
     feedId: { type: Number, required: false, default: null },
@@ -237,11 +239,6 @@ export default {
       deleteIsLoading: false,
       updateAuthIsLoading: false,
       discoveryIsLoading: false,
-    }
-  },
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
     }
   },
   methods: {

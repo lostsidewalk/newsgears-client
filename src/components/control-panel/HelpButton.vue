@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :size="xs ? 'x-small' : 'small'" 
+    :size="buttonSize" 
     accesskey="h"
     :title="$t('help')" 
     :append-icon="expanded ? 'fa-compress' : 'fa-expand'"
@@ -10,16 +10,14 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "HelpButton", 
+  mixins: [buttonSizeMixin], 
   props: { 
     expanded: { type: Boolean, default: false }
   },
   emits: [ "showHelp" ],
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
 }
 </script>

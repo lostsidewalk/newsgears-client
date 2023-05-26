@@ -125,7 +125,7 @@
           </v-card-subtitle>
           <v-card-actions>
             <v-btn
-              density="comfortable"
+              :size="buttonSize"
               type="text"
               @click="sendSupportMail"
             >
@@ -137,7 +137,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn
-        density="comfortable"
+        :size="buttonSize"
         :text="$t('dismiss')" 
         @click="$emit('dismiss')"
       />
@@ -146,8 +146,11 @@
 </template>
   
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "PrivacyPolicyPanel",
+  mixis: [buttonSizeMixin],
   components: {
   },
   emits: ["dismiss"],

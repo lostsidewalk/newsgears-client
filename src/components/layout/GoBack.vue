@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :size="xs ? 'x-small' : 'small'"  
+    :size="buttonSize"  
     accesskey="b"
     :title="$t('goBack')" 
     prepend-icon="fa-arrow-left"
@@ -10,13 +10,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "GoBack",
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
+  mixins: [buttonSizeMixin], 
   methods: {
     goBack() {
       this.$router.back();

@@ -84,11 +84,6 @@ export default {
       showPostSharing: false,
     };
   },
-  computed: {
-    xs: function() {
-      return this.$vuetify.display.xs;
-    }
-  },
   methods: {
     isHtmlContent(contentObj) {
       return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;

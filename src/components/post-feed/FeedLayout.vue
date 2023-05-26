@@ -1,12 +1,14 @@
 <template>
   <v-btn-group>
     <v-btn
+      :size="buttonSize"
       icon="fa-list"
       :disabled="showListLayout"
       :title="$t('listLayout')"
       @click="$emit('list')"
     />
     <v-btn
+      :size="buttonSize"
       icon="fa-th"
       :disabled="showCardLayout"
       :title="$t('cardLayout')"
@@ -16,8 +18,11 @@
 </template>
 
 <script>
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+
 export default {
   name: "FeedLayout",
+  mixins: [buttonSizeMixin],
   props: {
     showListLayout: { type: Boolean, required: true },
     showCardLayout: { type: Boolean, required: true }
