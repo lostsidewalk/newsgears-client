@@ -3,7 +3,7 @@ export default {
     buttonSize() {
       if (this.$vuetify.display.xs) {
         return 'x-small';
-      } else if (this.$vuetify.display.sm) {
+      } else { // if (this.$vuetify.display.sm) {
         return 'small';
       // } else if (this.$vuetify.display.md) {
       //   return 'medium';

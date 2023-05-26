@@ -1,26 +1,22 @@
 <template>
   <v-toolbar>
     <v-toolbar-items
-      class="overflow-auto"
+      class="overflow-auto flex-row-reverse"
       style="justify-content: space-around;align-content: space-around;"
     >
       <!-- logout button, don't disable -->
       <LogoutButton v-if="$auth.$isAuthenticated" />
       <!-- settings button -->
-      <v-badge
-        v-if="$auth.$isAuthenticated && showNotificationWarning"
-        dot
-        location="top right"
-        color="red"
-      >
-        <SettingsButton
-          :expanded="showSettingsPanel"
-          :title="$t('pleaseEnableNotifications')"
-          @showSettings="$emit('showSettings')"
-        />
-      </v-badge>
+      <v-btn
+        v-if="$auth.$isAuthenticated"
+        v-show="showNotificationWarning"
+        :title="$t('pleaseEnableNotifications')"
+        icon="fa-bell"
+        :size="buttonSize"
+        @showSettings="$emit('showSettings')"
+      />
       <SettingsButton
-        v-else-if="$auth.$isAuthenticated"
+        v-if="$auth.$isAuthenticated"
         :expanded="showSettingsPanel"
         @showSettings="$emit('showSettings')"
       />
@@ -62,6 +58,7 @@ import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import LogoutButton from "@/components/control-panel/LogoutButton.vue";
 import SettingsButton from "@/components/control-panel/SettingsButton.vue";
 import HelpButton from "@/components/control-panel/HelpButton.vue";
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "ControlPanel",
@@ -71,6 +68,7 @@ export default {
     DisplayModeButton,
     HelpButton,
   },
+  mixins: [buttonSizeMixin],
   props: {
     showSettingsPanel: { type: Boolean, default: false },
     showHelpPanel: { type: Boolean, default: false },

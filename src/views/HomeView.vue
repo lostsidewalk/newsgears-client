@@ -49,13 +49,13 @@
         </template>
         <template #prepend>
           <v-app-bar-nav-icon
-            icon="fa-rss" 
+            icon="fa-rss"
             @click.stop="showQueueDashboard = !showQueueDashboard"
           />
         </template>
         <template #append>
           <ControlPanel
-            ref="controlPanel" 
+            ref="controlPanel"
             :base-url="baseUrl"
             :show-settings-panel="showSettingsPanel"
             :show-help-panel="showHelpPanel"
@@ -66,18 +66,18 @@
             <template #additional>
               <!-- upload OPML button -->
               <v-btn
-                :size="buttonSize" 
+                :size="buttonSize"
                 accesskey="m"
-                :title="$t('uploadOPML')" 
+                :title="$t('uploadOPML')"
                 append-icon="fa-file"
                 :text="$t('uploadOPML')"
                 @click.stop="uploadOpml"
               />
               <!-- new queue button -->
               <v-btn
-                :size="buttonSize" 
+                :size="buttonSize"
                 accesskey="q"
-                :title="$t('createNewQueue')" 
+                :title="$t('createNewQueue')"
                 append-icon="fa-plus"
                 :text="$t('createNewQueue')"
                 @click.stop="newFeed"
@@ -105,9 +105,9 @@
         />
         <!-- help buton -->
         <v-btn
-          :size="buttonSize" 
-          :title="$t('toggleSortOrder')" 
-          :aria-label="$t('toggleSortOrder')" 
+          :size="buttonSize"
+          :title="$t('toggleSortOrder')"
+          :aria-label="$t('toggleSortOrder')"
           :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
           @click="showFilterHelp = !showFilterHelp"
         />
@@ -127,7 +127,7 @@
         app
         :location="'start'"
         :class="$vuetify.display.xs ? 'w-100' : 'w-50'"
-        elevation="12" 
+        elevation="12"
         temporary
       >
         <v-sheet>
@@ -146,19 +146,20 @@
             v-slot="{ isHovering, props }"
             :key="feed.value"
           >
-            <FeedSelectButton 
+            <FeedSelectButton
               variant="flat"
               :elevation="isHovering ? 12 : 0"
-              :feed="feed" 
+              :feed="feed"
               :feed-url="feedUrl"
-              :inbound-count="countInboundQueue(feed.id)" 
-              :published-count="countOutboundQueue(feed.id)" 
+              :inbound-count="countInboundQueue(feed.id)"
+              :published-count="countOutboundQueue(feed.id)"
               class="ma-4"
               :class="selectedFeedId === feed.id ? 'selected-feed' : ''"
+              :is-selected="selectedFeedId === feed.id"
               v-bind="props"
               @click.stop="$event => { setSelectedFeedId(feed.id); }"
-              @selectFeed="$event => { setSelectedFeedId(feed.id); showQueueDashboard = false; }" 
-              @manageSubscriptions="configureFeed(feed.id)" 
+              @selectFeed="$event => { setSelectedFeedId(feed.id); showQueueDashboard = false; }"
+              @manageSubscriptions="configureFeed(feed.id)"
               @updatePostFeedFilter="updatePostFeedFilter"
               @showQueryMetrics="openQueryMetrics"
             />
@@ -178,9 +179,9 @@
         v-model="showFeedDeleteConfirmation"
         scrollable
       >
-        <ConfirmationDialog 
+        <ConfirmationDialog
           class="rounded"
-          :prompt="$t('confirmDeleteQueue')" 
+          :prompt="$t('confirmDeleteQueue')"
           @confirm="performFeedDelete"
           @cancel="cancelFeedDelete"
         />
@@ -190,9 +191,9 @@
         v-model="showFeedMarkAsReadConfirmation"
         scrollable
       >
-        <ConfirmationDialog 
+        <ConfirmationDialog
           class="rounded"
-          :prompt="$t('confirmMarkQueueAsRead')" 
+          :prompt="$t('confirmMarkQueueAsRead')"
           @confirm="performFeedMarkAsRead"
           @cancel="cancelFeedMarkAsRead"
         />
@@ -203,7 +204,7 @@
         fullscreen
         scrollable
       >
-        <SettingsPanel 
+        <SettingsPanel
           class="rounded"
           :base-url="baseUrl"
           @dismiss="showSettingsPanel = false"
@@ -216,7 +217,7 @@
         fullscreen
         scrollable
       >
-        <HelpPanel 
+        <HelpPanel
           class="overflow-auto rounded"
           @dismiss="showHelpPanel = false"
         />
@@ -229,12 +230,12 @@
       >
         <FeedConfigPanel
           ref="feedConfigPanel"
-          :base-url="baseUrl" 
+          :base-url="baseUrl"
           @save="createFeed"
           @update="updateFeed"
           @dismiss="dismissFeedConfigPanel"
-          @authError="handleServerError" 
-          @updateServerMessage="setLastServerMessage" 
+          @authError="handleServerError"
+          @updateServerMessage="setLastServerMessage"
           @refreshFeedDefinition="$event => refreshFeeds([$event], true)"
         />
       </v-dialog>
@@ -246,7 +247,7 @@
       >
         <OpmlUploadPanel
           ref="opmlUploadPanel"
-          :base-url="baseUrl" 
+          :base-url="baseUrl"
           :is-loading="uploadIsLoading"
           @finalizeUpload="createOpmlFeeds"
           @cancel="cancelOpmlUpload"
@@ -289,7 +290,7 @@
       >
         <PostCard
           v-for="post in filteredInboundQueue"
-          :id="'post_' + post.id" 
+          :id="'post_' + post.id"
           :key="post.id"
           :post="post"
           :sharing-options="sharingOptions"
@@ -297,8 +298,8 @@
           class="mb-4"
           @openPostUrl="openPostUrl(post.id)"
           @updatePostReadStatus="updatePostReadStatus"
-          @updatePostPubStatus="updatePostPubStatus" 
-          @updatePostFeedFilter="updatePostFeedFilter" 
+          @updatePostPubStatus="updatePostPubStatus"
+          @updatePostFeedFilter="updatePostFeedFilter"
           @share="$event => share($event.sharingOption, $event.post)"
         />
       </v-container>
@@ -313,13 +314,13 @@
           fullscreen
         >
           <PostCard
-            :id="'post_' + selectedPost.id" 
+            :id="'post_' + selectedPost.id"
             :post="selectedPost"
             :sharing-options="sharingOptions"
             @openPostUrl="openPostUrl(selectedPost.id)"
             @updatePostReadStatus="updatePostReadStatus"
-            @updatePostPubStatus="updatePostPubStatus" 
-            @updatePostFeedFilter="updatePostFeedFilter" 
+            @updatePostPubStatus="updatePostPubStatus"
+            @updatePostFeedFilter="updatePostFeedFilter"
             @share="$event => share($event.sharingOption, $event.post)"
           >
             <template #additional>
@@ -332,7 +333,7 @@
                 @click.stop="selectNextPost"
               />
               <v-btn
-                :size="buttonSize" 
+                :size="buttonSize"
                 accesskey="p"
                 icon="fa-arrow-up"
                 class="ma-1"
@@ -349,15 +350,15 @@
         >
           <PostListItem
             v-for="post in filteredInboundQueue"
-            :id="'post_' + post.id" 
+            :id="'post_' + post.id"
             :key="post"
             :post="post"
             :sharing-options="sharingOptions"
             class="ma-4 rounded"
             @openPost="openPost(post.id)"
             @updatePostReadStatus="updatePostReadStatus"
-            @updatePostPubStatus="updatePostPubStatus" 
-            @updatePostFeedFilter="updatePostFeedFilter" 
+            @updatePostPubStatus="updatePostPubStatus"
+            @updatePostFeedFilter="updatePostFeedFilter"
             @share="$event => share($event.sharingOption, $event.post)"
           />
         </v-list>
@@ -416,17 +417,17 @@ const sharingOptions = [
   {
     name: 'telegram',
     icon: 'telegram',
-    url: 'https://telegram.me/share/url?url={URL}&t={TITLE}', 
+    url: 'https://telegram.me/share/url?url={URL}&t={TITLE}',
   },
   {
     name: 'linkedIn',
     icon: 'linkedin',
-    url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}', 
+    url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}',
   },
   {
     name: 'blogger',
     icon: 'rss', // kind of generic 
-    url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}', 
+    url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}',
   },
 ];
 
@@ -491,13 +492,13 @@ export default {
       // reactive window (inner) width 
       windowWidth: window.innerWidth,
       // operating mode 
-      feedIdToDelete: null, 
+      feedIdToDelete: null,
       feedIdToMarkAsRead: null,
       // show query metrics 
       rssAtomFeedUrlToShow: null,
-      showQueryMetrics: false, 
+      showQueryMetrics: false,
       // show notification warning 
-      showNotificationWarning: false, 
+      showNotificationWarning: false,
       // show filter help
       showFilterHelp: false,
       showFeedFilterPills: false,
@@ -507,7 +508,7 @@ export default {
       postFeedLayout: 'LIST', // 'CARD' 
       // show the feed config modal (t/f) 
       showFeedConfigPanel: false,
-      configuredFeedId: null, 
+      configuredFeedId: null,
       // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
       // show the help modal (t/f) 
@@ -606,14 +607,14 @@ export default {
     allFilterPills: function() {
       let filterPills = [
         {
-          isSelected: this.inboundQueueFilter.indexOf('status:READ_LATER') >= 0, 
-          invoke: () => this.toggleFeedFilterMode('READ_LATER'), 
+          isSelected: this.inboundQueueFilter.indexOf('status:READ_LATER') >= 0,
+          invoke: () => this.toggleFeedFilterMode('READ_LATER'),
           label: this.$t('readLater'),
           title: 'View items marked as read-later',
         },
         {
           isSelected: this.inboundQueueFilter.indexOf('status:PUBLISHED') >= 0,
-          invoke: () => this.toggleFeedFilterMode('PUBLISHED'), 
+          invoke: () => this.toggleFeedFilterMode('PUBLISHED'),
           label: this.$t('starred'),
           title: 'View starred items',
         },
@@ -670,10 +671,10 @@ export default {
         } else {
           console.log("home: not authenticated on mount");
         }
-    });
+      });
     window.addEventListener("keydown", this.keyHandler);
     if (this.$auth.$isAuthenticated) {
-        this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
+      this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
     }
   },
   beforeUnmount() {
@@ -681,26 +682,25 @@ export default {
   },
   methods: {
     shouldShowAlert(alertName) {
-      return !localStorage.getItem(alertName); 
+      return !localStorage.getItem(alertName);
     },
     dismissAlert(alertName) {
-      localStorage.setItem(alertName, new Date().toISOString())
+      localStorage.setItem(alertName, new Date().toISOString());
     },
-    setLastServerMessage(message) {
-      this.$notification.requestPermission().then(p => {
-        if (p === "granted") {
-          this.showNotificationWarning = false;
-          this.$notification.show('FeedGears message', {
-           body: message
-          }, {
-            onerror: function() {
-              console.error("unable to show notification, message=" + message);
-            }
-          });
-        } else {
-          this.showNotificationWarning = true;
-        }
-      });
+    async setLastServerMessage(message) {
+      const permission = await this.$notification.requestPermission();
+      if (permission === "granted") {
+        this.showNotificationWarning = false;
+        this.$notification.show('FeedGears message', {
+          body: message
+        }, {
+          onerror: () => {
+            console.error("unable to show notification, message=" + message);
+          }
+        });
+      } else {
+        this.showNotificationWarning = true;
+      }
       this.$announcer.polite(message);
     },
     // 
@@ -715,15 +715,9 @@ export default {
     // 
     selectNextPost() {
       if (this.selectedPost) {
-        let nextIdx = null;
-        let id = this.selectedPost.id;
-        let queue = this.filteredInboundQueue;
-        for (let i = 0; i < queue.length; i++) {
-          if (queue[i].id === id) {
-            nextIdx = i + 1;
-            break;
-          }
-        }
+        const id = this.selectedPost.id;
+        const queue = this.filteredInboundQueue;
+        const nextIdx = queue.findIndex(post => post.id === id) + 1;
         if (nextIdx < queue.length) {
           this.selectedPost = queue[nextIdx];
         }
@@ -734,15 +728,9 @@ export default {
     // 
     selectPreviousPost() {
       if (this.selectedPost) {
-        let prevIdx = null;
-        let id = this.selectedPost.id;
-        let queue = this.filteredInboundQueue;
-        for (let i = 0; i < queue.length; i++) {
-          if (queue[i].id === id) {
-            prevIdx = i - 1;
-            break;
-          }
-        }
+        const id = this.selectedPost.id;
+        const queue = this.filteredInboundQueue;
+        const prevIdx = queue.findIndex(post => post.id === id) - 1;
         if (prevIdx >= 0) {
           this.selectedPost = queue[prevIdx];
         }
@@ -752,19 +740,21 @@ export default {
     // open post URL in new window
     // 
     openPostUrl(postId) {
-      window.open(this.getPostFromQueue(postId).postUrl, '_blank');
+      const post = this.getPostFromQueue(postId);
+      window.open(post.postUrl, '_blank');
     },
     // 
     // share a post using the given sharing option 
     // 
     share(sharingOption, post) {
-      let title = encodeURIComponent(post.postTitle.value);
-      let link = encodeURIComponent(post.postUrl);
-      let source = encodeURIComponent(post.importerDesc);
-      let content = encodeURIComponent(post.postDesc ? post.postDesc.value : '');
-      let url = replaceArray(sharingOption.url, 
-        ["{URL}", "{TITLE}", "{SOURCE}", "{CONTENT}"], 
-        [ link, title, source, content ]
+      const { postTitle, postUrl, importerDesc, postDesc } = post;
+      const title = encodeURIComponent(postTitle.value);
+      const link = encodeURIComponent(postUrl);
+      const source = encodeURIComponent(importerDesc);
+      const content = encodeURIComponent(postDesc ? postDesc.value : '');
+      const url = replaceArray(sharingOption.url,
+        ["{URL}", "{TITLE}", "{SOURCE}", "{CONTENT}"],
+        [link, title, source, content]
       );
       window.open(url, '_blank');
     },
@@ -777,10 +767,8 @@ export default {
         this.setLastServerMessage(this.$t('somethingHorribleHappened'));
       } else if (error.name === 'AbortError') {
         this.setLastServerMessage(this.$t('requestTimedOut'));
-      } else if (error.message) {
-        this.setLastServerMessage(error.message); 
       } else {
-        this.setLastServerMessage(error); // $auth plugin errors 
+        this.setLastServerMessage(error.message || error);
       }
     },
     // 
@@ -794,17 +782,11 @@ export default {
       // article w/more recent published timestamp goes before article w/older timestamp 
       //
       queue.sort((l, r) => {
-        let r1, l1;
-        if (sortOrder === 'DSC') {
-          l1 = r;
-          r1 = l;
-        } else {
-          l1 = l;
-          r1 = r;
-        }
+        const l1 = sortOrder === 'DSC' ? r : l;
+        const r1 = sortOrder === 'DSC' ? l : r;
 
-        let leftDate = l1.publishTimestamp == null ? l1.lastUpdatedTimestamp : l1.publishTimestamp;
-        let rightDate = r1.publishTimestamp == null ? r1.lastUpdatedTimestamp : r1.publishTimestamp;
+        const leftDate = l1.publishTimestamp ?? l1.lastUpdatedTimestamp;
+        const rightDate = r1.publishTimestamp ?? r1.lastUpdatedTimestamp;
 
         if (leftDate && !rightDate) {
           return 1;
@@ -823,11 +805,7 @@ export default {
     // 
     //
     toggleInboundQueueSortOrder() {
-      if (this.inboundQueueSortOrder === 'DSC') {
-        this.inboundQueueSortOrder = 'ASC';
-      } else {
-        this.inboundQueueSortOrder = 'DSC';
-      }
+      this.inboundQueueSortOrder = this.inboundQueueSortOrder === 'DSC' ? 'ASC' : 'DSC';
     },
     // 
     // invoked when the user clicks the mode pill in the feed filter; 
@@ -835,19 +813,12 @@ export default {
     // or remove it if it already present. 
     // 
     toggleFeedFilterMode(filterMode) {
-      this.inboundQueueFilter = 'status:' + filterMode;
+      if (this.inboundQueueFilter.includes('status:' + filterMode)) {
+        this.inboundQueueFilter = this.inboundQueueFilter.replace('status:' + filterMode, '');
+      } else {
+        this.inboundQueueFilter += 'status:' + filterMode;
+      }
     },
-    // 
-    // invoked under two conditions: 
-    // 
-    //   1.  user clicks the subscription pill in the queue dashboard (we select the queue and add the subscription to the lunrjs query); 
-    // 
-    //   2.  user clicks the category pill in the post item (we add the category to the lunrjs query) 
-    // 
-    // f.name = 'subscription' | 'category'
-    // f.feedId = queue Id (* required for subscription) 
-    // f.value = <subscription | category name> 
-    // 
     updatePostFeedFilter(f) {
       if (f.name === "subscription") {
         if (f.feedId !== this.selectedFeedId) {
@@ -855,7 +826,7 @@ export default {
           this.inboundQueueFilter = '';
           this.$nextTick(() => {
             this.addSubscriptionToFeedFilter(f.value);
-          })
+          });
         } else {
           this.addSubscriptionToFeedFilter(f.value);
         }
@@ -881,7 +852,7 @@ export default {
       } else {
         this.inboundQueueFilter = ' +category:' + category;
       }
-    }, 
+    },
     openQueryMetrics(subscriptionInfo) {
       this.rssAtomFeedUrlToShow = subscriptionInfo;
       this.showQueryMetrics = true;
@@ -890,75 +861,70 @@ export default {
     // 
     // 
     countInboundQueue(feedId) {
-      let iq = this.inboundQueuesByFeed[feedId];
+      const iq = this.inboundQueuesByFeed[feedId];
       if (iq) {
-        let unreadCt = 0;
-        for (let i = 0; i < iq.values.length; i++) {
-          if (iq.values[i].isRead !== true) {
-            unreadCt++;
-          }
-        }
-        return unreadCt;
+        return iq.values.filter(post => !post.isRead).length;
       }
       return 0;
     },
     countOutboundQueue(feedId) {
-      let iq = this.inboundQueuesByFeed[feedId];
-      return iq ? iq.values.filter(p => p.isPublished).length : 0;
+      const iq = this.inboundQueuesByFeed[feedId];
+      return iq ? iq.values.filter(post => post.isPublished).length : 0;
     },
     // 
     // feed refresh 
     // 
     // feedsToFetch = fetch staging posts for the feed Ids in this array, empty -> all feeds 
     // fetchFeedDefinitions = t/f -> include/exclude feed definition updates 
-    refreshFeeds(feedsToFetch, fetchFeedDefinitions) {
+    async refreshFeeds(feedsToFetch, fetchFeedDefinitions) {
       console.log("post-feed: refreshing feeds");
       let rawPosts = [];
       this.refreshFeedsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+
+      try {
+        const token = await this.$auth.getTokenSilently();
         const stagingPostRefreshController = new AbortController();
         const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
         let feedDefinitionRefreshTimeoutId;
         let refreshPromises = [
-          fetch(this.baseUrl + "/staging" + (feedsToFetch ? ("?feedIds=" + feedsToFetch) : ''), { 
-            headers: { 
+          fetch(this.baseUrl + "/staging" + (feedsToFetch ? ("?feedIds=" + feedsToFetch) : ''), {
+            headers: {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             },
             credentials: 'include',
             signal: stagingPostRefreshController.signal
           })
-          .then((response) => {
-            // server returns JSON or empty string on success 
-            if (response.status === 200) {
-              let contentType = response.headers.get("content-type");
-              let isJson = contentType && contentType.indexOf("application/json") !== -1;
-              return isJson ? response.json() : {};
-            } else {
-              throw new Error(this.$t('refreshFailedDueTo') + 
-                " HTTP " + response.status + ": " + 
-                  (response.statusText ? 
+            .then((response) => {
+              if (response.status === 200) {
+                const contentType = response.headers.get("content-type");
+                const isJson = contentType && contentType.indexOf("application/json") !== -1;
+                return isJson ? response.json() : {};
+              } else {
+                throw new Error(this.$t('refreshFailedDueTo') +
+                  " HTTP " + response.status + ": " +
+                  (response.statusText ?
                     response.statusText : ("(" + this.$t('noMessage') + ")")
                   )
                 );
-            }
-          })
-          .then((data) => {
-            let ct = 0;
-            let stagingPosts = data.stagingPosts;
-            if (stagingPosts) {
-              for (let i = 0; i < stagingPosts.length; i++) {
-                let p = stagingPosts[i].post;
-                p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
-                p.isRead = p.postReadStatus === 'READ';
-                p.isReadLater = p.postReadStatus === 'READ_LATER';
-                p.postImgSrc = stagingPosts[i].postImgSrc;
-                rawPosts.push(p);
-                ct++;
               }
-              console.log("post-feed: staging post refresh complete, ct=" + ct);
-            }
-          })
+            })
+            .then((data) => {
+              let ct = 0;
+              const stagingPosts = data.stagingPosts;
+              if (stagingPosts) {
+                for (let i = 0; i < stagingPosts.length; i++) {
+                  const p = stagingPosts[i].post;
+                  p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
+                  p.isRead = p.postReadStatus === 'READ';
+                  p.isReadLater = p.postReadStatus === 'READ_LATER';
+                  p.postImgSrc = stagingPosts[i].postImgSrc;
+                  rawPosts.push(p);
+                  ct++;
+                }
+                console.log("post-feed: staging post refresh complete, ct=" + ct);
+              }
+            })
         ];
 
         let queryDefinitionImagesById = {};
@@ -967,107 +933,97 @@ export default {
           feedDefinitionRefreshTimeoutId = setTimeout(() => feedDefinitionRefreshController.abort(), 5000);
           refreshPromises.push(
             fetch(this.baseUrl + "/feeds", {
-              headers: { 
-                "Content-Type": "application/json", 
+              headers: {
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
               },
-              credentials: 'include', 
+              credentials: 'include',
               signal: feedDefinitionRefreshController.signal,
             })
-            .then((response) => {
-              // server returns JSON or empty string on success 
-              if (response.status === 200) {
-                let contentType = response.headers.get("content-type");
-                let isJson = contentType && contentType.indexOf("application/json") !== -1;
-                return isJson ? response.json() : {};
-              } else {
-                throw new Error(this.$t('refreshFailedDueTo') + 
-                  " HTTP " + response.status + ": " + 
-                    (response.statusText ? 
+              .then((response) => {
+                if (response.status === 200) {
+                  const contentType = response.headers.get("content-type");
+                  const isJson = contentType && contentType.indexOf("application/json") !== -1;
+                  return isJson ? response.json() : {};
+                } else {
+                  throw new Error(this.$t('refreshFailedDueTo') +
+                    " HTTP " + response.status + ": " +
+                    (response.statusText ?
                       response.statusText : ("(" + this.$t('noMessage') + ")")
                     )
                   );
-              }
-            })
-            .then((data) => {
-              // clear queryDefinitionImagesById 
-              // populate feeds and queryDefinitionImagesById
-              let feedDefinitionData = data.feedDefinitions; // all feed definition data objects 
-              let queryDefinitionData = data.queryDefinitions; // all query definition data objects 
-              if (feedDefinitionData) {
-                this.feeds.splice(0);
-                for (let i = 0; i < feedDefinitionData.length; i++) {
-                  let fd = feedDefinitionData[i]; // feed definition data for this feed 
-                  let qd = queryDefinitionData[fd.id]; // query definitions for this feed 
-                  // merge query definition and metrics data into feed definition 
-                  this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
-                  // marshall up all query definitions by Id for later reference 
-                  if (qd) {
-                    for (let j = 0; j < qd.length; j++) {
-                      let wrapper = qd[j];
-                      queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
-                    }
-                  }
-                  // parse feed definition export config (if present) 
-                  fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
-                  this.feeds.push(fd);
                 }
-                // update feeds localStorage 
-                localStorage.setItem('feeds', JSON.stringify(this.feeds));
-              }
-            })
+              })
+              .then((data) => {
+                this.feeds.splice(0);
+                const feedDefinitionData = data.feedDefinitions;
+                const queryDefinitionData = data.queryDefinitions;
+                if (feedDefinitionData) {
+                  for (let i = 0; i < feedDefinitionData.length; i++) {
+                    const fd = feedDefinitionData[i];
+                    const qd = queryDefinitionData[fd.id];
+                    this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
+                    if (qd) {
+                      for (let j = 0; j < qd.length; j++) {
+                        const wrapper = qd[j];
+                        queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
+                      }
+                    }
+                    fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
+                    this.feeds.push(fd);
+                  }
+                  localStorage.setItem('feeds', JSON.stringify(this.feeds));
+                }
+              })
           );
         }
 
-        Promise.all(refreshPromises)
-        .catch((error) => {
-          this.handleServerError(error);
-        })
-        .finally(() => {
-          clearTimeout(stagingPostRefreshTimeoutId);
-          if (feedDefinitionRefreshTimeoutId) {
-            clearTimeout(feedDefinitionRefreshTimeoutId);
-          }
-          for (let i = 0; i < this.feeds.length; i++) {
-            let feedId = this.feeds[i].id;
-            let iq = this.inboundQueuesByFeed[feedId];
-            if (iq) {
-              if (!feedsToFetch || feedsToFetch.indexOf(this.feeds[i].id) >= 0) {
-                iq.values.splice(0);
-                iq.index = null;
-              }
-            } else {
-              this.inboundQueuesByFeed[feedId] = { values: [] };
+        await Promise.all(refreshPromises);
+        clearTimeout(stagingPostRefreshTimeoutId);
+        if (feedDefinitionRefreshTimeoutId) {
+          clearTimeout(feedDefinitionRefreshTimeoutId);
+        }
+
+        for (let i = 0; i < this.feeds.length; i++) {
+          const feedId = this.feeds[i].id;
+          const iq = this.inboundQueuesByFeed[feedId];
+          if (iq) {
+            if (!feedsToFetch || feedsToFetch.indexOf(this.feeds[i].id) >= 0) {
+              iq.values.splice(0);
+              iq.index = null;
             }
-          }
-          for (let i = 0; i < rawPosts.length; i++) {
-            let post = rawPosts[i];
-            // set the post subscription image property 
-            post.sourceImgUrl = queryDefinitionImagesById[post.queryId];
-            if (!post.sourceImgUrl) {
-              post.sourceImgUrl =  'rss_logo.svg';
-            }
-            this.inboundQueuesByFeed[post.feedId].values.push(post);
-          }
-          this.rebuildLunrIndexes();
-          // update queues localStorage 
-          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
-          // set selected feed Id and inbound queue 
-          if (this.feeds.length > 0 && !this.selectedFeedId) {
-            // TODO: (enhancement) should be a configurable 'default' feed 
-            this.setSelectedFeedId(this.feeds[0].id);
           } else {
-            this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+            this.inboundQueuesByFeed[feedId] = { values: [] };
           }
-          this.refreshFeedsIsLoading = false; // end of refreshFeeds 
-        });
-      }).catch((error) => {
+        }
+
+        for (let i = 0; i < rawPosts.length; i++) {
+          const post = rawPosts[i];
+          post.sourceImgUrl = queryDefinitionImagesById[post.queryId];
+          if (!post.sourceImgUrl) {
+            post.sourceImgUrl = 'rss_logo.svg';
+          }
+          this.inboundQueuesByFeed[post.feedId].values.push(post);
+        }
+
+        this.rebuildLunrIndexes();
+        localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
+
+        if (this.feeds.length > 0 && !this.selectedFeedId) {
+          this.setSelectedFeedId(this.feeds[0].id);
+        } else {
+          this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+        }
+
+      } catch (error) {
         this.handleServerError(error);
+      } finally {
         this.refreshFeedsIsLoading = false;
-      });
+      }
     },
     decorateFeedWithQueryDefinitions(fd, qd, qm) {
       fd.rssAtomFeedUrls = [];
+
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
           let wrapper = qd[i];
@@ -1078,30 +1034,34 @@ export default {
             feedUrl: queryDefinition.queryText,
             feedId: fd.id,
           };
+
           // title
           let queryTitle = queryDefinition.queryTitle;
           if (queryTitle) {
             r.title = queryDefinition.queryTitle;
           }
-          // auth 
+
+          // auth
           let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : queryDefinition.queryConfig;
           if (queryConfig) {
             r.username = queryConfig.username;
             r.password = queryConfig.password;
           }
-          // image 
+
+          // image
           let queryDefinitionImageUrl = wrapper.queryDefinitionImageUrl;
           if (queryDefinitionImageUrl) {
             r.image = {
               title: null,
               url: queryDefinitionImageUrl,
-            }
+            };
           }
-          // add to FD 
+
+          // add to FD
           fd.rssAtomFeedUrls.push(r);
         }
       }
-    },
+    }, 
     rebuildLunrIndexes() {
       console.log("rebuilding lunrjs indexes...");
       for (let i = 0; i < this.feeds.length; i++) {
@@ -1195,7 +1155,7 @@ export default {
             }, this)
           });
         }
-      }            
+      }
     },
     // 
     // 
@@ -1207,7 +1167,7 @@ export default {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -1216,30 +1176,30 @@ export default {
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/staging/read-status/post/" + result.id, requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
+          .then((response) => {
+            if (response.status === 200) {
+              return;
+            } else {
+              let contentType = response.headers.get("content-type");
+              let isJson = contentType && contentType.indexOf("application/json") !== -1;
+              return isJson ?
               response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
               response.text().then(t => {throw new Error(t)});
-          }
-        }).then(() => {
-          let originator = result.originator;
-          if (originator === "togglePostReadStatus") { // NOTE: this happens when the user toggles the 'mark as read' button 
-            this.onTogglePostReadStatus(result);
-          } else if (originator === "togglePostReadLaterStatus") { // NOTE: this happens when the user toggles the 'mark as read-later' button 
-            this.onTogglePostReadLaterStatus(result);
-          }
-          this.rebuildLunrIndexes();
-        }).catch((error) => {
-          this.handleServerError(error);
-        }).finally(() => {
-          this.isLoading = false;
-          clearTimeout(timeoutId);
-        });
+            }
+          }).then(() => {
+            let originator = result.originator;
+            if (originator === "togglePostReadStatus") { // NOTE: this happens when the user toggles the 'mark as read' button 
+              this.onTogglePostReadStatus(result);
+            } else if (originator === "togglePostReadLaterStatus") { // NOTE: this happens when the user toggles the 'mark as read-later' button 
+              this.onTogglePostReadLaterStatus(result);
+            }
+            this.rebuildLunrIndexes();
+          }).catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            this.isLoading = false;
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
         this.handleServerError(error);
         this.isLoading = false;
@@ -1252,7 +1212,7 @@ export default {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -1261,46 +1221,46 @@ export default {
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/staging/pub-status/" + result.id, requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ?
               response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
               response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          // update the post 
-          let originator = result.originator;
-          let p = this.getPostFromQueue(result.id);
-          if (originator === "stagePost") {
-            p.isPublished = true;
-          } else if (originator === "unstagePost") {
-            p.isPublished = false;
-          }
-          p.postPubStatus = null;
-          // update the feed last deployed timestamp 
-          let updateLocalStorage = false;
-          for (let i = 0; i < this.feeds.length; i++) {
+            }
+          }).then((data) => {
+            // update the post 
+            let originator = result.originator;
+            let p = this.getPostFromQueue(result.id);
+            if (originator === "stagePost") {
+              p.isPublished = true;
+            } else if (originator === "unstagePost") {
+              p.isPublished = false;
+            }
+            p.postPubStatus = null;
+            // update the feed last deployed timestamp 
+            let updateLocalStorage = false;
+            for (let i = 0; i < this.feeds.length; i++) {
               if (this.feeds[i].id === result.feedId) {
                 this.feeds[i].lastDeployed = this.formatTimestamp(data.timestamp);
                 updateLocalStorage = true;
                 break;
               }
-          }
-          if (updateLocalStorage) {
-            // update feeds localStorage 
-            localStorage.setItem('feeds', JSON.stringify(this.feeds));
-          }
-          this.rebuildLunrIndexes();
-        }).catch((error) => {
-          this.handleServerError(error);
-        }).finally(() => {
-          this.isLoading = false;
-          clearTimeout(timeoutId);
-        });
+            }
+            if (updateLocalStorage) {
+              // update feeds localStorage 
+              localStorage.setItem('feeds', JSON.stringify(this.feeds));
+            }
+            this.rebuildLunrIndexes();
+          }).catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            this.isLoading = false;
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
         this.handleServerError(error);
         this.isLoading = false;
@@ -1344,7 +1304,7 @@ export default {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -1353,38 +1313,38 @@ export default {
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
         fetch(this.baseUrl + "/feeds/", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : [];
-          } else {
-            return isJson ? 
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : [];
+            } else {
+              return isJson ?
               response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
               response.text().then(t => {throw new Error(t)});
-          }
-        })
-        .then((data) => {
-          let feedIds = [];
-          for (let i = 0; i < data.length; i++) {
-            let f = data[i].feedDefinition;
-            this.decorateFeedWithQueryDefinitions(f, data[i].queryDefinitions, data[i].queryMetrics);
-            this.feeds.push(f);
-            feedIds.push(f.id);
-          }
-          // update feeds localStorage 
-          localStorage.setItem('feeds', JSON.stringify(this.feeds));
-          this.setLastServerMessage(feeds.length + " " + this.$t('nQueuesCreated'));
-          this.$refs.opmlUploadPanel.hide();
-          this.showOpmlUploadPanel = false;
-          this.refreshFeeds(feedIds, false);
-        })
-        .catch((error) => {
-          this.handleServerError(error);
-        }).finally(() => {
-          this.uploadIsLoading = false;
-          clearTimeout(timeoutId);
-        });
+            }
+          })
+          .then((data) => {
+            let feedIds = [];
+            for (let i = 0; i < data.length; i++) {
+              let f = data[i].feedDefinition;
+              this.decorateFeedWithQueryDefinitions(f, data[i].queryDefinitions, data[i].queryMetrics);
+              this.feeds.push(f);
+              feedIds.push(f.id);
+            }
+            // update feeds localStorage 
+            localStorage.setItem('feeds', JSON.stringify(this.feeds));
+            this.setLastServerMessage(feeds.length + " " + this.$t('nQueuesCreated'));
+            this.$refs.opmlUploadPanel.hide();
+            this.showOpmlUploadPanel = false;
+            this.refreshFeeds(feedIds, false);
+          })
+          .catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            this.uploadIsLoading = false;
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
         this.handleServerError(error);
         this.uploadIsLoading = false;
@@ -1411,7 +1371,7 @@ export default {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -1420,39 +1380,39 @@ export default {
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
         fetch(this.baseUrl + "/feeds/", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? response.json().then(j => {
-              throw new Error(j.message, { cause: {} });
-            }) : response.text().then(t => {
-              throw new Error(t, { cause: {} })
-            });
-          }
-        })
-        .then((data) => {
-          let created = data[0].feedDefinition;
-          this.feeds.push(created);
-          // update feeds localStorage 
-          localStorage.setItem('feeds', JSON.stringify(this.feeds));
-          this.inboundQueuesByFeed[created.id] = { values: [] };
-          // update queues localStorage 
-          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
-          this.$refs.feedConfigPanel.setup(created);
-          this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
-          this.setSelectedFeedId(created.id);
-          this.rebuildLunrIndexes();
-        }).catch((error) => {
-          this.handleServerError(error); 
-        }).finally(() => {
-          this.isLoading = false;
-          clearTimeout(timeoutId);
-        });
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ? response.json().then(j => {
+                throw new Error(j.message, { cause: {} });
+              }) : response.text().then(t => {
+                throw new Error(t, { cause: {} })
+              });
+            }
+          })
+          .then((data) => {
+            let created = data[0].feedDefinition;
+            this.feeds.push(created);
+            // update feeds localStorage 
+            localStorage.setItem('feeds', JSON.stringify(this.feeds));
+            this.inboundQueuesByFeed[created.id] = { values: [] };
+            // update queues localStorage 
+            localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
+            this.$refs.feedConfigPanel.setup(created);
+            this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
+            this.setSelectedFeedId(created.id);
+            this.rebuildLunrIndexes();
+          }).catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            this.isLoading = false;
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
-        this.handleServerError(error); 
+        this.handleServerError(error);
         this.isLoading = false;
       });
     },
@@ -1464,7 +1424,7 @@ export default {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -1473,44 +1433,44 @@ export default {
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
         fetch(this.baseUrl + "/feeds/" + feed.id, requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? response.json().then(j => {
-              throw new Error(j.message, { cause: {} });
-            }) : response.text().then(t => {
-              throw new Error(t, { cause: {} })
-            });
-          }
-        })
-        .then((data) => {
-          let updated = data.feedDefinition;
-          let current = this.getFeedById(updated.id);
-          current.ident = updated.ident;
-          current.title = updated.title;
-          current.description = updated.description;
-          current.generator = updated.generator;
-          current.copyright = updated.copyright;
-          current.language = updated.language;
-          current.categoryTerm = updated.categoryTerm;
-          current.categoryLabel = updated.categoryLabel;
-          current.categoryScheme = updated.categoryScheme;
-          current.categoryValue = updated.categoryValue;
-          current.categoryDomain = updated.categoryDomain;
-          this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.queryMetrics);
-          this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
-          this.refreshFeeds([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
-        }).catch((error) => {
-          this.handleServerError(error); 
-        }).finally(() => {
-          this.isLoading = false;
-          clearTimeout(timeoutId);
-        });
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ? response.json().then(j => {
+                throw new Error(j.message, { cause: {} });
+              }) : response.text().then(t => {
+                throw new Error(t, { cause: {} })
+              });
+            }
+          })
+          .then((data) => {
+            let updated = data.feedDefinition;
+            let current = this.getFeedById(updated.id);
+            current.ident = updated.ident;
+            current.title = updated.title;
+            current.description = updated.description;
+            current.generator = updated.generator;
+            current.copyright = updated.copyright;
+            current.language = updated.language;
+            current.categoryTerm = updated.categoryTerm;
+            current.categoryLabel = updated.categoryLabel;
+            current.categoryScheme = updated.categoryScheme;
+            current.categoryValue = updated.categoryValue;
+            current.categoryDomain = updated.categoryDomain;
+            this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.queryMetrics);
+            this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
+            this.refreshFeeds([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
+          }).catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            this.isLoading = false;
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
-        this.handleServerError(error); 
+        this.handleServerError(error);
         this.isLoading = false;
       });
     },
@@ -1544,8 +1504,8 @@ export default {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/feeds/" + this.feedIdToDelete, {
-          headers: { 
-            "Content-Type": "application/json", 
+          headers: {
+            "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
           method: 'DELETE',
@@ -1557,7 +1517,7 @@ export default {
           if (response.status === 200) {
             return isJson ? response.json() : {};
           } else {
-            return isJson ? 
+            return isJson ?
               response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
               response.text().then(t => {throw new Error(t)});
           }
@@ -1623,7 +1583,7 @@ export default {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -1632,34 +1592,34 @@ export default {
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/staging/read-status/feed/" + this.feedIdToMarkAsRead, requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ?
               response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
               response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          this.inboundQueuesByFeed[this.feedIdToMarkAsRead].values.forEach((p) => { 
-            p.isRead = true;
-            p.postReadStatus = 'READ';
-            p.isReadLater = false;
+            }
+          }).then((data) => {
+            this.inboundQueuesByFeed[this.feedIdToMarkAsRead].values.forEach((p) => {
+              p.isRead = true;
+              p.postReadStatus = 'READ';
+              p.isReadLater = false;
+            });
+            // update queue localStorage
+            localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
+            this.setLastServerMessage(data.message);
+            this.rebuildLunrIndexes();
+          }).catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            this.feedIdToMarkAsRead = null;
+            this.showFeedMarkAsReadConfirmation = false;
+            this.isLoading = false;
+            clearTimeout(timeoutId);
           });
-          // update queue localStorage
-          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
-          this.setLastServerMessage(data.message);
-          this.rebuildLunrIndexes();
-        }).catch((error) => {
-          this.handleServerError(error);
-        }).finally(() => {
-          this.feedIdToMarkAsRead = null;
-          this.showFeedMarkAsReadConfirmation = false;
-          this.isLoading = false;
-          clearTimeout(timeoutId);
-        });
       }).catch((error) => {
         this.handleServerError(error);
         this.feedIdToMarkAsRead = null;
@@ -1743,9 +1703,9 @@ export default {
           this.configureFeed(this.selectedFeedId);
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SLASH KEY (SEARCH SELECTED QUEUE)
-        // 
+          // 
+          // SLASH KEY (SEARCH SELECTED QUEUE)
+          // 
         } else if (event.key === '/') {
           this.$nextTick(() => {
             let filterElem = document.getElementById('feed-filter');
@@ -1762,37 +1722,37 @@ export default {
           });
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SHIFT + L KEY (TOGGLE QUEUE FILTER MODE)
-        // 
+          // 
+          // SHIFT + L KEY (TOGGLE QUEUE FILTER MODE)
+          // 
         } else if (event.key === 'L' && event.shiftKey) {
           this.toggleFeedFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SHIFT + H KEY (TOGGLE QUEUE FILTER MODE)
-        // 
+          // 
+          // SHIFT + H KEY (TOGGLE QUEUE FILTER MODE)
+          // 
         } else if (event.key === 'H' && event.shiftKey) {
           this.toggleFeedFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SHIFT + T KEY (TOGGLE QUEUE FILTER MODE)
-        // 
+          // 
+          // SHIFT + T KEY (TOGGLE QUEUE FILTER MODE)
+          // 
         } else if (event.key === 'T' && event.shiftKey) {
           this.toggleFeedFilterMode('PUBLISHED');
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SHIFT + A KEY (MARK QUEUE AS READ)
-        // 
+          // 
+          // SHIFT + A KEY (MARK QUEUE AS READ)
+          // 
         } else if (event.key === 'A' && event.shiftKey === true) {
           this.markSelectedFeedAsRead();
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SHIFT + D KEY (DELETE QUEUE) 
-        // 
+          // 
+          // SHIFT + D KEY (DELETE QUEUE) 
+          // 
         } else if (event.key === 'D' && event.shiftKey === true) {
           this.deleteSelectedFeed();
           event.stopPropagation();
@@ -1806,9 +1766,9 @@ export default {
         this.refreshFeeds(null, true);
         event.stopPropagation();
         event.preventDefault();
-      // 
-      // SHIFT + Q KEY (NEW QUEUE)
-      // 
+        // 
+        // SHIFT + Q KEY (NEW QUEUE)
+        // 
       } else if (event.key === 'Q' && event.shiftKey === true) {
         this.newFeed();
         event.stopPropagation();

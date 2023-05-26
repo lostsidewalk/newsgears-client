@@ -119,7 +119,6 @@
             v-for="enclosure in post.enclosure"
             :key="enclosure"
             :enclosure="enclosure"
-            :compact="true"
           />
         </v-sheet>
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->

@@ -3,13 +3,12 @@
     <!-- title -->
     <v-card-title
       class="clickable"
-      @click="showSubscriptionDetails = !showSubscriptionDetails"
     >
       {{ info.title ? info.title : info.feedUrl }}
     </v-card-title>
     <v-divider />
     <!-- icon -->
-    <v-card-subtitle v-if="showSubscriptionDetails">
+    <v-card-subtitle>
       <v-img
         v-if="info.icon"
         class="mt-4 rounded h-auto" 
@@ -32,11 +31,11 @@
       />
     </v-card-subtitle>
     <!-- description -->
-    <v-card-text v-if="info.description && showSubscriptionDetails">
+    <v-card-text v-if="info.description">
       {{ info.description ? info.description.value : '' }}
     </v-card-text>
     <!-- chips -->
-    <v-card-text v-show="showSubscriptionDetails">
+    <v-card-text>
       <v-chip-group v-if="hasChips">
         <!-- author -->
         <v-chip
@@ -202,7 +201,6 @@ export default {
   emits: [ "followRecommendation" ],
   data() {
     return {
-      showSubscriptionDetails: true,
       showQueryMetrics: false,
       cardMode: null,
     }

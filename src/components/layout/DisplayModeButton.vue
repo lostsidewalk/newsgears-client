@@ -19,7 +19,7 @@ export default {
     const theme = useTheme();
 
     const {
-      xs, sm,
+      xs, // sm,
       // md, lg, xl, xxl
     } = useDisplay();
 
@@ -31,17 +31,9 @@ export default {
     function buttonSize() {
       if (xs) {
         return 'x-small';
-      } else if (sm) {
+      }  else {
         return 'small';
-      // } else if (md) {
-      //   return 'medium';
-      // } else if (lg) {
-      //   return 'large';
-      // } else if (xl || xxl) {
-      //   return 'x-large';
-      // } else {
-      //   return 'medium';
-      }
+      } 
     }
 
     return {

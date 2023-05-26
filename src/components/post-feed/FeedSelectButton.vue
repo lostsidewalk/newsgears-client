@@ -37,32 +37,27 @@
       </v-chip-group>
     </v-card-text>
     <v-divider />
-    <v-card-actions>
-      <v-container>
-        <v-row dense>
-          <v-col>
-            <!-- add/manage subscriptions -->
-            <v-btn
-              block
-              variant="tonal"
-              :size="buttonSize" 
-              :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
-              @click.stop="$emit('manageSubscriptions')"
-            />
-          </v-col>
-          <v-col v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0">
-            <!-- show/hide feed details -->
-            <v-btn
-              block
-              variant="tonal"
-              :size="buttonSize" 
-              :text="showMoreInformation ? $t('hideMoreInfo') : $t('showMoreInfo')"
-              @click.stop="showMoreInformation = !showMoreInformation"
-            />
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card-actions>
+    <v-btn-group>
+      <!-- add/manage subscriptions -->
+      <v-btn
+        :disabled="!isSelected"
+        density="compact"
+        variant="text"
+        :size="buttonSize" 
+        :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
+        @click.stop="$emit('manageSubscriptions')"
+      />
+      <!-- show/hide feed details -->
+      <v-btn
+        v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0"
+        :disabled="!isSelected"
+        density="compact"
+        variant="text"
+        :size="buttonSize" 
+        :text="showMoreInformation ? $t('hideMoreInfo') : $t('showMoreInfo')"
+        @click.stop="showMoreInformation = !showMoreInformation"
+      />
+    </v-btn-group>
     <v-expand-transition>
       <FeedDetails 
         v-if="showMoreInformation"
@@ -94,6 +89,7 @@ export default {
     inboundCount: { type: Number, required: true },
     publishedCount: { type: Number, required: true },
     variant: { type: String, default: null },
+    isSelected: { type: Boolean, default: false },
   },
   emits: [ "selectFeed", "manageSubscriptions", "updatePostFeedFilter", "showQueryMetrics" ],
   data() {

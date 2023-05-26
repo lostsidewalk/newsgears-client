@@ -90,9 +90,18 @@
         </RssAtomFeedInfo>
         <v-alert
           v-if="newRssAtomUrl.error"
+          closable 
           type="error"
         >
           {{ newRssAtomUrl.error }}
+        </v-alert>
+        <v-alert
+          v-model="addSuccess"
+          closable
+          variant="tonal"
+          type="success"
+        >
+          {{ $t('subscriptionAdded') }}
         </v-alert>
       </v-card-text>
     </v-card>
@@ -239,6 +248,7 @@ export default {
       deleteIsLoading: false,
       updateAuthIsLoading: false,
       discoveryIsLoading: false,
+      addSuccess: false,
     }
   },
   methods: {
@@ -303,6 +313,7 @@ export default {
             let qd = queryDefinitions[0];
             this.$emit('addRssAtomUrl', qd);
             this.newRssAtomUrl = {};
+            this.addSuccess = true;
             this.setLastServerMessage(this.$t('subscriptionAdded'));
           }
         }).catch((error) => {
