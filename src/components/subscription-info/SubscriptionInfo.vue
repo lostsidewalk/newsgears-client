@@ -190,7 +190,7 @@ import QueryMetrics from './QueryMetrics.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "RssAtomFeedInfo",
+  name: "SubscriptionInfo",
   components: {
     QueryMetrics
   },

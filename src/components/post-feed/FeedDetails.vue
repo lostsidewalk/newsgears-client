@@ -19,13 +19,13 @@
       />
       <v-list>
         <v-list-item
-          v-for="rssAtomFeedUrl of rssAtomFeedUrls"
-          :key="rssAtomFeedUrl"
+          v-for="subscription of subscriptions"
+          :key="subscription"
           class="ma-2 pa-2"
         >
           <template #title>
             <v-label class="ml-2 clickable">
-              {{ rssAtomFeedUrl.title ? rssAtomFeedUrl.title : rssAtomFeedUrl.feedUrl }}
+              {{ subscription.title ? subscription.title : subscription.feedUrl }}
             </v-label>
           </template>
           <template #subtitle>
@@ -34,9 +34,9 @@
           <template #prepend>
             <!-- feed logo image -->
             <v-img
-              v-if="rssAtomFeedUrl.image"
+              v-if="subscription.image"
               class="ma-2"
-              :src="rssAtomFeedUrl.image.url"
+              :src="subscription.image.url"
               :alt="$t('feedLogoImage')"
               width="48"
               max-width="48"
@@ -58,9 +58,9 @@
               :size="buttonSize"
               class="mr-2"
               variant="outlined"
-              :text="buildImportCtMessage(rssAtomFeedUrl.feedMetrics)"
-              :title="buildMetricStatusMessage(rssAtomFeedUrl.feedMetrics)"
-              @click.prevent="hasFeedMetrics(rssAtomFeedUrl) ? openQueryMetrics(rssAtomFeedUrl) : false"
+              :text="buildImportCtMessage(subscription.feedMetrics)"
+              :title="buildMetricStatusMessage(subscription.feedMetrics)"
+              @click.prevent="hasFeedMetrics(subscription) ? openQueryMetrics(subscription) : false"
             />
             <v-btn
               :size="buttonSize"
@@ -69,8 +69,8 @@
               icon="fa-filter"
               @click.stop="$emit('updatePostFeedFilter', {
                 name: 'subscription',
-                feedId: rssAtomFeedUrl.feedId,
-                value: rssAtomFeedUrl.title,
+                feedId: subscription.feedId,
+                value: subscription.title,
               })"
             />
           </v-list-item-action>
@@ -138,7 +138,7 @@ export default {
   name: "FeedDetails",
   mixins: [buttonSizeMixin],
   props: {
-    rssAtomFeedUrls: { type: Array, required: true },
+    subscriptions: { type: Array, required: true },
     jsonPubUrl: { type: String, required: true },
     rssPubUrl: { type: String, required: true },
     atomPubUrl: { type: String, required: true },
@@ -190,8 +190,8 @@ export default {
         return this.$t("metricsNotYetAvailable");
       }
     },
-    hasFeedMetrics(rssAtomFeedUrl) {
-      return rssAtomFeedUrl.feedMetrics && rssAtomFeedUrl.feedMetrics.length > 0;
+    hasFeedMetrics(subscription) {
+      return subscription.feedMetrics && subscription.feedMetrics.length > 0;
     },
     // shown next to the RSS/ATOM icon 
     buildImportCtMessage(feedMetrics) {
@@ -218,8 +218,8 @@ export default {
       }
       return null;
     },
-    openQueryMetrics(rssAtomFeedUrl) {
-      this.$emit('showQueryMetrics', rssAtomFeedUrl);
+    openQueryMetrics(subscription) {
+      this.$emit('showQueryMetrics', subscription);
     },
     formatTimestamp(timestamp) {
       if (!timestamp) {

@@ -40,11 +40,11 @@
             v-if="feed"
             ref="subscriptionsConfig"
             :base-url="baseUrl"
-            :rss-atom-feed-urls="rssAtomFeedUrls" 
+            :subscriptions="subscriptions" 
             :feed-id="feed.id"
-            @addRssAtomUrl="addRssAtomUrl" 
-            @deleteRssAtomUrl="deleteRssAtomUrl" 
-            @updateRssAtomUrlAuth="updateRssAtomUrlAuth"
+            @addSubscription="addSubscription" 
+            @deleteSubscription="deleteSubscription" 
+            @updateSubscriptionAuth="updateSubscriptionAuth"
             @authError="handleAuthError" 
             @updateServerMessage="setLastServerMessage"
           /> 
@@ -190,7 +190,7 @@ export default {
       feedGenerator: '',
       feedCopyright: '',
       feedLanguage: '',
-      rssAtomFeedUrls: [],
+      subscriptions: [],
       selectedTab: null,
     };
   },
@@ -230,7 +230,7 @@ export default {
       this.feedGenerator = this.feed.generator;
       this.feedCopyright = this.feed.copyright;
       this.feedLanguage = this.feed.language;
-      this.rssAtomFeedUrls = this.feed.rssAtomFeedUrls;
+      this.subscriptions = this.feed.subscriptions;
       this.selectedTab = (feed && feed.id) ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
       this.showModal = true;
     },
@@ -273,9 +273,9 @@ export default {
       };
       this.$emit('update', updateObj);
     },
-    addRssAtomUrl(source) {
-      if (!this.rssAtomFeedUrls) {
-        this.rssAtomFeedUrls = [];
+    addSubscription(source) {
+      if (!this.subscriptions) {
+        this.subscriptions = [];
       }
       if (source === undefined) {
         source = {};
@@ -310,28 +310,28 @@ export default {
         }
       }
 
-      this.rssAtomFeedUrls.unshift(r);
+      this.subscriptions.unshift(r);
       
       this.$emit('refreshFeedDefinition', this.feed.id);
     },
-    deleteRssAtomUrl(id) {
+    deleteSubscription(id) {
       let deleteIdx = -1;
-      for (let i = 0; i < this.rssAtomFeedUrls.length; i++) {
-        if (this.rssAtomFeedUrls[i].id === id) {
+      for (let i = 0; i < this.subscriptions.length; i++) {
+        if (this.subscriptions[i].id === id) {
           deleteIdx = i;
           break;
         }
       }
       if (deleteIdx > -1) {
-        this.rssAtomFeedUrls.splice(deleteIdx, 1);
+        this.subscriptions.splice(deleteIdx, 1);
         this.$emit('refreshFeedDefinition', this.feed.id);
       }
     },
-    updateRssAtomUrlAuth(source) {
+    updateSubscriptionAuth(source) {
       let updateIdx = -1;
       let qd = source.queryDefinition;
-      for (let i = 0; i < this.rssAtomFeedUrls.length; i++) {
-        if (this.rssAtomFeedUrls[i].id === qd.id) {
+      for (let i = 0; i < this.subscriptions.length; i++) {
+        if (this.subscriptions[i].id === qd.id) {
           updateIdx = i;
           break;
         }
@@ -340,11 +340,11 @@ export default {
         let queryConfigStr = qd.queryConfig;
         if (queryConfigStr) {
           let queryConfig = JSON.parse(queryConfigStr);
-          this.rssAtomFeedUrls[updateIdx].username = queryConfig.username;
-          this.rssAtomFeedUrls[updateIdx].password = queryConfig.password;
+          this.subscriptions[updateIdx].username = queryConfig.username;
+          this.subscriptions[updateIdx].password = queryConfig.password;
         } else {
-          this.rssAtomFeedUrls[updateIdx].username = null;
-          this.rssAtomFeedUrls[updateIdx].password = null;
+          this.subscriptions[updateIdx].username = null;
+          this.subscriptions[updateIdx].password = null;
         }
         this.$emit('refreshFeedDefinition', this.feed.id);
       }

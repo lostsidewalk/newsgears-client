@@ -131,7 +131,7 @@
             </v-list-subheader>
             <v-divider />
             <v-list-item
-              v-for="r in f.rssAtomFeedUrls"
+              v-for="r in f.subscriptions"
               :key="r"
               class="opml-upload-summary-message-url"
             >

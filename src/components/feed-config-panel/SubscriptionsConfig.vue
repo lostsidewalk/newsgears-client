@@ -25,7 +25,7 @@
       <v-card-text>
         <!-- text field -->
         <v-text-field
-          v-model="newRssAtomUrl.feedUrl"
+          v-model="newSubscription.feedUrl"
           variant="solo-filled"
           type="text"
           autofocus
@@ -38,43 +38,43 @@
               :size="buttonSize" 
               prepend-icon="fa-refresh"
               :loading="discoveryIsLoading"
-              :disabled="!newRssAtomUrl.feedUrl"
+              :disabled="!newSubscription.feedUrl"
               :title="$t('discovery')"
               :text="$t('discovery')"
-              @click="refreshRssAtomUrlInfo(newRssAtomUrl)"
+              @click="refreshSubscriptionInfo(newSubscription)"
             />
           </template>
         </v-text-field>
         <v-alert
           type="info"
           closable
-          :variant="newRssAtomUrl.feedUrl ? 'tonal' : 'outlined'"
+          :variant="newSubscription.feedUrl ? 'tonal' : 'outlined'"
           class="mb-4"
         >
           {{ $t("credentialsUseMessage") }}
         </v-alert>
         <!-- username text field -->
         <v-text-field
-          v-model="newRssAtomUrl.username"
+          v-model="newSubscription.username"
           variant="solo-filled"
           type="text"
           :label="$t('username')"
           :placeholder="$t('username')"
-          :disabled="!newRssAtomUrl.feedUrl"
+          :disabled="!newSubscription.feedUrl"
         />
         <!-- password text field -->
         <v-text-field
-          v-model="newRssAtomUrl.password"
+          v-model="newSubscription.password"
           variant="solo-filled"
           type="password"
           :label="$t('password')"
           :placeholder="$t('password')"
-          :disabled="!newRssAtomUrl.feedUrl"
+          :disabled="!newSubscription.feedUrl"
         />
-        <RssAtomFeedInfo
-          v-if="newRssAtomUrl.discoveryUrl && !newRssAtomUrl.error"
+        <SubscriptionInfo
+          v-if="newSubscription.discoveryUrl && !newSubscription.error"
           elevation="6"
-          :info="newRssAtomUrl"
+          :info="newSubscription"
           @followRecommendation="followRecommendation"
         >
           <template #additional>
@@ -84,16 +84,16 @@
               :loading="addNewIsLoading"
               :title="$t('subscribe')"
               :text="$t('subscribe')"
-              @click="addNewRssAtomUrl"
+              @click="addNewSubscription"
             />
           </template>
-        </RssAtomFeedInfo>
+        </SubscriptionInfo>
         <v-alert
-          v-if="newRssAtomUrl.error"
+          v-if="newSubscription.error"
           closable 
           type="error"
         >
-          {{ newRssAtomUrl.error }}
+          {{ newSubscription.error }}
         </v-alert>
         <v-alert
           v-model="addSuccess"
@@ -109,7 +109,7 @@
     <v-divider class="mt-2 mb-2" />
     <!-- manage existing RSS/ATOM feed subscriptions -->
     <v-card
-      v-if="rssAtomFeedUrls && rssAtomFeedUrls.length > 0"
+      v-if="subscriptions && subscriptions.length > 0"
       class="ma-4"
       elevation="6"
     >
@@ -128,14 +128,14 @@
         @click.close="dismissAlert('manageYourSubscriptionsHere')"
       />
       <v-card-text
-        v-for="(rssAtomUrl, idx) in rssAtomFeedUrls"
+        v-for="(subscription, idx) in subscriptions"
         :key="idx" 
       >
-        <RssAtomFeedInfo
+        <SubscriptionInfo
           elevation="6"
-          :info="rssAtomUrl"
+          :info="subscription"
           :filter-support="false"
-          @refreshFeed="refreshRssAtomUrlInfo(rssAtomUrl)" 
+          @refreshFeed="refreshSubscriptionInfo(subscription)" 
           @followRecommendation="followRecommendation"
         >
           <template #additional>
@@ -144,7 +144,7 @@
               prepend-icon="fa-expand"
               :title="$t('auth')"
               :text="$t('auth')"
-              @click="configAuth(rssAtomUrl)"
+              @click="configAuth(subscription)"
             />
             <v-btn
               :size="buttonSize" 
@@ -152,10 +152,10 @@
               :loading="deleteIsLoading"
               :title="$t('unsubscribe')"
               :text="$t('unsubscribe')"
-              @click="deleteRssAtomUrl(rssAtomUrl.id)"
+              @click="deleteSubscription(subscription.id)"
             />
           </template>
-        </RssAtomFeedInfo>
+        </SubscriptionInfo>
       </v-card-text>
     </v-card>
     <!-- auth config dialog (existing subscriptions) -->
@@ -179,14 +179,14 @@
             {{ $t("credentialsUseMessage") }}
           </v-alert>
           <v-text-field
-            v-model="rssAtomUrlToUpdate.username"
+            v-model="subscriptionToUpdate.username"
             variant="solo-filled"
             type="text"
             :label="$t('username')"
             :placeholder="$t('username')"
           />
           <v-text-field
-            v-model="rssAtomUrlToUpdate.password"
+            v-model="subscriptionToUpdate.password"
             variant="solo-filled"
             type="password"
             :label="$t('password')"
@@ -199,7 +199,7 @@
             prepend-icon="fa-save"
             :loading="updateAuthIsLoading"
             :text="$t('update')" 
-            @click="updateRssAtomUrlAuth(rssAtomUrlToUpdate)"
+            @click="updateSubscriptionAuth(subscriptionToUpdate)"
           />
           <v-btn
             :size="buttonSize" 
@@ -213,24 +213,24 @@
 </template>
 
 <script>
-import RssAtomFeedInfo from '@/components/subscription-info/RssAtomFeedInfo.vue';
+import SubscriptionInfo from '@/components/subscription-info/SubscriptionInfo.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "SubscriptionsConfig", 
   components: {
-    RssAtomFeedInfo,
+    SubscriptionInfo,
   },
   mixins: [buttonSizeMixin],
   props: {
-    rssAtomFeedUrls: { type: Array, required: true },
+    subscriptions: { type: Array, required: true },
     feedId: { type: Number, required: false, default: null },
     baseUrl: { type: String, required: true },
   },
   emits: [
-    "addRssAtomUrl",
-    "deleteRssAtomUrl",
-    "updateRssAtomUrlAuth",
+    "addSubscription",
+    "deleteSubscription",
+    "updateSubscriptionAuth",
     "updateServerMessage",
   ],
   data() {
@@ -238,9 +238,9 @@ export default {
       mode: "ADD_FROM_URL",
       //
       newFeedDiscoveryError: null,
-      newRssAtomUrl: {},
+      newSubscription: {},
       // 
-      rssAtomUrlToUpdate: null,
+      subscriptionToUpdate: null,
       showAuthConfig: false,
       // 
       //
@@ -281,7 +281,7 @@ export default {
     // 
     // invoked by the 'subscribe' button on 'add a new subscription'
     // 
-    addNewRssAtomUrl() {
+    addNewSubscription() {
       this.addNewIsLoading = true;
       console.log("subscription-config: pushing new subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
@@ -292,7 +292,7 @@ export default {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify([this.newRssAtomUrl]),
+          body: JSON.stringify([this.newSubscription]),
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
@@ -311,8 +311,8 @@ export default {
           let queryDefinitions = data.queryDefinitions;
           if (queryDefinitions && queryDefinitions.length > 0) {
             let qd = queryDefinitions[0];
-            this.$emit('addRssAtomUrl', qd);
-            this.newRssAtomUrl = {};
+            this.$emit('addSubscription', qd);
+            this.newSubscription = {};
             this.addSuccess = true;
             this.setLastServerMessage(this.$t('subscriptionAdded'));
           }
@@ -330,7 +330,7 @@ export default {
     // 
     // invoked by the 'unsubsribe' button on existing subscriptions 
     // 
-    deleteRssAtomUrl(id) {
+    deleteSubscription(id) {
       this.deleteIsLoading = true;
       console.log("subscription-config: deleteing subscription..");
       this.$auth.getTokenSilently().then((token) => {
@@ -356,7 +356,7 @@ export default {
               response.text().then(t => {throw new Error(t, { cause: {} })});
           }
         }).then(() => {
-          this.$emit('deleteRssAtomUrl', id);
+          this.$emit('deleteSubscription', id);
           this.setLastServerMessage(this.$t('subscriptionDeleted'));
         }).catch((error) => {
           this.handleServerError(error); 
@@ -372,17 +372,11 @@ export default {
     // 
     // invoked by the 'auth' button on existing subscriptions 
     // 
-    configAuth(rssAtomUrl) {
-      this.rssAtomUrlToUpdate = rssAtomUrl;
+    configAuth(subscription) {
+      this.subscriptionToUpdate = subscription;
       this.showAuthConfig = true;
     },
-    updateRssAtomUrlAuth(rssAtomUrl) {
-      try {
-        this.validateRssAtomUrl(rssAtomUrl);
-      } catch (error) {
-        console.error(error);
-        return;
-      }
+    updateSubscriptionAuth(subscription) {
       this.updateAuthIsLoading = true;
       console.log("subscription-config: pushing updated subscription to remote..");
       this.$auth.getTokenSilently().then((token) => {
@@ -393,11 +387,11 @@ export default {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(rssAtomUrl),
+          body: JSON.stringify(subscription),
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/' + rssAtomUrl.id, requestOptions)
+        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/' + subscription.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -412,7 +406,7 @@ export default {
           let queryDefinitions = data.queryDefinitions;
           if (queryDefinitions && queryDefinitions.length > 0) {
             let qd = queryDefinitions[0];
-            this.$emit('updateRssAtomUrlAuth', qd);
+            this.$emit('updateSubscriptionAuth', qd);
             this.setLastServerMessage(this.$t('subscriptionUpdated'));
           }
         }).catch((error) => {
@@ -429,7 +423,7 @@ export default {
     // 
     // discovery 
     // 
-    refreshRssAtomUrlInfo(r) {
+    refreshSubscriptionInfo(r) {
       if (r.feedUrl) {
         this.doDiscovery(r);
       }
@@ -530,8 +524,8 @@ export default {
     // recommendation 
     // 
     followRecommendation(url) {
-      this.newRssAtomUrl.feedUrl = url;
-      this.refreshRssAtomUrlInfo(this.newRssAtomUrl);
+      this.newSubscription.feedUrl = url;
+      this.refreshSubscriptionInfo(this.newSubscription);
     },
     // 
     // misc 

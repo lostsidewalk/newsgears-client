@@ -262,8 +262,8 @@
         scrollable
       >
         <QueryMetrics
-          :title="rssAtomFeedUrlToShow.title"
-          :query-metrics="rssAtomFeedUrlToShow.feedMetrics"
+          :title="subscriptionToShow.title"
+          :query-metrics="subscriptionToShow.feedMetrics"
           @dismiss="showQueryMetrics = false"
         />
       </v-dialog>
@@ -500,7 +500,7 @@ export default {
       feedIdToDelete: null,
       feedIdToMarkAsRead: null,
       // show query metrics 
-      rssAtomFeedUrlToShow: null,
+      subscriptionToShow: null,
       showQueryMetrics: false,
       // show notification warning 
       showNotificationWarning: false,
@@ -599,7 +599,7 @@ export default {
           "id": t[i].id,
           "feedStatus": t[i].feedStatus,
           "lastDeployed": t[i].lastDeployed,
-          "rssAtomFeedUrls": t[i].rssAtomFeedUrls,
+          "subscriptions": t[i].subscriptions,
           "transportIdent": t[i].transportIdent,
         });
       }
@@ -660,7 +660,7 @@ export default {
         return false;
       }
       // ensure that we have subscriptions on hand for the selected queue 
-      let subscriptions = this.getSelectedFeed().rssAtomFeedUrls;
+      let subscriptions = this.getSelectedFeed().subscriptions;
       if (!subscriptions) {
         // console.debug("showQueueRefreshIndicator: returning early due to selected queue has 0 subscriptions");
         return false;
@@ -916,7 +916,7 @@ export default {
       }
     },
     openQueryMetrics(subscriptionInfo) {
-      this.rssAtomFeedUrlToShow = subscriptionInfo;
+      this.subscriptionToShow = subscriptionInfo;
       this.showQueryMetrics = true;
     },
     // 
@@ -1117,7 +1117,7 @@ export default {
       }
     },
     decorateFeedWithQueryDefinitions(fd, qd, qm) {
-      fd.rssAtomFeedUrls = [];
+      fd.subscriptions = [];
 
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
@@ -1153,7 +1153,7 @@ export default {
           }
 
           // add to FD
-          fd.rssAtomFeedUrls.push(r);
+          fd.subscriptions.push(r);
         }
       }
     }, 
@@ -1383,7 +1383,7 @@ export default {
     newFeed() {
       document.activeElement.blur();
       this.showFeedConfigPanel = true;
-      this.$nextTick(() => this.$refs.feedConfigPanel.setup({ rssAtomFeedUrls: [] }));
+      this.$nextTick(() => this.$refs.feedConfigPanel.setup({ subscriptions: [] }));
     },
     uploadOpml() {
       document.activeElement.blur();

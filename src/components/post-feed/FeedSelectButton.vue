@@ -46,12 +46,12 @@
         density="compact"
         variant="text"
         :size="buttonSize" 
-        :text="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
+        :text="feed.subscriptions && feed.subscriptions.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
         @click.stop="$emit('manageSubscriptions')"
       />
       <!-- show/hide feed details -->
       <v-btn
-        v-if="feed.rssAtomFeedUrls && feed.rssAtomFeedUrls.length > 0"
+        v-if="feed.subscriptions && feed.subscriptions.length > 0"
         :disabled="!isSelected"
         density="compact"
         variant="text"
@@ -63,7 +63,7 @@
     <v-expand-transition>
       <FeedDetails 
         v-if="showMoreInformation"
-        :rss-atom-feed-urls="feed.rssAtomFeedUrls" 
+        :subscriptions="feed.subscriptions" 
         :json-pub-url="feedUrl + '/feed/json/' + feed.transportIdent" 
         :rss-pub-url="feedUrl + '/feed/rss/' + feed.transportIdent" 
         :atom-pub-url="feedUrl + '/feed/atom/' + feed.transportIdent" 
