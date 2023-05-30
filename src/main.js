@@ -142,8 +142,8 @@ const i18n = createI18n({
         "REDIRIGIDO A {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable:
         "Las métricas aún no están disponibles para esta fuente RSS.",
-      theseAreYourSubscriptions: "Estas son sus suscripciones...",
-      theseAreYourPublications: "Estas son sus publicaciones...",
+      theseAreYourSubscriptions: "Estas son sus suscripciones. Las suscripciones se actualizan periódicamente. Utilice este panel para ver el historial de importación de sus suscripciones y para filtrar rápidamente la cola de artículos.",
+      theseAreYourPublications: "Estas son sus publicaciones. FeedGears publica sus artículos 'destacados' en cada cola en un nuevo feed que está disponible en múltiples formatos en los siguientes enlaces:",
       // buttons
       update: "Actualizar",
       save: "Guardar",
@@ -152,9 +152,9 @@ const i18n = createI18n({
       rssFeedDiscovery: "Descubrimiento de fuentes RSS",
       // queue properties
       createANewQueue: "Crear una nueva cola",
-      createANewQueueHere: "Crear una nueva cola aqui...",
+      createANewQueueHere: "Cree una nueva cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones de fuentes relacionadas. Los artículos en la misma cola se leen, indexan y filtran juntos. Del mismo modo, los artículos en la misma cola que están 'destacados' se publican en una nueva fuente específica de la cola, que está disponible en varios formatos. Utilice este panel para crear una nueva cola, definir sus propiedades básicas y configurar los ajustes relacionados con la publicación de artículos destacados. Una vez que se crea una cola, puede agregar suscripciones para importar artículos.",
       updateQueueSettings: "Actualizar la configuración de la cola",
-      updateQueueSettingsHere: "Actualizar la configuración de la cola...",
+      updateQueueSettingsHere: "Actualice la configuración de la cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones de fuentes relacionadas. Los artículos en la misma cola se leen, indexan y filtran juntos. Del mismo modo, los artículos en la misma cola que están 'destacados' se publican en una nueva fuente específica de la cola, que está disponible en varios formatos. Utilice este panel para cambiar las propiedades básicas de la cola y configurar los ajustes relacionados con la publicación de artículos destacados.",
       queueIdentifier: "Identificador de cola",
       queueIdentifierHint: "Un nombre corto y único para esta cola. Este valor se generará si no se proporciona. Este valor aparecerá en mensajes de registro y en otros lugares para referirse a esta cola.",
       queueTitle: "Título de la cola",
@@ -169,9 +169,9 @@ const i18n = createI18n({
       queueFeedLanguageHint: "En los artefactos publicados de esta cola, este valor aparece como el valor 'idioma del feed'.",
       // subscription config
       yourSubscriptions: "SUS SUSCRIPCIONES",
-      manageYourSubscriptionsHere: 'Gestiona tus suscripciones aquí...',
+      manageYourSubscriptionsHere: "Gestiona tus suscripciones aquí. Vea el historial completo de nuestra interacción con esto al ver las métricas de fuentes RSS. También puede usar este panel para configurar la autenticación y darse de baja de una fuente. Tenga en cuenta que los artículos se eliminan según sea necesario, independientemente del estado de la suscripción. Es posible que aún vea artículos en su cola incluso después de darse de baja de un feed aquí.",
       addANewSubscription: "AGREGAR UNA NEUVA SUSCRIPCIÓN",
-      addANewSubscriptionHere: "Añadir una nueva suscripción aquí...",
+      addANewSubscriptionHere: "Agregue una nueva suscripción aquí. Ingrese una URL válida. Intentaremos resolver la ubicación del artefacto RSS/ATOM en la ubicación que especifique.",
       feedUrl: "URL de fuente RSS",
       credentialsUseMessage:
         "* Se proporcionarán las siguientes credenciales si esta fuente RSS solicita autenticación.",
@@ -202,6 +202,7 @@ const i18n = createI18n({
       refreshThisFeed: "Actualizar este feed",
       // feed filter
       refreshQueues: "Actualizar colas",
+      refreshForLatest: "Actualizar esta cola para nuevos artículos",
       markQueueAsRead: "Marcar esta cola como leída",
       toggleSortOrder: "Alternar dirección de clasificación",
       toggleFeedFilterPills: "Alternar píldoras de filtro",
@@ -316,7 +317,7 @@ const i18n = createI18n({
       weWillCreateTheFollowingSubscriptions:
         "Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:",
       // post feed
-      thisIsYourQueueDashboard: 'Este es su tablero de colas...',
+      thisIsYourQueueDashboard: "Este es su tablero de colas. El panel muestra estadísticas de resumen sobre cada cola, como la cantidad de elementos no leídos en un grupo de suscripciones. Haga clic en una tarjeta de cola para ver los artículos en esa cola. Use los botones de la tarjeta de cola para agregar, administrar, suscribirse y cancelar la suscripción a las fuentes. Presione ESC para ocultar este menú.",
       confirmDeleteQueue:
         "Confirme que desea eliminar esta cola. Esta acción es irreversible.",
       confirmMarkQueueAsRead:
@@ -329,7 +330,7 @@ const i18n = createI18n({
       queueUpdated: "Cola actualizada",
       queueCreated: "Cola creada",
       nQueuesCreated: " colas creadas",
-      clickToLoadMore: "Haga clic aquí para cargar más",
+      noArticlesInThisQueue: "Ningún artículo en esta cola cumple con sus criterios. Ajuste su filtro, agregue más suscripciones o espere a que se importen más artículos.",
       // post item
       showPostDetails: "Mostrar detalles de la publicación",
       showPostCategories: "Mostrar categorías de publicaciones",
@@ -599,8 +600,8 @@ const i18n = createI18n({
       redirectedTo:
         "REDIRECT TO {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable: "Metrics are not yet available for this feed.",
-      theseAreYourSubscriptions: "These are your subscriptions...",
-      theseAreYourPublications: "These are your publications...",
+      theseAreYourSubscriptions: "These are your subscriptions.  Subscriptions are updated periodically.  Use this panel to view the import history for your subscriptions, and to quickly filter the article queue.",
+      theseAreYourPublications: "These are your publications.  FeedGears publishes your 'starred' articles in each queue to a new feed that is available in multiple formats at the following links:",
       // buttons
       update: "Update",
       save: "Save",
@@ -609,9 +610,9 @@ const i18n = createI18n({
       rssFeedDiscovery: "RSS Feed Discovery",
       // queue properties
       createANewQueue: "Create a new queue",
-      createANewQueueHere: "Create a new queue here...",
+      createANewQueueHere: "Create a new queue here.  Queues are used to group and organize articles from related feed subscriptions.  Articles in the same queue are read, indexed, and filtered together.  Similarly, articles in the same queue that are 'starred' are published to a new queue-specific feed, which is available in multiple formats.  Use this panel to create a new queue, define its basic properties, and configure settings related to publishing starred articles.  Once a queue is created, you can add subscriptions to import articles.",
       updateQueueSettings: "UPDATE QUEUE SETTINGS",
-      updateQueueSettingsHere: 'Update queue settings here...',
+      updateQueueSettingsHere: "Update queue settings here.  Queues are used to group and organize articles from related feed subscriptions.  Articles in the same queue are read, indexed, and filtered together.  Similarly, articles in the same queue that are 'starred' are published to a new queue-specific feed, which is available in multiple formats.  Use this panel to change basic queue properties, and configure settings related to publishing starred articles.",
       queueIdentifier: "Queue identifier",
       queueIdentifierHint: "A short, unique name for this queue. This value will be generated if not provided. This value will appear in log messages and elsewhere to refer to this queue.",
       queueTitle: "Queue title",
@@ -626,9 +627,9 @@ const i18n = createI18n({
       queueFeedLanguageHint: "In the published artifacts for this queue, this value appears as the 'feed language' value.",
       // subscription config
       yourSubscriptions: "YOUR SUBSCRIPTIONS",
-      manageYourSubscriptionsHere: 'Manage your subscriptions here...',
+      manageYourSubscriptionsHere: "Manage your subscriptions here.  View the entire history of our interaction with this by viewing RSS Feed Metrics.  You can also use this panel to configure authentication, and unsubscribe from a feed.  Please note that articles are purged as needed, regardless of subscription status.  You may still see articles in your queue even after you unsubscribe from a feed here.",
       addANewSubscription: "ADD A NEW SUBSCRIPTION",
-      addANewSubscriptionHere: 'Add a new subscription here...',
+      addANewSubscriptionHere: "Add a new subscription here.  Enter a valid URL.  We will attempt to resolve the location of the RSS/ATOM artifact at the location you specify.",
       feedUrl: "Feed URL",
       credentialsUseMessage:
         "* The following credentials will be supplied if this feed requests authentication.",
@@ -659,6 +660,7 @@ const i18n = createI18n({
       refreshThisFeed: "Refresh this feed",
       // post feed filter
       refreshQueues: "Refresh queues",
+      refreshForLatest: "Refresh this queue for new articles",
       markQueueAsRead: "Mark this queue as read",
       toggleSortOrder: "Toggle sort direction",
       toggleFeedFilterPills: "Toggle filter pills",
@@ -770,7 +772,7 @@ const i18n = createI18n({
       weWillCreateTheFollowingSubscriptions:
         "We will create the following queues from your OPML file(s):",
       // post feed
-      thisIsYourQueueDashboard: 'This is your queue dashboard...',
+      thisIsYourQueueDashboard: "This is your queue dashboard.  The dashboard shows summary statistics about each queue, such as the number of unread items across a group of subscriptions.  Click on a queue card to view articles in that queue.  Use the queue card buttons add, manage, subscribe, and unsubscribe to feeds.  Press ESC to hide this menu.",
       confirmDeleteQueue:
         "Please confirm that you want to delete this queue. This action is irreversible.",
       confirmMarkQueueAsRead:
@@ -786,7 +788,7 @@ const i18n = createI18n({
         "Queue created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
       nQueuesCreated:
         " queues created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
-      clickToLoadMore: "Click here to load more",
+      noArticlesInThisQueue: "There's nothing here!  Adjust your filter, add more subscriptions, or wait for more articles to be imported.",
       // post item
       showPostDetails: "Show post details",
       showPostCategories: "Show post categories",

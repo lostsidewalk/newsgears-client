@@ -203,10 +203,20 @@ export default {
     },
     getMostRecentMetric(feedMetrics) {
       if (feedMetrics) {
-        return feedMetrics.sort((a, b) => {
-          return a.importTimestamp - b.importTimestamp;
-        })[0];
+        let mostRecentMetric = null;
+        for (let i = 0; i < feedMetrics.length; i++) {
+          let f = feedMetrics[i];
+          if (!mostRecentMetric) {
+            mostRecentMetric = f;
+          } else {
+            if (new Date(f.importTimestamp) - new Date(mostRecentMetric.importTimestamp) > 0) {
+              mostRecentMetric = f;
+            }
+          }
+        }
+        return mostRecentMetric;
       }
+      return null;
     },
     openQueryMetrics(rssAtomFeedUrl) {
       this.$emit('showQueryMetrics', rssAtomFeedUrl);

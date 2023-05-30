@@ -14,6 +14,7 @@
       <v-chip-group>
         <v-chip
           label
+          size="x-large"
           variant="text"
           :ripple="false"
         >
@@ -25,6 +26,7 @@
         </v-chip>
         <v-chip
           label
+          size="x-large"
           variant="text"
           :ripple="false"
         >

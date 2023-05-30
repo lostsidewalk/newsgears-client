@@ -97,6 +97,7 @@
           :inbound-queue-sort-order="inboundQueueSortOrder"
           :queue-length="filteredInboundQueue.length"
           :queue-name="getSelectedFeed().title"
+          :show-queue-refresh-indicator="showQueueRefreshIndicator"
           @toggleSortOrder="toggleInboundQueueSortOrder"
           @refreshFeeds="refreshFeeds(null, true)"
           @markAsRead="markFeedAsRead(selectedFeedId)"
@@ -362,6 +363,12 @@
             @share="$event => share($event.sharingOption, $event.post)"
           />
         </v-list>
+        <v-alert
+          v-else
+          info
+        >
+          {{ $t('noArticlesInThisQueue') }}
+        </v-alert>
       </v-container>
     </v-main>
   </v-app>
@@ -485,12 +492,10 @@ export default {
   },
   data() {
     return {
-      selectedItem: null,
+      refreshIntervalId: null,
       isLoading: false,
       uploadIsLoading: false,
       refreshFeedsIsLoading: false,
-      // reactive window (inner) width 
-      windowWidth: window.innerWidth,
       // operating mode 
       feedIdToDelete: null,
       feedIdToMarkAsRead: null,
@@ -508,6 +513,7 @@ export default {
       postFeedLayout: 'LIST', // 'CARD' 
       // show the feed config modal (t/f) 
       showFeedConfigPanel: false,
+      // 
       configuredFeedId: null,
       // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
@@ -519,7 +525,8 @@ export default {
       showFeedMarkAsReadConfirmation: false,
       // 
       showSelectedPost: false,
-      selectedPost: null,
+      selectedPost: null, // selected post to show on the singleton post card modal (in list view) 
+      selectedItem: null, // selected post list item 
       // feed material 
       feeds: [], // all feeds 
       selectedFeedId: null, // currently selected feed Id 
@@ -531,6 +538,8 @@ export default {
       inboundQueueFilter: '', // user-supplied filter text (lunrjs query expression) 
       // queue sorting material 
       inboundQueueSortOrder: 'DSC',
+      // queue refresh material 
+      latestFeedMetricsByQueue: {}, 
     };
   },
   computed: {
@@ -637,6 +646,52 @@ export default {
     showListLayout: function() {
       return this.postFeedLayout === 'LIST';
     },
+    showQueueRefreshIndicator: function() {
+      // ensure we have latestFeedMetricsByQueue on hand; 
+      // this is periodically refreshed by a background process 
+      if (!this.latestFeedMetricsByQueue) {
+        // console.debug("showQueueRefreshIndicator: returning early due to missing latest feed metrics by queue");
+        return false;
+      }
+      // ensure we have a latest feed metrics for the selected queue 
+      let latestFeedMetric = this.latestFeedMetricsByQueue[this.selectedFeedId];
+      if (!latestFeedMetric) {
+        // console.debug("showQueueRefreshIndicator: returning early due to missing latest feed metrics for selected queue");
+        return false;
+      }
+      // ensure that we have subscriptions on hand for the selected queue 
+      let subscriptions = this.getSelectedFeed().rssAtomFeedUrls;
+      if (!subscriptions) {
+        // console.debug("showQueueRefreshIndicator: returning early due to selected queue has 0 subscriptions");
+        return false;
+      }
+      // locate the latest local feed metric across all subscriptions 
+      let latestLocalFeedMetric = null;
+      for (let i = 0; i < subscriptions.length; i++) {
+        let localFeedMetrics = subscriptions[i].feedMetrics;
+        if (localFeedMetrics) {
+          for (let i = 0; i < localFeedMetrics.length; i++) {
+            let l = localFeedMetrics[i]
+            if (!latestLocalFeedMetric) {
+              latestLocalFeedMetric = l;
+              continue;
+            } else {
+              let localResult = new Date(latestLocalFeedMetric.importTimestamp) - new Date(l.importTimestamp) < 0;
+              if (localResult) {
+                latestLocalFeedMetric = l;
+              }
+            }
+          }
+        }
+      }
+      // ensure that we have a latest local feed metric 
+      if (!latestLocalFeedMetric) {
+        return true; // (we have a latestFeedMetric, but no latestLocalFeedMetric, therefore refresh is required) 
+      }
+      // compare the latestLocalFeedMetric with the latestFeedMetric 
+      let result = new Date(latestFeedMetric) - new Date(latestLocalFeedMetric.importTimestamp) > 0;
+      return result;
+    }
   },
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {
@@ -659,6 +714,13 @@ export default {
         } else {
           this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
         }
+        // schedule the query-metrics refresh timer 
+        this.refreshIntervalId = setInterval(() => {
+          this.checkForNewQueryMetrics();
+        },  60_000 * 10); // 10 minutes (in ms) 
+      } else {
+        // unschedule the refresh timer 
+        this.refreshIntervalId = null;
       }
     }
   },
@@ -870,6 +932,39 @@ export default {
     countOutboundQueue(feedId) {
       const iq = this.inboundQueuesByFeed[feedId];
       return iq ? iq.values.filter(post => post.isPublished).length : 0;
+    },
+    checkForNewQueryMetrics() {
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/feeds/metrics", requestOptions)
+          .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              let contentType = response.headers.get("content-type");
+              let isJson = contentType && contentType.indexOf("application/json") !== -1;
+              return isJson ?
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
+            }
+          }).then((data) => {
+            this.latestFeedMetricsByQueue = data;
+          }).catch((error) => {
+            this.handleServerError(error);
+          }).finally(() => {
+            clearTimeout(timeoutId);
+          });
+      }).catch((error) => {
+        this.handleServerError(error);
+      });
     },
     // 
     // feed refresh 
@@ -1461,6 +1556,8 @@ export default {
             current.categoryValue = updated.categoryValue;
             current.categoryDomain = updated.categoryDomain;
             this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.queryMetrics);
+            // update feeds localStorage 
+            localStorage.setItem('feeds', JSON.stringify(this.feeds));
             this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
             this.refreshFeeds([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
           }).catch((error) => {
