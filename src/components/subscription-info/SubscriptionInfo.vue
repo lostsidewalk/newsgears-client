@@ -160,21 +160,20 @@
     <v-card-actions class="flex-wrap">
       <v-btn
         :size="buttonSize" 
-        :append-icon="cardMode === 'QUERY_METRICS' ? 'fa-compress' : 'fa-expand'"
-        :title="$t('queryMetrics')"
-        :text="$t('queryMetrics')"
-        :disabled="!info.feedMetrics" 
-        @click.stop="showQueryMetrics = true"
+        :title="$t('subscriptionMetrics')"
+        :text="$t('subscriptionMetrics')"
+        :disabled="!info.subscriptionMetrics" 
+        @click.stop="showSubscriptionMetrics = true"
       />
       <v-dialog
-        v-model="showQueryMetrics"
+        v-model="showSubscriptionMetrics"
         fullscreen
         scrollable
       >
-        <QueryMetrics
+        <SubscriptionMetrics
           :title="info.title ? info.title : info.url"
-          :query-metrics="usefulFeedMetrics"
-          @dismiss="showQueryMetrics = false"
+          :feed-metrics="usefulSubscriptionMetrics"
+          @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
       <slot name="additional" />
@@ -186,13 +185,13 @@
 </template>
 
 <script>
-import QueryMetrics from './QueryMetrics.vue';
+import SubscriptionMetrics from './SubscriptionMetrics.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "SubscriptionInfo",
   components: {
-    QueryMetrics
+    SubscriptionMetrics
   },
   mixins: [buttonSizeMixin], 
   props: {
@@ -201,7 +200,7 @@ export default {
   emits: [ "followRecommendation" ],
   data() {
     return {
-      showQueryMetrics: false,
+      showSubscriptionMetrics: false,
       cardMode: null,
     }
   },
@@ -211,9 +210,9 @@ export default {
       if (s) {
         return s;
       }
-      let feedMetrics = this.info.feedMetrics;
-      if (feedMetrics && feedMetrics.length > 0) {
-        let mostRecentMetric = feedMetrics[0];
+      let subscriptionMetrics = this.info.subscriptionMetrics;
+      if (subscriptionMetrics && subscriptionMetrics.length > 0) {
+        let mostRecentMetric = subscriptionMetrics[0];
         return mostRecentMetric.httpStatusCode;
       }
       return null;
@@ -223,15 +222,15 @@ export default {
       if (s) {
         return s;
       }
-      let feedMetrics = this.info.feedMetrics;
-      if (feedMetrics && feedMetrics.length > 0) {
-        let mostRecentMetric = feedMetrics[0];
+      let subscriptionMetrics = this.info.subscriptionMetrics;
+      if (subscriptionMetrics && subscriptionMetrics.length > 0) {
+        let mostRecentMetric = subscriptionMetrics[0];
         return mostRecentMetric.httpStatusMessage;
       }
       return null;
     },
-    usefulFeedMetrics: function() {
-      return this.info.feedMetrics ? this.info.feedMetrics.filter(f => f.persistCt > 0) : null;
+    usefulSubscriptionMetrics: function() {
+      return this.info.subscriptionMetrics ? this.info.subscriptionMetrics.filter(f => f.persistCt > 0) : null;
     },
     hasChips: function() {
       return this.info.author || 

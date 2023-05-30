@@ -58,9 +58,9 @@
               :size="buttonSize"
               class="mr-2"
               variant="outlined"
-              :text="buildImportCtMessage(subscription.feedMetrics)"
-              :title="buildMetricStatusMessage(subscription.feedMetrics)"
-              @click.prevent="hasFeedMetrics(subscription) ? openQueryMetrics(subscription) : false"
+              :text="buildImportCtMessage(subscription.subscriptionMetrics)"
+              :title="buildMetricStatusMessage(subscription.subscriptionMetrics)"
+              @click.prevent="hasSubscriptionMetrics(subscription) ? openSubscriptionMetrics(subscription) : false"
             />
             <v-btn
               :size="buttonSize"
@@ -143,7 +143,7 @@ export default {
     rssPubUrl: { type: String, required: true },
     atomPubUrl: { type: String, required: true },
   },
-  emits: ["updatePostFeedFilter", "showQueryMetrics"],
+  emits: ["updatePostFeedFilter", "showSubscriptionMetrics"],
   methods: {
     shouldShowAlert(alertName) {
       return !localStorage.getItem(alertName);
@@ -152,9 +152,9 @@ export default {
       localStorage.setItem(alertName, new Date().toISOString());
     },
     // shown on hover 
-    buildMetricStatusMessage(feedMetrics) {
-      if (feedMetrics) {
-        let m = this.getMostRecentMetric(feedMetrics);
+    buildMetricStatusMessage(subscriptionMetrics) {
+      if (subscriptionMetrics) {
+        let m = this.getMostRecentMetric(subscriptionMetrics);
         // 
         let metricStatusMessage = this.$t("importerRanAt", { importTimestamp: this.formatTimestamp(m.importTimestamp) }); // 'Importer ran at ' + m.importTimestamp;
         // add the persist ct to the metric status message 
@@ -190,22 +190,22 @@ export default {
         return this.$t("metricsNotYetAvailable");
       }
     },
-    hasFeedMetrics(subscription) {
-      return subscription.feedMetrics && subscription.feedMetrics.length > 0;
+    hasSubscriptionMetrics(subscription) {
+      return subscription.subscriptionMetrics && subscription.subscriptionMetrics.length > 0;
     },
     // shown next to the RSS/ATOM icon 
-    buildImportCtMessage(feedMetrics) {
-      let m = this.getMostRecentMetric(feedMetrics);
+    buildImportCtMessage(subscriptionMetrics) {
+      let m = this.getMostRecentMetric(subscriptionMetrics);
       if (m) {
         return "+" + (m.persistCt > 0 ? m.persistCt : 0);
       }
       return "-";
     },
-    getMostRecentMetric(feedMetrics) {
-      if (feedMetrics) {
+    getMostRecentMetric(subscriptionMetrics) {
+      if (subscriptionMetrics) {
         let mostRecentMetric = null;
-        for (let i = 0; i < feedMetrics.length; i++) {
-          let f = feedMetrics[i];
+        for (let i = 0; i < subscriptionMetrics.length; i++) {
+          let f = subscriptionMetrics[i];
           if (!mostRecentMetric) {
             mostRecentMetric = f;
           } else {
@@ -218,8 +218,8 @@ export default {
       }
       return null;
     },
-    openQueryMetrics(subscription) {
-      this.$emit('showQueryMetrics', subscription);
+    openSubscriptionMetrics(subscription) {
+      this.$emit('showSubscriptionMetrics', subscription);
     },
     formatTimestamp(timestamp) {
       if (!timestamp) {

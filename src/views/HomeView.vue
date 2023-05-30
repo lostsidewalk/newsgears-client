@@ -162,7 +162,7 @@
               @selectFeed="$event => { setSelectedFeedId(feed.id); showQueueDashboard = false; }"
               @manageSubscriptions="configureFeed(feed.id)"
               @updatePostFeedFilter="updatePostFeedFilter"
-              @showQueryMetrics="openQueryMetrics"
+              @showSubscriptionMetrics="openSubscriptionMetrics"
             />
           </v-hover>
         </v-sheet>
@@ -255,16 +255,16 @@
           @authError="handleServerError"
         />
       </v-dialog>
-      <!-- query metrics dialog -->
+      <!-- subscription metrics dialog -->
       <v-dialog
-        v-model="showQueryMetrics"
+        v-model="showSubscriptionMetrics"
         fullscreen
         scrollable
       >
-        <QueryMetrics
+        <SubscriptionMetrics
           :title="subscriptionToShow.title"
-          :query-metrics="subscriptionToShow.feedMetrics"
-          @dismiss="showQueryMetrics = false"
+          :subscription-metrics="subscriptionToShow.subscriptionMetrics"
+          @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
       <!-- post feed layout control -->
@@ -388,8 +388,8 @@ import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 import FeedConfigPanel from "@/components/feed-config-panel/FeedConfigPanel.vue";
 // OPML upload panel 
 import OpmlUploadPanel from "@/components/opml-upload-panel/OpmlUploadPanel.vue";
-// query metrics panel 
-import QueryMetrics from '@/components/subscription-info/QueryMetrics.vue';
+// subscription metrics panel 
+import SubscriptionMetrics from '@/components/subscription-info/SubscriptionMetrics.vue';
 // settings 
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
@@ -467,7 +467,7 @@ export default {
     ConfirmationDialog,
     FeedConfigPanel,
     OpmlUploadPanel,
-    QueryMetrics,
+    SubscriptionMetrics,
     // settings 
     ControlPanel,
     SettingsPanel,
@@ -499,9 +499,10 @@ export default {
       // operating mode 
       feedIdToDelete: null,
       feedIdToMarkAsRead: null,
-      // show query metrics 
+      // 
       subscriptionToShow: null,
-      showQueryMetrics: false,
+      // show subscription metrics 
+      showSubscriptionMetrics: false,
       // show notification warning 
       showNotificationWarning: false,
       // show filter help
@@ -539,12 +540,12 @@ export default {
       // queue sorting material 
       inboundQueueSortOrder: 'DSC',
       // queue refresh material 
-      latestFeedMetricsByQueue: {}, 
+      latestSubscriptionMetricsByQueue: {}, 
     };
   },
   computed: {
     isModalShowing: function() {
-      return this.showSettingsPanel || this.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showQueryMetrics;
+      return this.showSettingsPanel || this.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showSubscriptionMetrics;
     },
     filteredInboundQueue: function() {
       if (this.inboundQueue) {
@@ -647,15 +648,15 @@ export default {
       return this.postFeedLayout === 'LIST';
     },
     showQueueRefreshIndicator: function() {
-      // ensure we have latestFeedMetricsByQueue on hand; 
+      // ensure we have latestSubscriptionMetricsByQueue on hand; 
       // this is periodically refreshed by a background process 
-      if (!this.latestFeedMetricsByQueue) {
+      if (!this.latestSubscriptionMetricsByQueue) {
         // console.debug("showQueueRefreshIndicator: returning early due to missing latest feed metrics by queue");
         return false;
       }
       // ensure we have a latest feed metrics for the selected queue 
-      let latestFeedMetric = this.latestFeedMetricsByQueue[this.selectedFeedId];
-      if (!latestFeedMetric) {
+      let latestSubscriptionMetric = this.latestSubscriptionMetricsByQueue[this.selectedFeedId];
+      if (!latestSubscriptionMetric) {
         // console.debug("showQueueRefreshIndicator: returning early due to missing latest feed metrics for selected queue");
         return false;
       }
@@ -666,30 +667,30 @@ export default {
         return false;
       }
       // locate the latest local feed metric across all subscriptions 
-      let latestLocalFeedMetric = null;
+      let latestLocalSubscriptionMetric = null;
       for (let i = 0; i < subscriptions.length; i++) {
-        let localFeedMetrics = subscriptions[i].feedMetrics;
-        if (localFeedMetrics) {
-          for (let i = 0; i < localFeedMetrics.length; i++) {
-            let l = localFeedMetrics[i]
-            if (!latestLocalFeedMetric) {
-              latestLocalFeedMetric = l;
+        let localSubscriptionMetrics = subscriptions[i].subscriptionMetrics;
+        if (localSubscriptionMetrics) {
+          for (let i = 0; i < localSubscriptionMetrics.length; i++) {
+            let l = localSubscriptionMetrics[i]
+            if (!latestLocalSubscriptionMetric) {
+              latestLocalSubscriptionMetric = l;
               continue;
             } else {
-              let localResult = new Date(latestLocalFeedMetric.importTimestamp) - new Date(l.importTimestamp) < 0;
+              let localResult = new Date(latestLocalSubscriptionMetric.importTimestamp) - new Date(l.importTimestamp) < 0;
               if (localResult) {
-                latestLocalFeedMetric = l;
+                latestLocalSubscriptionMetric = l;
               }
             }
           }
         }
       }
       // ensure that we have a latest local feed metric 
-      if (!latestLocalFeedMetric) {
-        return true; // (we have a latestFeedMetric, but no latestLocalFeedMetric, therefore refresh is required) 
+      if (!latestLocalSubscriptionMetric) {
+        return true; // (we have a latestSubscriptionMetric, but no latestLocalSubscriptionMetric, therefore refresh is required) 
       }
-      // compare the latestLocalFeedMetric with the latestFeedMetric 
-      let result = new Date(latestFeedMetric) - new Date(latestLocalFeedMetric.importTimestamp) > 0;
+      // compare the latestLocalSubscriptionMetric with the latestSubscriptionMetric 
+      let result = new Date(latestSubscriptionMetric) - new Date(latestLocalSubscriptionMetric.importTimestamp) > 0;
       return result;
     }
   },
@@ -714,9 +715,9 @@ export default {
         } else {
           this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
         }
-        // schedule the query-metrics refresh timer 
+        // schedule the subscription-metrics refresh timer 
         this.refreshIntervalId = setInterval(() => {
-          this.checkForNewQueryMetrics();
+          this.checkForNewSubscriptionMetrics();
         },  60_000 * 10); // 10 minutes (in ms) 
       } else {
         // unschedule the refresh timer 
@@ -915,9 +916,9 @@ export default {
         this.inboundQueueFilter = ' +category:' + category;
       }
     },
-    openQueryMetrics(subscriptionInfo) {
+    openSubscriptionMetrics(subscriptionInfo) {
       this.subscriptionToShow = subscriptionInfo;
-      this.showQueryMetrics = true;
+      this.showSubscriptionMetrics = true;
     },
     // 
     // 
@@ -933,7 +934,7 @@ export default {
       const iq = this.inboundQueuesByFeed[feedId];
       return iq ? iq.values.filter(post => post.isPublished).length : 0;
     },
-    checkForNewQueryMetrics() {
+    checkForNewSubscriptionMetrics() {
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -956,7 +957,7 @@ export default {
               response.text().then(t => {throw new Error(t)});
             }
           }).then((data) => {
-            this.latestFeedMetricsByQueue = data;
+            this.latestSubscriptionMetricsByQueue = data;
           }).catch((error) => {
             this.handleServerError(error);
           }).finally(() => {
@@ -1022,7 +1023,6 @@ export default {
             })
         ];
 
-        let queryDefinitionImagesById = {};
         if (fetchFeedDefinitions) {
           const feedDefinitionRefreshController = new AbortController();
           feedDefinitionRefreshTimeoutId = setTimeout(() => feedDefinitionRefreshController.abort(), 5000);
@@ -1057,13 +1057,7 @@ export default {
                   for (let i = 0; i < feedDefinitionData.length; i++) {
                     const fd = feedDefinitionData[i];
                     const qd = queryDefinitionData[fd.id];
-                    this.decorateFeedWithQueryDefinitions(fd, qd, data.queryMetrics);
-                    if (qd) {
-                      for (let j = 0; j < qd.length; j++) {
-                        const wrapper = qd[j];
-                        queryDefinitionImagesById[wrapper.queryDefinition.id] = wrapper.queryDefinitionImageUrl;
-                      }
-                    }
+                    this.decorateFeedWithQueryDefinitions(fd, qd, data.subscriptionMetrics);
                     fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
                     this.feeds.push(fd);
                   }
@@ -1094,10 +1088,6 @@ export default {
 
         for (let i = 0; i < rawPosts.length; i++) {
           const post = rawPosts[i];
-          post.sourceImgUrl = queryDefinitionImagesById[post.queryId];
-          if (!post.sourceImgUrl) {
-            post.sourceImgUrl = 'rss_logo.svg';
-          }
           this.inboundQueuesByFeed[post.feedId].values.push(post);
         }
 
@@ -1125,7 +1115,7 @@ export default {
           let queryDefinition = wrapper.queryDefinition;
           let r = {
             id: queryDefinition.id,
-            feedMetrics: qm ? qm[queryDefinition.id] : null,
+            subscriptionMetrics: qm ? qm[queryDefinition.id] : null,
             feedUrl: queryDefinition.queryText,
             feedId: fd.id,
           };
@@ -1423,7 +1413,7 @@ export default {
             let feedIds = [];
             for (let i = 0; i < data.length; i++) {
               let f = data[i].feedDefinition;
-              this.decorateFeedWithQueryDefinitions(f, data[i].queryDefinitions, data[i].queryMetrics);
+              this.decorateFeedWithQueryDefinitions(f, data[i].queryDefinitions, data[i].subscriptionMetrics);
               this.feeds.push(f);
               feedIds.push(f.id);
             }
@@ -1555,7 +1545,7 @@ export default {
             current.categoryScheme = updated.categoryScheme;
             current.categoryValue = updated.categoryValue;
             current.categoryDomain = updated.categoryDomain;
-            this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.queryMetrics);
+            this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.subscriptionMetrics);
             // update feeds localStorage 
             localStorage.setItem('feeds', JSON.stringify(this.feeds));
             this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');

@@ -3,7 +3,7 @@
     align="left"
     justify="center"
   >
-    <!-- add RSS/ATOM feed from URL -->
+    <!-- add subscription from URL -->
     <v-card
       class="ma-4"
       elevation="6"

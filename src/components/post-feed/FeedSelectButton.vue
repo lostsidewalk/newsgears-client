@@ -68,7 +68,7 @@
         :rss-pub-url="feedUrl + '/feed/rss/' + feed.transportIdent" 
         :atom-pub-url="feedUrl + '/feed/atom/' + feed.transportIdent" 
         @updatePostFeedFilter="$event => $emit('updatePostFeedFilter', $event)"
-        @showQueryMetrics="$event => $emit('showQueryMetrics', $event)"
+        @showSubscriptionMetrics="$event => $emit('showSubscriptionMetrics', $event)"
       />
     </v-expand-transition>
   </v-card>
@@ -93,7 +93,7 @@ export default {
     variant: { type: String, default: null },
     isSelected: { type: Boolean, default: false },
   },
-  emits: [ "selectFeed", "manageSubscriptions", "updatePostFeedFilter", "showQueryMetrics" ],
+  emits: [ "selectFeed", "manageSubscriptions", "updatePostFeedFilter", "showSubscriptionMetrics" ],
   data() {
     return {
       showMoreInformation: false,

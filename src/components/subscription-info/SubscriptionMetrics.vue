@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="pa-4 text-center">
-      {{ $t('queryMetrics') }}
+      {{ $t('subscriptionMetrics') }}
     </v-card-title>
     <v-card-subtitle>
       {{ title }}
@@ -31,38 +31,38 @@
         </thead>
         <tbody style="text-align: left;white-space: nowrap;">
           <tr
-            v-for="queryMetric in queryMetrics"
-            :key="queryMetric"
+            v-for="subscriptionMetric in subscriptionMetrics"
+            :key="subscriptionMetric"
           >
             <td class="pa-1">
-              {{ formatTimestamp(queryMetric.importTimestamp) }}
+              {{ formatTimestamp(subscriptionMetric.importTimestamp) }}
             </td>
             <td class="pa-1">
-              {{ $t('importedNArticles', { n: queryMetric.persistCt }) }}
+              {{ $t('importedNArticles', { n: subscriptionMetric.persistCt }) }}
             </td>
             <!-- HTTP status -->
             <td class="pa-1">
               {{ $t('httpStatus', { 
-                httpStatusCode: queryMetric.httpStatusCode, 
-                httpStatusMessage: queryMetric.httpStatusMessage 
+                httpStatusCode: subscriptionMetric.httpStatusCode, 
+                httpStatusMessage: subscriptionMetric.httpStatusMessage 
               }) }}
             </td>
             <!-- HTTP redirect status -->
             <td class="pa-1">
-              {{ queryMetric.redirectFeedUrl ? 
+              {{ subscriptionMetric.redirectFeedUrl ? 
                 $t('redirectedTo', { 
-                  redirectFeedUrl: queryMetric.redirectFeedUrl, 
-                  redirectHttpStatusCode: queryMetric.redirectHttpStatusCode, 
-                  redirectHttpStatusMessage: queryMetric.redirectHttpStatusMessage
+                  redirectFeedUrl: subscriptionMetric.redirectFeedUrl, 
+                  redirectHttpStatusCode: subscriptionMetric.redirectHttpStatusCode, 
+                  redirectHttpStatusMessage: subscriptionMetric.redirectHttpStatusMessage
                 }) : $t('NONE') }}
             </td>
             <!-- error -->
             <td
               class="pa-1"
-              :class="{ 'error': queryMetric.queryExceptionTypeMessage }"
+              :class="{ 'error': subscriptionMetric.queryExceptionTypeMessage }"
             >
-              {{ queryMetric.queryExceptionTypeMessage ? 
-                queryMetric.queryExceptionTypeMessage : $t('NONE') }}
+              {{ subscriptionMetric.queryExceptionTypeMessage ? 
+                subscriptionMetric.queryExceptionTypeMessage : $t('NONE') }}
             </td>
           </tr>
         </tbody>
@@ -82,11 +82,11 @@
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "QueryMetrics",
+  name: "SubscriptionMetrics",
   mixins: [buttonSizeMixin],
   props: {
     title: { type: String, required: true },
-    queryMetrics: { type: Array, required: true },
+    subscriptionMetrics: { type: Array, required: true },
   },
   emits: ["dismiss"],
   methods: {
