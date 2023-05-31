@@ -41,7 +41,7 @@
               :disabled="!newSubscription.url"
               :title="$t('discovery')"
               :text="$t('discovery')"
-              @click="refreshSubscriptionInfo(newSubscription)"
+              @click="doDiscovery(newSubscription)"
             />
           </template>
         </v-text-field>
@@ -135,7 +135,7 @@
           elevation="6"
           :info="subscription"
           :filter-support="false"
-          @refreshFeed="refreshSubscriptionInfo(subscription)" 
+          @refreshFeed="doDiscovery(subscription)" 
           @followRecommendation="followRecommendation"
         >
           <template #additional>
@@ -422,11 +422,6 @@ export default {
     // 
     // discovery 
     // 
-    refreshSubscriptionInfo(r) {
-      if (r.url) {
-        this.doDiscovery(r);
-      }
-    },
     doDiscovery(r) {
       if (r.url) {
         r.error = null;
@@ -461,9 +456,9 @@ export default {
             if (data.error) {
               r.error = data.error;
             } else {
-              r.url = data.url; 
-              r.discoveryUrl = data.url;
-              r.title = data.title;
+              r.url = data.feedUrl; 
+              r.discoveryUrl = data.feedUrl;
+              r.title = data.title ? data.title.value : data.feedUrl;
               r.description = data.description;
               r.author = data.author;
               r.categories = data.categories;
@@ -483,7 +478,6 @@ export default {
               r.webMaster = data.webMaster;
               r.sampleEntries = data.sampleEntries;
               r.feedRecommendationInfo = data.feedRecommendationInfo;
-              r.discoveryUrl = data.url;
               r.httpStatusCode = data.httpStatusCode;
               r.httpStatusMessage = data.httpStatusMessage;
               r.redirectFeedUrl = data.redirectFeedUrl;
@@ -524,7 +518,7 @@ export default {
     // 
     followRecommendation(url) {
       this.newSubscription.url = url;
-      this.refreshSubscriptionInfo(this.newSubscription);
+      this.doDiscovery(this.newSubscription);
     },
     // 
     // misc 
