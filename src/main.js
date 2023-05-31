@@ -299,6 +299,7 @@ const i18n = createI18n({
       languageColon: "IDIOMA:",
       samplingRateColon: "TASA DE MUESTREO:",
       // opml
+      createQueuesFromOPML: "Cargue OPML para crear colas",
       selectAnOpmlFile: "Seleccione un archivo OPML",
       addAnOpmlFile: "Agregar un archivo OPML",
       addOneOrMoreFilesToUplod: "Agregue uno o más archivos para cargar",
@@ -755,6 +756,7 @@ const i18n = createI18n({
       languageColon: "LANGUAGE:",
       samplingRateColon: "SAMPLING RATE:",
       // opml
+      createQueuesFromOPML: "Upload OPML to create queues",
       selectAnOpmlFile: "Select an OPML file",
       addAnOpmlFile: "Add an OPML file",
       addOneOrMoreFilesToUpload: "Add one or more files to upload",
