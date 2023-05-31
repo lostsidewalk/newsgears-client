@@ -149,11 +149,7 @@
           <div>{{ post.postComment }}</div>
         </v-card-text>
         <!-- post authors -->
-        <v-card-text
-          v-if="
-            post.authors || post.publishTimestamp || post.lastUpdatedTimestamp
-          "
-        >
+        <v-card-text v-if="post.authors">
           <v-label v-if="post.authors">
             {{ post.authors.length > 1 ? $t("authors") : $t("author") }}
           </v-label>
@@ -409,6 +405,7 @@ export default {
 }
 
 .post-read {
+  mix-blend-mode: luminosity;
 }
 
 .clickable:hover {

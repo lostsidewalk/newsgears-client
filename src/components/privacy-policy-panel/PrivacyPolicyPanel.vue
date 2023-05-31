@@ -150,9 +150,9 @@ import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "PrivacyPolicyPanel",
-  mixis: [buttonSizeMixin],
   components: {
   },
+  mixins: [buttonSizeMixin],
   emits: ["dismiss"],
   methods: {
     sendSupportMail() {

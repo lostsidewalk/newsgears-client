@@ -35,7 +35,7 @@ export default {
             })
             .catch((error) => {
               if (isError(error)) {
-                // test for 401, 403
+                // check for 401, 403
                 log("*** please re-authenticate ***");
                 tearDownLoggedInSession();
               }
@@ -221,7 +221,6 @@ export default {
       );
     }
     function getError(error) {
-      // test for AxiosError
       let r = error.response;
       if (r && r.data) {
         let message = r.data.message;

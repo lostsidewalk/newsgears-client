@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    v-if="serverMessage && !$auth.$isAuthenticated"
+    v-if="serverMessage"
     class="ma-4 text-align-cener"
     type="error"
     theme="dark"

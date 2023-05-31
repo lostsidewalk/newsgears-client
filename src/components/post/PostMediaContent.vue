@@ -1,10 +1,8 @@
 <template>
   <v-card
     variant="flat"
-    align="left"
-    justify="left"
   >
-    <v-card-subtitle v-if="hasUseableMetadata()">
+    <v-card-subtitle v-if="hasUseableMetadata">
       <!-- metadata -->
       <PostMediaMetadata
         class="ma-2 pa-2"
@@ -13,7 +11,34 @@
     </v-card-subtitle>
     <!-- reference -->
     <v-card-text>
-      <v-chip-group>
+      <v-dialog
+        v-model="showContents"
+        fullscreen
+        scrollable
+      >
+        <vue-plyr v-if="isVideo()">
+          <div class="plyr__video-embed">
+            <iframe
+              allowfullscreen 
+              allowtransparency
+              :src="mediaContent.reference.uri"
+            />
+          </div>
+        </vue-plyr>
+        <v-img
+          v-else
+          :src="mediaContent.reference.uri"
+          class="post-media-content-image" 
+          tabindex="0" 
+          :alt="$t('postMediaContentImage')"
+        />
+      </v-dialog>
+      <v-btn
+        :size="buttonSize"
+        icon="fa-file-video-o"
+        @click="showContents = true"
+      />
+      <v-chip-group v-if="hasUseableProperties">
         <v-chip
           v-if="mediaContent.audioChannels"
           variant="text"
@@ -96,35 +121,6 @@
         </v-chip>
       </v-chip-group>
     </v-card-text>
-    <v-card-actions style="justify-content: start;">
-      <v-dialog
-        v-model="showContents"
-        fullscreen
-        scrollable
-      >
-        <vue-plyr v-if="isVideo()">
-          <div class="plyr__video-embed">
-            <iframe
-              allowfullscreen 
-              allowtransparency
-              :src="mediaContent.reference.uri"
-            />
-          </div>
-        </vue-plyr>
-        <v-img
-          v-else
-          :src="mediaContent.reference.uri"
-          class="post-media-content-image" 
-          tabindex="0" 
-          :alt="$t('postMediaContentImage')"
-        />
-      </v-dialog>
-      <v-btn
-        :size="buttonSize"
-        icon="fa-file-video-o"
-        @click="showContents = true"
-      />
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -146,10 +142,32 @@ export default {
       showContents: false,
     }
   },
-  methods: {
-    hasUseableMetadata() {
-      return this.mediaContent.metadata.thumbnail && this.mediaContent.metadata.thumbnail.length > 0;
+  computed: {
+    hasUseableMetadata: function() {
+      let m = false;
+      if (this.mediaContent.metadata.thumbnail) {
+        m = this.mediaContent.metadata.thumbnail.length > 0;
+      }
+      return m;
     },
+    hasUseableProperties: function() {
+      let p = false;
+      if (this.mediaContent.audioChannels || 
+        this.mediaContent.bitRate || 
+        this.mediaContent.duration ||
+        this.mediaContent.expression || 
+        this.mediaContent.fileSize || 
+        this.mediaContent.frameRate || 
+        this.mediaContent.height || 
+        this.mediaContent.width || 
+        this.mediaContent.language || 
+        this.mediaContent.samplingRate) {
+          p = true;
+        }
+      return p;
+    },
+  },
+  methods: {
     isVideo() {
       return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("video/mp4") >= 0);
     },

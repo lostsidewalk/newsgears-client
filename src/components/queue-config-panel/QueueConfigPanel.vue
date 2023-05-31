@@ -59,8 +59,8 @@
               <v-card-title class="pa-4">
                 {{ (queue && queue.id) ? $t('updateQueueSettings') : $t('createANewQueue') }}
               </v-card-title>
-              <v-card-subtitle v-if="(queue && queue.id && queue.description)">
-                {{ queue.description }}
+              <v-card-subtitle v-if="(queue && queue.id && queue.title)">
+                {{ queue.title }}
               </v-card-subtitle>
               <v-divider class="mb-1 mt-1" />
               <v-alert

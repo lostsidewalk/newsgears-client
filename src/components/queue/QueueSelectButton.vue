@@ -42,7 +42,6 @@
     <v-btn-group>
       <!-- add/manage subscriptions -->
       <v-btn
-        :disabled="!isSelected"
         density="compact"
         variant="text"
         :size="buttonSize" 
@@ -52,7 +51,6 @@
       <!-- show/hide queue details -->
       <v-btn
         v-if="queue.subscriptions && queue.subscriptions.length > 0"
-        :disabled="!isSelected"
         density="compact"
         variant="text"
         :size="buttonSize" 
@@ -64,9 +62,9 @@
       <QueueDetails 
         v-if="showMoreInformation"
         :subscriptions="queue.subscriptions" 
-        :json-pub-url="feedUrl + '/feed/json/' + feed.transportIdent" 
-        :rss-pub-url="feedUrl + '/feed/rss/' + feed.transportIdent" 
-        :atom-pub-url="feedUrl + '/feed/atom/' + feed.transportIdent" 
+        :json-pub-url="feedUrl + '/feed/json/' + queue.transportIdent" 
+        :rss-pub-url="feedUrl + '/feed/rss/' + queue.transportIdent" 
+        :atom-pub-url="feedUrl + '/feed/atom/' + queue.transportIdent" 
         @updateFilter="$event => $emit('updateFilter', $event)"
         @showSubscriptionMetrics="$event => $emit('showSubscriptionMetrics', $event)"
       />

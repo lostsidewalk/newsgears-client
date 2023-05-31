@@ -289,20 +289,28 @@
         v-if="selectedQueueId && showCardLayout"
         class="queue-container d-flex flex-column flex-grow-1 rounded"
       >
-        <PostCard
-          v-for="post in filteredArticleList"
-          :id="'post_' + post.id"
-          :key="post.id"
-          :post="post"
-          :sharing-options="sharingOptions"
-          :collapsed="true"
-          class="mb-4"
-          @openPostUrl="openPostUrl(post.id)"
-          @updatePostReadStatus="updatePostReadStatus"
-          @updatePostPubStatus="updatePostPubStatus"
-          @updateFilter="updateFilter"
-          @share="$event => share($event.sharingOption, $event.post)"
-        />
+        <div v-if="filteredArticleList.length > 0">
+          <PostCard
+            v-for="post in filteredArticleList"
+            :id="'post_' + post.id"
+            :key="post.id"
+            :post="post"
+            :sharing-options="sharingOptions"
+            :collapsed="true"
+            class="mb-4"
+            @openPostUrl="openPostUrl(post.id)"
+            @updatePostReadStatus="updatePostReadStatus"
+            @updatePostPubStatus="updatePostPubStatus"
+            @updateFilter="updateFilter"
+            @share="$event => share($event.sharingOption, $event.post)"
+          />
+        </div>
+        <v-alert
+          v-else
+          info
+        >
+          {{ $t('noArticlesInThisQueue') }}
+        </v-alert>
       </v-container>
       <!-- queue container (list) -->
       <v-container
