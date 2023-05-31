@@ -3,12 +3,12 @@
     :variant="variant" 
     :ripple="false"
   >
-    <!-- feed name -->
+    <!-- queue name -->
     <v-card-title>
-      {{ feed.label }}
+      {{ queue.label }}
     </v-card-title>
-    <v-card-subtitle v-if="feed.description">
-      {{ feed.description }}
+    <v-card-subtitle v-if="queue.description">
+      {{ queue.description }}
     </v-card-subtitle>
     <v-card-text>
       <v-chip-group>
@@ -46,12 +46,12 @@
         density="compact"
         variant="text"
         :size="buttonSize" 
-        :text="feed.subscriptions && feed.subscriptions.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
+        :text="queue.subscriptions && queue.subscriptions.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
         @click.stop="$emit('manageSubscriptions')"
       />
-      <!-- show/hide feed details -->
+      <!-- show/hide queue details -->
       <v-btn
-        v-if="feed.subscriptions && feed.subscriptions.length > 0"
+        v-if="queue.subscriptions && queue.subscriptions.length > 0"
         :disabled="!isSelected"
         density="compact"
         variant="text"
@@ -61,13 +61,13 @@
       />
     </v-btn-group>
     <v-expand-transition>
-      <FeedDetails 
+      <QueueDetails 
         v-if="showMoreInformation"
-        :subscriptions="feed.subscriptions" 
+        :subscriptions="queue.subscriptions" 
         :json-pub-url="feedUrl + '/feed/json/' + feed.transportIdent" 
         :rss-pub-url="feedUrl + '/feed/rss/' + feed.transportIdent" 
         :atom-pub-url="feedUrl + '/feed/atom/' + feed.transportIdent" 
-        @updatePostFeedFilter="$event => $emit('updatePostFeedFilter', $event)"
+        @updateFilter="$event => $emit('updateFilter', $event)"
         @showSubscriptionMetrics="$event => $emit('showSubscriptionMetrics', $event)"
       />
     </v-expand-transition>
@@ -77,23 +77,23 @@
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
-import FeedDetails from '@/components/post-feed/FeedDetails.vue';
+import QueueDetails from '@/components/queue/QueueDetails.vue';
 
 export default {
-  name: "FeedSelectButton",
+  name: "QueueSelectButton",
   components: {
-    FeedDetails,
+    QueueDetails,
   },
   mixins: [buttonSizeMixin], 
   props: {
-    feed: { type: Object, required: true },
+    queue: { type: Object, required: true },
     feedUrl: { type: String, required: true },
     inboundCount: { type: Number, required: true },
     publishedCount: { type: Number, required: true },
     variant: { type: String, default: null },
     isSelected: { type: Boolean, default: false },
   },
-  emits: [ "selectFeed", "manageSubscriptions", "updatePostFeedFilter", "showSubscriptionMetrics" ],
+  emits: [ "selectQueue", "manageSubscriptions", "updateFilter", "showSubscriptionMetrics" ],
   data() {
     return {
       showMoreInformation: false,

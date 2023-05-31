@@ -21,7 +21,7 @@
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "FeedLayout",
+  name: "QueueLayout",
   mixins: [buttonSizeMixin],
   props: {
     showListLayout: { type: Boolean, required: true },

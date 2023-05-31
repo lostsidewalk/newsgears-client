@@ -25,7 +25,7 @@
       <v-card-text>
         <!-- text field -->
         <v-text-field
-          v-model="newSubscription.feedUrl"
+          v-model="newSubscription.url"
           variant="solo-filled"
           type="text"
           autofocus
@@ -38,7 +38,7 @@
               :size="buttonSize" 
               prepend-icon="fa-refresh"
               :loading="discoveryIsLoading"
-              :disabled="!newSubscription.feedUrl"
+              :disabled="!newSubscription.url"
               :title="$t('discovery')"
               :text="$t('discovery')"
               @click="refreshSubscriptionInfo(newSubscription)"
@@ -48,7 +48,7 @@
         <v-alert
           type="info"
           closable
-          :variant="newSubscription.feedUrl ? 'tonal' : 'outlined'"
+          :variant="newSubscription.url ? 'tonal' : 'outlined'"
           class="mb-4"
         >
           {{ $t("credentialsUseMessage") }}
@@ -60,7 +60,7 @@
           type="text"
           :label="$t('username')"
           :placeholder="$t('username')"
-          :disabled="!newSubscription.feedUrl"
+          :disabled="!newSubscription.url"
         />
         <!-- password text field -->
         <v-text-field
@@ -69,7 +69,7 @@
           type="password"
           :label="$t('password')"
           :placeholder="$t('password')"
-          :disabled="!newSubscription.feedUrl"
+          :disabled="!newSubscription.url"
         />
         <SubscriptionInfo
           v-if="newSubscription.discoveryUrl && !newSubscription.error"
@@ -224,7 +224,6 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     subscriptions: { type: Array, required: true },
-    feedId: { type: Number, required: false, default: null },
     baseUrl: { type: String, required: true },
   },
   emits: [
@@ -296,7 +295,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/', requestOptions)
+        fetch(this.baseUrl + "/queues/" + this.queueId + '/queries/', requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -308,9 +307,9 @@ export default {
               response.text().then(t => {throw new Error(t, { cause: {} })});
           }
         }).then((data) => {
-          let queryDefinitions = data.queryDefinitions;
-          if (queryDefinitions && queryDefinitions.length > 0) {
-            let qd = queryDefinitions[0];
+          let subscriptionDefinitions = data.subscriptionDefinitions;
+          if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
+            let qd = subscriptionDefinitions[0];
             this.$emit('addSubscription', qd);
             this.newSubscription = {};
             this.addSuccess = true;
@@ -344,7 +343,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/' + id, requestOptions)
+        fetch(this.baseUrl + "/queues/" + this.queueId + '/queries/' + id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -391,7 +390,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/" + this.feedId + '/queries/' + subscription.id, requestOptions)
+        fetch(this.baseUrl + "/queues/" + this.queueId + '/queries/' + subscription.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -403,9 +402,9 @@ export default {
               response.text().then(t => {throw new Error(t, { cause: {} })});
           }
         }).then((data) => {
-          let queryDefinitions = data.queryDefinitions;
-          if (queryDefinitions && queryDefinitions.length > 0) {
-            let qd = queryDefinitions[0];
+          let subscriptionDefinitions = data.subscriptionDefinitions;
+          if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
+            let qd = subscriptionDefinitions[0];
             this.$emit('updateSubscriptionAuth', qd);
             this.setLastServerMessage(this.$t('subscriptionUpdated'));
           }
@@ -424,12 +423,12 @@ export default {
     // discovery 
     // 
     refreshSubscriptionInfo(r) {
-      if (r.feedUrl) {
+      if (r.url) {
         this.doDiscovery(r);
       }
     },
     doDiscovery(r) {
-      if (r.feedUrl) {
+      if (r.url) {
         r.error = null;
         this.discoveryIsLoading = true;
         this.$auth.getTokenSilently().then((token) => {
@@ -442,7 +441,7 @@ export default {
             },
             credentials: 'include', 
             body: JSON.stringify({
-              url: r.feedUrl,
+              url: r.url,
               username: r.username,
               password: r.password,
               includeRecommendations: false,
@@ -462,8 +461,8 @@ export default {
             if (data.error) {
               r.error = data.error;
             } else {
-              r.feedUrl = data.feedUrl; 
-              r.discoveryUrl = data.feedUrl;
+              r.url = data.url; 
+              r.discoveryUrl = data.url;
               r.title = data.title;
               r.description = data.description;
               r.author = data.author;
@@ -484,7 +483,7 @@ export default {
               r.webMaster = data.webMaster;
               r.sampleEntries = data.sampleEntries;
               r.feedRecommendationInfo = data.feedRecommendationInfo;
-              r.discoveryUrl = data.feedUrl;
+              r.discoveryUrl = data.url;
               r.httpStatusCode = data.httpStatusCode;
               r.httpStatusMessage = data.httpStatusMessage;
               r.redirectFeedUrl = data.redirectFeedUrl;
@@ -524,7 +523,7 @@ export default {
     // recommendation 
     // 
     followRecommendation(url) {
-      this.newSubscription.feedUrl = url;
+      this.newSubscription.url = url;
       this.refreshSubscriptionInfo(this.newSubscription);
     },
     // 

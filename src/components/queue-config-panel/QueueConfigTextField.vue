@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: "FeedConfigTextField",
+  name: "QueueConfigTextField",
   components: { },
   props: {
     label: { type: String, required: true },

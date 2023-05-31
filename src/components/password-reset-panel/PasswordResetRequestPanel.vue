@@ -117,6 +117,7 @@ import AuthButton from '@/components/auth/AuthButton.vue'
 import AuthPanelLink from '@/components/auth/AuthPanelLink.vue';
 import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
 import PrivacyPolicyPanel from '@/components/privacy-policy-panel/PrivacyPolicyPanel.vue';
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 
 export default {
@@ -127,6 +128,7 @@ export default {
     AuthServerResponse,
     PrivacyPolicyPanel,
   },
+  mixins: [buttonSizeMixin],
   data() {
     return {
       step: null,

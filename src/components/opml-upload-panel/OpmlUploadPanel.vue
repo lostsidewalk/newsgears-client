@@ -48,9 +48,9 @@
           autofocus 
           :disabled="!files.length"
           :loading="uploadIsLoading || isLoading" 
-          :title="feedConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continueToStep2') : null)"
-          :text="feedConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
-          @click="feedConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
+          :title="queueConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continueToStep2') : null)"
+          :text="queueConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
+          @click="queueConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
         />
       </v-row>
       <!-- OPML file list -- shows a list of files waiting to upload (step 1) -->
@@ -81,7 +81,7 @@
                 variant="tonal" 
                 prepend-icon="fa-trash"
                 :text="$t('delete')" 
-                @click="feedConfigRequests = []; errors=[]; deleteOpmlFile(file)"
+                @click="queueConfigRequests=[]; errors=[]; deleteOpmlFile(file)"
               />
             </v-list-item-action>
           </template>
@@ -110,7 +110,7 @@
       </v-card>
       <!-- OPML parse results (if any, shown at step 2)-->
       <v-card
-        v-if="feedConfigRequests.length > 0"
+        v-if="queueConfigRequests.length > 0"
         class="mt-2"
         variant="text"
       >
@@ -122,7 +122,7 @@
           {{ $t('weWillCreateTheFollowingSubscriptions') }}
         </v-card-title>
         <v-card-text
-          v-for="f in feedConfigRequests"
+          v-for="f in queueConfigRequests"
           :key="f.ident"
         >
           <v-list>
@@ -135,7 +135,7 @@
               :key="r"
               class="opml-upload-summary-message-url"
             >
-              {{ r.feedUrl }}
+              {{ r.url }}
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -177,7 +177,7 @@ export default {
       files: [],
       atStep2: false,
       errors: [],
-      feedConfigRequests: [],
+      queueConfigRequests: [],
       // 
       uploadIsLoading: false,
     }
@@ -226,11 +226,11 @@ export default {
     returnToStep1() {
       this.atStep2 = false;
       this.errors = [];
-      this.feedConfigRequests = [];
+      this.queueConfigRequests = [];
     },
     finalizeOpmlUpload() {
       console.log("opml-upload-panel: finalizing OPML upload");
-      this.$emit('finalizeUpload', this.feedConfigRequests);
+      this.$emit('finalizeUpload', this.queueConfigRequests);
     },
     continueOpmlUpload() {
       console.log("opml-upload-panel: continue upload of OPML files=" + JSON.stringify(this.files));
@@ -255,7 +255,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/opml", requestOptions)
+        fetch(this.baseUrl + "/queues/opml", requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -270,7 +270,7 @@ export default {
           if (data.errors && data.errors.length > 0) {
             this.errors = data.errors;
           } else {
-            this.feedConfigRequests = data.feedConfigRequests;
+            this.queueConfigRequests = data.queueConfigRequests;
             this.atStep2 = true;
           }
         }).catch((error) => {
@@ -299,11 +299,11 @@ export default {
       this.removeFile(file);
     },
     clearModel() {
-      // TODO: (enhancement) possibly warn of un-saved data / get confirmation if files or feedConfigRequests are non-empty 
+      // TODO: (enhancement) possibly warn of un-saved data / get confirmation if files or queueConfigRequests are non-empty 
       this.files.splice(0);
       this.atStep2 = false;
       this.errors.splice(0);
-      this.feedConfigRequests.splice(0);
+      this.queueConfigRequests.splice(0);
     }
   },
 }

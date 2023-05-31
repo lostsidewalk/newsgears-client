@@ -2,12 +2,12 @@
   <v-toolbar-items
     class="flex-grow-1 align-content-center"
   >
-    <!-- feed fil ter input -->
+    <!-- queue filter input -->
     <v-text-field
-      id="feed-filter"
+      id="queue-filter"
       :placeholder="$t('filter')"
-      :value="inboundQueueFilter" 
-      class="ml-2 mr-2 rounded-0 feed-filter"
+      :value="filter" 
+      class="ml-2 mr-2 rounded-0 queue-filter"
       variant="underlined"
       @input="$emit('update:modelValue', $event.target.value)"
     />
@@ -16,7 +16,7 @@
       :size="buttonSize"  
       :title="$t('toggleSortOrder')" 
       :aria-label="$t('toggleSortOrder')" 
-      :icon="'fa-arrow-' + (inboundQueueSortOrder === 'ASC' ? 'up' : 'down')"
+      :icon="'fa-arrow-' + (sortOrder === 'ASC' ? 'up' : 'down')"
       @click="$emit('toggleSortOrder')"
     />
     <!-- refresh queue button -->
@@ -26,7 +26,7 @@
       :title="showQueueRefreshIndicator ? $t('refreshForLatest') : $t('refreshQueues')"
       :aria-label="$t('refreshQueues')"
       :color="showQueueRefreshIndicator ? 'red' : 'primary'"
-      @click="$emit('refreshFeeds')"
+      @click="$emit('refreshQueues')"
     />
     <!-- mark as read button -->
     <v-btn
@@ -40,9 +40,9 @@
     <v-btn
       :size="buttonSize" 
       icon="fa-tag"
-      :title="$t('toggleFeedFilterPills')"  
-      :aria-label="$t('toggleFeedFilterPills')"
-      @click.stop="$emit('toggleFeedFilterPills')"
+      :title="$t('toggleFilterPills')"  
+      :aria-label="$t('toggleFilterPills')"
+      @click.stop="$emit('toggleFilterPills')"
     />
   </v-toolbar-items>
 </template>
@@ -51,17 +51,17 @@
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "FeedFilter",
+  name: "QueueFilter",
   mixins: [buttonSizeMixin], 
   props: {
-    inboundQueueFilter: { type: String, required: true },
-    inboundQueueSortOrder: { type: String, required: true },
+    filter: { type: String, required: true },
+    sortOrder: { type: String, required: true },
     showQueueRefreshIndicator: { type: Boolean, default: false },
   },
   emits: [
     "toggleSortOrder",
-    "toggleFeedFilterPills",
-    "refreshFeeds", 
+    "toggleFilterPills",
+    "refreshQueues", 
     "markAsRead", 
     "update:modelValue",
   ],

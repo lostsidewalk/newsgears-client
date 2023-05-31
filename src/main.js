@@ -199,13 +199,12 @@ const i18n = createI18n({
       redirectHttpStatusCode: "Redirigir el código de estado HTTP",
       feedAlsoAvailableInHttps: "Este feed también está disponible en HTTPS.",
       recommendedFeeds: "Fuentes RSS similares",
-      refreshThisFeed: "Actualizar este feed",
       // feed filter
       refreshQueues: "Actualizar colas",
       refreshForLatest: "Actualizar esta cola para nuevos artículos",
       markQueueAsRead: "Marcar esta cola como leída",
       toggleSortOrder: "Alternar dirección de clasificación",
-      toggleFeedFilterPills: "Alternar píldoras de filtro",
+      toggleFilterPills: "Alternar píldoras de filtro",
       // feed filter pills
       allSubscriptions: "todas las suscripciones",
       all: "todos",
@@ -325,7 +324,7 @@ const i18n = createI18n({
       queueDashboard: "PANEL DE RSS",
       queueSettings: "AJUSTES DE COLA",
       opmlUpload: "CARGA OPML",
-      refreshFailedDueToColon: "Actualizar falló debido a:",
+      refreshFailedDueTo: "Actualizar falló debido a",
       noMessage: "sin mensaje",
       queueUpdated: "Cola actualizada",
       queueCreated: "Cola creada",
@@ -657,13 +656,12 @@ const i18n = createI18n({
       redirectHttpStatusCode: "Redirect HTTP status code",
       feedAlsoAvailableInHttps: "This feed is also available in HTTPS.",
       recommendedFeeds: "Similar feeds",
-      refreshThisFeed: "Refresh this feed",
       // post feed filter
       refreshQueues: "Refresh queues",
       refreshForLatest: "Refresh this queue for new articles",
       markQueueAsRead: "Mark this queue as read",
       toggleSortOrder: "Toggle sort direction",
-      toggleFeedFilterPills: "Toggle filter pills",
+      toggleFilterPills: "Toggle filter pills",
       // post feed filter pills
       allSubscriptions: "all subscriptions",
       all: "all",
@@ -780,7 +778,7 @@ const i18n = createI18n({
       queueDashboard: "FEED DASHBOARD",
       queueSettings: "QUEUE SETTINGS",
       opmlUpload: "OPML UPLOAD",
-      refreshFailedDueToColon: "Refresh failed due to:",
+      refreshFailedDueTo: "Refresh failed due to",
       noMessage: "no message",
       queueUpdated:
         "Queue updated.  We're sorting out your subscriptions in the background.  This process may take several minutes.",

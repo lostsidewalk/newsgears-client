@@ -4,7 +4,7 @@
     <v-card-title
       class="clickable"
     >
-      {{ info.title ? info.title : info.feedUrl }}
+      {{ info.title ? info.title : info.url }}
     </v-card-title>
     <v-divider />
     <!-- icon -->
@@ -172,15 +172,12 @@
       >
         <SubscriptionMetrics
           :title="info.title ? info.title : info.url"
-          :feed-metrics="usefulSubscriptionMetrics"
+          :subscription-metrics="usefulSubscriptionMetrics"
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
       <slot name="additional" />
     </v-card-actions>
-    <!-- RSS feed metrics -->
-    <v-expand-transition />
-    <!-- auth -->
   </v-card>
 </template>
 

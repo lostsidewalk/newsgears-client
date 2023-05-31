@@ -25,14 +25,14 @@
         >
           <template #title>
             <v-label class="ml-2 clickable">
-              {{ subscription.title ? subscription.title : subscription.feedUrl }}
+              {{ subscription.title ? subscription.title : subscription.url }}
             </v-label>
           </template>
           <template #subtitle>
             <v-divider class="ml-2 mb-1 mt-1" />
           </template>
           <template #prepend>
-            <!-- feed logo image -->
+            <!-- subscription logo image -->
             <v-img
               v-if="subscription.image"
               class="ma-2"
@@ -42,7 +42,7 @@
               max-width="48"
               max-height="48"
             />
-            <!-- RSS logo -->
+            <!-- RSS logo (default) -->
             <v-img
               v-else
               class="ma-2"
@@ -67,9 +67,9 @@
               class="border-0"
               variant="outlined"
               icon="fa-filter"
-              @click.stop="$emit('updatePostFeedFilter', {
+              @click.stop="$emit('updateFilter', {
                 name: 'subscription',
-                feedId: subscription.feedId,
+                queueId: subscription.queueId,
                 value: subscription.title,
               })"
             />
@@ -135,7 +135,7 @@
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "FeedDetails",
+  name: "QueueDetails",
   mixins: [buttonSizeMixin],
   props: {
     subscriptions: { type: Array, required: true },
@@ -143,7 +143,7 @@ export default {
     rssPubUrl: { type: String, required: true },
     atomPubUrl: { type: String, required: true },
   },
-  emits: ["updatePostFeedFilter", "showSubscriptionMetrics"],
+  emits: ["updateFilter", "showSubscriptionMetrics"],
   methods: {
     shouldShowAlert(alertName) {
       return !localStorage.getItem(alertName);

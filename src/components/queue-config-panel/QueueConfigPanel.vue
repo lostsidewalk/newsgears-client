@@ -3,14 +3,14 @@
     <v-card-title class="text-center pa-4">
       <h3 class="view-header-no-count">
         <v-icon icon="fa-rss" />
-        {{ (feed && feed.id) ? $t('queueSettings') : $t('createANewQueue') }}
+        {{ (queue && queue.id) ? $t('queueSettings') : $t('createANewQueue') }}
       </h3>
     </v-card-title>
     <v-divider />
     <v-card-text>
       <!-- tab panel -->
       <v-tabs
-        v-if="feed && feed.id"
+        v-if="queue && queue.id"
         v-model="selectedTab"
       >
         <!-- tab 1: subscription config -->
@@ -37,11 +37,11 @@
         >
           <!-- subscription config -->
           <SubscriptionsConfig
-            v-if="feed"
+            v-if="queue"
             ref="subscriptionsConfig"
             :base-url="baseUrl"
             :subscriptions="subscriptions" 
-            :feed-id="feed.id"
+            :queue-id="queue.id"
             @addSubscription="addSubscription" 
             @deleteSubscription="deleteSubscription" 
             @updateSubscriptionAuth="updateSubscriptionAuth"
@@ -57,10 +57,10 @@
           <v-sheet>
             <v-card variant="flat">
               <v-card-title class="pa-4">
-                {{ (feed && feed.id) ? $t('updateQueueSettings') : $t('createANewQueue') }}
+                {{ (queue && queue.id) ? $t('updateQueueSettings') : $t('createANewQueue') }}
               </v-card-title>
-              <v-card-subtitle v-if="(feed && feed.id && feed.description)">
-                {{ feed.description }}
+              <v-card-subtitle v-if="(queue && queue.id && queue.description)">
+                {{ queue.description }}
               </v-card-subtitle>
               <v-divider class="mb-1 mt-1" />
               <v-alert
@@ -69,78 +69,78 @@
                 variant="outlined"
                 border="top"
                 icon="fa-question-circle"
-                :text="(feed && feed.id) ? $t('updateQueueSettingsHere') : $t('createANewQueueHere')"
+                :text="(queue && queue.id) ? $t('updateQueueSettingsHere') : $t('createANewQueueHere')"
                 class="ma-4"
                 @click.close="dismissAlert('updateQueueSettingsHere')"
               />
               <v-card-text>
-                <!-- feed ident -->
-                <FeedConfigTextField
+                <!-- queue ident -->
+                <QueueConfigTextField
                   class="mb-4"
                   :label="$t('queueIdentifier')"
                   :hint="$t('queueIdentifierHint')"
                   :required="true"
                   :placeholder="$t('queueIdentifier')" 
-                  :model-value="feedIdent" 
-                  @update:modelValue="feedIdent = $event"
+                  :model-value="queueIdent" 
+                  @update:modelValue="queueIdent = $event"
                 />
-                <!-- feed title -->
-                <FeedConfigTextField 
+                <!-- queue title -->
+                <QueueConfigTextField 
                   class="mb-4"
                   :label="$t('queueTitle')"
                   :hint="$t('queueTitleHint')"
                   :required="false"
                   :placeholder="$t('queueTitle')" 
-                  :model-value="feedTitle" 
-                  @update:modelValue="feedTitle = $event"
+                  :model-value="queueTitle" 
+                  @update:modelValue="queueTitle = $event"
                 />
-                <!-- feed description -->
-                <FeedConfigTextField 
+                <!-- queue description -->
+                <QueueConfigTextField 
                   class="mb-4"
                   :label="$t('queueDescription')"
                   :hint="$t('queueDescriptionHint')"
                   :required="false"
                   :placeholder="$t('queueDescription')"
-                  :model-value="feedDescription" 
-                  @update:modelValue="feedDescription = $event"
+                  :model-value="queueDescription" 
+                  @update:modelValue="queueDescription = $event"
                 />
-                <!-- feed generator -->
-                <FeedConfigTextField 
+                <!-- queue (starred) feed generator -->
+                <QueueConfigTextField 
                   class="mb-4"
                   :label="$t('queueFeedGenerator')"
                   :hint="$t('queueFeedGeneratorHint')"
                   :required="false"
                   :placeholder="$t('queueFeedGenerator')"
-                  :model-value="feedGenerator" 
-                  @update:modelValue="feedGenerator = $event"
+                  :model-value="queueFeedGenerator" 
+                  @update:modelValue="queueFeedGenerator = $event"
                 />
-                <!-- feed copyright -->
-                <FeedConfigTextField 
+                <!-- queue (starred) feed copyright -->
+                <QueueConfigTextField 
                   class="mb-4"
                   :label="$t('queueFeedCopyright')"
                   :hint="$t('queueFeedCopyrightHint')"
                   :required="false"
                   :placeholder="$t('queueFeedCopyright')"
-                  :model-value="feedCopyright" 
-                  @update:modelValue="feedCopyright = $event"
+                  :model-value="queueFeedCopyright" 
+                  @update:modelValue="queueFeedCopyright = $event"
                 />
-                <!-- feed language -->
-                <FeedConfigTextField 
+                <!-- queue (starred) feed language -->
+                <QueueConfigTextField 
                   class="mb-4"
                   :label="$t('queueFeedLanguage')"
                   :hint="$t('queueFeedLanguageHint')"
                   :required="false"
                   :placeholder="$t('queueFeedLanguage')"
-                  :model-value="feedLanguage" 
-                  @update:modelValue="feedLanguage = $event"
+                  :model-value="queueFeedLanguage" 
+                  @update:modelValue="queueFeedLanguage = $event"
                 />
               </v-card-text>
-              <v-divider v-if="(!feed || !feed.id)" />
-              <v-card-actions v-if="(!feed || !feed.id)">
+              <v-divider v-if="(!queue || !queue.id)" />
+              <v-card-actions v-if="(!queue || !queue.id)">
                 <v-btn
                   :size="buttonSize" 
                   :text="$t('save')"
-                  @click="saveFeedConfig"
+                  @click="saveQueueConfig"
                 />
               </v-card-actions>
             </v-card>
@@ -160,21 +160,21 @@
 </template>
 
 <script>
-import FeedConfigTextField from '@/components/feed-config-panel/FeedConfigTextField.vue';
-import SubscriptionsConfig from '@/components/feed-config-panel/SubscriptionsConfig.vue';
+import QueueConfigTextField from '@/components/queue-config-panel/QueueConfigTextField.vue';
+import SubscriptionsConfig from '@/components/queue-config-panel/SubscriptionsConfig.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "FeedConfigPanel", 
+  name: "QueueConfigPanel", 
   components: {
-    FeedConfigTextField,
+    QueueConfigTextField,
     SubscriptionsConfig,
   },
   mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
   },
-  emits: [ "save", "dismiss", "authError", "updateServerMessage", "refreshFeedDefinition" ],
+  emits: [ "save", "dismiss", "authError", "updateServerMessage", "refreshQueueDefinitions" ],
   data() {
     return {
       // 
@@ -182,14 +182,14 @@ export default {
       // 
       showModal: false,
       // queue properties 
-      feed: null,
-      feedId: null,
-      feedIdent: '',
-      feedTitle: '',
-      feedDescription: '',
-      feedGenerator: '',
-      feedCopyright: '',
-      feedLanguage: '',
+      queue: null,
+      queueId: null,
+      queueIdent: '',
+      queueTitle: '',
+      queueDescription: '',
+      queueGenerator: '',
+      queueCopyright: '',
+      queueLanguage: '',
       subscriptions: [],
       selectedTab: null,
     };
@@ -197,7 +197,7 @@ export default {
   computed: {
     tabModel: function() {
       let arr = [];
-      if (this.feed.id) {
+      if (this.queue.id) {
         arr.push({
           name: "SUBSCRIPTIONS",
           description: this.$t('rssFeedDiscovery'),
@@ -220,18 +220,18 @@ export default {
       localStorage.setItem(alertName, new Date().toISOString())
     },
     // setup is called to initialize the panel for updates 
-    setup(feed) {
-      this.feed = feed;
-      // setup feed 
-      this.feedId = this.feed.id;
-      this.feedIdent = this.feed.ident;
-      this.feedTitle = this.feed.title;
-      this.feedDescription = this.feed.description;
-      this.feedGenerator = this.feed.generator;
-      this.feedCopyright = this.feed.copyright;
-      this.feedLanguage = this.feed.language;
-      this.subscriptions = this.feed.subscriptions;
-      this.selectedTab = (feed && feed.id) ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
+    setup(queue) {
+      this.queue = queue;
+      // setup queue 
+      this.queueId = this.queue.id;
+      this.queueIdent = this.queue.ident;
+      this.queueTitle = this.queue.title;
+      this.queueDescription = this.queue.description;
+      this.queueFeedGenerator = this.queue.generator;
+      this.queueFeedCopyright = this.queue.copyright;
+      this.queueFeedLanguage = this.queue.language;
+      this.subscriptions = this.queue.subscriptions;
+      this.selectedTab = (queue && queue.id) ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
       this.showModal = true;
     },
     tearDown() {
@@ -247,29 +247,29 @@ export default {
       }
     },
     // 
-    // invoked when the user saves the feed to complete step 1 
-    // (after step 1 is complete, we transition to an update operation on an existing feed)
+    // invoked when the user saves the queue to complete step 1 
+    // (after step 1 is complete, we transition to an update operation on an existing queue)
     // 
-    saveFeedConfig() {
+    saveQueueConfig() {
       let saveObj = {
-        ident: this.feedIdent,
-        title: this.feedTitle,
-        description: this.feedDescription,
-        generator: this.feedGenerator,
-        copyright: this.feedCopyright,
-        language: this.feedLanguage,
+        ident: this.queuedIdent,
+        title: this.queueTitle,
+        description: this.queueDescription,
+        generator: this.queueFeedGenerator,
+        copyright: this.queueFeedCopyright,
+        language: this.queueFeedLanguage,
       };
       this.$emit('save', saveObj);
     },
-    updateFeedConfig() {
+    updateQueueConfig() {
       let updateObj = {
-        id: this.feed.id,
-        ident: this.feedIdent,
-        title: this.feedTitle,
-        description: this.feedDescription,
-        generator: this.feedGenerator,
-        copyright: this.feedCopyright,
-        language: this.feedLanguage,
+        id: this.queue.id,
+        ident: this.queueIdent,
+        title: this.queueTitle,
+        description: this.queueDescription,
+        generator: this.queueFeedGenerator,
+        copyright: this.queueFeedCopyright,
+        language: this.queueFeedLanguage,
       };
       this.$emit('update', updateObj);
     },
@@ -282,18 +282,12 @@ export default {
       } else {
         source = JSON.parse(JSON.stringify(source));
       }
-      let qd = source.queryDefinition;
+      let qd = source.subscriptionDefinition;
       let r = {
         id: qd.id,
-        feedUrl: qd.queryText,
-        feedId: qd.feedId,
-      }
-      // title
-      let queryTitle = qd.queryTitle;
-      if (queryTitle) {
-        r.title = {
-          value: qd.queryTitle
-        }
+        url: qd.url,
+        queueId: qd.queueId,
+        title: qd.title
       }
       // auth 
       let queryConfig = qd.queryConfig ? JSON.parse(qd.queryConfig) : qd.queryConfig;
@@ -302,17 +296,17 @@ export default {
         r.password = queryConfig.password;
       }
       // image 
-      let queryDefinitionImageUrl = source.queryDefinitionImageUrl;
-      if (queryDefinitionImageUrl) {
+      let sourceImgUrl = source.imgUrl;
+      if (sourceImgUrl) {
         r.image = {
           title: null,
-          url: queryDefinitionImageUrl,
+          url: sourceImgUrl,
         }
       }
 
       this.subscriptions.unshift(r);
       
-      this.$emit('refreshFeedDefinition', this.feed.id);
+      this.$emit('refreshQueueDefinition', this.queue.id);
     },
     deleteSubscription(id) {
       let deleteIdx = -1;
@@ -324,12 +318,12 @@ export default {
       }
       if (deleteIdx > -1) {
         this.subscriptions.splice(deleteIdx, 1);
-        this.$emit('refreshFeedDefinition', this.feed.id);
+        this.$emit('refreshQueueDefinition', this.queue.id);
       }
     },
     updateSubscriptionAuth(source) {
       let updateIdx = -1;
-      let qd = source.queryDefinition;
+      let qd = source.subscriptionDefinition;
       for (let i = 0; i < this.subscriptions.length; i++) {
         if (this.subscriptions[i].id === qd.id) {
           updateIdx = i;
@@ -346,7 +340,7 @@ export default {
           this.subscriptions[updateIdx].username = null;
           this.subscriptions[updateIdx].password = null;
         }
-        this.$emit('refreshFeedDefinition', this.feed.id);
+        this.$emit('refreshQueueDefinition', this.queue.id);
       }
     },
   }

@@ -36,7 +36,7 @@
       v-show="$auth.$isAuthenticated"
     >
       <!-- progress bar -->
-      <v-progress-linear :indeterminate="isLoading || refreshFeedsIsLoading" />
+      <v-progress-linear :indeterminate="isLoading || refreshQueuesIsLoading" />
       <!-- app bar (top-level)-->
       <v-app-bar
         app
@@ -80,29 +80,29 @@
                 :title="$t('createNewQueue')"
                 append-icon="fa-plus"
                 :text="$t('createNewQueue')"
-                @click.stop="newFeed"
+                @click.stop="newQueue"
               />
             </template>
           </ControlPanel>
         </template>
       </v-app-bar>
-      <!-- app bar (feed filter) -->
+      <!-- app bar (queue filter) -->
       <v-app-bar
-        v-show="selectedFeedId"
+        v-show="selectedQueueId"
         app
       >
-        <!-- feed filter  -->
-        <FeedFilter
-          :inbound-queue-filter="inboundQueueFilter"
-          :inbound-queue-sort-order="inboundQueueSortOrder"
-          :queue-length="filteredInboundQueue.length"
-          :queue-name="getSelectedFeed().title"
+        <!-- queue filter  -->
+        <QueueFilter
+          :filter="articleListFilter"
+          :sort-order="articleListSortOrder"
+          :queue-length="filteredArticleList.length"
+          :queue-name="getSelectedQueue().title"
           :show-queue-refresh-indicator="showQueueRefreshIndicator"
-          @toggleSortOrder="toggleInboundQueueSortOrder"
-          @refreshFeeds="refreshFeeds(null, true)"
-          @markAsRead="markFeedAsRead(selectedFeedId)"
-          @update:modelValue="inboundQueueFilter = $event"
-          @toggleFeedFilterPills="showFeedFilterPills = !showFeedFilterPills"
+          @toggleSortOrder="toggleArticleListSortOrder"
+          @refreshQueues="refreshQueues(null, true)"
+          @markAsRead="markQueueAsRead(selectedQueueId)"
+          @update:modelValue="articleListFilter = $event"
+          @toggleFilterPills="showQueueFilterPills = !showQueueFilterPills"
         />
         <!-- help buton -->
         <v-btn
@@ -116,10 +116,10 @@
       <!-- app bar (filter pills) -->
       <v-expand-transition>
         <v-app-bar
-          v-if="selectedFeedId && allFilterPills.length > 0 && showFeedFilterPills"
+          v-if="selectedQueueId && allFilterPills.length > 0 && showQueueFilterPills"
           app
         >
-          <FeedFilterPills :filter-pills="allFilterPills" />
+          <QueueFilterPills :filter-pills="allFilterPills" />
         </v-app-bar>
       </v-expand-transition>
       <!-- navigation drawer / left side -->
@@ -143,25 +143,25 @@
             @click.close="dismissAlert('thisIsYourQueueDashboard')"
           />
           <v-hover
-            v-for="feed in filteredFeedIdentOptions"
+            v-for="queue in filteredQueueIdentOptions"
             v-slot="{ isHovering, props }"
-            :key="feed.value"
+            :key="queue.value"
           >
-            <FeedSelectButton
+            <QueueSelectButton
               variant="flat"
               :elevation="isHovering ? 12 : 0"
-              :feed="feed"
+              :queue="queue"
               :feed-url="feedUrl"
-              :inbound-count="countInboundQueue(feed.id)"
-              :published-count="countOutboundQueue(feed.id)"
+              :inbound-count="countArticleList(queue.id)"
+              :published-count="countPublished(queue.id)"
               class="ma-4"
-              :class="selectedFeedId === feed.id ? 'selected-feed' : ''"
-              :is-selected="selectedFeedId === feed.id"
+              :class="selectedQueueId === queue.id ? 'selected-queue' : ''"
+              :is-selected="selectedQueueId === queue.id"
               v-bind="props"
-              @click.stop="$event => { setSelectedFeedId(feed.id); }"
-              @selectFeed="$event => { setSelectedFeedId(feed.id); showQueueDashboard = false; }"
-              @manageSubscriptions="configureFeed(feed.id)"
-              @updatePostFeedFilter="updatePostFeedFilter"
+              @click.stop="$event => { setSelectedQueueId(queue.id); }"
+              @selectQueue="$event => { setSelectedQueueId(queue.id); showQueueDashboard = false; }"
+              @manageSubscriptions="configureQueue(queue.id)"
+              @updateFilter="updateFilter"
               @showSubscriptionMetrics="openSubscriptionMetrics"
             />
           </v-hover>
@@ -173,30 +173,30 @@
         fullscreen
         scrollable
       >
-        <FilterHelp @dismiss="showFilterHelp = false" />
+        <QueueFilterHelp @dismiss="showFilterHelp = false" />
       </v-dialog>
       <!-- delete confirmation modal -->
       <v-dialog
-        v-model="showFeedDeleteConfirmation"
+        v-model="showQueueDeleteConfirmation"
         scrollable
       >
         <ConfirmationDialog
           class="rounded"
           :prompt="$t('confirmDeleteQueue')"
-          @confirm="performFeedDelete"
-          @cancel="cancelFeedDelete"
+          @confirm="performQueueDelete"
+          @cancel="cancelQueueDelete"
         />
       </v-dialog>
       <!-- mark as read confirmation modal -->
       <v-dialog
-        v-model="showFeedMarkAsReadConfirmation"
+        v-model="showQueueMarkAsReadConfirmation"
         scrollable
       >
         <ConfirmationDialog
           class="rounded"
           :prompt="$t('confirmMarkQueueAsRead')"
-          @confirm="performFeedMarkAsRead"
-          @cancel="cancelFeedMarkAsRead"
+          @confirm="performQueueMarkAsRead"
+          @cancel="cancelQueueMarkAsRead"
         />
       </v-dialog>
       <!-- settings modal -->
@@ -225,19 +225,19 @@
       </v-dialog>
       <!-- queue config modal -->
       <v-dialog
-        v-model="showFeedConfigPanel"
+        v-model="showQueueConfigPanel"
         fullscreen
         scrollable
       >
-        <FeedConfigPanel
-          ref="feedConfigPanel"
+        <QueueConfigPanel
+          ref="queueConfigPanel"
           :base-url="baseUrl"
-          @save="createFeed"
-          @update="updateFeed"
-          @dismiss="dismissFeedConfigPanel"
+          @save="createQueue"
+          @update="updateQueue"
+          @dismiss="dismissQueueConfigPanel"
           @authError="handleServerError"
           @updateServerMessage="setLastServerMessage"
-          @refreshFeedDefinition="$event => refreshFeeds([$event], true)"
+          @refreshQueueDefinitions="$event => refreshQueues([$event], true)"
         />
       </v-dialog>
       <!-- opml upload modal -->
@@ -250,7 +250,7 @@
           ref="opmlUploadPanel"
           :base-url="baseUrl"
           :is-loading="uploadIsLoading"
-          @finalizeUpload="createOpmlFeeds"
+          @finalizeUpload="finalizeOpmlUpload"
           @cancel="cancelOpmlUpload"
           @authError="handleServerError"
         />
@@ -267,30 +267,30 @@
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
-      <!-- post feed layout control -->
-      <v-container class="post-feed-container d-flex flex-grow-1 rounded justify-space-between flex-wrap">
-        <FeedLayout
+      <!-- queue layout control -->
+      <v-container class="queue-container d-flex flex-grow-1 rounded justify-space-between flex-wrap">
+        <QueueLayout
           :show-list-layout="showListLayout"
           :show-card-layout="showCardLayout"
-          @list="postFeedLayout = 'LIST'"
-          @card="postFeedLayout = 'CARD'"
+          @list="queueLayout = 'LIST'"
+          @card="queueLayout = 'CARD'"
         />
         <v-label
-          v-if="selectedFeedId"
+          v-if="selectedQueueId"
           class="ma-2 font-weight-bold"
         >
-          {{ getSelectedFeed().title }}
+          {{ getSelectedQueue().title }}
         </v-label>
       </v-container>
       <!-- divider -->
       <v-divider />
-      <!-- post feed container (cards) -->
+      <!-- queue container (cards) -->
       <v-container
-        v-if="selectedFeedId && showCardLayout"
-        class="post-feed-container d-flex flex-column flex-grow-1 rounded"
+        v-if="selectedQueueId && showCardLayout"
+        class="queue-container d-flex flex-column flex-grow-1 rounded"
       >
         <PostCard
-          v-for="post in filteredInboundQueue"
+          v-for="post in filteredArticleList"
           :id="'post_' + post.id"
           :key="post.id"
           :post="post"
@@ -300,14 +300,14 @@
           @openPostUrl="openPostUrl(post.id)"
           @updatePostReadStatus="updatePostReadStatus"
           @updatePostPubStatus="updatePostPubStatus"
-          @updatePostFeedFilter="updatePostFeedFilter"
+          @updateFilter="updateFilter"
           @share="$event => share($event.sharingOption, $event.post)"
         />
       </v-container>
-      <!-- post feed container (list) -->
+      <!-- queue container (list) -->
       <v-container
-        v-if="selectedFeedId && showListLayout"
-        class="post-feed-container d-flex flex-column flex-grow-1 rounded"
+        v-if="selectedQueueId && showListLayout"
+        class="queue-container d-flex flex-column flex-grow-1 rounded"
       >
         <v-dialog
           v-model="showSelectedPost"
@@ -321,7 +321,7 @@
             @openPostUrl="openPostUrl(selectedPost.id)"
             @updatePostReadStatus="updatePostReadStatus"
             @updatePostPubStatus="updatePostPubStatus"
-            @updatePostFeedFilter="updatePostFeedFilter"
+            @updateFilter="updateFilter"
             @share="$event => share($event.sharingOption, $event.post)"
           >
             <template #additional>
@@ -345,12 +345,12 @@
           </PostCard>
         </v-dialog>
         <v-list
-          v-if="filteredInboundQueue.length > 0"
+          v-if="filteredArticleList.length > 0"
           v-model="selectedItem"
           class="rounded"
         >
           <PostListItem
-            v-for="post in filteredInboundQueue"
+            v-for="post in filteredArticleList"
             :id="'post_' + post.id"
             :key="post"
             :post="post"
@@ -359,7 +359,7 @@
             @openPost="openPost(post.id)"
             @updatePostReadStatus="updatePostReadStatus"
             @updatePostPubStatus="updatePostPubStatus"
-            @updatePostFeedFilter="updatePostFeedFilter"
+            @updateFilter="updateFilter"
             @share="$event => share($event.sharingOption, $event.post)"
           />
         </v-list>
@@ -384,8 +384,8 @@ import AuthPanel from "@/components/auth-panel/AuthPanel.vue";
 import lunr from 'lunr';
 // confirmation modal dialog 
 import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
-// feed configuration panel 
-import FeedConfigPanel from "@/components/feed-config-panel/FeedConfigPanel.vue";
+// queue configuration panel 
+import QueueConfigPanel from "@/components/queue-config-panel/QueueConfigPanel.vue";
 // OPML upload panel 
 import OpmlUploadPanel from "@/components/opml-upload-panel/OpmlUploadPanel.vue";
 // subscription metrics panel 
@@ -394,19 +394,19 @@ import SubscriptionMetrics from '@/components/subscription-info/SubscriptionMetr
 import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
 import HelpPanel from '@/components/help-panel/HelpPanel.vue';
-// feed layout 
-import FeedLayout from "@/components/post-feed/FeedLayout.vue";
-// feed filter 
-import FeedFilter from "@/components/post-feed/FeedFilter.vue";
-import FeedFilterPills from "@/components/post-feed/FeedFilterPills.vue";
-import FilterHelp from "@/components/post-feed/FilterHelp.vue";
+// queue layout 
+import QueueLayout from "@/components/queue/QueueLayout.vue";
+// queue filter 
+import QueueFilter from "@/components/queue/QueueFilter.vue";
+import QueueFilterPills from "@/components/queue/QueueFilterPills.vue";
+import QueueFilterHelp from "@/components/queue/QueueFilterHelp.vue";
 // post 
 import PostCard from "@/components/post/PostCard.vue";
 import PostListItem from "@/components/post/PostListItem.vue";
-// feed dashboard 
-import FeedSelectButton from '@/components/post-feed/FeedSelectButton.vue';
+// queue dashboard 
+import QueueSelectButton from '@/components/queue/QueueSelectButton.vue';
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
-// import FeedDetails from '@/components/post-feed/FeedDetails.vue';
+// import QueueDetails from '@/components/queue/QueueDetails.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 
@@ -465,7 +465,7 @@ export default {
     AuthPanel,
     // modal 
     ConfirmationDialog,
-    FeedConfigPanel,
+    QueueConfigPanel,
     OpmlUploadPanel,
     SubscriptionMetrics,
     // settings 
@@ -473,16 +473,16 @@ export default {
     SettingsPanel,
     HelpPanel,
     // layout 
-    FeedLayout,
+    QueueLayout,
     // filter 
-    FeedFilter,
-    FeedFilterPills,
-    FilterHelp,
+    QueueFilter,
+    QueueFilterPills,
+    QueueFilterHelp,
     // item 
     PostCard,
     PostListItem,
     // dashboard 
-    FeedSelectButton,
+    QueueSelectButton,
     FooterPanel
   },
   mixins: [buttonSizeMixin],
@@ -495,10 +495,10 @@ export default {
       refreshIntervalId: null,
       isLoading: false,
       uploadIsLoading: false,
-      refreshFeedsIsLoading: false,
+      refreshQueuesIsLoading: false,
       // operating mode 
-      feedIdToDelete: null,
-      feedIdToMarkAsRead: null,
+      queueIdToDelete: null,
+      queueIdToMarkAsRead: null,
       // 
       subscriptionToShow: null,
       // show subscription metrics 
@@ -507,58 +507,58 @@ export default {
       showNotificationWarning: false,
       // show filter help
       showFilterHelp: false,
-      showFeedFilterPills: false,
+      showQueueFilterPills: false,
       // show the queue dashboard (t/f) 
       showQueueDashboard: false,
       // 
-      postFeedLayout: 'LIST', // 'CARD' 
-      // show the feed config modal (t/f) 
-      showFeedConfigPanel: false,
+      queueLayout: 'LIST', // 'CARD' 
+      // show the queue config modal (t/f) 
+      showQueueConfigPanel: false,
       // 
-      configuredFeedId: null,
+      configuredQueueId: null,
       // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
       // show the help modal (t/f) 
       showSettingsPanel: false,
       showHelpPanel: false,
       //  
-      showFeedDeleteConfirmation: false,
-      showFeedMarkAsReadConfirmation: false,
+      showQueueDeleteConfirmation: false,
+      showQueueMarkAsReadConfirmation: false,
       // 
       showSelectedPost: false,
       selectedPost: null, // selected post to show on the singleton post card modal (in list view) 
       selectedItem: null, // selected post list item 
-      // feed material 
-      feeds: [], // all feeds 
-      selectedFeedId: null, // currently selected feed Id 
-      previousFeedId: null, // previously selected feed Id 
       // queue material 
-      inboundQueuesByFeed: {}, // all queues 
-      inboundQueue: { values: [] }, // inbound queue for the currently selected feed  
+      queues: [], // all queues 
+      selectedQueueId: null, // currently selected queue Id 
+      previousQueueId: null, // previously selected queue Id 
+      // queue material 
+      articleListsByQueue: {}, // all queues 
+      articleList: { values: [] }, // inbound queue for the currently selected queue  
       // queue filter material 
-      inboundQueueFilter: '', // user-supplied filter text (lunrjs query expression) 
+      articleListFilter: '', // user-supplied filter text (lunrjs query expression) 
       // queue sorting material 
-      inboundQueueSortOrder: 'DSC',
+      articleListSortOrder: 'DSC',
       // queue refresh material 
       latestSubscriptionMetricsByQueue: {}, 
     };
   },
   computed: {
     isModalShowing: function() {
-      return this.showSettingsPanel || this.showHelpPanel || this.showFeedConfigPanel || this.showOpmlUploadPanel || this.showSubscriptionMetrics;
+      return this.showSettingsPanel || this.showHelpPanel || this.showQueueConfigPanel || this.showOpmlUploadPanel || this.showSubscriptionMetrics;
     },
-    filteredInboundQueue: function() {
-      if (this.inboundQueue) {
+    filteredArticleList: function() {
+      if (this.articleList) {
         let results = null;
         // if a lunr query expression is specified .. 
         // then fetch the preliminary results from lunrjs 
-        if (this.inboundQueueFilter) {
-          let lunrLambda = () => this.inboundQueue.index.search(this.inboundQueueFilter);
+        if (this.articleListFilter) {
+          let lunrLambda = () => this.articleList.index.search(this.articleListFilter);
           try {
             let lunrResults = lunrLambda.apply();
             if (lunrResults) {
               lunrResults = lunrResults.map(item => parseInt(item.ref));
-              results = this.inboundQueue.values.filter(item => {
+              results = this.articleList.values.filter(item => {
                 return lunrResults.includes(item.id);
               });
             }
@@ -572,13 +572,13 @@ export default {
           }
         } else {
           // (otherwise the preliminary results are the entire queue) 
-          results = this.inboundQueue.values;
+          results = this.articleList.values;
         }
         // 
         // sort the filtered result 
         // 
         if (results) {
-          this.sortQueue(results, this.inboundQueueSortOrder);
+          this.sortQueue(results, this.articleListSortOrder);
         }
         // 
         // return the final (sorted) result 
@@ -588,23 +588,23 @@ export default {
         return [];
       }
     },
-    filteredFeedIdentOptions: function() {
-      let feedIdentOptions = [];
-      let t = Array.from(this.feeds);
+    filteredQueueIdentOptions: function() {
+      let queueIdentOptions = [];
+      let t = Array.from(this.queues);
       for (let i = 0; i < Math.min(128, t.length); i++) {
-        feedIdentOptions.push({
+        queueIdentOptions.push({
           "label": t[i].title ? t[i].title : t[i].ident,
           "value": t[i].ident,
           "description": t[i].description,
           "title": t[i].title,
           "id": t[i].id,
-          "feedStatus": t[i].feedStatus,
+          "queueStatus": t[i].queueStatus,
           "lastDeployed": t[i].lastDeployed,
           "subscriptions": t[i].subscriptions,
           "transportIdent": t[i].transportIdent,
         });
       }
-      feedIdentOptions.sort((a, b) => {
+      queueIdentOptions.sort((a, b) => {
         if (a.id < b.id) {
           return -1;
         } else if (a.id > b.id) {
@@ -612,25 +612,25 @@ export default {
         }
         return 0;
       });
-      return feedIdentOptions;
+      return queueIdentOptions;
     },
     allFilterPills: function() {
       let filterPills = [
         {
-          isSelected: this.inboundQueueFilter.indexOf('status:READ_LATER') >= 0,
-          invoke: () => this.toggleFeedFilterMode('READ_LATER'),
+          isSelected: this.articleListFilter.indexOf('status:READ_LATER') >= 0,
+          invoke: () => this.toggleFilterMode('READ_LATER'),
           label: this.$t('readLater'),
           title: 'View items marked as read-later',
         },
         {
-          isSelected: this.inboundQueueFilter.indexOf('status:PUBLISHED') >= 0,
-          invoke: () => this.toggleFeedFilterMode('PUBLISHED'),
+          isSelected: this.articleListFilter.indexOf('status:PUBLISHED') >= 0,
+          invoke: () => this.toggleFilterMode('PUBLISHED'),
           label: this.$t('starred'),
           title: 'View starred items',
         },
         {
           isSelected: false,
-          invoke: () => this.inboundQueueFilter = '',
+          invoke: () => this.articleListFilter = '',
           label: this.$t('clear'),
           title: 'Clear filter',
         }
@@ -642,31 +642,31 @@ export default {
       return sharingOptions;
     },
     showCardLayout: function() {
-      return this.postFeedLayout === 'CARD';
+      return this.queueLayout === 'CARD';
     },
     showListLayout: function() {
-      return this.postFeedLayout === 'LIST';
+      return this.queueLayout === 'LIST';
     },
     showQueueRefreshIndicator: function() {
       // ensure we have latestSubscriptionMetricsByQueue on hand; 
       // this is periodically refreshed by a background process 
       if (!this.latestSubscriptionMetricsByQueue) {
-        // console.debug("showQueueRefreshIndicator: returning early due to missing latest feed metrics by queue");
+        // console.debug("showQueueRefreshIndicator: returning early due to missing latest subscription metrics by queue");
         return false;
       }
-      // ensure we have a latest feed metrics for the selected queue 
-      let latestSubscriptionMetric = this.latestSubscriptionMetricsByQueue[this.selectedFeedId];
+      // ensure we have a latest subscription metrics for the selected queue 
+      let latestSubscriptionMetric = this.latestSubscriptionMetricsByQueue[this.selectedQueueId];
       if (!latestSubscriptionMetric) {
-        // console.debug("showQueueRefreshIndicator: returning early due to missing latest feed metrics for selected queue");
+        // console.debug("showQueueRefreshIndicator: returning early due to missing latest subscription metrics for selected queue");
         return false;
       }
       // ensure that we have subscriptions on hand for the selected queue 
-      let subscriptions = this.getSelectedFeed().subscriptions;
+      let subscriptions = this.getSelectedQueue().subscriptions;
       if (!subscriptions) {
         // console.debug("showQueueRefreshIndicator: returning early due to selected queue has 0 subscriptions");
         return false;
       }
-      // locate the latest local feed metric across all subscriptions 
+      // locate the latest local subscription metric across all subscriptions 
       let latestLocalSubscriptionMetric = null;
       for (let i = 0; i < subscriptions.length; i++) {
         let localSubscriptionMetrics = subscriptions[i].subscriptionMetrics;
@@ -685,7 +685,7 @@ export default {
           }
         }
       }
-      // ensure that we have a latest local feed metric 
+      // ensure that we have a latest local subscription metric 
       if (!latestLocalSubscriptionMetric) {
         return true; // (we have a latestSubscriptionMetric, but no latestLocalSubscriptionMetric, therefore refresh is required) 
       }
@@ -697,23 +697,23 @@ export default {
   watch: {
     '$auth.$isAuthenticated' (isAuthenticated) {
       if (isAuthenticated) {
-        const storedFeeds = localStorage.getItem('feeds');
-        if (storedFeeds) {
-          this.feeds = JSON.parse(storedFeeds);
-        }
-        const storedQueues = localStorage.getItem('inboundQueuesByFeed');
+        const storedQueues = localStorage.getItem('queues');
         if (storedQueues) {
-          this.inboundQueuesByFeed = JSON.parse(storedQueues);
+          this.queues = JSON.parse(storedQueues);
         }
-        if (this.feeds.length > 0 && this.inboundQueuesByFeed) {
-          if (!this.selectedFeedId) {
-            this.setSelectedFeedId(this.feeds[0].id);
+        const storedArticleLists = localStorage.getItem('articleListsByQueue');
+        if (storedQueues) {
+          this.articleListsByQueue = JSON.parse(storedArticleLists);
+        }
+        if (this.queues.length > 0 && this.articleListsByQueue) {
+          if (!this.selectedQueueId) {
+            this.setSelectedQueueId(this.queues[0].id);
           } else {
-            this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+            this.articleList = this.articleListsByQueue[this.selectedQueueId];
           }
           this.rebuildLunrIndexes();
         } else {
-          this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
+          this.refreshQueues(null, true); // need staging posts for all queues and queues definitions 
         }
         // schedule the subscription-metrics refresh timer 
         this.refreshIntervalId = setInterval(() => {
@@ -737,7 +737,7 @@ export default {
       });
     window.addEventListener("keydown", this.keyHandler);
     if (this.$auth.$isAuthenticated) {
-      this.refreshFeeds(null, true); // need staging posts for all feeds and feed definitions 
+      this.refreshQueues(null, true); // need staging posts for all queues, and queues definitions 
     }
   },
   beforeUnmount() {
@@ -779,7 +779,7 @@ export default {
     selectNextPost() {
       if (this.selectedPost) {
         const id = this.selectedPost.id;
-        const queue = this.filteredInboundQueue;
+        const queue = this.filteredArticleList;
         const nextIdx = queue.findIndex(post => post.id === id) + 1;
         if (nextIdx < queue.length) {
           this.selectedPost = queue[nextIdx];
@@ -792,7 +792,7 @@ export default {
     selectPreviousPost() {
       if (this.selectedPost) {
         const id = this.selectedPost.id;
-        const queue = this.filteredInboundQueue;
+        const queue = this.filteredArticleList;
         const prevIdx = queue.findIndex(post => post.id === id) - 1;
         if (prevIdx >= 0) {
           this.selectedPost = queue[prevIdx];
@@ -867,53 +867,53 @@ export default {
     // 
     // 
     //
-    toggleInboundQueueSortOrder() {
-      this.inboundQueueSortOrder = this.inboundQueueSortOrder === 'DSC' ? 'ASC' : 'DSC';
+    toggleArticleListSortOrder() {
+      this.articleListSortOrder = (this.articleListSortOrder === 'DSC' ? 'ASC' : 'DSC');
     },
     // 
-    // invoked when the user clicks the mode pill in the feed filter; 
-    // this method should add the mode to feedFilterModes, 
+    // invoked when the user clicks the mode pill in the queue filter; 
+    // this method should add the mode to articleListFilter, 
     // or remove it if it already present. 
     // 
-    toggleFeedFilterMode(filterMode) {
-      if (this.inboundQueueFilter.includes('status:' + filterMode)) {
-        this.inboundQueueFilter = this.inboundQueueFilter.replace('status:' + filterMode, '');
+    toggleFilterMode(filterMode) {
+      if (this.articleListFilter.includes('status:' + filterMode)) {
+        this.articleListFilter = this.articleListFilter.replace('status:' + filterMode, '');
       } else {
-        this.inboundQueueFilter += 'status:' + filterMode;
+        this.articleListFilter += 'status:' + filterMode;
       }
     },
-    updatePostFeedFilter(f) {
+    updateFilter(f) {
       if (f.name === "subscription") {
-        if (f.feedId !== this.selectedFeedId) {
-          this.setSelectedFeedId(f.feedId);
-          this.inboundQueueFilter = '';
+        if (f.queueId !== this.selectedQueueId) {
+          this.setSelectedQueueId(f.queueId);
+          this.articleListFilter = '';
           this.$nextTick(() => {
-            this.addSubscriptionToFeedFilter(f.value);
+            this.addSubscriptionToFilter(f.value);
           });
         } else {
-          this.addSubscriptionToFeedFilter(f.value);
+          this.addSubscriptionToFilter(f.value);
         }
       } else if (f.name === "category") {
-        this.addCategoryToFeedFilter(f.value);
+        this.addCategoryToFilter(f.value);
       }
     },
     // 
     // convenience method (invoked from above) to add the subscriptionId to the lunrjs query expression 
     // 
-    addSubscriptionToFeedFilter(subscription) {
-      this.inboundQueueFilter = '+feed:' + toLunrToken(subscription);
+    addSubscriptionToFilter(subscription) {
+      this.articleListFilter = '+feed:' + toLunrToken(subscription);
     },
     // 
     // convenience method (invoked from above) to add the category to the lunrjs query expression 
     // 
-    addCategoryToFeedFilter(category) {
-      if (this.inboundQueueFilter) {
+    addCategoryToFilter(category) {
+      if (this.articleListFilter) {
         let expr = '+category:' + toLunrToken(category);
-        if (this.inboundQueueFilter.indexOf(expr) < 0) {
-          this.inboundQueueFilter = this.inboundQueueFilter + ' +category:' + category;
+        if (this.articleListFilter.indexOf(expr) < 0) {
+          this.articleListFilter = this.articleListFilter + ' +category:' + category;
         }
       } else {
-        this.inboundQueueFilter = ' +category:' + category;
+        this.articleListFilter = ' +category:' + category;
       }
     },
     openSubscriptionMetrics(subscriptionInfo) {
@@ -923,15 +923,15 @@ export default {
     // 
     // 
     // 
-    countInboundQueue(feedId) {
-      const iq = this.inboundQueuesByFeed[feedId];
+    countArticleList(queueId) {
+      const iq = this.articleListsByQueue[queueId];
       if (iq) {
         return iq.values.filter(post => !post.isRead).length;
       }
       return 0;
     },
-    countOutboundQueue(feedId) {
-      const iq = this.inboundQueuesByFeed[feedId];
+    countPublished(queueId) {
+      const iq = this.articleListsByQueue[queueId];
       return iq ? iq.values.filter(post => post.isPublished).length : 0;
     },
     checkForNewSubscriptionMetrics() {
@@ -945,7 +945,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/feeds/metrics", requestOptions)
+        fetch(this.baseUrl + "/queues/metrics", requestOptions)
           .then((response) => {
             if (response.status === 200) {
               return response.json();
@@ -968,22 +968,22 @@ export default {
       });
     },
     // 
-    // feed refresh 
+    // queue refresh 
     // 
-    // feedsToFetch = fetch staging posts for the feed Ids in this array, empty -> all feeds 
-    // fetchFeedDefinitions = t/f -> include/exclude feed definition updates 
-    async refreshFeeds(feedsToFetch, fetchFeedDefinitions) {
-      console.log("post-feed: refreshing feeds");
+    // queuesToFetch = fetch staging posts for the queue Ids in this array, empty -> all queues  
+    // fetchQueueDefinitions = t/f -> include/exclude queue definition updates 
+    async refreshQueues(queuesToFetch, fetchQueueDefinitions) {
+      console.log("refreshing queues");
       let rawPosts = [];
-      this.refreshFeedsIsLoading = true;
+      this.refreshQueuesIsLoading = true;
 
       try {
         const token = await this.$auth.getTokenSilently();
         const stagingPostRefreshController = new AbortController();
         const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
-        let feedDefinitionRefreshTimeoutId;
+        let queueDefinitionRefreshTimeoutId;
         let refreshPromises = [
-          fetch(this.baseUrl + "/staging" + (feedsToFetch ? ("?feedIds=" + feedsToFetch) : ''), {
+          fetch(this.baseUrl + "/staging" + (queuesToFetch ? ("?queueIds=" + queuesToFetch) : ''), {
             headers: {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
@@ -1018,22 +1018,22 @@ export default {
                   rawPosts.push(p);
                   ct++;
                 }
-                console.log("post-feed: staging post refresh complete, ct=" + ct);
+                console.log("staging post refresh complete, ct=" + ct);
               }
             })
         ];
 
-        if (fetchFeedDefinitions) {
-          const feedDefinitionRefreshController = new AbortController();
-          feedDefinitionRefreshTimeoutId = setTimeout(() => feedDefinitionRefreshController.abort(), 5000);
+        if (fetchQueueDefinitions) {
+          const queueDefinitionRefreshController = new AbortController();
+          queueDefinitionRefreshTimeoutId = setTimeout(() => queueDefinitionRefreshController.abort(), 5000);
           refreshPromises.push(
-            fetch(this.baseUrl + "/feeds", {
+            fetch(this.baseUrl + "/queues", {
               headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
               },
               credentials: 'include',
-              signal: feedDefinitionRefreshController.signal,
+              signal: queueDefinitionRefreshController.signal,
             })
               .then((response) => {
                 if (response.status === 200) {
@@ -1050,18 +1050,18 @@ export default {
                 }
               })
               .then((data) => {
-                this.feeds.splice(0);
-                const feedDefinitionData = data.feedDefinitions;
-                const queryDefinitionData = data.queryDefinitions;
-                if (feedDefinitionData) {
-                  for (let i = 0; i < feedDefinitionData.length; i++) {
-                    const fd = feedDefinitionData[i];
-                    const qd = queryDefinitionData[fd.id];
-                    this.decorateFeedWithQueryDefinitions(fd, qd, data.subscriptionMetrics);
-                    fd.exportConfig = fd.exportConfig ? JSON.parse(fd.exportConfig) : fd.exportConfig;
-                    this.feeds.push(fd);
+                this.queues.splice(0);
+                const queueDefinitionData = data.queueDefinitions;
+                const subscriptionDefinitions = data.subscriptionDefinitions;
+                if (queueDefinitionData) {
+                  for (let i = 0; i < queueDefinitionData.length; i++) {
+                    const qd = queueDefinitionData[i];
+                    const sd = subscriptionDefinitions[qd.id];
+                    this.decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics);
+                    qd.exportConfig = qd.exportConfig ? JSON.parse(qd.exportConfig) : qd.exportConfig;
+                    this.queues.push(qd);
                   }
-                  localStorage.setItem('feeds', JSON.stringify(this.feeds));
+                  localStorage.setItem('queues', JSON.stringify(this.queues));
                 }
               })
           );
@@ -1069,76 +1069,71 @@ export default {
 
         await Promise.all(refreshPromises);
         clearTimeout(stagingPostRefreshTimeoutId);
-        if (feedDefinitionRefreshTimeoutId) {
-          clearTimeout(feedDefinitionRefreshTimeoutId);
+        if (queueDefinitionRefreshTimeoutId) {
+          clearTimeout(queueDefinitionRefreshTimeoutId);
         }
 
-        for (let i = 0; i < this.feeds.length; i++) {
-          const feedId = this.feeds[i].id;
-          const iq = this.inboundQueuesByFeed[feedId];
+        for (let i = 0; i < this.queues.length; i++) {
+          const queuedId = this.queues[i].id;
+          const iq = this.articleListsByQueue[queuedId];
           if (iq) {
-            if (!feedsToFetch || feedsToFetch.indexOf(this.feeds[i].id) >= 0) {
+            if (!queuesToFetch || queuesToFetch.indexOf(this.queues[i].id) >= 0) {
               iq.values.splice(0);
               iq.index = null;
             }
           } else {
-            this.inboundQueuesByFeed[feedId] = { values: [] };
+            this.articleListsByQueue[queuedId] = { values: [] };
           }
         }
 
         for (let i = 0; i < rawPosts.length; i++) {
           const post = rawPosts[i];
-          this.inboundQueuesByFeed[post.feedId].values.push(post);
+          this.articleListsByQueue[post.queueId].values.push(post);
         }
 
         this.rebuildLunrIndexes();
-        localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
+        localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
 
-        if (this.feeds.length > 0 && !this.selectedFeedId) {
-          this.setSelectedFeedId(this.feeds[0].id);
+        if (this.queues.length > 0 && !this.selectedQueueId) {
+          this.setSelectedQueueId(this.queues[0].id);
         } else {
-          this.inboundQueue = this.inboundQueuesByFeed[this.selectedFeedId];
+          this.articleList = this.articleListsByQueue[this.selectedQueueId];
         }
 
       } catch (error) {
         this.handleServerError(error);
       } finally {
-        this.refreshFeedsIsLoading = false;
+        this.refreshQueuesIsLoading = false;
       }
     },
-    decorateFeedWithQueryDefinitions(fd, qd, qm) {
+    decorateQueueWithSubscriptionDefinitions(fd, qd, qm) {
       fd.subscriptions = [];
 
       if (qd) {
         for (let i = 0; i < qd.length; i++) {
           let wrapper = qd[i];
-          let queryDefinition = wrapper.queryDefinition;
+          let subscriptionDefinition = wrapper.subscriptionDefinition;
           let r = {
-            id: queryDefinition.id,
-            subscriptionMetrics: qm ? qm[queryDefinition.id] : null,
-            feedUrl: queryDefinition.queryText,
-            feedId: fd.id,
+            id: subscriptionDefinition.id,
+            subscriptionMetrics: qm ? qm[subscriptionDefinition.id] : null,
+            url: subscriptionDefinition.url,
+            queueId: fd.id,
+            title: subscriptionDefinition.title
           };
 
-          // title
-          let queryTitle = queryDefinition.queryTitle;
-          if (queryTitle) {
-            r.title = queryDefinition.queryTitle;
-          }
-
           // auth
-          let queryConfig = queryDefinition.queryConfig ? JSON.parse(queryDefinition.queryConfig) : queryDefinition.queryConfig;
+          let queryConfig = subscriptionDefinition.queryConfig ? JSON.parse(subscriptionDefinition.queryConfig) : subscriptionDefinition.queryConfig;
           if (queryConfig) {
             r.username = queryConfig.username;
             r.password = queryConfig.password;
           }
 
           // image
-          let queryDefinitionImageUrl = wrapper.queryDefinitionImageUrl;
-          if (queryDefinitionImageUrl) {
+          let imgUrl = wrapper.imgUrl;
+          if (imgUrl) {
             r.image = {
               title: null,
-              url: queryDefinitionImageUrl,
+              url: imgUrl,
             };
           }
 
@@ -1149,8 +1144,8 @@ export default {
     }, 
     rebuildLunrIndexes() {
       console.log("rebuilding lunrjs indexes...");
-      for (let i = 0; i < this.feeds.length; i++) {
-        let iq = this.inboundQueuesByFeed[this.feeds[i].id];
+      for (let i = 0; i < this.queues.length; i++) {
+        let iq = this.articleListsByQueue[this.queues[i].id];
         if (iq) {
           const trueStr = this.$t('trueStr');
           const falseStr = this.$t('falseStr');
@@ -1246,7 +1241,7 @@ export default {
     // 
     // 
     updatePostReadStatus(result) {
-      console.log("post-feed: updating post status");
+      console.log("updating post status");
       this.isLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -1291,7 +1286,7 @@ export default {
       });
     },
     updatePostPubStatus(result) {
-      console.log("post-feed: updating post status");
+      console.log("updating post status");
       this.isLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -1326,18 +1321,18 @@ export default {
               p.isPublished = false;
             }
             p.postPubStatus = null;
-            // update the feed last deployed timestamp 
+            // update the queue last deployed timestamp 
             let updateLocalStorage = false;
-            for (let i = 0; i < this.feeds.length; i++) {
-              if (this.feeds[i].id === result.feedId) {
-                this.feeds[i].lastDeployed = this.formatTimestamp(data.timestamp);
+            for (let i = 0; i < this.queues.length; i++) {
+              if (this.queues[i].id === result.queueId) {
+                this.queues[i].lastDeployed = this.formatTimestamp(data.timestamp);
                 updateLocalStorage = true;
                 break;
               }
             }
             if (updateLocalStorage) {
-              // update feeds localStorage 
-              localStorage.setItem('feeds', JSON.stringify(this.feeds));
+              // update queues localStorage 
+              localStorage.setItem('queues', JSON.stringify(this.queues));
             }
             this.rebuildLunrIndexes();
           }).catch((error) => {
@@ -1370,21 +1365,21 @@ export default {
     // 
     // create / update queue 
     // 
-    newFeed() {
+    newQueue() {
       document.activeElement.blur();
-      this.showFeedConfigPanel = true;
-      this.$nextTick(() => this.$refs.feedConfigPanel.setup({ subscriptions: [] }));
+      this.showQueueConfigPanel = true;
+      this.$nextTick(() => this.$refs.queueConfigPanel.setup({ subscriptions: [] }));
     },
     uploadOpml() {
       document.activeElement.blur();
-      this.setSelectedFeedId(this.selectedFeedId);
+      this.setSelectedQueueId(this.selectedQueueId);
       this.showOpmlUploadPanel = true;
       this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },
-    createOpmlFeeds(feeds) {
+    finalizeOpmlUpload(queues) {
       let method = 'POST';
       this.uploadIsLoading = true;
-      console.log("post-feed: pushing feeds to remote, ct=" + feeds.length);
+      console.log("pushing queues to remote, ct=" + queues.length);
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -1393,11 +1388,11 @@ export default {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(feeds),
+          body: JSON.stringify(queues),
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/", requestOptions)
+        fetch(this.baseUrl + "/queues/", requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1410,19 +1405,21 @@ export default {
             }
           })
           .then((data) => {
-            let feedIds = [];
+            let queueIds = [];
             for (let i = 0; i < data.length; i++) {
-              let f = data[i].feedDefinition;
-              this.decorateFeedWithQueryDefinitions(f, data[i].queryDefinitions, data[i].subscriptionMetrics);
-              this.feeds.push(f);
-              feedIds.push(f.id);
+              let queue = data[i].queueDefinition;
+              let subscriptionDefinitions = data[i].subscriptionDefinitions;
+              let subscriptionMetrics = data[i].subscriptionMetrics;
+              this.decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
+              this.queues.push(queue);
+              queueIds.push(queue.id);
             }
-            // update feeds localStorage 
-            localStorage.setItem('feeds', JSON.stringify(this.feeds));
-            this.setLastServerMessage(feeds.length + " " + this.$t('nQueuesCreated'));
+            // update queues localStorage 
+            localStorage.setItem('queues', JSON.stringify(this.queues));
+            this.setLastServerMessage(this.queues.length + " " + this.$t('nQueuesCreated'));
             this.$refs.opmlUploadPanel.hide();
             this.showOpmlUploadPanel = false;
-            this.refreshFeeds(feedIds, false);
+            this.refreshQueues(queueIds, false);
           })
           .catch((error) => {
             this.handleServerError(error);
@@ -1439,19 +1436,19 @@ export default {
       if (this.$refs.opmlUploadPanel) {
         this.$refs.opmlUploadPanel.hide();
         this.showOpmlUploadPanel = false;
-        this.restorePreviousFeedId();
+        this.restorePreviousQueueId();
       }
     },
-    configureFeed(feedId) {
+    configureQueue(queueId) {
       document.activeElement.blur();
-      this.showFeedConfigPanel = true;
-      this.configuredFeedId = feedId;
-      this.$nextTick(() => this.$refs.feedConfigPanel.setup(this.getFeedById(feedId)));
+      this.showQueueConfigPanel = true;
+      this.configuredQueueId = queueId;
+      this.$nextTick(() => this.$refs.queueConfigPanel.setup(this.getQueueById(queueId)));
     },
-    createFeed(feed) {
+    createQueue(queue) {
       let method = 'POST';
       this.isLoading = true;
-      console.log("post-feed: pushing new feed to remote..");
+      console.log("pushing new queue to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -1460,11 +1457,11 @@ export default {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify([feed]),
+          body: JSON.stringify([queue]),
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/", requestOptions)
+        fetch(this.baseUrl + "/queues/", requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1479,16 +1476,16 @@ export default {
             }
           })
           .then((data) => {
-            let created = data[0].feedDefinition;
-            this.feeds.push(created);
-            // update feeds localStorage 
-            localStorage.setItem('feeds', JSON.stringify(this.feeds));
-            this.inboundQueuesByFeed[created.id] = { values: [] };
+            let created = data[0].queueDefinition;
+            this.queues.push(created);
             // update queues localStorage 
-            localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
-            this.$refs.feedConfigPanel.setup(created);
+            localStorage.setItem('queues', JSON.stringify(this.queues));
+            this.articleListsByQueue[created.id] = { values: [] };
+            // update queues localStorage 
+            localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
+            this.$refs.queueConfigPanel.setup(created);
             this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
-            this.setSelectedFeedId(created.id);
+            this.setSelectedQueueId(created.id);
             this.rebuildLunrIndexes();
           }).catch((error) => {
             this.handleServerError(error);
@@ -1501,10 +1498,10 @@ export default {
         this.isLoading = false;
       });
     },
-    updateFeed(feed) {
+    updateQueue(queue) {
       let method = 'PUT';
       this.isLoading = true;
-      console.log("post-feed: pushing updated feed to remote..");
+      console.log("pushing updated queue to remote..");
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
@@ -1513,11 +1510,11 @@ export default {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(feed),
+          body: JSON.stringify(queue),
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/feeds/" + feed.id, requestOptions)
+        fetch(this.baseUrl + "/queues/" + queue.id, requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1532,8 +1529,8 @@ export default {
             }
           })
           .then((data) => {
-            let updated = data.feedDefinition;
-            let current = this.getFeedById(updated.id);
+            let updated = data.queueDefinition;
+            let current = this.getQueueById(updated.id);
             current.ident = updated.ident;
             current.title = updated.title;
             current.description = updated.description;
@@ -1545,11 +1542,11 @@ export default {
             current.categoryScheme = updated.categoryScheme;
             current.categoryValue = updated.categoryValue;
             current.categoryDomain = updated.categoryDomain;
-            this.decorateFeedWithQueryDefinitions(current, data.queryDefinitions, data.subscriptionMetrics);
-            // update feeds localStorage 
-            localStorage.setItem('feeds', JSON.stringify(this.feeds));
-            this.setLastServerMessage(this.$t('queueUpdated') + ' (' + feed.ident + ')');
-            this.refreshFeeds([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
+            this.decorateQueueWithSubscriptionDefinitions(current, data.subscriptionDefinitions, data.subscriptionMetrics);
+            // update queues localStorage 
+            localStorage.setItem('queues', JSON.stringify(this.queues));
+            this.setLastServerMessage(this.$t('queueUpdated') + ' (' + queue.ident + ')');
+            this.refreshQueues([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
           }).catch((error) => {
             this.handleServerError(error);
           }).finally(() => {
@@ -1561,36 +1558,36 @@ export default {
         this.isLoading = false;
       });
     },
-    dismissFeedConfigPanel() {
-      if (this.$refs.feedConfigPanel) {
-        this.$refs.feedConfigPanel.tearDown();
-        this.showFeedConfigPanel = false;
-        this.configuredFeedId = null;
-        if (!this.selectedFeedId) {
-          this.restorePreviousFeedId();
+    dismissQueueConfigPanel() {
+      if (this.$refs.queueConfigPanel) {
+        this.$refs.queueConfigPanel.tearDown();
+        this.showQueueConfigPanel = false;
+        this.configuredQueueId = null;
+        if (!this.selectedQueueId) {
+          this.restorePreviousQueueId();
         }
       }
     },
     // 
     // delete queue 
     // 
-    deleteSelectedFeed() {
+    deleteSelectedQueue() {
       document.activeElement.blur();
-      this.feedIdToDelete = this.selectedFeedId;
-      this.showFeedDeleteConfirmation = true;
+      this.queueIdToDelete = this.selectedQueueId;
+      this.showQueueDeleteConfirmation = true;
     },
-    deleteFeed(feedId) {
+    deleteQueue(queueId) {
       document.activeElement.blur();
-      this.feedIdToDelete = feedId;
-      this.showFeedDeleteConfirmation = true;
+      this.queueIdToDelete = queueId;
+      this.showQueueDeleteConfirmation = true;
     },
-    performFeedDelete() {
-      console.log("post-feed: deleting feed id=" + this.feedIdToDelete);
+    performQueueDelete() {
+      console.log("deleting queue id=" + this.queueIdToDelete);
       this.isLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/feeds/" + this.feedIdToDelete, {
+        fetch(this.baseUrl + "/queues/" + this.queueIdToDelete, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -1609,24 +1606,24 @@ export default {
               response.text().then(t => {throw new Error(t)});
           }
         }).then((data) => {
-          console.log("post-feed: deleted feedId=" + this.feedIdToDelete);
-          delete this.inboundQueuesByFeed[this.feedIdToDelete];
+          console.log("deleted queueId=" + this.queueIdToDelete);
+          delete this.articleListsByQueue[this.queueIdToDelete];
           // update queues localStorage 
-          localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
+          localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
           let idxToSplice = -1;
-          for (let i = 0; i < this.feeds.length; i++) {
-            if (this.feeds[i].id === this.feedIdToDelete) {
+          for (let i = 0; i < this.queues.length; i++) {
+            if (this.queues[i].id === this.queueIdToDelete) {
               idxToSplice = i;
               break;
             }
           }
           if (idxToSplice > -1) {
-            let nextFeedId = this.feeds.length > idxToSplice + 1 ? this.feeds[idxToSplice + 1].id : null;
-            this.feeds.splice(idxToSplice, 1);
-            // update feeds localStorage 
-            localStorage.setItem('feeds', JSON.stringify(this.feeds));
-            if (this.selectedFeedId === this.feedIdToDelete) {
-              this.setSelectedFeedId(nextFeedId); // TODO: (enhancement) should be a configurable 'default' feed 
+            let nextQueueId = this.queues.length > idxToSplice + 1 ? this.queues[idxToSplice + 1].id : null;
+            this.queues.splice(idxToSplice, 1);
+            // update queues localStorage 
+            localStorage.setItem('queues', JSON.stringify(this.queues));
+            if (this.selectedQueueId === this.queueIdToDelete) {
+              this.setSelectedQueueId(nextQueueId); // TODO: (enhancement) should be a configurable 'default' queue 
             }
           }
           this.setLastServerMessage(data.message);
@@ -1634,37 +1631,37 @@ export default {
         }).catch((error) => {
           this.handleServerError(error);
         }).finally(() => {
-          this.feedIdToDelete = null;
-          this.showFeedDeleteConfirmation = false;
+          this.queueIdToDelete = null;
+          this.showQueueDeleteConfirmation = false;
           this.isLoading = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
         this.handleServerError(error);
-        this.feedIdToDelete = null;
-        this.showFeedDeleteConfirmation = false;
+        this.queueIdToDelete = null;
+        this.showQueueDeleteConfirmation = false;
         this.isLoading = false;
       });
     },
-    cancelFeedDelete() {
-      this.feedIdToDelete = null;
-      this.showFeedDeleteConfirmation = false;
+    cancelQueueDelete() {
+      this.queueIdToDelete = null;
+      this.showQueueDeleteConfirmation = false;
     },
     // 
     // mark queue as read 
     // 
-    markSelectedFeedAsRead() {
+    markSelectedQueueAsRead() {
       document.activeElement.blur();
-      this.feedIdToMarkAsRead = this.selectedFeedId;
-      this.showFeedMarkAsReadConfirmation = true;
+      this.queueIdToMarkAsRead = this.selectedQueueId;
+      this.showQueueMarkAsReadConfirmation = true;
     },
-    markFeedAsRead(feedId) {
+    markQueueAsRead(queueId) {
       document.activeElement.blur();
-      this.feedIdToMarkAsRead = feedId;
-      this.showFeedMarkAsReadConfirmation = true;
+      this.queueIdToMarkAsRead = queueId;
+      this.showQueueMarkAsReadConfirmation = true;
     },
-    performFeedMarkAsRead() {
-      console.log("post-feed: updating feed status, id=" + this.feedIdToMarkAsRead);
+    performQueueMarkAsRead() {
+      console.log("updating queue status, id=" + this.queueIdToMarkAsRead);
       this.isLoading = true;
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -1678,7 +1675,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/staging/read-status/feed/" + this.feedIdToMarkAsRead, requestOptions)
+        fetch(this.baseUrl + "/staging/read-status/queue/" + this.queueIdToMarkAsRead, requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1690,64 +1687,64 @@ export default {
               response.text().then(t => {throw new Error(t)});
             }
           }).then((data) => {
-            this.inboundQueuesByFeed[this.feedIdToMarkAsRead].values.forEach((p) => {
+            this.articleListsByQueue[this.queueIdToMarkAsRead].values.forEach((p) => {
               p.isRead = true;
               p.postReadStatus = 'READ';
               p.isReadLater = false;
             });
             // update queue localStorage
-            localStorage.setItem('inboundQueuesByFeed', JSON.stringify(this.inboundQueuesByFeed));
+            localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
             this.setLastServerMessage(data.message);
             this.rebuildLunrIndexes();
           }).catch((error) => {
             this.handleServerError(error);
           }).finally(() => {
-            this.feedIdToMarkAsRead = null;
-            this.showFeedMarkAsReadConfirmation = false;
+            this.queueIdToMarkAsRead = null;
+            this.showQueueMarkAsReadConfirmation = false;
             this.isLoading = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
         this.handleServerError(error);
-        this.feedIdToMarkAsRead = null;
-        this.showFeedMarkAsReadConfirmation = false;
+        this.queueIdToMarkAsRead = null;
+        this.showQueueMarkAsReadConfirmation = false;
         this.isLoading = false;
       });
     },
-    cancelFeedMarkAsRead() {
-      this.feedIdToMarkAsRead = null;
-      this.showFeedMarkAsReadConfirmation = false;
+    cancelQueueMarkAsRead() {
+      this.queueIdToMarkAsRead = null;
+      this.showQueueMarkAsReadConfirmation = false;
     },
     // 
     // data model methods 
     // 
-    setSelectedFeedId(feedId) {
-      this.previousFeedId = this.selectedFeedId;
-      this.selectedFeedId = feedId;
-      this.inboundQueue = feedId ? this.inboundQueuesByFeed[feedId] : null;
+    setSelectedQueueId(queueId) {
+      this.previousQueueId = this.selectedQueueId;
+      this.selectedQueueId = queueId;
+      this.articleList = queueId ? this.articleListsByQueue[queueId] : null;
     },
-    restorePreviousFeedId() {
-      this.setSelectedFeedId(this.previousFeedId);
+    restorePreviousQueueId() {
+      this.setSelectedQueueId(this.previousQueueId);
     },
-    getSelectedFeed() {
-      if (this.selectedFeedId) {
-        for (let i = 0; i < this.feeds.length; i++) {
-          if (this.feeds[i].id === this.selectedFeedId) {
-            return this.feeds[i];
+    getSelectedQueue() {
+      if (this.selectedQueueId) {
+        for (let i = 0; i < this.queues.length; i++) {
+          if (this.queues[i].id === this.selectedQueueId) {
+            return this.queues[i];
           }
         }
       }
       return {};
     },
-    getFeedById(feedId) {
-      for (let i = 0; i < this.feeds.length; i++) {
-        if (this.feeds[i].id === feedId) {
-          return this.feeds[i];
+    getQueueById(queueId) {
+      for (let i = 0; i < this.queues.length; i++) {
+        if (this.queues[i].id === queueId) {
+          return this.queues[i];
         }
       }
     },
     getPostFromQueue(id) {
-      let f = this.inboundQueue.values;
+      let f = this.articleList.values;
       for (let j = 0; j < f.length; j++) {
         if (f[j].id === id) {
           return f[j];
@@ -1776,9 +1773,9 @@ export default {
         return;
       }
       // 
-      // Feed-related key handling 
+      // queue-related key handling 
       // 
-      if (this.selectedFeedId) {
+      if (this.selectedQueueId) {
         let t = event.target.getAttribute("type") || event.target.type;
         if (t === 'text') {
           return;
@@ -1787,7 +1784,7 @@ export default {
         // SHIFT + E KEY (CONFIGURE SELECTED QUEUE)
         // 
         if (event.key === 'E' && event.shiftKey === true) {
-          this.configureFeed(this.selectedFeedId);
+          this.configureQueue(this.selectedQueueId);
           event.stopPropagation();
           event.preventDefault();
           // 
@@ -1795,12 +1792,12 @@ export default {
           // 
         } else if (event.key === '/') {
           this.$nextTick(() => {
-            let filterElem = document.getElementById('feed-filter');
+            let filterElem = document.getElementById('queue-filter');
             if (filterElem) {
               filterElem.focus();
             } else {
               this.$nextTick(() => {
-                let filterElem = document.getElementById('feed-filter');
+                let filterElem = document.getElementById('queue-filter');
                 if (filterElem) {
                   filterElem.focus();
                 }
@@ -1813,35 +1810,35 @@ export default {
           // SHIFT + L KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'L' && event.shiftKey) {
-          this.toggleFeedFilterMode('READ_LATER');
+          this.toggleFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + H KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'H' && event.shiftKey) {
-          this.toggleFeedFilterMode('READ');
+          this.toggleFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + T KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'T' && event.shiftKey) {
-          this.toggleFeedFilterMode('PUBLISHED');
+          this.toggleFilterMode('PUBLISHED');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + A KEY (MARK QUEUE AS READ)
           // 
         } else if (event.key === 'A' && event.shiftKey === true) {
-          this.markSelectedFeedAsRead();
+          this.markSelectedQueueAsRead();
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + D KEY (DELETE QUEUE) 
           // 
         } else if (event.key === 'D' && event.shiftKey === true) {
-          this.deleteSelectedFeed();
+          this.deleteSelectedQueue();
           event.stopPropagation();
           event.preventDefault();
         }
@@ -1850,14 +1847,14 @@ export default {
       // SHIFT + R KEY (REFRESH QUEUES)
       // 
       if (event.key === 'R' && event.shiftKey === true) {
-        this.refreshFeeds(null, true);
+        this.refreshQueues(null, true);
         event.stopPropagation();
         event.preventDefault();
         // 
         // SHIFT + Q KEY (NEW QUEUE)
         // 
       } else if (event.key === 'Q' && event.shiftKey === true) {
-        this.newFeed();
+        this.newQueue();
         event.stopPropagation();
         event.preventDefault();
       }
@@ -1904,7 +1901,7 @@ body {
   }
 }
 
-.selected-feed {
+.selected-queue {
   border: 1px solid !important;
 }
 
@@ -1914,7 +1911,7 @@ body {
   font-size: larger;
 }
 
-.post-feed-container {
+.queue-container {
   background-color: transparent;
 }
 </style>

@@ -731,7 +731,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/feeds/opml", requestOptions).then((response) => {
+        fetch(this.baseUrl + "/queues/opml", requestOptions).then((response) => {
           if (response.status === 200) {
             return response.blob();
           } else {
