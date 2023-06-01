@@ -224,6 +224,7 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     subscriptions: { type: Array, required: true },
+    queueId: { type: Number, required: true },
     baseUrl: { type: String, required: true },
   },
   emits: [
@@ -295,7 +296,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/" + this.queueId + '/queries/', requestOptions)
+        fetch(this.baseUrl + "/queues/" + this.queueId + '/subscriptions/', requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -311,7 +312,6 @@ export default {
           if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
             let qd = subscriptionDefinitions[0];
             this.$emit('addSubscription', qd);
-            this.newSubscription = {};
             this.addSuccess = true;
             this.setLastServerMessage(this.$t('subscriptionAdded'));
           }
@@ -343,7 +343,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/" + this.queueId + '/queries/' + id, requestOptions)
+        fetch(this.baseUrl + "/queues/" + this.queueId + '/subscriptions/' + id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -390,7 +390,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/" + this.queueId + '/queries/' + subscription.id, requestOptions)
+        fetch(this.baseUrl + "/queues/" + this.queueId + '/subscriptions/' + subscription.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;

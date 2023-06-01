@@ -16,7 +16,6 @@
         :title="$t('pleaseEnableNotifications')"
         icon="fa-bell"
         :size="buttonSize"
-        @showSettings="$emit('showSettings')"
       />
       <SettingsButton
         v-if="isAuthenticated"

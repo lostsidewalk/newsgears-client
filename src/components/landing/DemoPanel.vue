@@ -1,15 +1,7 @@
 <template>
   <v-container>
-    <!-- row -->
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <!-- col -->
-      <v-col
-        cols="12"
-        sm="10"
-      >
+    <v-carousel>
+      <v-carousel-item>
         <v-hover v-slot="{ isHovering, props }">
           <v-card
             :elevation="isHovering ? 12 : 0" 
@@ -22,8 +14,8 @@
             />
           </v-card>
         </v-hover>
-      </v-col>
-    </v-row>
+      </v-carousel-item>
+    </v-carousel>
   </v-container>
 </template>
 

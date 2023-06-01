@@ -24,6 +24,7 @@
 
       <PasswordResetRequestPanel
         :is-loading="pwResetIsLoading"
+        :server-message="serverMessage"
         @submitPwReset="submitPwReset"
       />
       
@@ -59,8 +60,9 @@ export default {
   },
   methods: {
     submitPwReset(pwResetRequest) {
+      console.log("here");
       let username = pwResetRequest.username;
-      let email = pwResetRequest.password;
+      let email = pwResetRequest.email;
       this.serverMessage = null;
       if (!username || !email) {
         this.serverMessage = this.$t('pwResetRequestMessage');

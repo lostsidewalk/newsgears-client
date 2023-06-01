@@ -25,6 +25,7 @@
       <PasswordUpdatePanel
         ref="passwordUpdate"
         :is-loading="pwUpdateIsLoading"
+        :server-message="serverMessage"
         @submitPwUpdate="submitPwUpdate"
       />
 

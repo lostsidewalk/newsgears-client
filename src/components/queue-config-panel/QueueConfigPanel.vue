@@ -306,7 +306,7 @@ export default {
 
       this.subscriptions.unshift(r);
       
-      this.$emit('refreshQueueDefinition', this.queue.id);
+      this.$emit('refreshQueueDefinitions', this.queue.id);
     },
     deleteSubscription(id) {
       let deleteIdx = -1;
@@ -318,7 +318,7 @@ export default {
       }
       if (deleteIdx > -1) {
         this.subscriptions.splice(deleteIdx, 1);
-        this.$emit('refreshQueueDefinition', this.queue.id);
+        this.$emit('refreshQueueDefinitions', this.queue.id);
       }
     },
     updateSubscriptionAuth(source) {
@@ -340,7 +340,7 @@ export default {
           this.subscriptions[updateIdx].username = null;
           this.subscriptions[updateIdx].password = null;
         }
-        this.$emit('refreshQueueDefinition', this.queue.id);
+        this.$emit('refreshQueueDefinitions', this.queue.id);
       }
     },
   }

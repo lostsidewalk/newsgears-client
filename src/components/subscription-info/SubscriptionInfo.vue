@@ -194,7 +194,6 @@ export default {
   props: {
     info: { type: Object, required: true }
   },
-  emits: [ "followRecommendation" ],
   data() {
     return {
       showSubscriptionMetrics: false,
