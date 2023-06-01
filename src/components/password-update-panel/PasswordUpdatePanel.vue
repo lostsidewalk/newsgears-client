@@ -16,7 +16,7 @@
             :elevation="isHovering ? 7 : 6"
             class="mt-10 mb-10"
             v-bind="props"
-            variant="outlined"
+            variant="flat"
           >
             <!-- window -->
             <v-window v-model="step">
@@ -68,8 +68,8 @@
                             <!-- submit button -->
                             <AuthButton
                               :label="$t('submit')"
-                              :is-loading="pwUpdateIsLoading"
-                              @clicked="submitPwUpdate()"
+                              :is-loading="isLoading"
+                              @clicked="$emit('submitPwUpdate', { newPassword: newPassword, newPasswordConfirmed: newPasswordConfirmed })"
                             />
                           </div>
                           <AuthServerResponse
@@ -105,8 +105,8 @@
 </template>
 
 <script>
-import AuthButton from '@/components/auth/AuthButton.vue'
 import AuthTextField from '@/components/auth/AuthTextField.vue';
+import AuthButton from '@/components/auth/AuthButton.vue'
 import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
 import PrivacyPolicyPanel from '@/components/privacy-policy-panel/PrivacyPolicyPanel.vue';
 
@@ -118,6 +118,11 @@ export default {
     AuthServerResponse, 
     PrivacyPolicyPanel, 
   },
+  props: {
+    serverMessage: { type: String, default: null },
+    isLoading: { type: Boolean, default: false },
+  },
+  emits: ["submitPwUpdate"],
   data() {
     return {
       step: null,
@@ -125,56 +130,13 @@ export default {
       newPassword: '',
       newPasswordConfirmed: '',
       showPrivacyPolicy: false,
-      // server response/initiating action 
-      serverMessage: null,
-      // 
-      pwUpdateIsLoading: false,
     }
   },
-  methods: {
-    //
-    // 
-    //
-    submitPwUpdate() {
-      this.clearServerResponse();
-
-      if (!this.newPassword || !this.newPasswordConfirmed) {
-        return;
-      }
-
-      this.pwUpdateIsLoading = true;
-      this.$auth
-          .pwUpdateWithSupplied(this.newPassword, this.newPasswordConfirmed)
-          .then(() => {
-            this.clearData();
-            this.serverMessage = this.$t('pwUpdated');
-          })
-          .catch((error) => {
-            this.serverMessage = error;
-          })
-          .finally(() => {
-            this.pwUpdateIsLoading = false;
-          });
-    },
-    //
-    //
-    //
-    clearData() {
-      // reset all fields 
-      this.newPassword = '';
-      this.newPasswordConfirmed = '';
-      this.clearServerResponse();
-    },
-    clearServerResponse() {
-      this.serverMessage = null;
-    }
-  }
 }
 </script>
 
-
 <style scoped>
 .logotext {
-  font-family: 'Russo One';
+  font-family: 'Russo One' !important;
 }
 </style>
