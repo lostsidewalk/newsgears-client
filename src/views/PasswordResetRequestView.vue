@@ -22,7 +22,10 @@
     <v-main>
       <BannerPanel :show-auth="false" />
 
-      <PasswordResetRequestPanel />
+      <PasswordResetRequestPanel
+        :is-loading="pwResetIsLoading"
+        @submitPwReset="submitPwReset"
+      />
       
       <FooterPanel app />
     </v-main>
@@ -48,5 +51,35 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
+  data() {
+    return {
+      pwResetIsLoading: false,
+      serverMessage: null,
+    }
+  },
+  methods: {
+    submitPwReset(pwResetRequest) {
+      let username = pwResetRequest.username;
+      let email = pwResetRequest.password;
+      this.serverMessage = null;
+      if (!username || !email) {
+        this.serverMessage = this.$t('pwResetRequestMessage');
+        return;
+      }
+
+      this.pwResetIsLoading = true;
+      this.$auth
+          .pwResetWithSupplied(username, email)
+          .then(() => {
+            this.serverMessage = this.$t('checkEmailForFurther');
+          })
+          .catch((error) => {
+            this.serverMessage = error;
+          })
+          .finally(() => {
+            this.pwResetIsLoading = false;
+          });
+    },
+  }
 };
 </script>

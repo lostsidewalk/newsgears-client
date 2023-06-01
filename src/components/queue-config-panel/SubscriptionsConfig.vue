@@ -269,7 +269,7 @@ export default {
       } else if (error.message) {
         this.setLastServerMessage(error.message); 
       } else {
-        this.setLastServerMessage(error); // $auth plugin errors 
+        this.setLastServerMessage(error);
       }
     },
     setLastServerMessage(message) {

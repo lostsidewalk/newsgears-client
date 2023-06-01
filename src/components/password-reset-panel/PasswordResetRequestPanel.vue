@@ -67,8 +67,8 @@
                             <AuthButton
                               class="ma-4"
                               :label="$t('submit')"
-                              :is-loading="pwResetIsLoading"
-                              @clicked="submitPwReset()"
+                              :is-loading="isLoading"
+                              @clicked="$emit('submitPwReset', { email: email, username: username })"
                             />
                           </div>
                           <AuthPanelLink
@@ -129,6 +129,11 @@ export default {
     PrivacyPolicyPanel,
   },
   mixins: [buttonSizeMixin],
+  props: {
+    serverMessage: { type: String, default: null },
+    isLoading: { type: Boolean, default: false },
+  },
+  emits: ["submitPwReset"],
   data() {
     return {
       step: null,
@@ -136,50 +141,8 @@ export default {
       username: '',
       email: '',
       showPrivacyPolicy: false,
-      // server response
-      serverMessage: null,
-      // 
-      pwResetIsLoading: false,
     }
   },
-  methods: {
-    //
-    // 
-    //
-    submitPwReset() {
-      this.clearServerResponse();
-      if (!this.username || !this.email) {
-        this.serverMessage = this.$t('pwResetRequestMessage');
-        return;
-      }
-
-      this.pwResetIsLoading = true;
-      this.$auth
-          .pwResetWithSupplied(this.username, this.email)
-          .then(() => {
-            this.clearData();
-            this.serverMessage = this.$t('checkEmailForFurther');
-          })
-          .catch((error) => {
-            this.serverMessage = error;
-          })
-          .finally(() => {
-            this.pwResetIsLoading = false;
-          });
-    },
-    //
-    //
-    //
-    clearData() {
-      // reset all fields 
-      this.username = '';
-      this.email = '';
-      this.clearServerResponse();
-    },
-    clearServerResponse() {
-      this.serverMessage = null;
-    }
-  }
 }
 </script>
 
