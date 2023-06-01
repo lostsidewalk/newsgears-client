@@ -66,6 +66,7 @@
             :show-settings-panel="showSettingsPanel"
             :show-help-panel="showHelpPanel"
             :show-notification-warning="showNotificationWarning"
+            :is-authenticated="$auth.$isAuthenticated"
             @showSettings="showSettingsPanel = !showSettingsPanel"
             @showHelp="showHelpPanel = !showHelpPanel"
           >

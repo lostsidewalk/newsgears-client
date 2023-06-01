@@ -5,10 +5,10 @@
       style="justify-content: space-around;align-content: space-around;"
     >
       <!-- logout button, don't disable -->
-      <LogoutButton v-if="$auth.$isAuthenticated" />
+      <LogoutButton v-if="isAuthenticated" />
       <!-- settings button -->
       <v-btn
-        v-if="$auth.$isAuthenticated"
+        v-if="isAuthenticated"
         v-show="showNotificationWarning"
         :title="$t('pleaseEnableNotifications')"
         icon="fa-bell"
@@ -16,7 +16,7 @@
         @showSettings="$emit('showSettings')"
       />
       <SettingsButton
-        v-if="$auth.$isAuthenticated"
+        v-if="isAuthenticated"
         :expanded="showSettingsPanel"
         @showSettings="$emit('showSettings')"
       />
@@ -73,6 +73,7 @@ export default {
     showSettingsPanel: { type: Boolean, default: false },
     showHelpPanel: { type: Boolean, default: false },
     showNotificationWarning: { type: Boolean, defualt: false },
+    isAuthenticated: { type: Boolean, default: false },
   },
   emits: [
     "showSettings",
