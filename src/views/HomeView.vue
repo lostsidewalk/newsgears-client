@@ -69,6 +69,7 @@
             :is-authenticated="$auth.$isAuthenticated"
             @showSettings="showSettingsPanel = !showSettingsPanel"
             @showHelp="showHelpPanel = !showHelpPanel"
+            @logout="logout"
           >
             <template #additional>
               <!-- upload OPML button -->
@@ -763,9 +764,18 @@ export default {
     window.removeEventListener("keydown", this.keyHandler);
   },
   methods: {
+    logout() {
+      this.$auth.logout()
+      .catch((error) => {
+        console.error("unable to logout due to: " + error);
+      }).finally(() => {
+        console.log("logout complete");
+      });
+    },
     login(loginRequest) {
       let username = loginRequest.username;
       let password = loginRequest.password;
+      this.authServerMessage = null;
       if (!username && !password) {
         this.authServerMessage = this.$t("usernameAndPasswordAreRequired");
         return;

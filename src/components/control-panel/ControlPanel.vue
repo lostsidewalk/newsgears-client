@@ -5,7 +5,10 @@
       style="justify-content: space-around;align-content: space-around;"
     >
       <!-- logout button, don't disable -->
-      <LogoutButton v-if="isAuthenticated" />
+      <LogoutButton
+        v-if="isAuthenticated"
+        @logout="$emit('logout')"
+      />
       <!-- settings button -->
       <v-btn
         v-if="isAuthenticated"
@@ -78,6 +81,7 @@ export default {
   emits: [
     "showSettings",
     "showHelp",
+    "logout", 
   ],
   data() {
     return {};
