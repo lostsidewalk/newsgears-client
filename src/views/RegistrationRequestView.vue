@@ -22,7 +22,11 @@
     <v-main>
       <BannerPanel :show-auth="false" />
 
-      <RegistrationRequestPanel />
+      <RegistrationRequestPanel
+        :is-loading="registrationIsLoading"
+        :server-message="serverMessage"
+        @submit-registration="submitRegistration"
+      />
 
       <FooterPanel app />
     </v-main>
@@ -48,5 +52,48 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
+  data() {
+    return {
+      registrationIsLoading: false,
+      serverMessage: null,
+    }
+  },
+  methods: {
+    submitRegistration(registrationRequest) {
+      let username = registrationRequest.username;
+      let email = registrationRequest.email;
+      let password = registrationRequest.password;
+      let userType = registrationRequest.userType;
+      this.serverMessage = null;
+      if (!username || !email || !password) {
+        this.serverMessage = this.$t('registrationRequirements');
+        return;
+      }
+
+      this.registrationIsLoading = true;
+      this.$auth
+        .registerWithSupplied(username, email, password, userType)
+        .then((response) => {
+          this.clearData();
+          this.$auth.loginWithSupplied(response.username, response.password, false)
+          .then(() => {
+            this.clearData();
+            this.$router.push("/app");
+          })
+          .catch((error) => {
+            this.serverMessage = error;
+          })
+          .finally(() => {
+            this.registrationIsLoading = false;
+          });
+        })
+        .catch((error) => {
+          this.serverMessage = error;
+        })
+        .finally(() => {
+          this.registrationIsLoading = false;
+        });
+    }
+  }
 };
 </script>

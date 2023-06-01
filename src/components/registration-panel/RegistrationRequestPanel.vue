@@ -72,8 +72,8 @@
                             <AuthButton
                               class="ma-4"
                               :label="$t('submit')"
-                              :is-loading="registrationIsLoading"
-                              @clicked="submitRegistration()"
+                              :is-loading="isLoading"
+                              @clicked="$emit('submitRegistration', { username: username, email: email, password: password, userType: userType })"
                             />
                           </div>
                           <AuthPanelLink
@@ -131,6 +131,11 @@ export default {
     AuthServerResponse,
     PrivacyPolicyPanel,
   },
+  props: {
+    isLoading: { type: Boolean, default: false },
+    serverMessage: { type: String, default: null },
+  },
+  emits: ["submitRegistration"],
   data() {
     return {
       step: null,
@@ -139,62 +144,8 @@ export default {
       password: '',
       userType: null,
       showPrivacyPolicy: false,
-      // server response 
-      serverMessage: null,
-      // 
-      registrationIsLoading: false,
     }
   },
-  methods: {
-    //
-    // 
-    //
-    submitRegistration() {
-      this.clearServerResponse();
-
-      if (!this.username || !this.email || !this.password) {
-        this.serverMessage = this.$t('registrationRequirements');
-        return;
-      }
-
-      this.registrationIsLoading = true;
-      this.$auth
-        .registerWithSupplied(this.username, this.email, this.password, this.userType)
-        .then((response) => {
-          this.clearData();
-          this.$auth.loginWithSupplied(response.username, response.password, false)
-          .then(() => {
-            this.clearData();
-            this.$router.push("/app");
-          })
-          .catch((error) => {
-            this.serverMessage = error;
-          })
-          .finally(() => {
-            this.registrationIsLoading = false;
-          });
-        })
-        .catch((error) => {
-          this.serverMessage = error;
-        })
-        .finally(() => {
-          this.registrationIsLoading = false;
-        });
-    },
-    //
-    //
-    //
-    clearData() {
-      // reset all fields 
-      this.username = '';
-      this.email = '';
-      this.password = '';
-      this.clearServerResponse();
-    },
-    clearServerResponse() {
-      this.serverMessage = null;
-    }
-  }
 }
 </script>
 
