@@ -257,10 +257,14 @@
         <OpmlUploadPanel
           ref="opmlUploadPanel"
           :base-url="baseUrl"
-          :is-loading="uploadIsLoading"
+          :is-loading="finalizeIsLoading || continueIsLoading" 
+          :at-step2="atStep2"
+          :errors="opmlErrors"
+          :queue-config-requests="queueConfigRequests"
+          @continueUplkoad="continueOpmlUpload"
           @finalizeUpload="finalizeOpmlUpload"
+          @returnToStep1="atStep2 = false"
           @cancel="cancelOpmlUpload"
-          @authError="handleServerError"
         />
       </v-dialog>
       <!-- subscription metrics dialog -->
@@ -512,7 +516,8 @@ export default {
       // 
       isLoading: false,
       loginIsLoading: false,
-      uploadIsLoading: false,
+      continueIsLoading: false,
+      finalizeIsLoading: false,
       refreshQueuesIsLoading: false,
       // 
       authServerMessage: null,
@@ -538,6 +543,9 @@ export default {
       configuredQueueId: null,
       // show the OPML config modal (t/f) 
       showOpmlUploadPanel: false,
+      atStep2: false, 
+      queueConfigRequests: null,
+      opmlErrors: [],
       // show the help modal (t/f) 
       showSettingsPanel: false,
       showHelpPanel: false,
@@ -1437,9 +1445,67 @@ export default {
       this.showOpmlUploadPanel = true;
       this.$nextTick(() => this.$refs.opmlUploadPanel.show());
     },
+    continueOpmlUpload(opmlFiles) {
+      this.continueIsLoading = true;
+      this.opmlErrors.splice(0);
+      this.$auth.getTokenSilently().then((token) => {
+        // form data 
+        let formData = new FormData();
+        for (let i = 0; i < opmlFiles.length; i++) {
+          let f = this.files[i];
+          formData.append('files', f.file, f.file.name);
+        }
+        // request options 
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'POST', 
+          headers: { 
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          body: formData,
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(this.baseUrl + "/queues/opml", requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? 
+              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+              response.text().then(t => {throw new Error(t)});
+          }
+        }).then((data) => {
+          if (data.errors && data.errors.length > 0) {
+            this.opmlErrors = data.errors;
+          } else {
+            this.queueConfigRequests = data.queueConfigRequests;
+            this.atStep2 = true;
+          }
+        }).catch((error) => {
+          console.error(error);
+          if (error.name === 'TypeError') {
+            this.opmlErrors.push(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.opmlErrors.push(this.$t('requestTimedOut'));
+          } else {
+            this.opmlErrors.push(error.message);
+          }
+        }).finally(() => {
+          this.continueIsLoading = false;
+          clearTimeout(timeoutId);
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.continueIsLoading = false;
+      });
+    },
     finalizeOpmlUpload(queues) {
       let method = 'POST';
-      this.uploadIsLoading = true;
+      this.finalizeIsLoading = true;
       console.log("pushing queues to remote, ct=" + queues.length);
       this.$auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
@@ -1485,12 +1551,12 @@ export default {
           .catch((error) => {
             this.handleServerError(error);
           }).finally(() => {
-            this.uploadIsLoading = false;
+            this.finalizeIsLoading = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
         this.handleServerError(error);
-        this.uploadIsLoading = false;
+        this.finalizeIsLoading = false;
       });
     },
     cancelOpmlUpload() {

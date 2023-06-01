@@ -63,7 +63,7 @@
                       variant="tonal" 
                       prepend-icon="fa-trash"
                       :text="$t('delete')" 
-                      @click="queueConfigRequests=[]; errors=[]; deleteOpmlFile(file)"
+                      @click="deleteOpmlFile(file)"
                     />
                   </v-list-item-action>
                 </template>
@@ -120,7 +120,7 @@
               :disabled="atStep2"
               :title="$t('selectAnOpmlFile')" 
               :text="$t('addAnOpmlFile')"
-              @click="errors = []; $refs.fileInput.click()"
+              @click="$refs.fileInput.click()"
             />
           </v-card-text>
           <v-divider class="mb-1 mt-1" />
@@ -130,7 +130,7 @@
               :size="buttonSize"
               autofocus 
               :disabled="!files.length"
-              :loading="uploadIsLoading || isLoading" 
+              :loading="isLoading" 
               :title="queueConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continueToStep2') : null)"
               :text="queueConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
               @click="queueConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
@@ -145,7 +145,7 @@
         v-if="atStep2"
         :size="buttonSize"
         :text="$t('goBack')" 
-        @click="returnToStep1"
+        @click="$emit('returnToStep1')"
       />
       <v-btn
         :size="buttonSize"
@@ -164,20 +164,16 @@ export default {
   mixins: [buttonSizeMixin],
   props: { 
     isLoading: { type: Boolean, default: false },
-    baseUrl: { type: String, required: true } 
+    baseUrl: { type: String, required: true }, 
+    atStep2: { type: Boolean, required: true },
+    errors: { type: Array, default: null },
+    queueConfigRequests: { type: Array, required: true },
   },
-  emits: [ "finalizeUpload", "cancel", "authError" ],
+  emits: [ "continueUpload", "finalizeUpload", "returnToStep1", "cancel" ],
   data() {
     return {
-      //
-      showModal: false,
       // 
       files: [],
-      atStep2: false,
-      errors: [],
-      queueConfigRequests: [],
-      // 
-      uploadIsLoading: false,
     }
   },
   methods: {
@@ -191,13 +187,6 @@ export default {
     eventHandler(event) {
       this.addFiles(event.target.files)
       event.target.value = null
-    },
-    show() {
-      this.showModal = true;
-    },
-    hide() {
-      this.clearModel();
-      this.showModal = false;
     },
     addFiles(newFiles) {
         let newUploadableFiles = [...newFiles]
@@ -217,92 +206,23 @@ export default {
     },
     removeFile(file) {
         const index = this.files.indexOf(file)
-
         if (index > -1) this.files.splice(index, 1)
     },
     // 
-    returnToStep1() {
-      this.atStep2 = false;
-      this.errors = [];
-      this.queueConfigRequests = [];
-    },
     finalizeOpmlUpload() {
       console.log("opml-upload-panel: finalizing OPML upload");
       this.$emit('finalizeUpload', this.queueConfigRequests);
     },
     continueOpmlUpload() {
-      console.log("opml-upload-panel: continue upload of OPML files=" + JSON.stringify(this.files));
-      this.uploadIsLoading = true;
-      this.errors.splice(0);
-      this.$auth.getTokenSilently().then((token) => {
-        // form data 
-        let formData = new FormData();
-        for (let i = 0; i < this.files.length; i++) {
-          let f = this.files[i];
-          formData.append('files', f.file, f.file.name);
-        }
-        // request options 
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'POST', 
-          headers: { 
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          body: formData,
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/opml", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          if (data.errors && data.errors.length > 0) {
-            this.errors = data.errors;
-          } else {
-            this.queueConfigRequests = data.queueConfigRequests;
-            this.atStep2 = true;
-          }
-        }).catch((error) => {
-          console.error(error);
-          if (error.name === 'TypeError') {
-            this.errors.push(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.errors.push(this.$t('requestTimedOut'));
-          } else {
-            this.errors.push(error.message);
-          }
-        }).finally(() => {
-          this.uploadIsLoading = false;
-          clearTimeout(timeoutId);
-        });
-      }).catch((error) => {
-        this.$emit('authError', error);
-        this.uploadIsLoading = false;
-      });
+      console.log("opml-upload-panel: continuing OPML upload");
+      this.$emit("continueUpload", this.files);
     },
     cancelOpmlUpload() {
-      this.clearModel();
       this.$emit('cancel');
     },
     deleteOpmlFile(file) {
       this.removeFile(file);
     },
-    clearModel() {
-      // TODO: (enhancement) possibly warn of un-saved data / get confirmation if files or queueConfigRequests are non-empty 
-      this.files.splice(0);
-      this.atStep2 = false;
-      this.errors.splice(0);
-      this.queueConfigRequests.splice(0);
-    }
   },
 }
 </script>
