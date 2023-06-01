@@ -67,7 +67,7 @@
             :show-help-panel="showHelpPanel"
             :show-notification-warning="showNotificationWarning"
             :is-authenticated="$auth.$isAuthenticated"
-            @showSettings="showSettingsPanel = !showSettingsPanel"
+            @showSettings="openSettings"
             @showHelp="showHelpPanel = !showHelpPanel"
             @logout="logout"
           >
@@ -216,8 +216,20 @@
         <SettingsPanel
           class="rounded"
           :base-url="baseUrl"
+          :account="account"
+          :framework-config="frameworkConfig"
+          :subscription="subscription"
+          :is-loading="settingsIsLoading"
+          @exportOpml="exportOpml"
+          @finalizeDeactivation="finalizeDeactivation"
+          @initPasswordReset="initPasswordReset"
+          @updateAccount="updateAccount"
+          @updateNotificationPreferences="updateNotificationPreferences"
+          @toggleNotifications="toggleNotifications"
+          @cancelSubscription="cancelSubscription"
+          @resumeSubscription="resumeSubscription"
+          @submitOrder="submitOrder"
           @dismiss="showSettingsPanel = false"
-          @updateServerMessage="setLastServerMessage"
         />
       </v-dialog>
       <!-- help modal -->
@@ -513,59 +525,61 @@ export default {
   data() {
     return {
       refreshIntervalId: null,
-      // 
+      // loading indicators 
       isLoading: false,
       loginIsLoading: false,
-      continueIsLoading: false,
-      finalizeIsLoading: false,
-      refreshQueuesIsLoading: false,
-      // 
+      continueIsLoading: false, // opml 
+      finalizeIsLoading: false, // opml 
+      refreshQueuesIsLoading: false, 
+      settingsIsLoading: false, // settings 
+      // show auth server message 
       authServerMessage: null,
-      // operating mode 
+      // show delete queue confirmation 
+      showQueueDeleteConfirmation: false,
       queueIdToDelete: null,
+      // show queue mark as read confirmation 
+      showQueueMarkAsReadConfirmation: false,
       queueIdToMarkAsRead: null,
-      // 
-      subscriptionToShow: null,
       // show subscription metrics 
+      subscriptionToShow: null,
       showSubscriptionMetrics: false,
       // show notification warning 
       showNotificationWarning: false,
       // show filter help
       showFilterHelp: false,
+      // show filter pills 
       showQueueFilterPills: false,
-      // show the queue dashboard (t/f) 
+      // show the queue dashboard 
       showQueueDashboard: false,
-      // 
+      // queue layout (list/card) 
       queueLayout: 'LIST', // 'CARD' 
-      // show the queue config modal (t/f) 
+      // show the queue config modal 
       showQueueConfigPanel: false,
-      // 
       configuredQueueId: null,
-      // show the OPML config modal (t/f) 
+      // show the OPML config modal 
       showOpmlUploadPanel: false,
       atStep2: false, 
       queueConfigRequests: null,
       opmlErrors: [],
-      // show the help modal (t/f) 
+      // show the account settings modal 
       showSettingsPanel: false,
+      account: null, 
+      frameworkConfig: null, 
+      subscription: null, 
+      // show the help modal 
       showHelpPanel: false,
-      //  
-      showQueueDeleteConfirmation: false,
-      showQueueMarkAsReadConfirmation: false,
-      // 
+      // show selected post 
       showSelectedPost: false,
-      selectedPost: null, // selected post to show on the singleton post card modal (in list view) 
-      selectedItem: null, // selected post list item 
+      selectedPost: null, // selected post to show on the post card modal (while in list view) 
+      selectedItem: null, // selected post list item (i.e., scrolling through the list in list view) 
       // queue material 
       queues: [], // all queues 
       selectedQueueId: null, // currently selected queue Id 
       previousQueueId: null, // previously selected queue Id 
-      // queue material 
       articleListsByQueue: {}, // all queues 
       articleList: { values: [] }, // inbound queue for the currently selected queue  
-      // queue filter material 
+      // filter material 
       articleListFilter: '', // user-supplied filter text (lunrjs query expression) 
-      // queue sorting material 
       articleListSortOrder: 'DSC',
       // queue refresh material 
       latestSubscriptionMetricsByQueue: {}, 
@@ -1996,7 +2010,490 @@ export default {
       } catch (error) {
         console.debug("Unable to format timestamp due to: " + error);
       }
-    }
+    },
+    // 
+    // SETTINGS 
+    // 
+    updateNotificationPreferences(updateNotificationRequest) {
+      let enableAccountAlerts = updateNotificationRequest.enableAccountAlerts;
+      let enableDailyFeedReport = updateNotificationRequest.enableDailyFeedReport;
+      let enableProductNotifications = updateNotificationRequest.enableProductNotifications;
+      let newSettings = {
+        frameworkConfig: {
+          notifications: {
+            accountAlerts: enableAccountAlerts,
+            dailyFeedReport: enableDailyFeedReport,
+            productNotifications: enableProductNotifications,
+          }
+        }
+      };
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return;
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then(() => {
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
+          if (newSettings.username) {
+            this.account.username = newSettings.username;
+          }
+          if (newSettings.emailAddress) {
+            this.account.emailAddress = newSettings.emailAddress;
+          }
+          if (newSettings.frameworkConfig) {
+            this.frameworkConfig = newSettings.frameworkConfig;
+          }
+          this.setLastServerMessage(this.$t('settingsUpdated'));
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    toggleNotifications(toggleNotificationsRequest) {
+      let enableAccountAlerts = toggleNotificationsRequest.enableAccountAlerts;
+      let enableDailyFeedReport = toggleNotificationsRequest.enableDailyFeedReport;
+      let enableProductNotifications = toggleNotificationsRequest.enableProductNotifications;
+      let newSettings = {
+        frameworkConfig: {
+          notifications: {
+            disabled: !this.isTrue(this.frameworkConfig.notifications.disabled),
+            accountAlerts: enableAccountAlerts,
+            dailyFeedReport: enableDailyFeedReport,
+            productNotifications: enableProductNotifications,
+          }
+        }
+      };
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return;
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then(() => {
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
+          if (newSettings.username) {
+            this.account.username = newSettings.username;
+          }
+          if (newSettings.emailAddress) {
+            this.account.emailAddress = newSettings.emailAddress;
+          }
+          if (newSettings.frameworkConfig) {
+            this.frameworkConfig = newSettings.frameworkConfig;
+          }
+          this.setLastServerMessage(this.$t('settingsUpdated'));
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    updateAccount(updateAccountRequest) {
+      let emailAddress = updateAccountRequest.emailAddress;
+      let newSettings = {
+        emailAddress: emailAddress
+      };
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(newSettings),
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return;
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then(() => {
+          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
+          if (newSettings.emailAddress) {
+            this.account.emailAddress = newSettings.emailAddress;
+          }
+          this.setLastServerMessage(this.$t('settingsUpdated'));
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          this.settingsIsLoading = false;
+          clearTimeout(timeoutId);
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    openSettings() {
+      this.isLoading = true; // top-level
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/settings", requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then((data) => {
+          this.account = {
+            username: data.username,
+            emailAddress: data.emailAddress,
+            authProvider: data.authProvider,
+            authProviderProfileImgUrl: data.authProviderProfileImgUrl,
+            authProviderUsername: data.authProviderUsername
+          }
+          this.frameworkConfig = data.frameworkConfig;
+          this.subscription = data.subscription;
+          this.showSettingsPanel = true;
+        }).catch((error) => {
+          this.handleServerError(error);
+          this.isLoading = false; // top-level 
+        }).finally(() => {
+          this.isLoading = false; // top-level 
+          clearTimeout(timeoutId);
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.isLoading = false; // top-level
+      });
+    },
+    exportOpml() {
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'GET',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/queues/opml", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return response.blob();
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then((blob) => {
+          let url = window.URL.createObjectURL(blob);
+          let anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = 'feedgears-opml-export.xml';
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+          this.setLastServerMessage(this.$t('opmlExportDownloaded'));
+        }).catch((error) => {
+          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    finalizeDeactivation() {
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'DELETE',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/deregister", requestOptions).then((response) => {
+          if (response.status === 200) {
+            return response.blob();
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).catch((error) => {
+          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+          this.$auth.tearDownLoggedInSession();
+          this.$router.push("/app");
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    initPasswordReset() {
+      this.settingsIsLoading = true;
+      this.$auth
+        .pwResetWithSupplied(this.account.username, this.account.emailAddress)
+        .then(() => {
+          this.setLastServerMessage(this.$t('checkEmailForFurther'));
+        })
+        .catch((error) => {
+          this.setLastServerMessage(error);
+        })
+        .finally(() => {
+          this.settingsIsLoading = false;
+        });
+    },
+    submitOrder() {
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: 'POST',
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/order", requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).then((data) => {
+          window.location.href = data.sessionUrl;
+        }).catch((error) => {
+          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    cancelSubscription() {
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          method: 'PUT',
+          body: JSON.stringify({
+            subscriptionStatus: 'CANCELED'
+          }),
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/subscriptions", requestOptions)
+        .then((response) => {
+          if (response.status === 200) {
+            this.$auth.unsubscribe();
+            this.subscription.cancelAtPeriodEnd = true;
+            this.setLastServerMessage(this.$t('yourSubscriptionWasCanceledClickToResume'));
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).catch((error) => {
+          console.log(error);
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
+    resumeSubscription() {
+      this.settingsIsLoading = true;
+      this.$auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: 'include',
+          method: 'PUT',
+          body: JSON.stringify({
+            subscriptionStatus: 'ACTIVE'
+          }),
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        fetch(this.baseUrl + "/subscriptions", requestOptions).then((response) => {
+          if (response.status === 200) {
+            this.$auth.subscribe();
+            this.subscription.cancelAtPeriodEnd = false;
+            this.setLastServerMessage(this.$t('yourSubscriptionWasResumed'));
+          } else {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            return isJson ? 
+                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
+                response.text().then(t => {throw new Error(t)});
+          }
+        }).catch((error) => {
+          if (error.name === 'TypeError') {
+            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+          } else if (error.name === 'AbortError') {
+            this.setLastServerMessage(this.$t('requestTimedOut'));
+          } else {
+            this.setLastServerMessage(error.message);
+          }
+        }).finally(() => {
+          clearTimeout(timeoutId);
+          this.settingsIsLoading = false;
+        });
+      }).catch((error) => {
+        this.handleServerError(error);
+        this.settingsIsLoading = false;
+      });
+    },
   }
 };
 </script>

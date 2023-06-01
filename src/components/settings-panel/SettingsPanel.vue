@@ -1,5 +1,5 @@
 <template>
-  <v-card :disabled="isLoading">
+  <v-card>
     <v-card-title class="text-center pa-4">
       <h3 class="view-header-no-count">
         <v-icon icon="fa-user" />
@@ -7,7 +7,7 @@
       </h3>
     </v-card-title>
     <v-divider />
-    <v-card-text v-if="isLoaded">
+    <v-card-text>
       <!-- profile -->
       <v-card
         elevation="6"
@@ -53,17 +53,15 @@
           <v-btn
             v-if="showDeactivateUser"
             :size="buttonSize"
-            :loading="exportOpmlIsLoading"
             :text="$t('downloadYourData')"
-            @click="exportOpml()"
+            @click="$emit('exportOpml')"
           />
           <!-- permanently delete your account button -->
           <v-btn
             v-if="showDeactivateUser"
             :size="buttonSize" 
-            :loading="finalizeDeactivationIsLoading"
             :text="$t('permanentlyDeleteYourAccount')"
-            @click="finalizeDeactivation()"
+            @click="$emit('finalizeDeactivation')"
           />
           <!-- cancel (deactivate account) button -->
           <v-btn
@@ -76,18 +74,16 @@
           <v-btn
             v-if="showResetPassword"
             :size="buttonSize" 
-            :loading="initPasswordResetIsLoading"
             :text="$t('sendPasswordResetEmail')"
-            @click="initPasswordReset()"
+            @click="$emit('initPasswordReset')"
           />
           <!-- reset password button (local) -->
           <v-btn
             v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser"
             id="resetPassword" 
             :size="buttonSize" 
-            :loading="resetPasswordIsLoading" 
             :text="$t('resetPassword')"
-            @click="resetPassword()"
+            @click="showResetPassword = true"
           />
           <!-- cancel (reset password) -->
           <v-btn
@@ -126,9 +122,10 @@
             v-if="authProvider === 'LOCAL' && !showResetPassword && !showDeactivateUser"
             id="updateAccount" 
             :size="buttonSize" 
-            :loading="updateAccountIsLoading"
             :text="$t('applyChanges')"
-            @click="updateAccount()"
+            @click="$emit('updateAccount', {
+              emailAddress: emailAddress,
+            })"
           />
         </v-card-actions>
       </v-card>
@@ -167,16 +164,22 @@
             id="updateNotificationPreferences"
             :size="buttonSize" 
             :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)" 
-            :loading="updateNotificationPreferencesIsLoading"
             :text="$t('updateNotificationPreferences')"
-            @click="updateNotificationPreferences()"
+            @click="$emit('updateNotificationPreferences', {
+              enableAccountAlerts: enableAccountAlerts,
+              enableDailyFeedReport: enableDailyFeedReport, 
+              enableProductNotifications: enableProductNotifications
+            })"
           />
           <!-- toggle (all) notifications button -->
           <v-btn 
             :size="buttonSize"
-            :loading="toggleNotificationsIsLoading" 
             :text="(frameworkConfig && isTrue(frameworkConfig.notifications.disabled)) ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
-            @click="toggleNotifications()"
+            @click="$emit('toggleNotifications', {
+              enableAccountAlerts: enableAccountAlerts,
+              enableDailyFeedReport: enableDailyFeedReport, 
+              enableProductNotifications: enableProductNotifications
+            })"
           />
         </v-card-actions>
       </v-card>
@@ -258,17 +261,15 @@
             v-if="subscription && !isCanceled()"
             id="cancelSubscription"
             :size="buttonSize" 
-            :loading="cancelSubscriptionIsLoading" 
             :text="$t('cancelSubscription')"
-            @click="cancelSubscription()"
+            @click="$emit('cancelSubscription')"
           />
           <v-btn
             v-if="subscription && isCanceled()"
             id="resumeSubscription"
             :size="buttonSize" 
-            :loading="resumeSubscriptionIsLoading" 
             :text="$t('resumeSubscription')"
-            @click="resumeSubscription()"
+            @click="$emit('resumeSubscription')"
           />
         </v-card-actions>
       </v-card>
@@ -287,9 +288,8 @@
           <v-btn
             id="checkout"
             :size="buttonSize" 
-            :loading="submitOrderIsLoading" 
             :text="$t('checkout')"
-            @click="submitOrder"
+            @click="$emit('submitOrder')"
           />
         </v-card-actions>
       </v-card>
@@ -321,42 +321,25 @@ export default {
   name: "SettingsPanel",
   mixins: [buttonSizeMixin],
   props: {
+    isLoading: { type: Boolean, default: false }, // TODO: use this 
     baseUrl: { type: String, required: true },
+    account: { type: Object, required: true },
+    frameworkConfig: { type: Object, required: true },
+    subscription: { type: Object, default: null },
   },
-  emits: [ "updateServerMessage", "dismiss" ],
+  emits: [ 
+    "exportOpml", 
+    "finalizeDeactivation", 
+    "initPasswordReset", 
+    "updateAccount", 
+    "updateNotificationPreferences", 
+    "toggleNotifications", 
+    "cancelSubscription", 
+    "resumeSubscription", 
+    "submitOrder", 
+    "dismiss" ],
   data() {
     return {
-      account: null,
-      frameworkConfig: null,
-      subscription: null,
-      forceLogout: false,
-      // 
-      isLoaded: false,
-      isLoading: true, // top-level 
-      exportOpmlIsLoading: false,
-      finalizeDeactivationIsLoading: false,
-      initPasswordResetIsLoading: false,
-      resetPasswordIsLoading: false,
-      updateAccountIsLoading: false,
-      updateNotificationPreferencesIsLoading: false,
-      toggleNotificationsIsLoading: false,
-      cancelSubscriptionIsLoading: false,
-      resumeSubscriptionIsLoading: false,
-      submitOrderIsLoading: false,
-      // 
-      showModal: false,
-      tabModel: [
-        {
-          "name": "SETTINGS",
-          "description": "User Preferences",
-          "icon": "list",
-        },
-        {
-          "name": "THEME",
-          "description": "Theme",
-          "icon": "paint-brush",
-        }
-      ],
       username: null,
       emailAddress: null,
       authProvider: null,
@@ -367,227 +350,26 @@ export default {
       enableProductNotifications: null,
       showDeactivateUser: false,
       showResetPassword: false,
-      // currently selected tab
-      selectedTab: 'SETTINGS',
     }
   },
   mounted() {
-    this.refreshSettings();
+    this.username = this.account.username;
+    this.emailAddress = this.account.emailAddress;
+    this.authProvider = this.account.authProvider;
+    this.authProviderProfileImgUrl = this.account.authProviderProfileImgUrl;
+    this.authProviderUsername = this.account.authProviderUsername;
+
+    let frameworkConfig = this.account.frameworkConfig;
+    if (frameworkConfig) {
+      this.enableAccountAlerts = frameworkConfig.accountAlerts;
+      this.enableDailyFeedReport = frameworkConfig.dailyFeedReport;
+      this.enableProductNotifications = frameworkConfig.productNotifications;
+    }
   },
   methods: {
     // 
-    // server error 
-    // 
-    handleServerError(error) {
-      console.error(error);
-      if (error.name === 'TypeError') {
-        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-      } else if (error.name === 'AbortError') {
-        this.setLastServerMessage(this.$t('requestTimedOut'));
-      } else if (error.message) {
-        this.setLastServerMessage(error.message); 
-      } else {
-        this.setLastServerMessage(error);
-      }
-    },
-    setLastServerMessage(message) {
-      if (message) {
-        this.$emit('updateServerMessage', message);
-      }
-    },
-    // 
     isTrue(obj) {
       return obj instanceof String ? obj === 'true' : obj === true;
-    },
-    resetPassword() {
-      this.showResetPassword = true;
-    },
-    deactivateAccount() {
-      this.showDeactivateUser = true;
-    },
-    updateNotificationPreferences() {
-      let newSettings = {
-        frameworkConfig: {
-          notifications: {
-            accountAlerts: this.enableAccountAlerts,
-            dailyFeedReport: this.enableDailyFeedReport,
-            productNotifications: this.enableProductNotifications,
-          }
-        }
-      };
-      this.updateNotificationPreferencesIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.username) {
-            this.account.username = newSettings.username;
-          }
-          if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
-          }
-          if (newSettings.frameworkConfig) {
-            this.frameworkConfig = newSettings.frameworkConfig;
-          }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.updateNotificationPreferencesIsLoading = false;
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.updateNotificationPreferencesIsLoading = false;
-      });
-    },
-    toggleNotifications() {
-      let newSettings = {
-        frameworkConfig: {
-          notifications: {
-            disabled: !this.isTrue(this.frameworkConfig.notifications.disabled),
-            accountAlerts: this.enableAccountAlerts,
-            dailyFeedReport: this.enableDailyFeedReport,
-            productNotifications: this.enableProductNotifications,
-          }
-        }
-      };
-      this.toggleNotificationsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.username) {
-            this.account.username = newSettings.username;
-          }
-          if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
-          }
-          if (newSettings.frameworkConfig) {
-            this.frameworkConfig = newSettings.frameworkConfig;
-          }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.toggleNotificationsIsLoading = false;
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.toggleNotificationsIsLoading = false;
-      });
-    },
-    updateAccount() {
-      let newSettings = {
-        emailAddress: this.emailAddress
-      };
-      this.updateAccountIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.username) {
-            this.account.username = newSettings.username;
-          }
-          if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
-          }
-          if (newSettings.frameworkConfig) {
-            this.frameworkConfig = newSettings.frameworkConfig;
-          }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          this.updateAccountIsLoading = false;
-          clearTimeout(timeoutId);
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.updateAccountIsLoading = false;
-      });
     },
     // 
     toLocalDate(epochTime) {
@@ -656,320 +438,8 @@ export default {
     hasLastInvoice() {
       return this.subscription.lastInvoice !== null;
     },
-    //
-    // fetch framework config from /settings  
-    refreshSettings() {
-      this.isLoading = true; // top-level
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          this.account = {
-            username: data.username,
-            emailAddress: data.emailAddress,
-            authProvider: data.authProvider,
-            authProviderProfileImgUrl: data.authProviderProfileImgUrl,
-            authProviderUsername: data.authProviderUsername
-          }
-          this.frameworkConfig = data.frameworkConfig;
-          this.subscription = data.subscription;
-          this.username = this.account.username;
-          this.emailAddress = this.account.emailAddress;
-          this.authProvider = 'LOCAL'; // this.account.authProvider;
-          this.authProviderProfileImgUrl = this.account.authProviderProfileImgUrl;
-          this.authProviderUsername = this.account.authProviderUsername;
-
-          let frameworkConfig = this.account.frameworkConfig;
-          if (frameworkConfig) {
-            this.enableAccountAlerts = frameworkConfig.accountAlerts;
-            this.enableDailyFeedReport = frameworkConfig.dailyFeedReport;
-            this.enableProductNotifications = frameworkConfig.productNotifications;
-          }
-          this.isLoaded = true;
-        }).catch((error) => {
-          this.handleServerError(error);
-          this.isLoaded = false;
-        }).finally(() => {
-          this.isLoading = false; // top-level 
-          clearTimeout(timeoutId);
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.isLoaded = false;
-      });
-    },
-    exportOpml() {
-      this.exportOpmlIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'GET',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/queues/opml", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return response.blob();
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then((blob) => {
-          let url = window.URL.createObjectURL(blob);
-          let anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = 'feedgears-opml-export.xml';
-          document.body.appendChild(anchor);
-          anchor.click();
-          anchor.remove();
-          this.setLastServerMessage(this.$t('opmlExportDownloaded'));
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.exportOpmlIsLoading = false;
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.exportOpmlIsLoading = false;
-      });
-    },
-    finalizeDeactivation() {
-      this.finalizeDeactivationIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'DELETE',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/deregister", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return response.blob();
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.finalizeDeactivationIsLoading = false;
-          this.forceLogout = true;
-          this.$auth.tearDownLoggedInSession();
-          this.$router.push("/app");
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.finalizeDeactivationIsLoading = false;
-      });
-    },
-    initPasswordReset() {
-      this.showResetPassword = false;
-      this.initPasswordResetIsLoading = true;
-      this.$auth
-        .pwResetWithSupplied(this.account.username, this.account.emailAddress)
-        .then(() => {
-          this.setLastServerMessage(this.$t('checkEmailForFurther'));
-        })
-        .catch((error) => {
-          this.setLastServerMessage(error);
-        })
-        .finally(() => {
-          this.initPasswordResetIsLoading = false;
-        });
-    },
-    submitOrder() {
-      this.submitOrderIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'POST',
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/order", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          window.location.href = data.sessionUrl;
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.submitOrderIsLoading = false;
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.submitOrderIsLoading = false;
-      });
-    },
-    cancelSubscription() {
-      this.cancelSubscriptionIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          method: 'PUT',
-          body: JSON.stringify({
-            subscriptionStatus: 'CANCELED'
-          }),
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/subscriptions", requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            this.$auth.unsubscribe();
-            this.subscription.cancelAtPeriodEnd = true;
-            this.setLastServerMessage(this.$t('yourSubscriptionWasCanceledClickToResume'));
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.cancelSubscriptionIsLoading = false;
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.cancelSubscriptionIsLoading = false;
-      });
-    },
-    resumeSubscription() {
-      this.resumeSubscriptionIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          method: 'PUT',
-          body: JSON.stringify({
-            subscriptionStatus: 'ACTIVE'
-          }),
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/subscriptions", requestOptions).then((response) => {
-          if (response.status === 200) {
-            this.$auth.subscribe();
-            this.subscription.cancelAtPeriodEnd = false;
-            this.setLastServerMessage(this.$t('yourSubscriptionWasResumed'));
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.resumeSubscriptionIsLoading = false;
-        });
-      }).catch((error) => {
-        this.handleServerError(error);
-        this.resumeSubscriptionIsLoading = false;
-      });
-    },
     cancelSettings() {
-      this.$emit('cancel');
+      this.$emit('dismiss');
     }
   }
 }

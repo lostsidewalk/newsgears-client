@@ -174,7 +174,7 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
-  emits: [ "save", "dismiss", "authError", "updateServerMessage", "refreshQueueDefinitions" ],
+  emits: [ "save", "update", "dismiss", "authError", "updateServerMessage", "refreshQueueDefinitions" ],
   data() {
     return {
       // 
