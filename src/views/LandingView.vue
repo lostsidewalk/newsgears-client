@@ -23,7 +23,7 @@
 
     <v-main>
       <!-- container -->
-      <BannerPanel />
+      <BannerPanel :is-authenticated="$auth.$isAuthenticated" />
 
       <!-- container -->
       <DemoPanel class="mb-4" /> 

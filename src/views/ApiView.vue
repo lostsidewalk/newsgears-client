@@ -20,7 +20,7 @@
 
     <v-main>
       <!-- container -->
-      <BannerPanel />
+      <BannerPanel :is-authenticated="$auth.$isAuthenticated" />
 
       <v-divider /> 
 
