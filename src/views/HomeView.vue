@@ -27,7 +27,13 @@
     >
       <BannerPanel :show-auth="false" />
 
-      <AuthPanel ref="authentication" />
+      <AuthPanel
+        v-show="!$auth.$isAuthenticated"
+        ref="authentication"
+        :server-message="authServerMessage"
+        :is-loading="loginIsLoading"
+        @login="login"
+      />
       <FooterPanel app />
     </v-main>
 
@@ -501,9 +507,13 @@ export default {
   data() {
     return {
       refreshIntervalId: null,
+      // 
       isLoading: false,
+      loginIsLoading: false,
       uploadIsLoading: false,
       refreshQueuesIsLoading: false,
+      // 
+      authServerMessage: null,
       // operating mode 
       queueIdToDelete: null,
       queueIdToMarkAsRead: null,
@@ -752,6 +762,38 @@ export default {
     window.removeEventListener("keydown", this.keyHandler);
   },
   methods: {
+    login(loginRequest) {
+      let username = loginRequest.username;
+      let password = loginRequest.password;
+      if (!username && !password) {
+        this.authServerMessage = this.$t("usernameAndPasswordAreRequired");
+        return;
+      }
+      if (!username && password) {
+        this.authServerMessage = this.$t("usernameIsRequired");
+        return;
+      }
+      if (username && !password) {
+        this.authServerMessage = this.$t("passwordIsRequired");
+        return;
+      }
+
+      this.loginIsLoading = true;
+      this.$auth
+        .loginWithSupplied(username, password, false)
+        .then(() => {
+          this.authServerMessage = null;
+        })
+        .catch((error) => {
+          this.authServerMessage = error;
+          if (!this.authServerMessage) {
+            this.authServerMessage = this.$t("somethingHorribleHappened");
+          }
+        })
+        .finally(() => {
+          this.loginIsLoading = false;
+        });
+    },
     shouldShowAlert(alertName) {
       return !localStorage.getItem(alertName);
     },

@@ -1,5 +1,5 @@
 <template>
-  <v-container v-show="!$auth.$isAuthenticated">
+  <v-container>
     <!-- row -->
     <v-row
       align="center"
@@ -65,8 +65,8 @@
                               class="ma-4"
                               :label="$t('login')"
                               :tooltip="$t('login')"
-                              :is-loading="loginIsLoading"
-                              @clicked="login"
+                              :is-loading="isLoading"
+                              @clicked="$emit('login', { username: username, password: password })"
                             />
                             <!-- google button -->
                             <GoogleAuthButton
@@ -131,66 +131,18 @@ export default {
     AuthServerResponse,
     PrivacyPolicyPanel,
   },
+  props: {
+    serverMessage: { type: String, default: null },
+    isLoading: { type: Boolean, default: false },
+  },
+  emits: ["login"],
   data() {
     return {
       step: null,
       username: "",
       password: "",
       showPrivacyPolicy: false,
-      // server response
-      serverMessage: null,
-      //
-      loginIsLoading: false,
     };
-  },
-  mounted() {
-    if (this.$route.query.error) {
-      this.serverMessage = this.$t("unableToCompleteYourRequest");
-    }
-  },
-  methods: {
-    login() {
-      if (!this.username && !this.password) {
-        this.serverMessage = this.$t("usernameAndPasswordAreRequired");
-        return;
-      }
-      if (this.username && !this.password) {
-        this.serverMessage = this.$t("usernameIsRequired");
-        return;
-      }
-      if (!this.username && this.password) {
-        this.serverMessage = this.$t("passwordIsRequired");
-        return;
-      }
-
-      this.loginIsLoading = true;
-      this.$auth
-        .loginWithSupplied(this.username, this.password, false)
-        .then(() => {
-          this.clearData();
-        })
-        .catch((error) => {
-          this.serverMessage = error;
-          if (!this.serverMessage) {
-            this.serverMessage = this.$t("somethingHorribleHappened");
-          }
-        })
-        .finally(() => {
-          this.loginIsLoading = false;
-        });
-    },
-    //
-    //
-    //
-    clearData() {
-      // reset all fields
-      this.username = null;
-      this.password = null;
-      this.clearServerResponse();
-    },
-    clearServerResponse() {
-      this.serverMessage = null;
-    },
   },
 };
 </script>
