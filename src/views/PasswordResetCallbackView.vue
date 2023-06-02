@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -49,6 +50,13 @@ export default {
     DisplayModeButton,
     PasswordUpdatePanel,
     FooterPanel,
+  },
+  setup() {
+    const auth = inject('auth');
+
+    return {
+      auth
+    }
   },
   data() {
     return {
@@ -66,7 +74,7 @@ export default {
       }
 
       this.pwUpdateIsLoading = true;
-      this.$auth.pwUpdateWithSupplied(newPassword, newPasswordConfirmed)
+      this.auth.pwUpdateWithSupplied(newPassword, newPasswordConfirmed)
           .then(() => {
             this.serverMessage = this.$t('pwUpdated');
           })

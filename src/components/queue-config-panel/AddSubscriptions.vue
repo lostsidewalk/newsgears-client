@@ -121,6 +121,7 @@ export default {
     subscriptions: { type: Array, required: true },
     queueId: { type: Number, required: true },
     baseUrl: { type: String, required: true },
+    auth: { type: Object, required: true },
   },
   emits: [
     "addSubscription",
@@ -130,7 +131,6 @@ export default {
     return {
       mode: "ADD_FROM_URL",
       //
-      newFeedDiscoveryError: null,
       newSubscription: {},
       addNewIsLoading: false,
       discoveryIsLoading: false,
@@ -170,7 +170,7 @@ export default {
     addNewSubscription() {
       this.addNewIsLoading = true;
       console.log("subscription-config: pushing new subscription to remote..");
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'POST',
@@ -220,7 +220,7 @@ export default {
       if (r.url) {
         r.error = null;
         this.discoveryIsLoading = true;
-        this.$auth.getTokenSilently().then((token) => {
+        this.auth.getTokenSilently().then((token) => {
           const controller = new AbortController();
           const requestOptions = {
             method: 'POST', 

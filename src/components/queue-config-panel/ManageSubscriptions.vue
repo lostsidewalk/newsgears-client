@@ -120,6 +120,7 @@ export default {
     subscriptions: { type: Array, required: true },
     queueId: { type: Number, required: true },
     baseUrl: { type: String, required: true },
+    auth: { type: Object, required: true },
   },
   emits: [
     "deleteSubscription",
@@ -170,7 +171,7 @@ export default {
     deleteSubscription(id) {
       this.deleteIsLoading = true;
       console.log("subscription-config: deleteing subscription..");
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'DELETE',
@@ -216,7 +217,7 @@ export default {
     updateSubscriptionAuth(subscription) {
       this.updateAuthIsLoading = true;
       console.log("subscription-config: pushing updated subscription to remote..");
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',

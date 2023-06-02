@@ -21,7 +21,7 @@
 
     <v-main>
       <!-- container -->
-      <BannerPanel :is-authenticated="$auth.$isAuthenticated" />
+      <BannerPanel :is-authenticated="auth.isAuthenticated" />
 
       <v-divider /> 
 
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -53,11 +54,18 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
+  setup() {
+    const auth = inject('auth');
+
+    return {
+      auth
+    }
+  },
   mounted() {
-    this.$auth.getTokenSilently()
+    this.auth.getTokenSilently()
       .catch(() => { })
       .finally(() => {
-        if (this.$auth.$isAuthenticated) {
+        if (this.auth.isAuthenticated) {
           console.log("docs-view: authenticated on mount");
         } else {
           console.log("docs-view: not authenticated on mount");

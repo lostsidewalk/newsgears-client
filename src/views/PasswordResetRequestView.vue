@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -51,6 +52,13 @@ export default {
   },
   props: {
     baseUrl: { type: String, required: true },
+  },
+  setup() {
+    const auth = inject('auth');
+
+    return {
+      auth
+    }
   },
   data() {
     return {
@@ -70,7 +78,7 @@ export default {
       }
 
       this.pwResetIsLoading = true;
-      this.$auth.pwResetWithSupplied(username, email)
+      this.auth.pwResetWithSupplied(username, email)
           .then(() => {
             this.serverMessage = this.$t('checkEmailForFurther');
           })

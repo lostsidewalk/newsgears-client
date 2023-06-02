@@ -2,7 +2,7 @@
   <v-app>
     <!-- pre-auth app bar -->
     <v-app-bar
-      v-if="!$auth.$isAuthenticated"
+      v-if="!auth.isAuthenticated"
       app
       location="top"
       :scrol-behavior="'elevate'"
@@ -23,12 +23,12 @@
 
     <!-- pre-auth main -->
     <v-main
-      v-show="!$auth.$isAuthenticated"
+      v-show="!auth.isAuthenticated"
     >
       <BannerPanel :show-auth="false" />
 
       <AuthPanel
-        v-show="!$auth.$isAuthenticated"
+        v-show="!auth.isAuthenticated"
         ref="authentication"
         :server-message="authServerMessage"
         :is-loading="loginIsLoading"
@@ -39,7 +39,7 @@
 
     <!-- post-auth main -->
     <v-main
-      v-show="$auth.$isAuthenticated"
+      v-show="auth.isAuthenticated"
     >
       <!-- progress bar -->
       <v-progress-linear :indeterminate="isLoading || refreshQueuesIsLoading" />
@@ -66,7 +66,7 @@
             :show-settings-panel="showSettingsPanel"
             :show-help-panel="showHelpPanel"
             :show-notification-warning="showNotificationWarning"
-            :is-authenticated="$auth.$isAuthenticated"
+            :is-authenticated="auth.isAuthenticated"
             @showSettings="openSettings"
             @showHelp="showHelpPanel = !showHelpPanel"
             @logout="logout"
@@ -251,6 +251,7 @@
         <QueueConfigPanel
           ref="queueConfigPanel"
           :base-url="baseUrl"
+          :auth="auth"
           @save="createQueue"
           @update="updateQueue"
           @dismiss="dismissQueueConfigPanel"
@@ -406,6 +407,7 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 // import debounce from 'lodash.debounce';
 // components 
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
@@ -520,6 +522,13 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
     feedUrl: { type: String, required: true },
+  },
+  setup() {
+    const auth = inject('auth');
+
+    return {
+      auth
+    }
   },
   data() {
     return {
@@ -736,7 +745,7 @@ export default {
     }
   },
   watch: {
-    '$auth.$isAuthenticated' (isAuthenticated) {
+    'auth.isAuthenticated' (isAuthenticated) {
       if (isAuthenticated) {
         const storedQueues = localStorage.getItem('queues');
         if (storedQueues) {
@@ -767,17 +776,17 @@ export default {
     }
   },
   mounted() {
-    this.$auth.getTokenSilently()
+    this.auth.getTokenSilently()
       .catch(() => {})
       .finally(() => {
-        if (this.$auth.$isAuthenticated) {
+        if (this.auth.isAuthenticated) {
           console.log("home: authenticated on mount");
         } else {
           console.log("home: not authenticated on mount");
         }
       });
     window.addEventListener("keydown", this.keyHandler);
-    if (this.$auth.$isAuthenticated) {
+    if (this.auth.isAuthenticated) {
       this.refreshQueues(null, true); // need staging posts for all queues, and queues definitions 
     }
   },
@@ -786,7 +795,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$auth.logout()
+      this.auth.logout()
       .catch((error) => {
         console.error("unable to logout due to: " + error);
       }).finally(() => {
@@ -811,7 +820,7 @@ export default {
       }
 
       this.loginIsLoading = true;
-      this.$auth.loginWithSupplied(username, password, false)
+      this.auth.loginWithSupplied(username, password, false)
         .then(() => {
           this.authServerMessage = null;
         })
@@ -1016,7 +1025,7 @@ export default {
       return iq ? iq.values.filter(post => post.isPublished).length : 0;
     },
     checkForNewSubscriptionMetrics() {
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           headers: {
@@ -1059,7 +1068,7 @@ export default {
       this.refreshQueuesIsLoading = true;
 
       try {
-        const token = await this.$auth.getTokenSilently();
+        const token = await this.auth.getTokenSilently();
         const stagingPostRefreshController = new AbortController();
         const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
         let queueDefinitionRefreshTimeoutId;
@@ -1324,7 +1333,7 @@ export default {
     updatePostReadStatus(result) {
       console.log("updating post status");
       this.isLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
@@ -1369,7 +1378,7 @@ export default {
     updatePostPubStatus(result) {
       console.log("updating post status");
       this.isLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
@@ -1460,7 +1469,7 @@ export default {
     continueOpmlUpload(opmlFiles) {
       this.continueIsLoading = true;
       this.opmlErrors.splice(0);
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         // form data 
         let formData = new FormData();
         for (let i = 0; i < opmlFiles.length; i++) {
@@ -1519,7 +1528,7 @@ export default {
       let method = 'POST';
       this.finalizeIsLoading = true;
       console.log("pushing queues to remote, ct=" + queues.length);
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
@@ -1588,7 +1597,7 @@ export default {
       let method = 'POST';
       this.isLoading = true;
       console.log("pushing new queue to remote..");
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
@@ -1641,7 +1650,7 @@ export default {
       let method = 'PUT';
       this.isLoading = true;
       console.log("pushing updated queue to remote..");
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
@@ -1723,7 +1732,7 @@ export default {
     performQueueDelete() {
       console.log("deleting queue id=" + this.queueIdToDelete);
       this.isLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/queues/" + this.queueIdToDelete, {
@@ -1802,7 +1811,7 @@ export default {
     performQueueMarkAsRead() {
       console.log("updating queue status, id=" + this.queueIdToMarkAsRead);
       this.isLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
@@ -2026,7 +2035,7 @@ export default {
         }
       };
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
@@ -2093,7 +2102,7 @@ export default {
         }
       };
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
@@ -2151,7 +2160,7 @@ export default {
         emailAddress: emailAddress
       };
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
@@ -2199,7 +2208,7 @@ export default {
     },
     openSettings() {
       this.isLoading = true; // top-level
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           headers: { 
@@ -2246,7 +2255,7 @@ export default {
     },
     exportOpml() {
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'GET',
@@ -2297,7 +2306,7 @@ export default {
     },
     finalizeDeactivation() {
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'DELETE',
@@ -2331,7 +2340,7 @@ export default {
         }).finally(() => {
           clearTimeout(timeoutId);
           this.settingsIsLoading = false;
-          this.$auth.tearDownLoggedInSession();
+          this.auth.tearDownLoggedInSession();
           this.$router.push("/app");
         });
       }).catch((error) => {
@@ -2341,7 +2350,7 @@ export default {
     },
     initPasswordReset() {
       this.settingsIsLoading = true;
-      this.$auth.pwResetWithSupplied(this.account.username, this.account.emailAddress)
+      this.auth.pwResetWithSupplied(this.account.username, this.account.emailAddress)
         .then(() => {
           this.setLastServerMessage(this.$t('checkEmailForFurther'));
         })
@@ -2354,7 +2363,7 @@ export default {
     },
     submitOrder() {
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'POST',
@@ -2399,7 +2408,7 @@ export default {
     },
     cancelSubscription() {
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           headers: { 
@@ -2417,7 +2426,7 @@ export default {
         fetch(this.baseUrl + "/subscriptions", requestOptions)
         .then((response) => {
           if (response.status === 200) {
-            this.$auth.unsubscribe();
+            this.auth.unsubscribe();
             this.subscription.cancelAtPeriodEnd = true;
             this.setLastServerMessage(this.$t('yourSubscriptionWasCanceledClickToResume'));
           } else {
@@ -2447,7 +2456,7 @@ export default {
     },
     resumeSubscription() {
       this.settingsIsLoading = true;
-      this.$auth.getTokenSilently().then((token) => {
+      this.auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           headers: { 
@@ -2464,7 +2473,7 @@ export default {
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         fetch(this.baseUrl + "/subscriptions", requestOptions).then((response) => {
           if (response.status === 200) {
-            this.$auth.subscribe();
+            this.auth.subscribe();
             this.subscription.cancelAtPeriodEnd = false;
             this.setLastServerMessage(this.$t('yourSubscriptionWasResumed'));
           } else {

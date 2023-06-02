@@ -92,7 +92,7 @@
             </v-card>
             <!-- OPML parse results (if any, shown at step 2)-->
             <v-card
-              v-if="queueConfigRequests.length > 0"
+              v-if="atStep2 && queueConfigRequests.length > 0"
               class="mb-4"
             >
               <v-list
@@ -211,7 +211,7 @@ export default {
     // 
     finalizeOpmlUpload() {
       console.log("opml-upload-panel: finalizing OPML upload");
-      this.$emit('finalizeUpload', this.queueConfigRequests);
+      this.$emit('finalizeUpload');
     },
     continueOpmlUpload() {
       console.log("opml-upload-panel: continuing OPML upload");

@@ -23,7 +23,7 @@
 
     <v-main>
       <!-- container -->
-      <BannerPanel :is-authenticated="$auth.$isAuthenticated" />
+      <BannerPanel :is-authenticated="auth.isAuthenticated" />
 
       <!-- container -->
       <DemoPanel class="mb-4" /> 
@@ -42,6 +42,7 @@
 </template>
   
 <script>
+import { inject } from 'vue';
 import LoginButton from '@/components/landing/LoginButton.vue';
 import DemoPanel from '@/components/landing/DemoPanel.vue';
 import FAQPanel from '@/components/landing/FAQPanel.vue';
@@ -63,11 +64,18 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
+  setup() {
+    const auth = inject('auth');
+
+    return {
+      auth
+    }
+  },
   mounted() {
-    this.$auth.getTokenSilently()
+    this.auth.getTokenSilently()
       .catch(() => {})
       .finally(() => {
-        if (this.$auth.$isAuthenticated) {
+        if (this.auth.isAuthenticated) {
           console.log("landing: authenticated on mount");
         } else {
           console.log("landing: not authenticated on mount");

@@ -45,6 +45,7 @@
           <!-- add subscriptions -->
           <AddSubscriptions
             v-if="queue"
+            :auth="auth"
             :base-url="baseUrl"
             :subscriptions="subscriptions" 
             :queue-id="queue.id"
@@ -60,6 +61,7 @@
         >
           <ManageSubscriptions
             v-if="queue"
+            :auth="auth"
             :base-url="baseUrl"
             :subscriptions="subscriptions" 
             :queue-id="queue.id"
@@ -195,6 +197,7 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
+    auth: { type: Object, required: true },
   },
   emits: [ "save", "update", "dismiss", "authError", "updateServerMessage", "refreshQueueDefinitions" ],
   data() {

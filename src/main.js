@@ -1,6 +1,6 @@
 import { createApp } from "vue";
+import useAuthService from '@/services/auth/AuthService.vue';
 import App from "./App.vue";
-import NewsGearsWebPlugin from "@/newsgears-web/newsgears-web-plugin";
 import router from "./router";
 import VuePlyr from "vue-plyr";
 import VueAnnouncer from "@vue-a11y/announcer";
@@ -1054,7 +1054,7 @@ const vuetify = createVuetify({
 });
 
 createApp(App, {})
-  .use(NewsGearsWebPlugin, {})
+  .provide("auth", useAuthService())
   .use(router)
   .use(VuePlyr, {
     plyr: {},

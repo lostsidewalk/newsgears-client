@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -51,6 +52,13 @@ export default {
   },
   props: {
     baseUrl: { type: String, required: true },
+  },
+  setup() {
+    const auth = inject('auth');
+
+    return {
+      auth
+    }
   },
   data() {
     return {
@@ -71,10 +79,10 @@ export default {
       }
 
       this.registrationIsLoading = true;
-      this.$auth.registerWithSupplied(username, email, password, userType)
+      this.auth.registerWithSupplied(username, email, password, userType)
         .then((response) => {
           this.clearData();
-          this.$auth.loginWithSupplied(response.username, response.password, false)
+          this.auth.loginWithSupplied(response.username, response.password, false)
           .then(() => {
             this.clearData();
             this.$router.push("/app");
