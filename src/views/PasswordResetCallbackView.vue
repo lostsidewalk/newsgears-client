@@ -66,8 +66,7 @@ export default {
       }
 
       this.pwUpdateIsLoading = true;
-      this.$auth
-          .pwUpdateWithSupplied(newPassword, newPasswordConfirmed)
+      this.$auth.pwUpdateWithSupplied(newPassword, newPasswordConfirmed)
           .then(() => {
             this.serverMessage = this.$t('pwUpdated');
           })

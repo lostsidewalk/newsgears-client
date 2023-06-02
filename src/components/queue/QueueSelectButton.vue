@@ -45,7 +45,7 @@
         density="compact"
         variant="text"
         :size="buttonSize" 
-        :text="queue.subscriptions && queue.subscriptions.length > 0 ? $t('manageSubscriptions') : $t('addSubscriptions')"
+        :text="queue.subscriptions && queue.subscriptions.length > 0 ? $t('manageSubscriptions', { ct: queue.subscriptions.length }) : $t('addSubscriptions')"
         @click.stop="$emit('manageSubscriptions')"
       />
       <!-- show/hide queue details -->

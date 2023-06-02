@@ -71,8 +71,7 @@ export default {
       }
 
       this.registrationIsLoading = true;
-      this.$auth
-        .registerWithSupplied(username, email, password, userType)
+      this.$auth.registerWithSupplied(username, email, password, userType)
         .then((response) => {
           this.clearData();
           this.$auth.loginWithSupplied(response.username, response.password, false)

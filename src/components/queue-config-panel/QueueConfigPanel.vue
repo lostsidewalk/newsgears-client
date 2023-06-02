@@ -13,14 +13,21 @@
         v-if="queue && queue.id"
         v-model="selectedTab"
       >
-        <!-- tab 1: subscription config -->
+        <!-- tab 1: add subscription -->
         <v-tab
-          key="SUBSCRIPTIONS"
-          value="SUBSCRIPTIONS"
+          key="ADD_SUBSCRIPTIONS"
+          value="ADD_SUBSCRIPTIONS"
         >
-          {{ $t('subscriptions') }}
+          {{ $t('addSubscriptions') }}
         </v-tab>
-        <!-- tab 2: queue properties -->
+        <!-- tab 2: manage subscriptions -->
+        <v-tab
+          key="MANAGE_SUBSCRIPTIONS"
+          value="MANAGE_SUBSCRIPTIONS"
+        >
+          {{ $t('manageSubscriptions', { ct: subscriptions.length }) }}
+        </v-tab>
+        <!-- tab 3: queue properties -->
         <v-tab
           key="QUEUE_PROPERTIES"
           value="QUEUE_PROPERTIES"
@@ -32,17 +39,30 @@
       <v-window v-model="selectedTab">
         <!-- subscriptions -->
         <v-window-item
-          key="SUBSCRIPTIONS"
-          value="SUBSCRIPTIONS"
+          key="ADD_SUBSCRIPTIONS"
+          value="ADD_SUBSCRIPTIONS"
         >
-          <!-- subscription config -->
-          <SubscriptionsConfig
+          <!-- add subscriptions -->
+          <AddSubscriptions
             v-if="queue"
-            ref="subscriptionsConfig"
             :base-url="baseUrl"
             :subscriptions="subscriptions" 
             :queue-id="queue.id"
             @addSubscription="addSubscription" 
+            @authError="handleAuthError" 
+            @updateServerMessage="setLastServerMessage"
+          /> 
+        </v-window-item>
+        <!-- manage subscriptions -->
+        <v-window-item
+          key="MANAGE_SUBSCRIPTIONS"
+          value="MANAGE_SUBSCRIPTIONS"
+        >
+          <ManageSubscriptions
+            v-if="queue"
+            :base-url="baseUrl"
+            :subscriptions="subscriptions" 
+            :queue-id="queue.id"
             @deleteSubscription="deleteSubscription" 
             @updateSubscriptionAuth="updateSubscriptionAuth"
             @authError="handleAuthError" 
@@ -161,14 +181,16 @@
 
 <script>
 import QueueConfigTextField from '@/components/queue-config-panel/QueueConfigTextField.vue';
-import SubscriptionsConfig from '@/components/queue-config-panel/SubscriptionsConfig.vue';
+import AddSubscriptions from '@/components/queue-config-panel/AddSubscriptions.vue';
+import ManageSubscriptions from '@/components/queue-config-panel/ManageSubscriptions.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "QueueConfigPanel", 
   components: {
     QueueConfigTextField,
-    SubscriptionsConfig,
+    AddSubscriptions,
+    ManageSubscriptions,
   },
   mixins: [buttonSizeMixin],
   props: {
@@ -199,10 +221,15 @@ export default {
       let arr = [];
       if (this.queue.id) {
         arr.push({
-          name: "SUBSCRIPTIONS",
+          name: "ADD_SUBSCRIPTIONS",
           description: this.$t('rssFeedDiscovery'),
           icon: "feed",
         });
+        arr.push({
+          name: "MANAGE_SUBSCRIPTIONS",
+          description: this.$t('manageSubscriptions', { ct: this.subscriptions.length }),
+          icon: "feed",
+        })
         arr.push({
           name: "QUEUE_PROPERTIES",
           description: this.$t('queueProperties'),

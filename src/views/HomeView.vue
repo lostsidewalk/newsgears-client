@@ -811,8 +811,7 @@ export default {
       }
 
       this.loginIsLoading = true;
-      this.$auth
-        .loginWithSupplied(username, password, false)
+      this.$auth.loginWithSupplied(username, password, false)
         .then(() => {
           this.authServerMessage = null;
         })
@@ -2342,8 +2341,7 @@ export default {
     },
     initPasswordReset() {
       this.settingsIsLoading = true;
-      this.$auth
-        .pwResetWithSupplied(this.account.username, this.account.emailAddress)
+      this.$auth.pwResetWithSupplied(this.account.username, this.account.emailAddress)
         .then(() => {
           this.setLastServerMessage(this.$t('checkEmailForFurther'));
         })

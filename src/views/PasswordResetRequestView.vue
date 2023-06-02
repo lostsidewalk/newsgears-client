@@ -70,8 +70,7 @@ export default {
       }
 
       this.pwResetIsLoading = true;
-      this.$auth
-          .pwResetWithSupplied(username, email)
+      this.$auth.pwResetWithSupplied(username, email)
           .then(() => {
             this.serverMessage = this.$t('checkEmailForFurther');
           })
