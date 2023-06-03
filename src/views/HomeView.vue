@@ -408,6 +408,8 @@ import { useNativeNotifications } from 'vue3-native-notification';
 import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
+import { useAuth } from '@/composable/auth/HomeAuth.js';
+
 // import debounce from 'lodash.debounce';
 // components 
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
@@ -442,24 +444,6 @@ import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 // import QueueDetails from '@/components/queue/QueueDetails.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
-
-const replaceArray = function (str, find, replace) {
-  let replaceString = str;
-  let regex;
-  for (let i = 0; i < find.length; i++) {
-    regex = new RegExp(find[i], "g");
-    replaceString = replaceString.replace(regex, replace[i]);
-  }
-  return replaceString;
-};
-
-const toLunrToken = function (str) {
-  if (str) {
-    let pieces = str.split(' ');
-    let token = pieces[0];
-    return token + (pieces.length > 1 ? '*' : '');
-  }
-};
 
 export default {
   name: "HomeView",
@@ -510,6 +494,7 @@ export default {
     const { polite } = useAnnouncer();
     const { nativeNotifications } = useNativeNotifications();
     const display = useDisplay();
+    const { login, logout, authServerMessage, loginIsLoading } = useAuth();
     // 
     // props 
     // 
@@ -519,12 +504,10 @@ export default {
     // 
     const refreshIntervalId = ref(null);
     const isLoading = ref(false);
-    const loginIsLoading = ref(false);
     const continueIsLoading = ref(false); // opml 
     const finalizeIsLoading = ref(false); // opml 
     const refreshQueuesIsLoading = ref(false);
     const settingsIsLoading = ref(false); // settings 
-    const authServerMessage = ref(null);
     const showQueueDeleteConfirmation = ref(false);
     const queueIdToDelete = ref(null);
     const showQueueMarkAsReadConfirmation = ref(false);
@@ -746,47 +729,6 @@ export default {
     // 
     // functions 
     // 
-    function logout() {
-      auth.logout()
-        .catch((error) => {
-          console.error("unable to logout due to: " + error);
-        }).finally(() => {
-          console.log("logout complete");
-        });
-    }
-
-    function login(loginRequest) {
-      let username = loginRequest.username;
-      let password = loginRequest.password;
-      authServerMessage.value = null;
-      if (!username && !password) {
-        authServerMessage.value = t("usernameAndPasswordAreRequired");
-        return;
-      }
-      if (!username && password) {
-        authServerMessage.value = t("usernameIsRequired");
-        return;
-      }
-      if (username && !password) {
-        authServerMessage.value = t("passwordIsRequired");
-        return;
-      }
-
-      loginIsLoading.value = true;
-      auth.loginWithSupplied(username, password, false)
-        .then(() => {
-          authServerMessage.value = null;
-        })
-        .catch((error) => {
-          authServerMessage.value = error;
-          if (!authServerMessage.value) {
-            authServerMessage.value = t("somethingHorribleHappened");
-          }
-        })
-        .finally(() => {
-          loginIsLoading.value = false;
-        });
-    }
 
     function shouldShowAlert(alertName) {
       return !localStorage.getItem(alertName);
@@ -866,6 +808,16 @@ export default {
         [link, title, source, content]
       );
       window.open(url, '_blank');
+    }
+
+    function replaceArray(str, find, replace) {
+      let replaceString = str;
+      let regex;
+      for (let i = 0; i < find.length; i++) {
+        regex = new RegExp(find[i], "g");
+        replaceString = replaceString.replace(regex, replace[i]);
+      }
+      return replaceString;
     }
     // 
     // handleserver error 
@@ -961,6 +913,14 @@ export default {
         }
       } else {
         articleListFilter.value = ' +category:' + category;
+      }
+    }
+
+    function toLunrToken(str) {
+      if (str) {
+        let pieces = str.split(' ');
+        let token = pieces[0];
+        return token + (pieces.length > 1 ? '*' : '');
       }
     }
 
@@ -2572,14 +2532,14 @@ export default {
       showListLayout,
       showQueueRefreshIndicator,
       // data  
+      loginIsLoading, // imported 
+      authServerMessage, // imported 
       refreshIntervalId,
       isLoading,
-      loginIsLoading,
       continueIsLoading,
       finalizeIsLoading,
       refreshQueuesIsLoading,
       settingsIsLoading,
-      authServerMessage,
       showQueueDeleteConfirmation,
       queueIdToDelete,
       showQueueMarkAsReadConfirmation,
@@ -2614,8 +2574,8 @@ export default {
       articleListSortOrder,
       latestSubscriptionMetricsByQueue,
       // functions 
-      logout,
-      login,
+      logout, // imported 
+      login, // imported 
       shouldShowAlert,
       dismissAlert,
       openPost,

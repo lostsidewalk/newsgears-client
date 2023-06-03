@@ -358,9 +358,7 @@ export default {
         console.log("post: marking post id=" + this.post.id + " as read-later");
         newStatus = "READ_LATER";
       } else {
-        console.log(
-          "post: unmarking post id=" + this.post.id + " as read-later"
-        );
+        console.log("post: unmarking post id=" + this.post.id + " as read-later");
         newStatus = "UNREAD";
       }
       this.updatePostReadStatus(newStatus, "togglePostReadLaterStatus");

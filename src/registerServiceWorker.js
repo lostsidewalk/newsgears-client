@@ -22,9 +22,7 @@ register(`${process.env.BASE_URL}service-worker.js`, {
     console.log("New content is available; please refresh.");
   },
   offline() {
-    console.log(
-      "No internet connection found. FeedGears is running in offline mode."
-    );
+    console.log("No internet connection found. FeedGears is running in offline mode.");
   },
   error(error) {
     console.error("Error during service worker registration:", error);
