@@ -15,6 +15,7 @@
       </template>
       <v-toolbar-items>
         <GoBack />
+        <DisplayModeButton />
       </v-toolbar-items>
     </v-app-bar>
 
@@ -25,7 +26,7 @@
       <v-divider /> 
 
       <v-container>
-        {{ $t('inDevelopment') }}
+        {{ t('inDevelopment') }}
       </v-container>
 
       <v-divider /> 
@@ -36,39 +37,44 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
+import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 
 export default {
   name: "ApiView",
   components: {
-    BannerPanel,
     GoBack,
+    DisplayModeButton,
+    BannerPanel,
     FooterPanel,
   },
-
   props: {
     baseUrl: { type: String, required: true },
   },
   setup() {
     const auth = inject('auth');
+    const { t } = useI18n();
 
-    return {
-      auth
-    }
-  },
-  mounted() {
-    this.auth.getTokenSilently()
+    onMounted(() => {
+      auth.getTokenSilently()
       .catch(() => { })
       .finally(() => {
-        if (this.auth.isAuthenticated) {
+        if (auth.isAuthenticated) {
           console.log("api-view: authenticated on mount");
         } else {
           console.log("api-view: not authenticated on mount");
         }
       });
+    })
+
+    return {
+      auth,
+      t
+    }
   },
 };
 </script>

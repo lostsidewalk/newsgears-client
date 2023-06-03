@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -53,19 +54,12 @@ export default {
   },
   setup() {
     const auth = inject('auth');
+    const { t } = useI18n();
 
-    return {
-      auth
-    }
-  },
-  data() {
-    return {
-      pwUpdateIsLoading: false,
-      serverMessage: null,
-    }
-  },
-  methods: {
-    submitPwUpdate(pwUpdateRequest) {
+    const pwUpdateIsLoading = ref(false);
+    const serverMessage = ref(null);
+
+    function submitPwUpdate(pwUpdateRequest) {
       let newPassword = pwUpdateRequest.newPassword;
       let newPasswordConfirmed = pwUpdateRequest.newPasswordConfirmed;
       this.serverMessage = null;
@@ -73,18 +67,28 @@ export default {
         return;
       }
 
-      this.pwUpdateIsLoading = true;
-      this.auth.pwUpdateWithSupplied(newPassword, newPasswordConfirmed)
+      pwUpdateIsLoading.value = true;
+      auth.pwUpdateWithSupplied(newPassword.value, newPasswordConfirmed.value)
           .then(() => {
-            this.serverMessage = this.$t('pwUpdated');
+            serverMessage.value = t('pwUpdated');
           })
           .catch((error) => {
-            this.serverMessage = error;
+            serverMessage.value = error;
           })
           .finally(() => {
-            this.pwUpdateIsLoading = false;
+            pwUpdateIsLoading.value = false;
           });
-    },
-  }
+    }
+
+    return {
+      auth, 
+      t, 
+      // 
+      pwUpdateIsLoading,
+      serverMessage, 
+      // 
+      submitPwUpdate, 
+    }
+  },
 };
 </script>

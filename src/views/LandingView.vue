@@ -42,7 +42,7 @@
 </template>
   
 <script>
-import { inject } from 'vue';
+import { inject, onMounted } from 'vue';
 import LoginButton from '@/components/landing/LoginButton.vue';
 import DemoPanel from '@/components/landing/DemoPanel.vue';
 import FAQPanel from '@/components/landing/FAQPanel.vue';
@@ -61,27 +61,25 @@ export default {
     DisplayModeButton,
     FooterPanel, 
   },
-  props: {
-    baseUrl: { type: String, required: true },
-  },
   setup() {
     const auth = inject('auth');
+
+    onMounted(() => {
+      auth.getTokenSilently()
+        .catch(() => {})
+        .finally(() => {
+          if (auth.isAuthenticated) {
+            console.log("landing: authenticated on mount");
+          } else {
+            console.log("landing: not authenticated on mount");
+          }
+      });
+    });
 
     return {
       auth
     }
   },
-  mounted() {
-    this.auth.getTokenSilently()
-      .catch(() => {})
-      .finally(() => {
-        if (this.auth.isAuthenticated) {
-          console.log("landing: authenticated on mount");
-        } else {
-          console.log("landing: not authenticated on mount");
-        }
-    });
-  }
 };
 </script>
   

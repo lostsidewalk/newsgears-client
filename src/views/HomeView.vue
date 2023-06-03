@@ -22,14 +22,11 @@
     </v-app-bar>
 
     <!-- pre-auth main -->
-    <v-main
-      v-show="!auth.isAuthenticated"
-    >
+    <v-main v-show="!auth.isAuthenticated">
       <BannerPanel :show-auth="false" />
 
       <AuthPanel
         v-show="!auth.isAuthenticated"
-        ref="authentication"
         :server-message="authServerMessage"
         :is-loading="loginIsLoading"
         @login="login"
@@ -38,9 +35,7 @@
     </v-main>
 
     <!-- post-auth main -->
-    <v-main
-      v-show="auth.isAuthenticated"
-    >
+    <v-main v-show="auth.isAuthenticated">
       <!-- progress bar -->
       <v-progress-linear :indeterminate="isLoading || refreshQueuesIsLoading" />
       <!-- app bar (top-level)-->
@@ -61,7 +56,6 @@
         </template>
         <template #append>
           <ControlPanel
-            ref="controlPanel"
             :base-url="baseUrl"
             :show-settings-panel="showSettingsPanel"
             :show-help-panel="showHelpPanel"
@@ -76,18 +70,18 @@
               <v-btn
                 :size="buttonSize"
                 accesskey="m"
-                :title="$t('uploadOPML')"
+                :title="t('uploadOPML')"
                 append-icon="fa-file"
-                :text="$t('uploadOPML')"
+                :text="t('uploadOPML')"
                 @click.stop="uploadOpml"
               />
               <!-- new queue button -->
               <v-btn
                 :size="buttonSize"
                 accesskey="q"
-                :title="$t('createNewQueue')"
+                :title="t('createNewQueue')"
                 append-icon="fa-plus"
-                :text="$t('createNewQueue')"
+                :text="t('createNewQueue')"
                 @click.stop="newQueue"
               />
             </template>
@@ -115,8 +109,8 @@
         <!-- help buton -->
         <v-btn
           :size="buttonSize"
-          :title="$t('toggleSortOrder')"
-          :aria-label="$t('toggleSortOrder')"
+          :title="t('toggleSortOrder')"
+          :aria-label="t('toggleSortOrder')"
           :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
           @click="showFilterHelp = !showFilterHelp"
         />
@@ -135,7 +129,7 @@
         v-model="showQueueDashboard"
         app
         :location="'start'"
-        :class="$vuetify.display.xs ? 'w-100' : 'w-50'"
+        :class="xs ? 'w-100' : 'w-50'"
         elevation="12"
         temporary
       >
@@ -146,7 +140,7 @@
             variant="outlined"
             border="top"
             icon="fa-question-circle"
-            :text="$t('thisIsYourQueueDashboard')"
+            :text="t('thisIsYourQueueDashboard')"
             class="ma-4"
             @click.close="dismissAlert('thisIsYourQueueDashboard')"
           />
@@ -189,7 +183,7 @@
       >
         <ConfirmationDialog
           class="rounded"
-          :prompt="$t('confirmDeleteQueue')"
+          :prompt="t('confirmDeleteQueue')"
           @confirm="performQueueDelete"
           @cancel="cancelQueueDelete"
         />
@@ -201,7 +195,7 @@
       >
         <ConfirmationDialog
           class="rounded"
-          :prompt="$t('confirmMarkQueueAsRead')"
+          :prompt="t('confirmMarkQueueAsRead')"
           @confirm="performQueueMarkAsRead"
           @cancel="cancelQueueMarkAsRead"
         />
@@ -269,7 +263,7 @@
         <OpmlUploadPanel
           ref="opmlUploadPanel"
           :base-url="baseUrl"
-          :is-loading="finalizeIsLoading || continueIsLoading" 
+          :is-loading="finalizeIsLoading || continueIsLoading"
           :at-step2="atStep2"
           :errors="opmlErrors"
           :queue-config-requests="queueConfigRequests"
@@ -333,7 +327,7 @@
           v-else
           info
         >
-          {{ $t('noArticlesInThisQueue') }}
+          {{ t('noArticlesInThisQueue') }}
         </v-alert>
       </v-container>
       <!-- queue container (list) -->
@@ -362,7 +356,7 @@
                 accesskey="n"
                 icon="fa-arrow-down"
                 class="ma-1"
-                :title="$t('goToNextPost')"
+                :title="t('goToNextPost')"
                 @click.stop="selectNextPost"
               />
               <v-btn
@@ -370,7 +364,7 @@
                 accesskey="p"
                 icon="fa-arrow-up"
                 class="ma-1"
-                :title="$t('goToPreviousPost')"
+                :title="t('goToPreviousPost')"
                 @click.stop="selectPreviousPost"
               />
             </template>
@@ -399,7 +393,7 @@
           v-else
           info
         >
-          {{ $t('noArticlesInThisQueue') }}
+          {{ t('noArticlesInThisQueue') }}
         </v-alert>
       </v-container>
     </v-main>
@@ -407,7 +401,13 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, watch, ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useAnnouncer } from '@vue-a11y/announcer';
+import { useNativeNotifications } from 'vue3-native-notification';
+import { useRouter } from 'vue-router';
+import { useDisplay } from 'vuetify/lib/framework.mjs';
+
 // import debounce from 'lodash.debounce';
 // components 
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
@@ -442,34 +442,6 @@ import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 // import QueueDetails from '@/components/queue/QueueDetails.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
-
-const sharingOptions = [
-  {
-    name: 'twitter',
-    icon: 'twitter',
-    url: 'https://twitter.com/intent/tweet?text={TITLE}&url={URL}',
-  },
-  {
-    name: 'facebook',
-    icon: 'facebook',
-    url: 'http://www.facebook.com/share.php?u={URL}&title={TITLE}',
-  },
-  {
-    name: 'telegram',
-    icon: 'telegram',
-    url: 'https://telegram.me/share/url?url={URL}&t={TITLE}',
-  },
-  {
-    name: 'linkedIn',
-    icon: 'linkedin',
-    url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}',
-  },
-  {
-    name: 'blogger',
-    icon: 'rss', // kind of generic 
-    url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}',
-  },
-];
 
 const replaceArray = function (str, find, replace) {
   let replaceString = str;
@@ -523,92 +495,88 @@ export default {
     baseUrl: { type: String, required: true },
     feedUrl: { type: String, required: true },
   },
-  setup() {
+  setup(props) {
+    // 
+    // refs 
+    // 
+    const queueConfigPanel = ref(null);
+    const opmlUploadPanel = ref(null);
+    // 
+    // injected 
+    // 
     const auth = inject('auth');
+    const { router } = useRouter();
+    const { t } = useI18n();
+    const { polite } = useAnnouncer();
+    const { nativeNotifications } = useNativeNotifications();
+    const display = useDisplay();
+    // 
+    // props 
+    // 
+    const { baseUrl } = props;
+    // 
+    // data 
+    // 
+    const refreshIntervalId = ref(null);
+    const isLoading = ref(false);
+    const loginIsLoading = ref(false);
+    const continueIsLoading = ref(false); // opml 
+    const finalizeIsLoading = ref(false); // opml 
+    const refreshQueuesIsLoading = ref(false);
+    const settingsIsLoading = ref(false); // settings 
+    const authServerMessage = ref(null);
+    const showQueueDeleteConfirmation = ref(false);
+    const queueIdToDelete = ref(null);
+    const showQueueMarkAsReadConfirmation = ref(false);
+    const queueIdToMarkAsRead = ref(null);
+    const subscriptionToShow = reactive({});
+    const showSubscriptionMetrics = ref(false);
+    const showNotificationWarning = ref(false);
+    const showFilterHelp = ref(false);
+    const showQueueFilterPills = ref(false);
+    const showQueueDashboard = ref(false);
+    const queueLayout = ref('LIST'); // 'CARD' 
+    const showQueueConfigPanel = ref(false);
+    const configuredQueueId = ref(null);
+    const showOpmlUploadPanel = ref(false);
+    const atStep2 = ref(false);
+    const queueConfigRequests = reactive([]);
+    const opmlErrors = reactive([]);
+    const showSettingsPanel = ref(false,);
+    const account = reactive({});
+    const frameworkConfig = reactive({});
+    const subscription = reactive({});
+    const showHelpPanel = ref(false);
+    const showSelectedPost = ref(false);
+    const selectedPost = reactive({}); // selected post to show on the post card modal (while in list view) 
+    const selectedItem = reactive({}); // selected post list item (i.e., scrolling through the list in list view) 
+    const queues = reactive([]); // all queues 
+    const selectedQueueId = ref(null); // currently selected queue Id 
+    const previousQueueId = ref(null); // previously selected queue Id 
+    const articleListsByQueue = reactive({}); // all queues 
+    const articleList = reactive({ values: [] }); // inbound queue for the currently selected queue  
+    const articleListFilter = ref(''); // user-supplied filter text (lunrjs query expression) 
+    const articleListSortOrder = ref('DSC');
+    const latestSubscriptionMetricsByQueue = reactive({});
+    // 
+    // computed properties 
+    // 
+    const isModalShowing = computed(() => {
+      return showSettingsPanel.value || showHelpPanel.value || showQueueConfigPanel.value || showOpmlUploadPanel.value || showSubscriptionMetrics.value;
+    });
 
-    return {
-      auth
-    }
-  },
-  data() {
-    return {
-      refreshIntervalId: null,
-      // loading indicators 
-      isLoading: false,
-      loginIsLoading: false,
-      continueIsLoading: false, // opml 
-      finalizeIsLoading: false, // opml 
-      refreshQueuesIsLoading: false, 
-      settingsIsLoading: false, // settings 
-      // show auth server message 
-      authServerMessage: null,
-      // show delete queue confirmation 
-      showQueueDeleteConfirmation: false,
-      queueIdToDelete: null,
-      // show queue mark as read confirmation 
-      showQueueMarkAsReadConfirmation: false,
-      queueIdToMarkAsRead: null,
-      // show subscription metrics 
-      subscriptionToShow: null,
-      showSubscriptionMetrics: false,
-      // show notification warning 
-      showNotificationWarning: false,
-      // show filter help
-      showFilterHelp: false,
-      // show filter pills 
-      showQueueFilterPills: false,
-      // show the queue dashboard 
-      showQueueDashboard: false,
-      // queue layout (list/card) 
-      queueLayout: 'LIST', // 'CARD' 
-      // show the queue config modal 
-      showQueueConfigPanel: false,
-      configuredQueueId: null,
-      // show the OPML config modal 
-      showOpmlUploadPanel: false,
-      atStep2: false, 
-      queueConfigRequests: null,
-      opmlErrors: [],
-      // show the account settings modal 
-      showSettingsPanel: false,
-      account: null, 
-      frameworkConfig: null, 
-      subscription: null, 
-      // show the help modal 
-      showHelpPanel: false,
-      // show selected post 
-      showSelectedPost: false,
-      selectedPost: null, // selected post to show on the post card modal (while in list view) 
-      selectedItem: null, // selected post list item (i.e., scrolling through the list in list view) 
-      // queue material 
-      queues: [], // all queues 
-      selectedQueueId: null, // currently selected queue Id 
-      previousQueueId: null, // previously selected queue Id 
-      articleListsByQueue: {}, // all queues 
-      articleList: { values: [] }, // inbound queue for the currently selected queue  
-      // filter material 
-      articleListFilter: '', // user-supplied filter text (lunrjs query expression) 
-      articleListSortOrder: 'DSC',
-      // queue refresh material 
-      latestSubscriptionMetricsByQueue: {}, 
-    };
-  },
-  computed: {
-    isModalShowing: function() {
-      return this.showSettingsPanel || this.showHelpPanel || this.showQueueConfigPanel || this.showOpmlUploadPanel || this.showSubscriptionMetrics;
-    },
-    filteredArticleList: function() {
-      if (this.articleList) {
+    const filteredArticleList = computed(() => {
+      if (articleList) {
         let results = null;
         // if a lunr query expression is specified .. 
         // then fetch the preliminary results from lunrjs 
-        if (this.articleListFilter) {
-          let lunrLambda = () => this.articleList.index.search(this.articleListFilter);
+        if (articleListFilter.value) {
+          let lunrLambda = () => articleList.index.search(articleListFilter.value);
           try {
             let lunrResults = lunrLambda.apply();
             if (lunrResults) {
               lunrResults = lunrResults.map(item => parseInt(item.ref));
-              results = this.articleList.values.filter(item => {
+              results = articleList.values.filter(item => {
                 return lunrResults.includes(item.id);
               });
             }
@@ -622,13 +590,13 @@ export default {
           }
         } else {
           // (otherwise the preliminary results are the entire queue) 
-          results = this.articleList.values;
+          results = articleList.values;
         }
         // 
         // sort the filtered result 
         // 
         if (results) {
-          this.sortQueue(results, this.articleListSortOrder);
+          sortQueue(results, articleListSortOrder.value);
         }
         // 
         // return the final (sorted) result 
@@ -637,10 +605,11 @@ export default {
       } else {
         return [];
       }
-    },
-    filteredQueueIdentOptions: function() {
+    });
+
+    const filteredQueueIdentOptions = computed(() => {
       let queueIdentOptions = [];
-      let t = Array.from(this.queues);
+      let t = Array.from(queues);
       for (let i = 0; i < Math.min(128, t.length); i++) {
         queueIdentOptions.push({
           "label": t[i].title ? t[i].title : t[i].ident,
@@ -663,55 +632,86 @@ export default {
         return 0;
       });
       return queueIdentOptions;
-    },
-    allFilterPills: function() {
+    });
+
+    const allFilterPills = computed(() => {
       let filterPills = [
         {
-          isSelected: this.articleListFilter.indexOf('status:READ_LATER') >= 0,
-          invoke: () => this.toggleFilterMode('READ_LATER'),
-          label: this.$t('readLater'),
+          isSelected: articleListFilter.value.indexOf('status:READ_LATER') >= 0,
+          invoke: () => toggleFilterMode('READ_LATER'),
+          label: t('readLater'),
           title: 'View items marked as read-later',
         },
         {
-          isSelected: this.articleListFilter.indexOf('status:PUBLISHED') >= 0,
-          invoke: () => this.toggleFilterMode('PUBLISHED'),
-          label: this.$t('starred'),
+          isSelected: articleListFilter.value.indexOf('status:PUBLISHED') >= 0,
+          invoke: () => toggleFilterMode('PUBLISHED'),
+          label: t('starred'),
           title: 'View starred items',
         },
         {
           isSelected: false,
-          invoke: () => this.articleListFilter = '',
-          label: this.$t('clear'),
+          invoke: () => articleListFilter.value = '',
+          label: t('clear'),
           title: 'Clear filter',
         }
       ];
 
       return filterPills;
-    },
-    sharingOptions: function() {
-      return sharingOptions;
-    },
-    showCardLayout: function() {
-      return this.queueLayout === 'CARD';
-    },
-    showListLayout: function() {
-      return this.queueLayout === 'LIST';
-    },
-    showQueueRefreshIndicator: function() {
+    });
+
+    const sharingOptions = computed(() => {
+      return [
+        {
+          name: 'twitter',
+          icon: 'twitter',
+          url: 'https://twitter.com/intent/tweet?text={TITLE}&url={URL}',
+        },
+        {
+          name: 'facebook',
+          icon: 'facebook',
+          url: 'http://www.facebook.com/share.php?u={URL}&title={TITLE}',
+        },
+        {
+          name: 'telegram',
+          icon: 'telegram',
+          url: 'https://telegram.me/share/url?url={URL}&t={TITLE}',
+        },
+        {
+          name: 'linkedIn',
+          icon: 'linkedin',
+          url: 'http://www.linkedin.com/shareArticle?mini=true&url={URL}&title={TITLE}&source={SOURCE}',
+        },
+        {
+          name: 'blogger',
+          icon: 'rss', // kind of generic 
+          url: 'https://www.blogger.com/blog-this.g?n={TITLE}&t={CONTENT}&u={URL}',
+        },
+      ];
+    });
+
+    const showCardLayout = computed(() => {
+      return queueLayout.value === 'CARD';
+    });
+
+    const showListLayout = computed(() => {
+      return queueLayout.value === 'LIST';
+    });
+
+    const showQueueRefreshIndicator = computed(() => {
       // ensure we have latestSubscriptionMetricsByQueue on hand; 
       // this is periodically refreshed by a background process 
-      if (!this.latestSubscriptionMetricsByQueue) {
+      if (!latestSubscriptionMetricsByQueue) {
         // console.debug("showQueueRefreshIndicator: returning early due to missing latest subscription metrics by queue");
         return false;
       }
       // ensure we have a latest subscription metrics for the selected queue 
-      let latestSubscriptionMetric = this.latestSubscriptionMetricsByQueue[this.selectedQueueId];
+      let latestSubscriptionMetric = latestSubscriptionMetricsByQueue[selectedQueueId.value];
       if (!latestSubscriptionMetric) {
         // console.debug("showQueueRefreshIndicator: returning early due to missing latest subscription metrics for selected queue");
         return false;
       }
       // ensure that we have subscriptions on hand for the selected queue 
-      let subscriptions = this.getSelectedQueue().subscriptions;
+      let subscriptions = getSelectedQueue().subscriptions;
       if (!subscriptions) {
         // console.debug("showQueueRefreshIndicator: returning early due to selected queue has 0 subscriptions");
         return false;
@@ -742,109 +742,65 @@ export default {
       // compare the latestLocalSubscriptionMetric with the latestSubscriptionMetric 
       let result = new Date(latestSubscriptionMetric) - new Date(latestLocalSubscriptionMetric.importTimestamp) > 0;
       return result;
+    });
+    // 
+    // functions 
+    // 
+    function logout() {
+      auth.logout()
+        .catch((error) => {
+          console.error("unable to logout due to: " + error);
+        }).finally(() => {
+          console.log("logout complete");
+        });
     }
-  },
-  watch: {
-    'auth.isAuthenticated' (isAuthenticated) {
-      if (isAuthenticated) {
-        const storedQueues = localStorage.getItem('queues');
-        if (storedQueues) {
-          this.queues = JSON.parse(storedQueues);
-        }
-        const storedArticleLists = localStorage.getItem('articleListsByQueue');
-        if (storedQueues) {
-          this.articleListsByQueue = JSON.parse(storedArticleLists);
-        }
-        if (this.queues.length > 0 && this.articleListsByQueue) {
-          if (!this.selectedQueueId) {
-            this.setSelectedQueueId(this.queues[0].id);
-          } else {
-            this.articleList = this.articleListsByQueue[this.selectedQueueId];
-          }
-          this.rebuildLunrIndexes();
-        } else {
-          this.refreshQueues(null, true); // need staging posts for all queues and queues definitions 
-        }
-        // schedule the subscription-metrics refresh timer 
-        this.refreshIntervalId = setInterval(() => {
-          this.checkForNewSubscriptionMetrics();
-        },  60_000 * 10); // 10 minutes (in ms) 
-      } else {
-        // unschedule the refresh timer 
-        this.refreshIntervalId = null;
-      }
-    }
-  },
-  mounted() {
-    this.auth.getTokenSilently()
-      .catch(() => {})
-      .finally(() => {
-        if (this.auth.isAuthenticated) {
-          console.log("home: authenticated on mount");
-        } else {
-          console.log("home: not authenticated on mount");
-        }
-      });
-    window.addEventListener("keydown", this.keyHandler);
-    if (this.auth.isAuthenticated) {
-      this.refreshQueues(null, true); // need staging posts for all queues, and queues definitions 
-    }
-  },
-  beforeUnmount() {
-    window.removeEventListener("keydown", this.keyHandler);
-  },
-  methods: {
-    logout() {
-      this.auth.logout()
-      .catch((error) => {
-        console.error("unable to logout due to: " + error);
-      }).finally(() => {
-        console.log("logout complete");
-      });
-    },
-    login(loginRequest) {
+
+    function login(loginRequest) {
       let username = loginRequest.username;
       let password = loginRequest.password;
-      this.authServerMessage = null;
+      authServerMessage.value = null;
       if (!username && !password) {
-        this.authServerMessage = this.$t("usernameAndPasswordAreRequired");
+        authServerMessage.value = t("usernameAndPasswordAreRequired");
         return;
       }
       if (!username && password) {
-        this.authServerMessage = this.$t("usernameIsRequired");
+        authServerMessage.value = t("usernameIsRequired");
         return;
       }
       if (username && !password) {
-        this.authServerMessage = this.$t("passwordIsRequired");
+        authServerMessage.value = t("passwordIsRequired");
         return;
       }
 
-      this.loginIsLoading = true;
-      this.auth.loginWithSupplied(username, password, false)
+      loginIsLoading.value = true;
+      auth.loginWithSupplied(username, password, false)
         .then(() => {
-          this.authServerMessage = null;
+          authServerMessage.value = null;
         })
         .catch((error) => {
-          this.authServerMessage = error;
-          if (!this.authServerMessage) {
-            this.authServerMessage = this.$t("somethingHorribleHappened");
+          authServerMessage.value = error;
+          if (!authServerMessage.value) {
+            authServerMessage.value = t("somethingHorribleHappened");
           }
         })
         .finally(() => {
-          this.loginIsLoading = false;
+          loginIsLoading.value = false;
         });
-    },
-    shouldShowAlert(alertName) {
+    }
+
+    function shouldShowAlert(alertName) {
       return !localStorage.getItem(alertName);
-    },
-    dismissAlert(alertName) {
+    }
+
+    function dismissAlert(alertName) {
       localStorage.setItem(alertName, new Date().toISOString());
-    },
-    async setLastServerMessage(message) {
-      const permission = await this.$notification.requestPermission();
+    }
+
+    async function setLastServerMessage(message) {
+      const permission = await nativeNotifications.requestPermission();
       if (permission === "granted") {
-        this.showNotificationWarning = false;
-        this.$notification.show('FeedGears message', {
+        showNotificationWarning.value = false;
+        nativeNotifications.show('FeedGears message', {
           body: message
         }, {
           onerror: () => {
@@ -852,54 +808,54 @@ export default {
           }
         });
       } else {
-        this.showNotificationWarning = true;
+        showNotificationWarning.value = true;
       }
-      this.$announcer.polite(message);
-    },
+      polite(message);
+    }
     // 
     // open post card in a modal dialog
     // 
-    openPost(postId) {
-      this.selectedPost = this.getPostFromQueue(postId);
-      this.showSelectedPost = true;
-    },
+    function openPost(postId) {
+      Object.assign(selectedPost, getPostFromQueue(postId));
+      showSelectedPost.value = true;
+    }
     // 
     //
     // 
-    selectNextPost() {
-      if (this.selectedPost) {
-        const id = this.selectedPost.id;
-        const queue = this.filteredArticleList;
+    function selectNextPost() {
+      if (selectedPost) {
+        const id = selectedPost.id;
+        const queue = filteredArticleList;
         const nextIdx = queue.findIndex(post => post.id === id) + 1;
         if (nextIdx < queue.length) {
-          this.selectedPost = queue[nextIdx];
+          Object.assign(selectedPost, queue[nextIdx]);
         }
       }
-    },
+    }
     // 
     //
     // 
-    selectPreviousPost() {
-      if (this.selectedPost) {
-        const id = this.selectedPost.id;
-        const queue = this.filteredArticleList;
+    function selectPreviousPost() {
+      if (selectedPost) {
+        const id = selectedPost.id;
+        const queue = filteredArticleList;
         const prevIdx = queue.findIndex(post => post.id === id) - 1;
         if (prevIdx >= 0) {
-          this.selectedPost = queue[prevIdx];
+          Object.assign(selectedPost, queue[prevIdx]);
         }
       }
-    },
+    }
     // 
     // open post URL in new window
     // 
-    openPostUrl(postId) {
-      const post = this.getPostFromQueue(postId);
+    function openPostUrl(postId) {
+      const post = getPostFromQueue(postId);
       window.open(post.postUrl, '_blank');
-    },
+    }
     // 
     // share a post using the given sharing option 
     // 
-    share(sharingOption, post) {
+    function share(sharingOption, post) {
       const { postTitle, postUrl, importerDesc, postDesc } = post;
       const title = encodeURIComponent(postTitle.value);
       const link = encodeURIComponent(postUrl);
@@ -910,24 +866,24 @@ export default {
         [link, title, source, content]
       );
       window.open(url, '_blank');
-    },
+    }
     // 
     // handleserver error 
     // 
-    handleServerError(error) {
+    function handleServerError(error) {
       console.error(error);
       if (error.name === 'TypeError') {
-        this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+        setLastServerMessage(t('somethingHorribleHappened'));
       } else if (error.name === 'AbortError') {
-        this.setLastServerMessage(this.$t('requestTimedOut'));
+        setLastServerMessage(t('requestTimedOut'));
       } else {
-        this.setLastServerMessage(error.message || error);
+        setLastServerMessage(error.message || error);
       }
-    },
+    }
     // 
     // sorting / filtering 
     // 
-    sortQueue(queue, sortOrder) {
+    function sortQueue(queue, sortOrder) {
       // 
       // when sorted 'descending': 
       // 
@@ -953,79 +909,83 @@ export default {
           return l1.id > r1.id ? 1 : -1;
         }
       });
-    },
+    }
     // 
     // 
     //
-    toggleArticleListSortOrder() {
-      this.articleListSortOrder = (this.articleListSortOrder === 'DSC' ? 'ASC' : 'DSC');
-    },
+    function toggleArticleListSortOrder() {
+      articleListSortOrder.value = (articleListSortOrder.value === 'DSC' ? 'ASC' : 'DSC');
+    }
     // 
     // invoked when the user clicks the mode pill in the queue filter; 
     // this method should add the mode to articleListFilter, 
     // or remove it if it already present. 
     // 
-    toggleFilterMode(filterMode) {
-      if (this.articleListFilter.includes('status:' + filterMode)) {
-        this.articleListFilter = this.articleListFilter.replace('status:' + filterMode, '');
+    function toggleFilterMode(filterMode) {
+      if (articleListFilter.value.includes('status:' + filterMode)) {
+        articleListFilter.value = articleListFilter.value.replace('status:' + filterMode, '');
       } else {
-        this.articleListFilter += 'status:' + filterMode;
+        articleListFilter.value += 'status:' + filterMode;
       }
-    },
-    updateFilter(f) {
+    }
+
+    function updateFilter(f) {
       if (f.name === "subscription") {
-        if (f.queueId !== this.selectedQueueId) {
-          this.setSelectedQueueId(f.queueId);
-          this.articleListFilter = '';
-          this.$nextTick(() => {
-            this.addSubscriptionToFilter(f.value);
+        if (f.queueId !== selectedQueueId.value) {
+          setSelectedQueueId(f.queueId);
+          articleListFilter.value = '';
+          nextTick(() => {
+            addSubscriptionToFilter(f.value);
           });
         } else {
-          this.addSubscriptionToFilter(f.value);
+          addSubscriptionToFilter(f.value);
         }
       } else if (f.name === "category") {
-        this.addCategoryToFilter(f.value);
+        addCategoryToFilter(f.value);
       }
-    },
+    }
     // 
     // convenience method (invoked from above) to add the subscriptionId to the lunrjs query expression 
     // 
-    addSubscriptionToFilter(subscription) {
-      this.articleListFilter = '+feed:' + toLunrToken(subscription);
-    },
+    function addSubscriptionToFilter(subscription) {
+      articleListFilter.value = '+feed:' + toLunrToken(subscription);
+    }
     // 
     // convenience method (invoked from above) to add the category to the lunrjs query expression 
     // 
-    addCategoryToFilter(category) {
-      if (this.articleListFilter) {
+    function addCategoryToFilter(category) {
+      if (articleListFilter.value) {
         let expr = '+category:' + toLunrToken(category);
-        if (this.articleListFilter.indexOf(expr) < 0) {
-          this.articleListFilter = this.articleListFilter + ' +category:' + category;
+        if (articleListFilter.value.indexOf(expr) < 0) {
+          articleListFilter.value = articleListFilter.value + ' +category:' + category;
         }
       } else {
-        this.articleListFilter = ' +category:' + category;
+        articleListFilter.value = ' +category:' + category;
       }
-    },
-    openSubscriptionMetrics(subscriptionInfo) {
-      this.subscriptionToShow = subscriptionInfo;
-      this.showSubscriptionMetrics = true;
-    },
+    }
+
+    function openSubscriptionMetrics(subscriptionInfo) {
+      Object.assign(subscriptionToShow, subscriptionInfo);
+      showSubscriptionMetrics.value = true;
+    }
     // 
     // 
     // 
-    countArticleList(queueId) {
-      const iq = this.articleListsByQueue[queueId];
+    function countArticleList(queueId) {
+      const iq = articleListsByQueue[queueId];
       if (iq) {
         return iq.values.filter(post => !post.isRead).length;
       }
       return 0;
-    },
-    countPublished(queueId) {
-      const iq = this.articleListsByQueue[queueId];
+    }
+
+    function countPublished(queueId) {
+      const iq = articleListsByQueue[queueId];
       return iq ? iq.values.filter(post => post.isPublished).length : 0;
-    },
-    checkForNewSubscriptionMetrics() {
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function checkForNewSubscriptionMetrics() {
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           headers: {
@@ -1035,7 +995,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/queues/metrics", requestOptions)
+        fetch(baseUrl + "/queues/metrics", requestOptions)
           .then((response) => {
             if (response.status === 200) {
               return response.json();
@@ -1043,37 +1003,37 @@ export default {
               let contentType = response.headers.get("content-type");
               let isJson = contentType && contentType.indexOf("application/json") !== -1;
               return isJson ?
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
             }
           }).then((data) => {
-            this.latestSubscriptionMetricsByQueue = data;
+            Object.assign(latestSubscriptionMetricsByQueue, data);
           }).catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
+        handleServerError(error);
       });
-    },
+    }
     // 
     // queue refresh 
     // 
     // queuesToFetch = fetch staging posts for the queue Ids in this array, empty -> all queues  
     // fetchQueueDefinitions = t/f -> include/exclude queue definition updates 
-    async refreshQueues(queuesToFetch, fetchQueueDefinitions) {
+    async function refreshQueues(queuesToFetch, fetchQueueDefinitions) {
       console.log("refreshing queues");
       let rawPosts = [];
-      this.refreshQueuesIsLoading = true;
+      refreshQueuesIsLoading.value = true;
 
       try {
-        const token = await this.auth.getTokenSilently();
+        const token = await auth.getTokenSilently();
         const stagingPostRefreshController = new AbortController();
         const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
         let queueDefinitionRefreshTimeoutId;
         let refreshPromises = [
-          fetch(this.baseUrl + "/staging" + (queuesToFetch ? ("?queueIds=" + queuesToFetch) : ''), {
+          fetch(baseUrl + "/staging" + (queuesToFetch ? ("?queueIds=" + queuesToFetch) : ''), {
             headers: {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
@@ -1087,10 +1047,10 @@ export default {
                 const isJson = contentType && contentType.indexOf("application/json") !== -1;
                 return isJson ? response.json() : {};
               } else {
-                throw new Error(this.$t('refreshFailedDueTo') +
+                throw new Error(t('refreshFailedDueTo') +
                   " HTTP " + response.status + ": " +
                   (response.statusText ?
-                    response.statusText : ("(" + this.$t('noMessage') + ")")
+                    response.statusText : ("(" + t('noMessage') + ")")
                   )
                 );
               }
@@ -1117,7 +1077,7 @@ export default {
           const queueDefinitionRefreshController = new AbortController();
           queueDefinitionRefreshTimeoutId = setTimeout(() => queueDefinitionRefreshController.abort(), 5000);
           refreshPromises.push(
-            fetch(this.baseUrl + "/queues", {
+            fetch(baseUrl + "/queues", {
               headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -1131,27 +1091,27 @@ export default {
                   const isJson = contentType && contentType.indexOf("application/json") !== -1;
                   return isJson ? response.json() : {};
                 } else {
-                  throw new Error(this.$t('refreshFailedDueTo') +
+                  throw new Error(t('refreshFailedDueTo') +
                     " HTTP " + response.status + ": " +
                     (response.statusText ?
-                      response.statusText : ("(" + this.$t('noMessage') + ")")
+                      response.statusText : ("(" + t('noMessage') + ")")
                     )
                   );
                 }
               })
               .then((data) => {
-                this.queues.splice(0);
+                queues.splice(0);
                 const queueDefinitionData = data.queueDefinitions;
                 const subscriptionDefinitions = data.subscriptionDefinitions;
                 if (queueDefinitionData) {
                   for (let i = 0; i < queueDefinitionData.length; i++) {
                     const qd = queueDefinitionData[i];
                     const sd = subscriptionDefinitions[qd.id];
-                    this.decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics);
+                    decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics);
                     qd.exportConfig = qd.exportConfig ? JSON.parse(qd.exportConfig) : qd.exportConfig;
-                    this.queues.push(qd);
+                    queues.push(qd);
                   }
-                  localStorage.setItem('queues', JSON.stringify(this.queues));
+                  localStorage.setItem('queues', JSON.stringify(queues));
                 }
               })
           );
@@ -1163,40 +1123,41 @@ export default {
           clearTimeout(queueDefinitionRefreshTimeoutId);
         }
 
-        for (let i = 0; i < this.queues.length; i++) {
-          const queuedId = this.queues[i].id;
-          const iq = this.articleListsByQueue[queuedId];
+        for (let i = 0; i < queues.length; i++) {
+          const queuedId = queues[i].id;
+          const iq = articleListsByQueue[queuedId];
           if (iq) {
-            if (!queuesToFetch || queuesToFetch.indexOf(this.queues[i].id) >= 0) {
+            if (!queuesToFetch || queuesToFetch.indexOf(queues[i].id) >= 0) {
               iq.values.splice(0);
               iq.index = null;
             }
           } else {
-            this.articleListsByQueue[queuedId] = { values: [] };
+            articleListsByQueue[queuedId] = { values: [] };
           }
         }
 
         for (let i = 0; i < rawPosts.length; i++) {
           const post = rawPosts[i];
-          this.articleListsByQueue[post.queueId].values.push(post);
+          articleListsByQueue[post.queueId].values.push(post);
         }
 
-        this.rebuildLunrIndexes();
-        localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
+        rebuildLunrIndexes();
+        localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
 
-        if (this.queues.length > 0 && !this.selectedQueueId) {
-          this.setSelectedQueueId(this.queues[0].id);
+        if (queues.length > 0 && !selectedQueueId.value) {
+          setSelectedQueueId(queues[0].id);
         } else {
-          this.articleList = this.articleListsByQueue[this.selectedQueueId];
+          Object.assign(articleList, articleListsByQueue[selectedQueueId.value]);
         }
 
       } catch (error) {
-        this.handleServerError(error);
+        handleServerError(error);
       } finally {
-        this.refreshQueuesIsLoading = false;
+        refreshQueuesIsLoading.value = false;
       }
-    },
-    decorateQueueWithSubscriptionDefinitions(fd, qd, qm) {
+    }
+
+    function decorateQueueWithSubscriptionDefinitions(fd, qd, qm) {
       fd.subscriptions = [];
 
       if (qd) {
@@ -1231,38 +1192,39 @@ export default {
           fd.subscriptions.push(r);
         }
       }
-    }, 
-    rebuildLunrIndexes() {
+    }
+
+    function rebuildLunrIndexes() {
       console.log("rebuilding lunrjs indexes...");
-      for (let i = 0; i < this.queues.length; i++) {
-        let iq = this.articleListsByQueue[this.queues[i].id];
+      for (let i = 0; i < queues.length; i++) {
+        let iq = articleListsByQueue[queues[i].id];
         if (iq) {
-          const trueStr = this.$t('trueStr');
-          const falseStr = this.$t('falseStr');
+          const trueStr = t('trueStr');
+          const falseStr = t('falseStr');
           iq.index = lunr(function () {
             this.ref('id')
             // title 
             this.field('title', {
-              extractor: function(doc = {}) {
+              extractor: function (doc = {}) {
                 return doc.postTitle ? doc.postTitle.value : null;
               },
               boost: 10,
             });
             // description 
             this.field('description', {
-              extractor: function(doc = {}) {
+              extractor: function (doc = {}) {
                 return doc.postDesc ? doc.postDesc.value : null;
               }
             });
             // feed 
             this.field('feed', {
-              extractor: function(doc = {}) {
+              extractor: function (doc = {}) {
                 return doc.importerDesc;
               },
             });
             // category 
             this.field('category', {
-              extractor: function(doc = {}) {
+              extractor: function (doc = {}) {
                 return doc.postCategories;
               }
             });
@@ -1326,14 +1288,14 @@ export default {
           });
         }
       }
-    },
+    }
     // 
     // 
     // 
-    updatePostReadStatus(result) {
+    function updatePostReadStatus(result) {
       console.log("updating post status");
-      this.isLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      isLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
@@ -1345,7 +1307,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/staging/read-status/post/" + result.id, requestOptions)
+        fetch(baseUrl + "/staging/read-status/post/" + result.id, requestOptions)
           .then((response) => {
             if (response.status === 200) {
               return;
@@ -1353,32 +1315,33 @@ export default {
               let contentType = response.headers.get("content-type");
               let isJson = contentType && contentType.indexOf("application/json") !== -1;
               return isJson ?
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
             }
           }).then(() => {
             let originator = result.originator;
             if (originator === "togglePostReadStatus") { // NOTE: this happens when the user toggles the 'mark as read' button 
-              this.onTogglePostReadStatus(result);
+              onTogglePostReadStatus(result);
             } else if (originator === "togglePostReadLaterStatus") { // NOTE: this happens when the user toggles the 'mark as read-later' button 
-              this.onTogglePostReadLaterStatus(result);
+              onTogglePostReadLaterStatus(result);
             }
-            this.rebuildLunrIndexes();
+            rebuildLunrIndexes();
           }).catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
-            this.isLoading = false;
+            isLoading.value = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.isLoading = false;
+        handleServerError(error);
+        isLoading.value = false;
       });
-    },
-    updatePostPubStatus(result) {
+    }
+
+    function updatePostPubStatus(result) {
       console.log("updating post status");
-      this.isLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      isLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
@@ -1390,7 +1353,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/staging/pub-status/" + result.id, requestOptions)
+        fetch(baseUrl + "/staging/pub-status/" + result.id, requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1398,13 +1361,13 @@ export default {
               return isJson ? response.json() : {};
             } else {
               return isJson ?
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
             }
           }).then((data) => {
             // update the post 
             let originator = result.originator;
-            let p = this.getPostFromQueue(result.id);
+            let p = getPostFromQueue(result.id);
             if (originator === "stagePost") {
               p.isPublished = true;
             } else if (originator === "unstagePost") {
@@ -1413,74 +1376,78 @@ export default {
             p.postPubStatus = null;
             // update the queue last deployed timestamp 
             let updateLocalStorage = false;
-            for (let i = 0; i < this.queues.length; i++) {
-              if (this.queues[i].id === result.queueId) {
-                this.queues[i].lastDeployed = this.formatTimestamp(data.timestamp);
+            for (let i = 0; i < queues.length; i++) {
+              if (queues[i].id === result.queueId) {
+                queues[i].lastDeployed = formatTimestamp(data.timestamp);
                 updateLocalStorage = true;
                 break;
               }
             }
             if (updateLocalStorage) {
               // update queues localStorage 
-              localStorage.setItem('queues', JSON.stringify(this.queues));
+              localStorage.setItem('queues', JSON.stringify(queues));
             }
-            this.rebuildLunrIndexes();
+            rebuildLunrIndexes();
           }).catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
-            this.isLoading = false;
+            isLoading.value = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.isLoading = false;
+        handleServerError(error);
+        isLoading.value = false;
       });
-    },
-    onTogglePostReadStatus(result) {
-      let p = this.getPostFromQueue(result.id);
+    }
+
+    function onTogglePostReadStatus(result) {
+      let p = getPostFromQueue(result.id);
       p.isRead = !p.isRead;
       p.postReadStatus = p.isRead ? 'READ' : null;
       if (p.isRead) {
         p.isReadLater = false;
       }
-    },
-    onTogglePostReadLaterStatus(result) {
-      let p = this.getPostFromQueue(result.id);
+    }
+
+    function onTogglePostReadLaterStatus(result) {
+      let p = getPostFromQueue(result.id);
       p.isReadLater = !p.isReadLater;
       p.postReadStatus = p.isReadLater ? 'READ_LATER' : null;
       if (p.isReadLater) {
         p.isRead = false;
       }
-    },
+    }
     // 
     // create / update queue 
     // 
-    newQueue() {
+    function newQueue() {
       document.activeElement.blur();
-      this.showQueueConfigPanel = true;
-      this.$nextTick(() => this.$refs.queueConfigPanel.setup({ subscriptions: [] }));
-    },
-    uploadOpml() {
+      showQueueConfigPanel.value = true;
+      nextTick(() => queueConfigPanel.value.setup({ subscriptions: [] }));
+    }
+
+    function uploadOpml() {
       document.activeElement.blur();
-      this.setSelectedQueueId(this.selectedQueueId);
-      this.showOpmlUploadPanel = true;
-      this.$nextTick(() => this.$refs.opmlUploadPanel.show());
-    },
-    continueOpmlUpload(opmlFiles) {
-      this.continueIsLoading = true;
-      this.opmlErrors.splice(0);
-      this.auth.getTokenSilently().then((token) => {
+      setSelectedQueueId(selectedQueueId.value);
+      showOpmlUploadPanel.value = true;
+      nextTick(() => opmlUploadPanel.value.show());
+    }
+
+    function continueOpmlUpload(opmlFiles) {
+      continueIsLoading.value = true;
+      opmlErrors.splice(0);
+      auth.getTokenSilently().then((token) => {
         // form data 
         let formData = new FormData();
         for (let i = 0; i < opmlFiles.length; i++) {
-          let f = this.files[i];
+          let f = opmlFiles[i];
           formData.append('files', f.file, f.file.name);
         }
         // request options 
         const controller = new AbortController();
         const requestOptions = {
-          method: 'POST', 
-          headers: { 
+          method: 'POST',
+          headers: {
             "Authorization": `Bearer ${token}`
           },
           credentials: 'include',
@@ -1488,47 +1455,48 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/opml", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          if (data.errors && data.errors.length > 0) {
-            this.opmlErrors = data.errors;
-          } else {
-            this.queueConfigRequests = data.queueConfigRequests;
-            this.atStep2 = true;
-          }
-        }).catch((error) => {
-          console.error(error);
-          if (error.name === 'TypeError') {
-            this.opmlErrors.push(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.opmlErrors.push(this.$t('requestTimedOut'));
-          } else {
-            this.opmlErrors.push(error.message);
-          }
-        }).finally(() => {
-          this.continueIsLoading = false;
-          clearTimeout(timeoutId);
-        });
+        fetch(baseUrl + "/queues/opml", requestOptions)
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ?
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
+            }
+          }).then((data) => {
+            if (data.errors && data.errors.length > 0) {
+              Object.assign(opmlErrors, data.errors);
+            } else {
+              Object.assign(queueConfigRequests, data.queueConfigRequests);
+              atStep2.value = true;
+            }
+          }).catch((error) => {
+            console.error(error);
+            if (error.name === 'TypeError') {
+              opmlErrors.push(t('somethingHorribleHappened'));
+            } else if (error.name === 'AbortError') {
+              opmlErrors.push(t('requestTimedOut'));
+            } else {
+              opmlErrors.push(error.message);
+            }
+          }).finally(() => {
+            continueIsLoading.value = false;
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.continueIsLoading = false;
+        handleServerError(error);
+        continueIsLoading.value = false;
       });
-    },
-    finalizeOpmlUpload(queues) {
+    }
+
+    function finalizeOpmlUpload() {
       let method = 'POST';
-      this.finalizeIsLoading = true;
-      console.log("pushing queues to remote, ct=" + queues.length);
-      this.auth.getTokenSilently().then((token) => {
+      finalizeIsLoading.value = true;
+      console.log("pushing queues to remote, ct=" + queueConfigRequests.length);
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
@@ -1536,11 +1504,11 @@ export default {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(queues),
+          body: JSON.stringify(queueConfigRequests),
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/", requestOptions)
+        fetch(baseUrl + "/queues/", requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1548,8 +1516,8 @@ export default {
               return isJson ? response.json() : [];
             } else {
               return isJson ?
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
             }
           })
           .then((data) => {
@@ -1558,46 +1526,49 @@ export default {
               let queue = data[i].queueDefinition;
               let subscriptionDefinitions = data[i].subscriptionDefinitions;
               let subscriptionMetrics = data[i].subscriptionMetrics;
-              this.decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
-              this.queues.push(queue);
+              decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
+              queues.push(queue);
               queueIds.push(queue.id);
             }
             // update queues localStorage 
-            localStorage.setItem('queues', JSON.stringify(this.queues));
-            this.setLastServerMessage(this.queues.length + " " + this.$t('nQueuesCreated'));
-            this.$refs.opmlUploadPanel.hide();
-            this.showOpmlUploadPanel = false;
-            this.refreshQueues(queueIds, false);
+            localStorage.setItem('queues', JSON.stringify(queues));
+            setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
+            opmlUploadPanel.value.hide();
+            showOpmlUploadPanel.value = false;
+            refreshQueues(queueIds, false);
           })
           .catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
-            this.finalizeIsLoading = false;
+            finalizeIsLoading.value = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.finalizeIsLoading = false;
+        handleServerError(error);
+        finalizeIsLoading.value = false;
       });
-    },
-    cancelOpmlUpload() {
-      if (this.$refs.opmlUploadPanel) {
-        this.$refs.opmlUploadPanel.hide();
-        this.showOpmlUploadPanel = false;
-        this.restorePreviousQueueId();
+    }
+
+    function cancelOpmlUpload() {
+      if (opmlUploadPanel.value) {
+        opmlUploadPanel.value.hide();
+        showOpmlUploadPanel.value = false;
+        restorePreviousQueueId();
       }
-    },
-    configureQueue(queueId) {
+    }
+
+    function configureQueue(queueId) {
       document.activeElement.blur();
-      this.showQueueConfigPanel = true;
-      this.configuredQueueId = queueId;
-      this.$nextTick(() => this.$refs.queueConfigPanel.setup(this.getQueueById(queueId)));
-    },
-    createQueue(queue) {
+      showQueueConfigPanel.value = true;
+      configuredQueueId.value = queueId;
+      nextTick(() => queueConfigPanel.value.setup(getQueueById(queueId)));
+    }
+
+    function createQueue(queue) {
       let method = 'POST';
-      this.isLoading = true;
+      isLoading.value = true;
       console.log("pushing new queue to remote..");
-      this.auth.getTokenSilently().then((token) => {
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
@@ -1609,7 +1580,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/", requestOptions)
+        fetch(baseUrl + "/queues/", requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1625,32 +1596,33 @@ export default {
           })
           .then((data) => {
             let created = data[0].queueDefinition;
-            this.queues.push(created);
+            queues.push(created);
             // update queues localStorage 
-            localStorage.setItem('queues', JSON.stringify(this.queues));
-            this.articleListsByQueue[created.id] = { values: [] };
+            localStorage.setItem('queues', JSON.stringify(queues));
+            articleListsByQueue[created.id] = { values: [] };
             // update queues localStorage 
-            localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
-            this.$refs.queueConfigPanel.setup(created);
-            this.setLastServerMessage(this.$t('queueCreated') + ' (' + created.ident + ")'");
-            this.setSelectedQueueId(created.id);
-            this.rebuildLunrIndexes();
+            localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
+            queueConfigPanel.value.setup(created);
+            setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
+            setSelectedQueueId(created.id);
+            rebuildLunrIndexes();
           }).catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
-            this.isLoading = false;
+            isLoading.value = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.isLoading = false;
+        handleServerError(error);
+        isLoading.value = false;
       });
-    },
-    updateQueue(queue) {
+    }
+
+    function updateQueue(queue) {
       let method = 'PUT';
-      this.isLoading = true;
+      isLoading.value = true;
       console.log("pushing updated queue to remote..");
-      this.auth.getTokenSilently().then((token) => {
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: method,
@@ -1662,7 +1634,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(this.baseUrl + "/queues/" + queue.id, requestOptions)
+        fetch(baseUrl + "/queues/" + queue.id, requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1678,7 +1650,7 @@ export default {
           })
           .then((data) => {
             let updated = data.queueDefinition;
-            let current = this.getQueueById(updated.id);
+            let current = getQueueById(updated.id);
             current.ident = updated.ident;
             current.title = updated.title;
             current.description = updated.description;
@@ -1690,52 +1662,56 @@ export default {
             current.categoryScheme = updated.categoryScheme;
             current.categoryValue = updated.categoryValue;
             current.categoryDomain = updated.categoryDomain;
-            this.decorateQueueWithSubscriptionDefinitions(current, data.subscriptionDefinitions, data.subscriptionMetrics);
+            decorateQueueWithSubscriptionDefinitions(current, data.subscriptionDefinitions, data.subscriptionMetrics);
             // update queues localStorage 
-            localStorage.setItem('queues', JSON.stringify(this.queues));
-            this.setLastServerMessage(this.$t('queueUpdated') + ' (' + queue.ident + ')');
-            this.refreshQueues([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
+            localStorage.setItem('queues', JSON.stringify(queues));
+            setLastServerMessage(t('queueUpdated') + ' (' + queue.ident + ')');
+            refreshQueues([current.id], false); // TODO: (enhancement) the refresh should be returned from the update call 
           }).catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
-            this.isLoading = false;
+            isLoading.value = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.isLoading = false;
+        handleServerError(error);
+        isLoading.value = false;
       });
-    },
-    dismissQueueConfigPanel() {
-      if (this.$refs.queueConfigPanel) {
-        this.$refs.queueConfigPanel.tearDown();
-        this.showQueueConfigPanel = false;
-        this.configuredQueueId = null;
-        if (!this.selectedQueueId) {
-          this.restorePreviousQueueId();
+    }
+
+    function dismissQueueConfigPanel() {
+      if (queueConfigPanel.value) {
+        queueConfigPanel.value.tearDown();
+        showQueueConfigPanel.value = false;
+        configuredQueueId.value = null;
+        if (!selectedQueueId.value) {
+          restorePreviousQueueId();
         }
       }
-    },
+    }
+
     // 
     // delete queue 
     // 
-    deleteSelectedQueue() {
+    function deleteSelectedQueue() {
       document.activeElement.blur();
-      this.queueIdToDelete = this.selectedQueueId;
-      this.showQueueDeleteConfirmation = true;
-    },
-    deleteQueue(queueId) {
+      queueIdToDelete.value = selectedQueueId.value;
+      showQueueDeleteConfirmation.value = true;
+    }
+
+    function deleteQueue(queueId) {
       document.activeElement.blur();
-      this.queueIdToDelete = queueId;
-      this.showQueueDeleteConfirmation = true;
-    },
-    performQueueDelete() {
-      console.log("deleting queue id=" + this.queueIdToDelete);
-      this.isLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      queueIdToDelete.value = queueId;
+      showQueueDeleteConfirmation.value = true;
+    }
+
+    function performQueueDelete() {
+      console.log("deleting queue id=" + queueIdToDelete.value);
+      isLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/queues/" + this.queueIdToDelete, {
+        fetch(baseUrl.value + "/queues/" + queueIdToDelete.value, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -1750,68 +1726,71 @@ export default {
             return isJson ? response.json() : {};
           } else {
             return isJson ?
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).then((data) => {
-          console.log("deleted queueId=" + this.queueIdToDelete);
-          delete this.articleListsByQueue[this.queueIdToDelete];
+          console.log("deleted queueId=" + queueIdToDelete.value);
+          delete articleListsByQueue[queueIdToDelete.value];
           // update queues localStorage 
-          localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
+          localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
           let idxToSplice = -1;
-          for (let i = 0; i < this.queues.length; i++) {
-            if (this.queues[i].id === this.queueIdToDelete) {
+          for (let i = 0; i < queues.length; i++) {
+            if (queues[i].id === queueIdToDelete.value) {
               idxToSplice = i;
               break;
             }
           }
           if (idxToSplice > -1) {
-            let nextQueueId = this.queues.length > idxToSplice + 1 ? this.queues[idxToSplice + 1].id : null;
-            this.queues.splice(idxToSplice, 1);
+            let nextQueueId = queues.length > idxToSplice + 1 ? queues[idxToSplice + 1].id : null;
+            queues.splice(idxToSplice, 1);
             // update queues localStorage 
-            localStorage.setItem('queues', JSON.stringify(this.queues));
-            if (this.selectedQueueId === this.queueIdToDelete) {
-              this.setSelectedQueueId(nextQueueId); // TODO: (enhancement) should be a configurable 'default' queue 
+            localStorage.setItem('queues', JSON.stringify(queues));
+            if (selectedQueueId.value === queueIdToDelete.value) {
+              setSelectedQueueId(nextQueueId); // TODO: (enhancement) should be a configurable 'default' queue 
             }
           }
-          this.setLastServerMessage(data.message);
-          this.rebuildLunrIndexes();
+          setLastServerMessage(data.message);
+          rebuildLunrIndexes();
         }).catch((error) => {
-          this.handleServerError(error);
+          handleServerError(error);
         }).finally(() => {
-          this.queueIdToDelete = null;
-          this.showQueueDeleteConfirmation = false;
-          this.isLoading = false;
+          queueIdToDelete.value = null;
+          showQueueDeleteConfirmation.value = false;
+          isLoading.value = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.queueIdToDelete = null;
-        this.showQueueDeleteConfirmation = false;
-        this.isLoading = false;
+        handleServerError(error);
+        queueIdToDelete.value = null;
+        showQueueDeleteConfirmation.value = false;
+        isLoading.value = false;
       });
-    },
-    cancelQueueDelete() {
-      this.queueIdToDelete = null;
-      this.showQueueDeleteConfirmation = false;
-    },
+    }
+
+    function cancelQueueDelete() {
+      queueIdToDelete.value = null;
+      showQueueDeleteConfirmation.value = false;
+    }
     // 
     // mark queue as read 
     // 
-    markSelectedQueueAsRead() {
+    function markSelectedQueueAsRead() {
       document.activeElement.blur();
-      this.queueIdToMarkAsRead = this.selectedQueueId;
-      this.showQueueMarkAsReadConfirmation = true;
-    },
-    markQueueAsRead(queueId) {
+      queueIdToMarkAsRead.value = selectedQueueId.value;
+      showQueueMarkAsReadConfirmation.value = true;
+    }
+
+    function markQueueAsRead(queueId) {
       document.activeElement.blur();
-      this.queueIdToMarkAsRead = queueId;
-      this.showQueueMarkAsReadConfirmation = true;
-    },
-    performQueueMarkAsRead() {
-      console.log("updating queue status, id=" + this.queueIdToMarkAsRead);
-      this.isLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      queueIdToMarkAsRead.value = queueId;
+      showQueueMarkAsReadConfirmation.value = true;
+    }
+
+    function performQueueMarkAsRead() {
+      console.log("updating queue status, id=" + queueIdToMarkAsRead.value);
+      isLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: "PUT",
@@ -1823,7 +1802,7 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/staging/read-status/queue/" + this.queueIdToMarkAsRead, requestOptions)
+        fetch(baseUrl + "/staging/read-status/queue/" + queueIdToMarkAsRead.value, requestOptions)
           .then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1831,78 +1810,83 @@ export default {
               return isJson ? response.json() : {};
             } else {
               return isJson ?
-              response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-              response.text().then(t => {throw new Error(t)});
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
             }
           }).then((data) => {
-            this.articleListsByQueue[this.queueIdToMarkAsRead].values.forEach((p) => {
+            articleListsByQueue[queueIdToMarkAsRead.value].values.forEach((p) => {
               p.isRead = true;
               p.postReadStatus = 'READ';
               p.isReadLater = false;
             });
             // update queue localStorage
-            localStorage.setItem('articleListsByQueue', JSON.stringify(this.articleListsByQueue));
-            this.setLastServerMessage(data.message);
-            this.rebuildLunrIndexes();
+            localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
+            setLastServerMessage(data.message);
+            rebuildLunrIndexes();
           }).catch((error) => {
-            this.handleServerError(error);
+            handleServerError(error);
           }).finally(() => {
-            this.queueIdToMarkAsRead = null;
-            this.showQueueMarkAsReadConfirmation = false;
-            this.isLoading = false;
+            queueIdToMarkAsRead.value = null;
+            showQueueMarkAsReadConfirmation.value = false;
+            isLoading.value = false;
             clearTimeout(timeoutId);
           });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.queueIdToMarkAsRead = null;
-        this.showQueueMarkAsReadConfirmation = false;
-        this.isLoading = false;
+        handleServerError(error);
+        queueIdToMarkAsRead.value = null;
+        showQueueMarkAsReadConfirmation.value = false;
+        isLoading.value = false;
       });
-    },
-    cancelQueueMarkAsRead() {
-      this.queueIdToMarkAsRead = null;
-      this.showQueueMarkAsReadConfirmation = false;
-    },
+    }
+
+    function cancelQueueMarkAsRead() {
+      queueIdToMarkAsRead.value = null;
+      showQueueMarkAsReadConfirmation.value = false;
+    }
     // 
     // data model methods 
     // 
-    setSelectedQueueId(queueId) {
-      this.previousQueueId = this.selectedQueueId;
-      this.selectedQueueId = queueId;
-      this.articleList = queueId ? this.articleListsByQueue[queueId] : null;
-    },
-    restorePreviousQueueId() {
-      this.setSelectedQueueId(this.previousQueueId);
-    },
-    getSelectedQueue() {
-      if (this.selectedQueueId) {
-        for (let i = 0; i < this.queues.length; i++) {
-          if (this.queues[i].id === this.selectedQueueId) {
-            return this.queues[i];
+    function setSelectedQueueId(queueId) {
+      previousQueueId.value = selectedQueueId.value;
+      selectedQueueId.value = queueId;
+      Object.assign(articleList, queueId ? articleListsByQueue[queueId] : null);
+    }
+
+    function restorePreviousQueueId() {
+      setSelectedQueueId(previousQueueId.value);
+    }
+
+    function getSelectedQueue() {
+      if (selectedQueueId.value) {
+        for (let i = 0; i < queues.length; i++) {
+          if (queues[i].id === selectedQueueId.value) {
+            return queues[i];
           }
         }
       }
       return {};
-    },
-    getQueueById(queueId) {
-      for (let i = 0; i < this.queues.length; i++) {
-        if (this.queues[i].id === queueId) {
-          return this.queues[i];
+    }
+
+    function getQueueById(queueId) {
+      for (let i = 0; i < queues.length; i++) {
+        if (queues[i].id === queueId) {
+          return queues[i];
         }
       }
-    },
-    getPostFromQueue(id) {
-      let f = this.articleList.values;
+    }
+
+    function getPostFromQueue(id) {
+      let f = articleList.values;
       for (let j = 0; j < f.length; j++) {
         if (f[j].id === id) {
           return f[j];
         }
       }
-    },
+    }
     // 
     // 
     // 
-    keyHandler(event) {
+    function keyHandler(event) {
       if (!event.key) {
         return;
       }
@@ -1911,19 +1895,19 @@ export default {
       // 
       if (event.key === 'Escape') {
         // bail if a modal is showing
-        if (this.isModalShowing) {
+        if (isModalShowing) {
           return;
         }
         // otherwise hide the queue dashboard if it's showing 
-        if (this.showQueueDashboard) {
-          this.showQueueDashboard = false;
+        if (showQueueDashboard) {
+          showQueueDashboard.value = false;
         }
         return;
       }
       // 
       // queue-related key handling 
       // 
-      if (this.selectedQueueId) {
+      if (selectedQueueId.value) {
         let t = event.target.getAttribute("type") || event.target.type;
         if (t === 'text') {
           return;
@@ -1932,19 +1916,19 @@ export default {
         // SHIFT + E KEY (CONFIGURE SELECTED QUEUE)
         // 
         if (event.key === 'E' && event.shiftKey === true) {
-          this.configureQueue(this.selectedQueueId);
+          configureQueue(selectedQueueId.value);
           event.stopPropagation();
           event.preventDefault();
           // 
           // SLASH KEY (SEARCH SELECTED QUEUE)
           // 
         } else if (event.key === '/') {
-          this.$nextTick(() => {
+          nextTick(() => {
             let filterElem = document.getElementById('queue-filter');
             if (filterElem) {
               filterElem.focus();
             } else {
-              this.$nextTick(() => {
+              nextTick(() => {
                 let filterElem = document.getElementById('queue-filter');
                 if (filterElem) {
                   filterElem.focus();
@@ -1958,35 +1942,35 @@ export default {
           // SHIFT + L KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'L' && event.shiftKey) {
-          this.toggleFilterMode('READ_LATER');
+          toggleFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + H KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'H' && event.shiftKey) {
-          this.toggleFilterMode('READ');
+          toggleFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + T KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'T' && event.shiftKey) {
-          this.toggleFilterMode('PUBLISHED');
+          toggleFilterMode('PUBLISHED');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + A KEY (MARK QUEUE AS READ)
           // 
         } else if (event.key === 'A' && event.shiftKey === true) {
-          this.markSelectedQueueAsRead();
+          markSelectedQueueAsRead();
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + D KEY (DELETE QUEUE) 
           // 
         } else if (event.key === 'D' && event.shiftKey === true) {
-          this.deleteSelectedQueue();
+          deleteSelectedQueue();
           event.stopPropagation();
           event.preventDefault();
         }
@@ -1995,19 +1979,20 @@ export default {
       // SHIFT + R KEY (REFRESH QUEUES)
       // 
       if (event.key === 'R' && event.shiftKey === true) {
-        this.refreshQueues(null, true);
+        refreshQueues(null, true);
         event.stopPropagation();
         event.preventDefault();
         // 
         // SHIFT + Q KEY (NEW QUEUE)
         // 
       } else if (event.key === 'Q' && event.shiftKey === true) {
-        this.newQueue();
+        newQueue();
         event.stopPropagation();
         event.preventDefault();
       }
-    },
-    formatTimestamp(timestamp) {
+    }
+
+    function formatTimestamp(timestamp) {
       if (!timestamp) {
         return null;
       }
@@ -2017,11 +2002,11 @@ export default {
       } catch (error) {
         console.debug("Unable to format timestamp due to: " + error);
       }
-    },
+    }
     // 
     // SETTINGS 
     // 
-    updateNotificationPreferences(updateNotificationRequest) {
+    function updateNotificationPreferences(updateNotificationRequest) {
       let enableAccountAlerts = updateNotificationRequest.enableAccountAlerts;
       let enableDailyFeedReport = updateNotificationRequest.enableDailyFeedReport;
       let enableProductNotifications = updateNotificationRequest.enableProductNotifications;
@@ -2034,12 +2019,12 @@ export default {
           }
         }
       };
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2048,65 +2033,70 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+        fetch(baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
             return;
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).then(() => {
           // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
           if (newSettings.username) {
-            this.account.username = newSettings.username;
+            account.username = newSettings.username;
           }
           if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
+            account.emailAddress = newSettings.emailAddress;
           }
           if (newSettings.frameworkConfig) {
-            this.frameworkConfig = newSettings.frameworkConfig;
+            Object.assign(frameworkConfig, newSettings.frameworkConfig);
           }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
+          setLastServerMessage(t('settingsUpdated'));
         }).catch((error) => {
           if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            setLastServerMessage(t('somethingHorribleHappened'));
           } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
+            setLastServerMessage(t('requestTimedOut'));
           } else {
-            this.setLastServerMessage(error.message);
+            setLastServerMessage(error.message);
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
+          settingsIsLoading.value = false;
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    toggleNotifications(toggleNotificationsRequest) {
+    }
+
+    function isTrue(obj) {
+      return obj instanceof String ? obj === 'true' : obj === true;
+    }
+
+    function toggleNotifications(toggleNotificationsRequest) {
       let enableAccountAlerts = toggleNotificationsRequest.enableAccountAlerts;
       let enableDailyFeedReport = toggleNotificationsRequest.enableDailyFeedReport;
       let enableProductNotifications = toggleNotificationsRequest.enableProductNotifications;
       let newSettings = {
         frameworkConfig: {
           notifications: {
-            disabled: !this.isTrue(this.frameworkConfig.notifications.disabled),
+            disabled: !isTrue(frameworkConfig.notifications.disabled),
             accountAlerts: enableAccountAlerts,
             dailyFeedReport: enableDailyFeedReport,
             productNotifications: enableProductNotifications,
           }
         }
       };
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2115,56 +2105,57 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+        fetch(baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
             return;
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).then(() => {
           // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
           if (newSettings.username) {
-            this.account.username = newSettings.username;
+            account.username = newSettings.username;
           }
           if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
+            account.emailAddress = newSettings.emailAddress;
           }
           if (newSettings.frameworkConfig) {
-            this.frameworkConfig = newSettings.frameworkConfig;
+            Object.assign(frameworkConfig, newSettings.frameworkConfig);
           }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
+          setLastServerMessage(t('settingsUpdated'));
         }).catch((error) => {
           if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            setLastServerMessage(t('somethingHorribleHappened'));
           } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
+            setLastServerMessage(t('requestTimedOut'));
           } else {
-            this.setLastServerMessage(error.message);
+            setLastServerMessage(error.message);
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
+          settingsIsLoading.value = false;
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    updateAccount(updateAccountRequest) {
+    }
+
+    function updateAccount(updateAccountRequest) {
       let emailAddress = updateAccountRequest.emailAddress;
       let newSettings = {
         emailAddress: emailAddress
       };
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'PUT',
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2173,45 +2164,46 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions).then((response) => {
+        fetch(baseUrl + "/settings", requestOptions).then((response) => {
           if (response.status === 200) {
             return;
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).then(() => {
           // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
           if (newSettings.emailAddress) {
-            this.account.emailAddress = newSettings.emailAddress;
+            account.emailAddress = newSettings.emailAddress;
           }
-          this.setLastServerMessage(this.$t('settingsUpdated'));
+          setLastServerMessage(t('settingsUpdated'));
         }).catch((error) => {
           if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            setLastServerMessage(t('somethingHorribleHappened'));
           } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
+            setLastServerMessage(t('requestTimedOut'));
           } else {
-            this.setLastServerMessage(error.message);
+            setLastServerMessage(error.message);
           }
         }).finally(() => {
-          this.settingsIsLoading = false;
+          settingsIsLoading.value = false;
           clearTimeout(timeoutId);
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    openSettings() {
-      this.isLoading = true; // top-level
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function openSettings() {
+      isLoading.value = true; // top-level
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2219,47 +2211,48 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/settings", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          this.account = {
-            username: data.username,
-            emailAddress: data.emailAddress,
-            authProvider: data.authProvider,
-            authProviderProfileImgUrl: data.authProviderProfileImgUrl,
-            authProviderUsername: data.authProviderUsername
-          }
-          this.frameworkConfig = data.frameworkConfig;
-          this.subscription = data.subscription;
-          this.showSettingsPanel = true;
-        }).catch((error) => {
-          this.handleServerError(error);
-          this.isLoading = false; // top-level 
-        }).finally(() => {
-          this.isLoading = false; // top-level 
-          clearTimeout(timeoutId);
-        });
+        fetch(baseUrl + "/settings", requestOptions)
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ?
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
+            }
+          }).then((data) => {
+            Object.assign(account, {
+              username: data.username,
+              emailAddress: data.emailAddress,
+              authProvider: data.authProvider,
+              authProviderProfileImgUrl: data.authProviderProfileImgUrl,
+              authProviderUsername: data.authProviderUsername
+            })
+            Object.assign(frameworkConfig, data.frameworkConfig);
+            Object.assign(subscription, data.subscription);
+            showSettingsPanel.value = true;
+          }).catch((error) => {
+            handleServerError(error);
+            isLoading.value = false; // top-level 
+          }).finally(() => {
+            isLoading.value = false; // top-level 
+            clearTimeout(timeoutId);
+          });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.isLoading = false; // top-level
+        handleServerError(error);
+        isLoading.value = false; // top-level
       });
-    },
-    exportOpml() {
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function exportOpml() {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'GET',
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2267,15 +2260,15 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/queues/opml", requestOptions).then((response) => {
+        fetch(baseUrl + "/queues/opml", requestOptions).then((response) => {
           if (response.status === 200) {
             return response.blob();
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).then((blob) => {
           let url = window.URL.createObjectURL(blob);
@@ -2285,32 +2278,33 @@ export default {
           document.body.appendChild(anchor);
           anchor.click();
           anchor.remove();
-          this.setLastServerMessage(this.$t('opmlExportDownloaded'));
+          setLastServerMessage(t('opmlExportDownloaded'));
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            setLastServerMessage(t('somethingHorribleHappened'));
           } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
+            setLastServerMessage(t('requestTimedOut'));
           } else {
-            this.setLastServerMessage(error.message);
+            setLastServerMessage(error.message);
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
+          settingsIsLoading.value = false;
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    finalizeDeactivation() {
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function finalizeDeactivation() {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'DELETE',
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2318,56 +2312,58 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/deregister", requestOptions).then((response) => {
+        fetch(baseUrl + "/deregister", requestOptions).then((response) => {
           if (response.status === 200) {
             return response.blob();
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).catch((error) => {
           console.log(error);
           if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            setLastServerMessage(t('somethingHorribleHappened'));
           } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
+            setLastServerMessage(t('requestTimedOut'));
           } else {
-            this.setLastServerMessage(error.message);
+            setLastServerMessage(error.message);
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
-          this.auth.tearDownLoggedInSession();
-          this.$router.push("/app");
+          settingsIsLoading.value = false;
+          auth.tearDownLoggedInSession();
+          router.value.push("/app");
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    initPasswordReset() {
-      this.settingsIsLoading = true;
-      this.auth.pwResetWithSupplied(this.account.username, this.account.emailAddress)
+    }
+
+    function initPasswordReset() {
+      settingsIsLoading.value = true;
+      auth.pwResetWithSupplied(account.username, account.emailAddress)
         .then(() => {
-          this.setLastServerMessage(this.$t('checkEmailForFurther'));
+          setLastServerMessage(t('checkEmailForFurther'));
         })
         .catch((error) => {
-          this.setLastServerMessage(error);
+          setLastServerMessage(error);
         })
         .finally(() => {
-          this.settingsIsLoading = false;
+          settingsIsLoading.value = false;
         });
-    },
-    submitOrder() {
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function submitOrder() {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
           method: 'POST',
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2375,43 +2371,44 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/order", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).then((data) => {
-          window.location.href = data.sessionUrl;
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
-        });
+        fetch(baseUrl + "/order", requestOptions)
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ?
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
+            }
+          }).then((data) => {
+            window.location.href = data.sessionUrl;
+          }).catch((error) => {
+            console.log(error);
+            if (error.name === 'TypeError') {
+              setLastServerMessage(t('somethingHorribleHappened'));
+            } else if (error.name === 'AbortError') {
+              setLastServerMessage(t('requestTimedOut'));
+            } else {
+              setLastServerMessage(error.message);
+            }
+          }).finally(() => {
+            clearTimeout(timeoutId);
+            settingsIsLoading.value = false;
+          });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    cancelSubscription() {
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function cancelSubscription() {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2423,43 +2420,44 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/subscriptions", requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            this.auth.unsubscribe();
-            this.subscription.cancelAtPeriodEnd = true;
-            this.setLastServerMessage(this.$t('yourSubscriptionWasCanceledClickToResume'));
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
-          }
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
-          } else {
-            this.setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
-        });
+        fetch(baseUrl + "/subscriptions", requestOptions)
+          .then((response) => {
+            if (response.status === 200) {
+              auth.unsubscribe();
+              subscription.cancelAtPeriodEnd = true;
+              setLastServerMessage(t('yourSubscriptionWasCanceledClickToResume'));
+            } else {
+              let contentType = response.headers.get("content-type");
+              let isJson = contentType && contentType.indexOf("application/json") !== -1;
+              return isJson ?
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
+            }
+          }).catch((error) => {
+            console.log(error);
+            if (error.name === 'TypeError') {
+              setLastServerMessage(t('somethingHorribleHappened'));
+            } else if (error.name === 'AbortError') {
+              setLastServerMessage(t('requestTimedOut'));
+            } else {
+              setLastServerMessage(error.message);
+            }
+          }).finally(() => {
+            clearTimeout(timeoutId);
+            settingsIsLoading.value = false;
+          });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-    resumeSubscription() {
-      this.settingsIsLoading = true;
-      this.auth.getTokenSilently().then((token) => {
+    }
+
+    function resumeSubscription() {
+      settingsIsLoading.value = true;
+      auth.getTokenSilently().then((token) => {
         const controller = new AbortController();
         const requestOptions = {
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -2471,36 +2469,196 @@ export default {
           signal: controller.signal
         };
         const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(this.baseUrl + "/subscriptions", requestOptions).then((response) => {
+        fetch(baseUrl + "/subscriptions", requestOptions).then((response) => {
           if (response.status === 200) {
-            this.auth.subscribe();
-            this.subscription.cancelAtPeriodEnd = false;
-            this.setLastServerMessage(this.$t('yourSubscriptionWasResumed'));
+            auth.subscribe();
+            subscription.cancelAtPeriodEnd = false;
+            setLastServerMessage(t('yourSubscriptionWasResumed'));
           } else {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ? 
-                response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''))}) : 
-                response.text().then(t => {throw new Error(t)});
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
           }
         }).catch((error) => {
           if (error.name === 'TypeError') {
-            this.setLastServerMessage(this.$t('somethingHorribleHappened'));
+            setLastServerMessage(t('somethingHorribleHappened'));
           } else if (error.name === 'AbortError') {
-            this.setLastServerMessage(this.$t('requestTimedOut'));
+            setLastServerMessage(t('requestTimedOut'));
           } else {
-            this.setLastServerMessage(error.message);
+            setLastServerMessage(error.message);
           }
         }).finally(() => {
           clearTimeout(timeoutId);
-          this.settingsIsLoading = false;
+          settingsIsLoading.value = false;
         });
       }).catch((error) => {
-        this.handleServerError(error);
-        this.settingsIsLoading = false;
+        handleServerError(error);
+        settingsIsLoading.value = false;
       });
-    },
-  }
+    }
+    // 
+    // 
+    // 
+    watch(auth, (newAuth) => {
+      if (newAuth.isAuthenticated) {
+        const storedQueues = localStorage.getItem('queues');
+        if (storedQueues) {
+          Object.assign(queues, JSON.parse(storedQueues));
+        }
+        const storedArticleLists = localStorage.getItem('articleListsByQueue');
+        if (storedArticleLists) {
+          Object.assign(articleListsByQueue, JSON.parse(storedArticleLists));
+        }
+        if (queues.length > 0 && articleListsByQueue) {
+          if (!selectedQueueId.value) {
+            setSelectedQueueId(queues[0].id);
+          } else {
+            Object.assign(articleList, articleListsByQueue[selectedQueueId.value]);
+          }
+          rebuildLunrIndexes();
+        } else {
+          refreshQueues(null, true); // need staging posts for all queues and queues definitions 
+        }
+        // schedule the subscription-metrics refresh timer 
+        refreshIntervalId.value = setInterval(() => {
+          checkForNewSubscriptionMetrics();
+        }, 60_000 * 10); // 10 minutes (in ms) 
+      } else {
+        // unschedule the refresh timer 
+        refreshIntervalId.value = null;
+      }
+    });
+    // 
+    // 
+    // 
+    onMounted(() => {
+      auth.getTokenSilently()
+        .catch(() => { })
+        .finally(() => {
+          if (auth.isAuthenticated) {
+            console.log("home: authenticated on mount");
+          } else {
+            console.log("home: not authenticated on mount");
+          }
+        });
+      window.addEventListener("keydown", keyHandler);
+      if (auth.isAuthenticated) {
+        refreshQueues(null, true); // need staging posts for all queues, and queues definitions 
+      }
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener("keydown", keyHandler);
+    });
+    // 
+    // 
+    // 
+    return {
+      // 
+      auth,
+      router,
+      t, 
+      nativeNotifications, 
+      xs: display.xs, 
+      // computed 
+      isModalShowing,
+      filteredArticleList,
+      filteredQueueIdentOptions,
+      allFilterPills,
+      sharingOptions,
+      showCardLayout,
+      showListLayout,
+      showQueueRefreshIndicator,
+      // data  
+      refreshIntervalId,
+      isLoading,
+      loginIsLoading,
+      continueIsLoading,
+      finalizeIsLoading,
+      refreshQueuesIsLoading,
+      settingsIsLoading,
+      authServerMessage,
+      showQueueDeleteConfirmation,
+      queueIdToDelete,
+      showQueueMarkAsReadConfirmation,
+      queueIdToMarkAsRead,
+      subscriptionToShow,
+      showSubscriptionMetrics,
+      showNotificationWarning,
+      showFilterHelp,
+      showQueueFilterPills,
+      showQueueDashboard,
+      queueLayout,
+      showQueueConfigPanel,
+      configuredQueueId,
+      showOpmlUploadPanel,
+      atStep2,
+      queueConfigRequests,
+      opmlErrors,
+      showSettingsPanel,
+      account,
+      frameworkConfig,
+      subscription,
+      showHelpPanel,
+      showSelectedPost,
+      selectedPost, // selected post to show on the post card modal (while in list view) 
+      selectedItem, // selected post list item (i.e., scrolling through the list in list view) 
+      queues, // all queues 
+      selectedQueueId, // currently selected queue Id 
+      previousQueueId, // previously selected queue Id 
+      articleListsByQueue, // all queues 
+      articleList, // inbound queue for the currently selected queue  
+      articleListFilter, // user-supplied filter text (lunrjs query expression) 
+      articleListSortOrder,
+      latestSubscriptionMetricsByQueue,
+      // functions 
+      logout,
+      login,
+      shouldShowAlert,
+      dismissAlert,
+      openPost,
+      selectNextPost,
+      selectPreviousPost,
+      openPostUrl,
+      share,
+      toggleArticleListSortOrder,
+      updateFilter,
+      openSubscriptionMetrics,
+      countArticleList,
+      countPublished,
+      checkForNewSubscriptionMetrics,
+      updatePostReadStatus,
+      updatePostPubStatus,
+      newQueue,
+      uploadOpml,
+      continueOpmlUpload,
+      finalizeOpmlUpload,
+      cancelOpmlUpload,
+      createQueue,
+      updateQueue,
+      dismissQueueConfigPanel,
+      deleteQueue,
+      performQueueDelete,
+      cancelQueueDelete,
+      markQueueAsRead,
+      performQueueMarkAsRead,
+      cancelQueueMarkAsRead,
+      keyHandler,
+      updateNotificationPreferences,
+      toggleNotifications,
+      updateAccount,
+      openSettings,
+      exportOpml,
+      finalizeDeactivation,
+      initPasswordReset,
+      submitOrder,
+      cancelSubscription,
+      resumeSubscription,
+      getSelectedQueue,
+    }
+  },
 };
 </script>
 

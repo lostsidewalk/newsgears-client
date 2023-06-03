@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -55,40 +56,42 @@ export default {
   },
   setup() {
     const auth = inject('auth');
+    const { t } = useI18n();
 
-    return {
-      auth
-    }
-  },
-  data() {
-    return {
-      pwResetIsLoading: false,
-      serverMessage: null,
-    }
-  },
-  methods: {
-    submitPwReset(pwResetRequest) {
-      console.log("here");
+    const pwResetIsLoading = ref(false);
+    const serverMessage = ref(null);
+
+    function submitPwReset(pwResetRequest) {
       let username = pwResetRequest.username;
       let email = pwResetRequest.email;
-      this.serverMessage = null;
+      serverMessage.value = null;
       if (!username || !email) {
-        this.serverMessage = this.$t('pwResetRequestMessage');
+        serverMessage.value = t('pwResetRequestMessage');
         return;
       }
 
-      this.pwResetIsLoading = true;
-      this.auth.pwResetWithSupplied(username, email)
+      pwResetIsLoading.value = true;
+      auth.pwResetWithSupplied(username, email)
           .then(() => {
-            this.serverMessage = this.$t('checkEmailForFurther');
+            serverMessage.value = t('checkEmailForFurther');
           })
           .catch((error) => {
-            this.serverMessage = error;
+            serverMessage.value = error;
           })
           .finally(() => {
-            this.pwResetIsLoading = false;
+            pwResetIsLoading.value = false;
           });
-    },
-  }
+    }
+
+    return {
+      auth,
+      t,
+      // 
+      pwResetIsLoading, 
+      serverMessage, 
+      // 
+      submitPwReset,
+    }
+  },
 };
 </script>

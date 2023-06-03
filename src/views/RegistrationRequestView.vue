@@ -34,7 +34,9 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
@@ -50,57 +52,57 @@ export default {
     RegistrationRequestPanel,
     FooterPanel,
   },
-  props: {
-    baseUrl: { type: String, required: true },
-  },
   setup() {
     const auth = inject('auth');
+    const { router } = useRouter();
+    const { t } = useI18n();
 
-    return {
-      auth
-    }
-  },
-  data() {
-    return {
-      registrationIsLoading: false,
-      serverMessage: null,
-    }
-  },
-  methods: {
-    submitRegistration(registrationRequest) {
+    const registrationIsLoading = ref(false);
+    const serverMessage = ref(null);
+
+    function submitRegistration(registrationRequest) {
       let username = registrationRequest.username;
       let email = registrationRequest.email;
       let password = registrationRequest.password;
       let userType = registrationRequest.userType;
-      this.serverMessage = null;
+      serverMessage.value = null;
       if (!username || !email || !password) {
-        this.serverMessage = this.$t('registrationRequirements');
+        serverMessage.value = ('registrationRequirements');
         return;
       }
 
-      this.registrationIsLoading = true;
-      this.auth.registerWithSupplied(username, email, password, userType)
+      registrationIsLoading.value = true;
+      auth.registerWithSupplied(username, email, password, userType)
         .then((response) => {
-          this.clearData();
-          this.auth.loginWithSupplied(response.username, response.password, false)
+          auth.loginWithSupplied(response.username, response.password, false)
           .then(() => {
-            this.clearData();
-            this.$router.push("/app");
+            router.value.push("/app");
           })
           .catch((error) => {
-            this.serverMessage = error;
+            serverMessage.value = error;
           })
           .finally(() => {
-            this.registrationIsLoading = false;
+            registrationIsLoading.value = false;
           });
         })
         .catch((error) => {
-          this.serverMessage = error;
+          serverMessage.value = error;
         })
         .finally(() => {
-          this.registrationIsLoading = false;
+          registrationIsLoading.value = false;
         });
     }
-  }
+
+    return {
+      auth,
+      router, 
+      t,
+      // 
+      registrationIsLoading,
+      serverMessage, 
+      // 
+      submitRegistration, 
+    }
+  },
 };
 </script>
