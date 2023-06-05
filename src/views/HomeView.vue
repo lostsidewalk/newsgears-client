@@ -210,7 +210,6 @@
           class="rounded"
           :base-url="baseUrl"
           :account="account"
-          :framework-config="frameworkConfig"
           :subscription="subscription"
           :is-loading="settingsIsLoading"
           @exportOpml="exportOpml"
@@ -402,12 +401,13 @@
 <script>
 import { inject, watch, ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAnnouncer } from '@vue-a11y/announcer';
 import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 import { useAuth } from '@/composable/auth/HomeAuth.js';
 import { useOpml } from '@/composable/opml/HomeOpml.js';
+import { useSettings} from '@/composable/settings/HomeSettings.js';
+import { useNotifications } from '@/composable/notifications/HomeNotifications.js';
 
 // import debounce from 'lodash.debounce';
 // components 
@@ -489,11 +489,20 @@ export default {
     const auth = inject('auth');
     const { router } = useRouter();
     const { t } = useI18n();
-    const { polite } = useAnnouncer();
-    const vue3NativeNotifications = inject('vue3NativeNotifications');
     const display = useDisplay();
-    const { login, logout, authServerMessage, loginIsLoading } = useAuth();
+    const { authServerMessage, loginIsLoading, login, logout } = useAuth();
     const { continueIsLoading, atStep2, queueConfigRequests, opmlErrors, continueOpmlUpload } = useOpml(props);
+    const { account, subscription, settingsIsLoading, 
+      updateNotificationPreferences, 
+      exportOpml, 
+      finalizeDeactivation, 
+      initPasswordReset,
+      submitOrder, 
+      cancelSubscription, 
+      resumeSubscription, 
+      toggleNotifications,
+      updateAccount } = useSettings(props);
+    const { showNotificationWarning, handleServerError, setLastServerMessage } = useNotifications();
     // 
     // props 
     // 
@@ -505,14 +514,12 @@ export default {
     const isLoading = ref(false);
     const finalizeIsLoading = ref(false);
     const refreshQueuesIsLoading = ref(false);
-    const settingsIsLoading = ref(false); // settings 
     const showQueueDeleteConfirmation = ref(false);
     const queueIdToDelete = ref(null);
     const showQueueMarkAsReadConfirmation = ref(false);
     const queueIdToMarkAsRead = ref(null);
     const subscriptionToShow = reactive({});
     const showSubscriptionMetrics = ref(false);
-    const showNotificationWarning = ref(false);
     const showFilterHelp = ref(false);
     const showQueueFilterPills = ref(false);
     const showQueueDashboard = ref(false);
@@ -521,9 +528,6 @@ export default {
     const configuredQueueId = ref(null);
     const showOpmlUploadPanel = ref(false);
     const showSettingsPanel = ref(false,);
-    const account = reactive({});
-    const frameworkConfig = reactive({});
-    const subscription = reactive({});
     const showHelpPanel = ref(false);
     const showSelectedPost = ref(false);
     const selectedPost = reactive({}); // selected post to show on the post card modal (while in list view) 
@@ -731,23 +735,6 @@ export default {
     function dismissAlert(alertName) {
       localStorage.setItem(alertName, new Date().toISOString());
     }
-
-    async function setLastServerMessage(message) {
-      const permission = await vue3NativeNotifications.requestPermission();
-      if (permission === "granted") {
-        showNotificationWarning.value = false;
-        vue3NativeNotifications.show('FeedGears message', {
-          body: message
-        }, {
-          onerror: () => {
-            console.error("unable to show notification, message=" + message);
-          }
-        });
-        polite(message);
-      } else {
-        showNotificationWarning.value = true;
-      }
-    }
     // 
     // open post card in a modal dialog
     // 
@@ -812,19 +799,6 @@ export default {
         replaceString = replaceString.replace(regex, replace[i]);
       }
       return replaceString;
-    }
-    // 
-    // handleserver error 
-    // 
-    function handleServerError(error) {
-      console.error(error);
-      if (error.name === 'TypeError') {
-        setLastServerMessage(t('somethingHorribleHappened'));
-      } else if (error.name === 'AbortError') {
-        setLastServerMessage(t('requestTimedOut'));
-      } else {
-        setLastServerMessage(error.message || error);
-      }
     }
     // 
     // sorting / filtering 
@@ -1892,200 +1866,6 @@ export default {
         console.debug("Unable to format timestamp due to: " + error);
       }
     }
-    // 
-    // SETTINGS 
-    // 
-    function updateNotificationPreferences(updateNotificationRequest) {
-      let enableAccountAlerts = updateNotificationRequest.enableAccountAlerts;
-      let enableDailyFeedReport = updateNotificationRequest.enableDailyFeedReport;
-      let enableProductNotifications = updateNotificationRequest.enableProductNotifications;
-      let newSettings = {
-        frameworkConfig: {
-          notifications: {
-            accountAlerts: enableAccountAlerts,
-            dailyFeedReport: enableDailyFeedReport,
-            productNotifications: enableProductNotifications,
-          }
-        }
-      };
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.username) {
-            account.username = newSettings.username;
-          }
-          if (newSettings.emailAddress) {
-            account.emailAddress = newSettings.emailAddress;
-          }
-          if (newSettings.frameworkConfig) {
-            Object.assign(frameworkConfig, newSettings.frameworkConfig);
-          }
-          setLastServerMessage(t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            setLastServerMessage(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            setLastServerMessage(t('requestTimedOut'));
-          } else {
-            setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-        });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
-
-    function isTrue(obj) {
-      return obj instanceof String ? obj === 'true' : obj === true;
-    }
-
-    function toggleNotifications(toggleNotificationsRequest) {
-      let enableAccountAlerts = toggleNotificationsRequest.enableAccountAlerts;
-      let enableDailyFeedReport = toggleNotificationsRequest.enableDailyFeedReport;
-      let enableProductNotifications = toggleNotificationsRequest.enableProductNotifications;
-      let newSettings = {
-        frameworkConfig: {
-          notifications: {
-            disabled: !isTrue(frameworkConfig.notifications.disabled),
-            accountAlerts: enableAccountAlerts,
-            dailyFeedReport: enableDailyFeedReport,
-            productNotifications: enableProductNotifications,
-          }
-        }
-      };
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.username) {
-            account.username = newSettings.username;
-          }
-          if (newSettings.emailAddress) {
-            account.emailAddress = newSettings.emailAddress;
-          }
-          if (newSettings.frameworkConfig) {
-            Object.assign(frameworkConfig, newSettings.frameworkConfig);
-          }
-          setLastServerMessage(t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            setLastServerMessage(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            setLastServerMessage(t('requestTimedOut'));
-          } else {
-            setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-        });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
-
-    function updateAccount(updateAccountRequest) {
-      let emailAddress = updateAccountRequest.emailAddress;
-      let newSettings = {
-        emailAddress: emailAddress
-      };
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(newSettings),
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/settings", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return;
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).then(() => {
-          // TODO: (enhancement) set the account obj properties from the JSON response object (above) 
-          if (newSettings.emailAddress) {
-            account.emailAddress = newSettings.emailAddress;
-          }
-          setLastServerMessage(t('settingsUpdated'));
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            setLastServerMessage(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            setLastServerMessage(t('requestTimedOut'));
-          } else {
-            setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          settingsIsLoading.value = false;
-          clearTimeout(timeoutId);
-        });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
 
     function openSettings() {
       isLoading.value = true; // top-level
@@ -2119,7 +1899,6 @@ export default {
               authProviderProfileImgUrl: data.authProviderProfileImgUrl,
               authProviderUsername: data.authProviderUsername
             })
-            Object.assign(frameworkConfig, data.frameworkConfig);
             Object.assign(subscription, data.subscription);
             showSettingsPanel.value = true;
           }).catch((error) => {
@@ -2132,259 +1911,6 @@ export default {
       }).catch((error) => {
         handleServerError(error);
         isLoading.value = false; // top-level
-      });
-    }
-
-    function exportOpml() {
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/queues/opml", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return response.blob();
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).then((blob) => {
-          let url = window.URL.createObjectURL(blob);
-          let anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = 'feedgears-opml-export.xml';
-          document.body.appendChild(anchor);
-          anchor.click();
-          anchor.remove();
-          setLastServerMessage(t('opmlExportDownloaded'));
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            setLastServerMessage(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            setLastServerMessage(t('requestTimedOut'));
-          } else {
-            setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-        });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
-
-    function finalizeDeactivation() {
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'DELETE',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/deregister", requestOptions).then((response) => {
-          if (response.status === 200) {
-            return response.blob();
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).catch((error) => {
-          console.log(error);
-          if (error.name === 'TypeError') {
-            setLastServerMessage(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            setLastServerMessage(t('requestTimedOut'));
-          } else {
-            setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-          auth.tearDownLoggedInSession();
-          router.value.push("/app");
-        });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
-
-    function initPasswordReset() {
-      settingsIsLoading.value = true;
-      auth.pwResetWithSupplied(account.username, account.emailAddress)
-        .then(() => {
-          setLastServerMessage(t('checkEmailForFurther'));
-        })
-        .catch((error) => {
-          setLastServerMessage(error);
-        })
-        .finally(() => {
-          settingsIsLoading.value = false;
-        });
-    }
-
-    function submitOrder() {
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/order", requestOptions)
-          .then((response) => {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            if (response.status === 200) {
-              return isJson ? response.json() : {};
-            } else {
-              return isJson ?
-                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-                response.text().then(t => { throw new Error(t) });
-            }
-          }).then((data) => {
-            window.location.href = data.sessionUrl;
-          }).catch((error) => {
-            console.log(error);
-            if (error.name === 'TypeError') {
-              setLastServerMessage(t('somethingHorribleHappened'));
-            } else if (error.name === 'AbortError') {
-              setLastServerMessage(t('requestTimedOut'));
-            } else {
-              setLastServerMessage(error.message);
-            }
-          }).finally(() => {
-            clearTimeout(timeoutId);
-            settingsIsLoading.value = false;
-          });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
-
-    function cancelSubscription() {
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          method: 'PUT',
-          body: JSON.stringify({
-            subscriptionStatus: 'CANCELED'
-          }),
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/subscriptions", requestOptions)
-          .then((response) => {
-            if (response.status === 200) {
-              auth.unsubscribe();
-              subscription.cancelAtPeriodEnd = true;
-              setLastServerMessage(t('yourSubscriptionWasCanceledClickToResume'));
-            } else {
-              let contentType = response.headers.get("content-type");
-              let isJson = contentType && contentType.indexOf("application/json") !== -1;
-              return isJson ?
-                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-                response.text().then(t => { throw new Error(t) });
-            }
-          }).catch((error) => {
-            console.log(error);
-            if (error.name === 'TypeError') {
-              setLastServerMessage(t('somethingHorribleHappened'));
-            } else if (error.name === 'AbortError') {
-              setLastServerMessage(t('requestTimedOut'));
-            } else {
-              setLastServerMessage(error.message);
-            }
-          }).finally(() => {
-            clearTimeout(timeoutId);
-            settingsIsLoading.value = false;
-          });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
-      });
-    }
-
-    function resumeSubscription() {
-      settingsIsLoading.value = true;
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          method: 'PUT',
-          body: JSON.stringify({
-            subscriptionStatus: 'ACTIVE'
-          }),
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        fetch(baseUrl + "/subscriptions", requestOptions).then((response) => {
-          if (response.status === 200) {
-            auth.subscribe();
-            subscription.cancelAtPeriodEnd = false;
-            setLastServerMessage(t('yourSubscriptionWasResumed'));
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).catch((error) => {
-          if (error.name === 'TypeError') {
-            setLastServerMessage(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            setLastServerMessage(t('requestTimedOut'));
-          } else {
-            setLastServerMessage(error.message);
-          }
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-        });
-      }).catch((error) => {
-        handleServerError(error);
-        settingsIsLoading.value = false;
       });
     }
     // 
@@ -2467,12 +1993,15 @@ export default {
       atStep2,
       queueConfigRequests,
       opmlErrors,
+      // settings module data 
+      account, 
+      subscription, 
+      settingsIsLoading,
       // other data 
       refreshIntervalId,
       isLoading,
       finalizeIsLoading, 
       refreshQueuesIsLoading,
-      settingsIsLoading,
       showQueueDeleteConfirmation,
       queueIdToDelete,
       showQueueMarkAsReadConfirmation,
@@ -2488,9 +2017,6 @@ export default {
       configuredQueueId,
       showOpmlUploadPanel,
       showSettingsPanel,
-      account,
-      frameworkConfig,
-      subscription,
       showHelpPanel,
       showSelectedPost,
       selectedPost, // selected post to show on the post card modal (while in list view) 
@@ -2508,6 +2034,16 @@ export default {
       login, // imported 
       // opml module functions 
       continueOpmlUpload,
+      // settings module functions 
+      updateNotificationPreferences, 
+      exportOpml,
+      finalizeDeactivation,
+      initPasswordReset,
+      submitOrder, 
+      cancelSubscription,
+      resumeSubscription,
+      toggleNotifications,
+      updateAccount, 
       // other functions 
       shouldShowAlert,
       dismissAlert,
@@ -2560,17 +2096,7 @@ export default {
       getPostFromQueue,
       keyHandler,
       formatTimestamp, 
-      updateNotificationPreferences,
-      isTrue, 
-      toggleNotifications, 
-      updateAccount, 
       openSettings, 
-      exportOpml, 
-      finalizeDeactivation, 
-      initPasswordReset, 
-      submitOrder, 
-      cancelSubscription, 
-      resumeSubscription, 
     }
   },
 };

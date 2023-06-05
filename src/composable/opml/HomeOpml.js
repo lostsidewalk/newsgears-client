@@ -1,9 +1,10 @@
 import { ref, reactive, inject } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useNotifications } from '../notifications/HomeNotifications';
+
 
 export function useOpml(props) {
   const auth = inject('auth');
-  const { t } = useI18n();
+  const { handleServerError } = useNotifications();
   const continueIsLoading = ref(false);
   const atStep2 = ref(false);
   const queueConfigRequests = reactive([]);
@@ -53,25 +54,13 @@ export function useOpml(props) {
           }
         }).catch((error) => {
           console.error(error);
-          if (error.name === 'TypeError') {
-            opmlErrors.push(t('somethingHorribleHappened'));
-          } else if (error.name === 'AbortError') {
-            opmlErrors.push(t('requestTimedOut'));
-          } else {
-            opmlErrors.push(error.message);
-          }
+          handleServerError(error);
         }).finally(() => {
           continueIsLoading.value = false;
           clearTimeout(timeoutId);
         });
     }).catch((error) => {
-      if (error.name === 'TypeError') {
-        opmlErrors.push(t('somethingHorribleHappened'));
-      } else if (error.name === 'AbortError') {
-        opmlErrors.push(t('requestTimedOut'));
-      } else {
-        opmlErrors.push(error.message);
-      }
+      handleServerError(error);
       continueIsLoading.value = false;
     });
   }

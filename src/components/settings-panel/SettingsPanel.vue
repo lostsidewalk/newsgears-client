@@ -136,9 +136,7 @@
       >
         <v-card-item 
           :title="$t('emailNotifications')" 
-          :subtitle="frameworkConfig && isTrue(frameworkConfig.notifications.disabled) ? 
-            $t('emailNotificationsAreDisabled') : 
-            $t('emailNotificationsAreEnabled')"
+          :subtitle="notificationsDisabled ? $t('emailNotificationsAreDisabled') : $t('emailNotificationsAreEnabled')"
         />
         <v-divider />
         <v-card-actions>
@@ -147,14 +145,14 @@
             v-model="enableAccountAlerts" 
             name="enableAccountAlerts"
             :label="$t('enableAccountAlertsNotifications')" 
-            :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)"
+            :disabled="notificationsDisabled"
           />
           <v-checkbox
             id="enableProductNotifications" 
             v-model="enableProductNotifications" 
             name="enableProductNotifications"
             :label="$t('enableProductNotifications')" 
-            :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)"
+            :disabled="notificationsDisabled"
           />
         </v-card-actions>
         <v-divider />
@@ -163,9 +161,10 @@
           <v-btn
             id="updateNotificationPreferences"
             :size="buttonSize" 
-            :disabled="frameworkConfig && isTrue(frameworkConfig.notifications.disabled)" 
+            :disabled="notificationsDisabled" 
             :text="$t('updateNotificationPreferences')"
             @click="$emit('updateNotificationPreferences', {
+              notificationsDisabled: false,
               enableAccountAlerts: enableAccountAlerts,
               enableDailyFeedReport: enableDailyFeedReport, 
               enableProductNotifications: enableProductNotifications
@@ -174,8 +173,9 @@
           <!-- toggle (all) notifications button -->
           <v-btn 
             :size="buttonSize"
-            :text="(frameworkConfig && isTrue(frameworkConfig.notifications.disabled)) ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
+            :text="notificationsDisabled ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
             @click="$emit('toggleNotifications', {
+              notificationsDisabled: !notificationsDisabled, 
               enableAccountAlerts: enableAccountAlerts,
               enableDailyFeedReport: enableDailyFeedReport, 
               enableProductNotifications: enableProductNotifications
@@ -192,7 +192,7 @@
         <v-card-item
           title="CARD TITLE"
           :subtitle="$t('subscriptionStatus', { 
-            status: getSubscrpitionStatus(), 
+            status: getSubscriptionStatus(), 
             started: getSubscriptionStarted() 
           })"
         />
@@ -324,7 +324,6 @@ export default {
     isLoading: { type: Boolean, default: false }, // TODO: use this 
     baseUrl: { type: String, required: true },
     account: { type: Object, required: true },
-    frameworkConfig: { type: Object, required: true },
     subscription: { type: Object, default: null },
   },
   emits: [ 
@@ -350,6 +349,7 @@ export default {
       enableProductNotifications: null,
       showDeactivateUser: false,
       showResetPassword: false,
+      notificationsDisabled: false,
     }
   },
   mounted() {
@@ -364,6 +364,9 @@ export default {
       this.enableAccountAlerts = frameworkConfig.accountAlerts;
       this.enableDailyFeedReport = frameworkConfig.dailyFeedReport;
       this.enableProductNotifications = frameworkConfig.productNotifications;
+      this.notificationsDisabled = frameworkConfig.notifications.disabled;
+    } else {
+      this.notificationsDisabled = false;
     }
   },
   methods: {
@@ -379,34 +382,34 @@ export default {
       return currencyFormatter.format(amount / 100);
     },
     getProductDescription() {
-      return this.subscription === null ? null : this.subscription.lastInvoice.productDescription;
+      return this.subscription ? null : this.subscription.lastInvoice.productDescription;
     },
     getHostedInvoiceUrl() {
-      return this.subscription === null ? null : this.subscription.lastInvoice.hostedUrl;
+      return this.subscription ? null : this.subscription.lastInvoice.hostedUrl;
     },
     getCustomerEmailAddress() {
-      return this.subscription === null ? null : this.subscription.lastInvoice.customerEmail;
+      return this.subscription ? null : this.subscription.lastInvoice.customerEmail;
     },
     getCustomerName() {
-      return this.subscription === null ? null : this.subscription.lastInvoice.customerName;
+      return this.subscription ? null : this.subscription.lastInvoice.customerName;
     },
     getAmountDue() {
-      return this.subscription === null ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountDue);
+      return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountDue);
     },
     getAmountPaid() {
-      return this.subscription === null ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountPaid);
+      return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountPaid);
     },
     getAmountRemaining() {
-      return this.subscription === null ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountRemaining);
+      return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountRemaining);
     },
     getLastInvoiceCreated() {
-      return this.subscription === null ? null : this.toLocalDate(this.subscription.lastInvoice.created);
+      return this.subscription ? null : this.toLocalDate(this.subscription.lastInvoice.created);
     },
     getLastInvoiceStatus() {
-      return this.subscription === null ? null : this.subscription.lastInvoice.status;
+      return this.subscription ? null : this.subscription.lastInvoice.status;
     },
     getSubscriptionStarted() {
-      return this.subscription == null ? null : this.toLocalDate(this.subscription.startDate);
+      return this.subscription ? null : this.toLocalDate(this.subscription.startDate);
     },
     getSubscriptionCurrentPeriod() {
       if (!this.subscription) {
@@ -433,10 +436,10 @@ export default {
       return this.subscription.cancelAtPeriodEnd === true;
     },
     hasEnded() {
-      return this.subscription.endedAt !== null;
+      return this.subscription.endedAt;
     },
     hasLastInvoice() {
-      return this.subscription.lastInvoice !== null;
+      return this.subscription.lastInvoice;
     },
     cancelSettings() {
       this.$emit('dismiss');
