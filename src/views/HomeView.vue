@@ -261,13 +261,12 @@
         scrollable
       >
         <OpmlUploadPanel
-          ref="opmlUploadPanel"
           :base-url="baseUrl"
           :is-loading="finalizeIsLoading || continueIsLoading"
           :at-step2="atStep2"
           :errors="opmlErrors"
           :queue-config-requests="queueConfigRequests"
-          @continueUplkoad="continueOpmlUpload"
+          @continueUpload="continueOpmlUpload"
           @finalizeUpload="finalizeOpmlUpload"
           @returnToStep1="atStep2 = false"
           @cancel="cancelOpmlUpload"
@@ -404,11 +403,11 @@
 import { inject, watch, ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAnnouncer } from '@vue-a11y/announcer';
-import { useNativeNotifications } from 'vue3-native-notification';
 import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 import { useAuth } from '@/composable/auth/HomeAuth.js';
+import { useOpml } from '@/composable/opml/HomeOpml.js';
 
 // import debounce from 'lodash.debounce';
 // components 
@@ -484,7 +483,6 @@ export default {
     // refs 
     // 
     const queueConfigPanel = ref(null);
-    const opmlUploadPanel = ref(null);
     // 
     // injected 
     // 
@@ -492,9 +490,10 @@ export default {
     const { router } = useRouter();
     const { t } = useI18n();
     const { polite } = useAnnouncer();
-    const { nativeNotifications } = useNativeNotifications();
+    const vue3NativeNotifications = inject('vue3NativeNotifications');
     const display = useDisplay();
     const { login, logout, authServerMessage, loginIsLoading } = useAuth();
+    const { continueIsLoading, atStep2, queueConfigRequests, opmlErrors, continueOpmlUpload } = useOpml(props);
     // 
     // props 
     // 
@@ -504,8 +503,7 @@ export default {
     // 
     const refreshIntervalId = ref(null);
     const isLoading = ref(false);
-    const continueIsLoading = ref(false); // opml 
-    const finalizeIsLoading = ref(false); // opml 
+    const finalizeIsLoading = ref(false);
     const refreshQueuesIsLoading = ref(false);
     const settingsIsLoading = ref(false); // settings 
     const showQueueDeleteConfirmation = ref(false);
@@ -522,9 +520,6 @@ export default {
     const showQueueConfigPanel = ref(false);
     const configuredQueueId = ref(null);
     const showOpmlUploadPanel = ref(false);
-    const atStep2 = ref(false);
-    const queueConfigRequests = reactive([]);
-    const opmlErrors = reactive([]);
     const showSettingsPanel = ref(false,);
     const account = reactive({});
     const frameworkConfig = reactive({});
@@ -729,7 +724,6 @@ export default {
     // 
     // functions 
     // 
-
     function shouldShowAlert(alertName) {
       return !localStorage.getItem(alertName);
     }
@@ -739,20 +733,20 @@ export default {
     }
 
     async function setLastServerMessage(message) {
-      const permission = await nativeNotifications.requestPermission();
+      const permission = await vue3NativeNotifications.requestPermission();
       if (permission === "granted") {
         showNotificationWarning.value = false;
-        nativeNotifications.show('FeedGears message', {
+        vue3NativeNotifications.show('FeedGears message', {
           body: message
         }, {
           onerror: () => {
             console.error("unable to show notification, message=" + message);
           }
         });
+        polite(message);
       } else {
         showNotificationWarning.value = true;
       }
-      polite(message);
     }
     // 
     // open post card in a modal dialog
@@ -1390,66 +1384,6 @@ export default {
       document.activeElement.blur();
       setSelectedQueueId(selectedQueueId.value);
       showOpmlUploadPanel.value = true;
-      nextTick(() => opmlUploadPanel.value.show());
-    }
-
-    function continueOpmlUpload(opmlFiles) {
-      continueIsLoading.value = true;
-      opmlErrors.splice(0);
-      auth.getTokenSilently().then((token) => {
-        // form data 
-        let formData = new FormData();
-        for (let i = 0; i < opmlFiles.length; i++) {
-          let f = opmlFiles[i];
-          formData.append('files', f.file, f.file.name);
-        }
-        // request options 
-        const controller = new AbortController();
-        const requestOptions = {
-          method: 'POST',
-          headers: {
-            "Authorization": `Bearer ${token}`
-          },
-          credentials: 'include',
-          body: formData,
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(baseUrl + "/queues/opml", requestOptions)
-          .then((response) => {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            if (response.status === 200) {
-              return isJson ? response.json() : {};
-            } else {
-              return isJson ?
-                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-                response.text().then(t => { throw new Error(t) });
-            }
-          }).then((data) => {
-            if (data.errors && data.errors.length > 0) {
-              Object.assign(opmlErrors, data.errors);
-            } else {
-              Object.assign(queueConfigRequests, data.queueConfigRequests);
-              atStep2.value = true;
-            }
-          }).catch((error) => {
-            console.error(error);
-            if (error.name === 'TypeError') {
-              opmlErrors.push(t('somethingHorribleHappened'));
-            } else if (error.name === 'AbortError') {
-              opmlErrors.push(t('requestTimedOut'));
-            } else {
-              opmlErrors.push(error.message);
-            }
-          }).finally(() => {
-            continueIsLoading.value = false;
-            clearTimeout(timeoutId);
-          });
-      }).catch((error) => {
-        handleServerError(error);
-        continueIsLoading.value = false;
-      });
     }
 
     function finalizeOpmlUpload() {
@@ -1493,7 +1427,6 @@ export default {
             // update queues localStorage 
             localStorage.setItem('queues', JSON.stringify(queues));
             setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
-            opmlUploadPanel.value.hide();
             showOpmlUploadPanel.value = false;
             refreshQueues(queueIds, false);
           })
@@ -1510,11 +1443,8 @@ export default {
     }
 
     function cancelOpmlUpload() {
-      if (opmlUploadPanel.value) {
-        opmlUploadPanel.value.hide();
-        showOpmlUploadPanel.value = false;
-        restorePreviousQueueId();
-      }
+      showOpmlUploadPanel.value = false;
+      restorePreviousQueueId();
     }
 
     function configureQueue(queueId) {
@@ -1649,7 +1579,6 @@ export default {
         }
       }
     }
-
     // 
     // delete queue 
     // 
@@ -1659,11 +1588,11 @@ export default {
       showQueueDeleteConfirmation.value = true;
     }
 
-    function deleteQueue(queueId) {
-      document.activeElement.blur();
-      queueIdToDelete.value = queueId;
-      showQueueDeleteConfirmation.value = true;
-    }
+    // function deleteQueue(queueId) {
+    //   document.activeElement.blur();
+    //   queueIdToDelete.value = queueId;
+    //   showQueueDeleteConfirmation.value = true;
+    // }
 
     function performQueueDelete() {
       console.log("deleting queue id=" + queueIdToDelete.value);
@@ -2520,7 +2449,6 @@ export default {
       auth,
       router,
       t, 
-      nativeNotifications, 
       xs: display.xs, 
       // computed 
       isModalShowing,
@@ -2531,13 +2459,18 @@ export default {
       showCardLayout,
       showListLayout,
       showQueueRefreshIndicator,
-      // data  
-      loginIsLoading, // imported 
-      authServerMessage, // imported 
+      // auth module data 
+      loginIsLoading,
+      authServerMessage,
+      // opml module data 
+      continueIsLoading,
+      atStep2,
+      queueConfigRequests,
+      opmlErrors,
+      // other data 
       refreshIntervalId,
       isLoading,
-      continueIsLoading,
-      finalizeIsLoading,
+      finalizeIsLoading, 
       refreshQueuesIsLoading,
       settingsIsLoading,
       showQueueDeleteConfirmation,
@@ -2554,9 +2487,6 @@ export default {
       showQueueConfigPanel,
       configuredQueueId,
       showOpmlUploadPanel,
-      atStep2,
-      queueConfigRequests,
-      opmlErrors,
       showSettingsPanel,
       account,
       frameworkConfig,
@@ -2573,50 +2503,74 @@ export default {
       articleListFilter, // user-supplied filter text (lunrjs query expression) 
       articleListSortOrder,
       latestSubscriptionMetricsByQueue,
-      // functions 
+      // auth module functions 
       logout, // imported 
       login, // imported 
+      // opml module functions 
+      continueOpmlUpload,
+      // other functions 
       shouldShowAlert,
       dismissAlert,
+      setLastServerMessage,
       openPost,
       selectNextPost,
       selectPreviousPost,
       openPostUrl,
       share,
+      // replaceArray 
+      handleServerError,
+      // sortQueue,
       toggleArticleListSortOrder,
+      toggleFilterMode, 
       updateFilter,
-      openSubscriptionMetrics,
+      // addSubscriptionToFilter, 
+      // addCategoryToFilter, 
+      // toLunrToken, 
       countArticleList,
       countPublished,
       checkForNewSubscriptionMetrics,
+      openSubscriptionMetrics,
+      refreshQueues, 
+      // decorateQueueWithSubscriptionDefinitions
+      rebuildLunrIndexes, 
       updatePostReadStatus,
       updatePostPubStatus,
+      // onTogglePostReadStatus, 
+      // onTogglePostReadLaterStatus, 
       newQueue,
       uploadOpml,
-      continueOpmlUpload,
       finalizeOpmlUpload,
       cancelOpmlUpload,
+      configureQueue, 
       createQueue,
       updateQueue,
       dismissQueueConfigPanel,
-      deleteQueue,
+      deleteSelectedQueue,
+      // deleteQueue,
       performQueueDelete,
       cancelQueueDelete,
+      // markSelectedQueueAsRead, 
       markQueueAsRead,
       performQueueMarkAsRead,
       cancelQueueMarkAsRead,
+      setSelectedQueueId,  
+      restorePreviousQueueId, 
+      getSelectedQueue, 
+      getQueueById, 
+      getPostFromQueue,
       keyHandler,
+      formatTimestamp, 
       updateNotificationPreferences,
-      toggleNotifications,
-      updateAccount,
-      openSettings,
-      exportOpml,
-      finalizeDeactivation,
-      initPasswordReset,
-      submitOrder,
-      cancelSubscription,
-      resumeSubscription,
-      getSelectedQueue,
+      isTrue, 
+      toggleNotifications, 
+      updateAccount, 
+      openSettings, 
+      exportOpml, 
+      finalizeDeactivation, 
+      initPasswordReset, 
+      submitOrder, 
+      cancelSubscription, 
+      resumeSubscription, 
     }
   },
 };
