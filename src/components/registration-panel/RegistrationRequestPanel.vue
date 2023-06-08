@@ -19,9 +19,9 @@
             variant="outlined"
           >
             <!-- window -->
-            <v-window v-model="step">
+            <v-window>
               <!-- window item -->
-              <v-window-item :value="1">
+              <v-window-item>
                 <!-- row -->
                 <v-row>
                   <!-- col -->
@@ -138,7 +138,6 @@ export default {
   emits: ["submitRegistration"],
   data() {
     return {
-      step: null,
       username: '',
       email: '',
       password: '',

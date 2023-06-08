@@ -108,8 +108,6 @@ export default {
       showPrivacyPolicy: false,
     }
   },
-  computed: {
-  },
   methods: {
     devBlog() {
       window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank');

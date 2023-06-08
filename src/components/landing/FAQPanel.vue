@@ -135,7 +135,6 @@
 import VideoPanel from '@/components/landing/VideoPanel.vue';
 import ImagePanel from '@/components/landing/ImagePanel.vue';
 
-
 export default {
   name: "FAQPanel",
   components: {

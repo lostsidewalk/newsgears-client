@@ -1,8 +1,8 @@
 <template>
   <v-card>
     <v-card-title class="text-center pa-4">
-      <h3 class="view-header-no-count">
-        <v-icon icon="fa-user" />
+      <h3 class="opml-upload">
+        <v-icon icon="fa-file" />
         {{ $t('opmlUpload') }}
       </h3>
     </v-card-title>
@@ -63,7 +63,7 @@
                       variant="tonal" 
                       prepend-icon="fa-trash"
                       :text="$t('delete')" 
-                      @click="deleteOpmlFile(file)"
+                      @click="removeFile(file)"
                     />
                   </v-list-item-action>
                 </template>
@@ -133,7 +133,7 @@
               :loading="isLoading" 
               :title="queueConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continueToStep2') : null)"
               :text="queueConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
-              @click="queueConfigRequests.length > 0 ? finalizeOpmlUpload() : continueOpmlUpload()"
+              @click="queueConfigRequests.length > 0 ? $emit('finalizeUpload') : $emit('continueUpload', files)"
             />
           </v-card-actions>
         </v-card>
@@ -150,13 +150,14 @@
       <v-btn
         :size="buttonSize"
         :text="$t('cancel')" 
-        @click="cancelOpmlUpload"
+        @click="$emit('cancel')"
       />
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { useNotifications } from '@/composable/notifications/HomeNotifications';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
@@ -164,26 +165,25 @@ export default {
   mixins: [buttonSizeMixin],
   props: { 
     isLoading: { type: Boolean, default: false },
-    baseUrl: { type: String, required: true }, 
     atStep2: { type: Boolean, required: true },
     errors: { type: Array, default: null },
     queueConfigRequests: { type: Array, required: true },
   },
   emits: [ "continueUpload", "finalizeUpload", "returnToStep1", "cancel" ],
+  setup() {
+    const { shouldShowAlert } = useNotifications();
+
+    return {
+      shouldShowAlert,
+    }
+  },
   data() {
     return {
       // 
-      files: [],
+      files: [], // TODO: extract this and associated methods to a composable 
     }
   },
   methods: {
-    shouldShowAlert(alertName) {
-      return !localStorage.getItem(alertName); 
-    },
-    dismissAlert(alertName) {
-      localStorage.setItem(alertName, new Date().toISOString())
-    },
-    //
     eventHandler(event) {
       this.addFiles(event.target.files)
       event.target.value = null
@@ -208,27 +208,12 @@ export default {
         const index = this.files.indexOf(file)
         if (index > -1) this.files.splice(index, 1)
     },
-    // 
-    finalizeOpmlUpload() {
-      console.log("opml-upload-panel: finalizing OPML upload");
-      this.$emit('finalizeUpload');
-    },
-    continueOpmlUpload() {
-      console.log("opml-upload-panel: continuing OPML upload");
-      this.$emit("continueUpload", this.files);
-    },
-    cancelOpmlUpload() {
-      this.$emit('cancel');
-    },
-    deleteOpmlFile(file) {
-      this.removeFile(file);
-    },
   },
 }
 </script>
 
 <style scoped>
-.view-header-no-count {
+.opml-upload {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;

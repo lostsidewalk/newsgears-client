@@ -1,4 +1,4 @@
-import { ref, inject } from 'vue';
+import { ref, inject, readonly } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 export function useAuth() {
@@ -49,10 +49,13 @@ export function useAuth() {
       });
   }
 
+  const roAuthServerMessage = readonly(authServerMessage);
+  const roLoginIsLoading = readonly(loginIsLoading);
+
   return {
     logout,
     login,
-    authServerMessage,
-    loginIsLoading,
+    roAuthServerMessage,
+    roLoginIsLoading,
   };
 }

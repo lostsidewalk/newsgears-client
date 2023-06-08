@@ -19,9 +19,9 @@
             variant="flat"
           >
             <!-- window -->
-            <v-window v-model="step">
+            <v-window>
               <!-- window item -->
-              <v-window-item :value="1">
+              <v-window-item>
                 <!-- row -->
                 <v-row>
                   <!-- col -->
@@ -125,8 +125,6 @@ export default {
   emits: ["submitPwUpdate"],
   data() {
     return {
-      step: null,
-      // new password/new password confirmed 
       newPassword: '',
       newPasswordConfirmed: '',
       showPrivacyPolicy: false,

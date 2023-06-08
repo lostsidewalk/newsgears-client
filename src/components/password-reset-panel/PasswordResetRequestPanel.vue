@@ -19,9 +19,9 @@
             variant="flat"
           >
             <!-- window -->
-            <v-window v-model="step">
+            <v-window>
               <!-- window item -->
-              <v-window-item :value="1">
+              <v-window-item>
                 <!-- row -->
                 <v-row>
                   <!-- col -->
@@ -136,8 +136,6 @@ export default {
   emits: ["submitPwReset"],
   data() {
     return {
-      step: null,
-      // username/email address 
       username: '',
       email: '',
       showPrivacyPolicy: false,

@@ -182,6 +182,7 @@
 </template>
 
 <script>
+import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
 import SubscriptionMetrics from './SubscriptionMetrics.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
@@ -194,6 +195,13 @@ export default {
   props: {
     info: { type: Object, required: true }
   },
+  setup() {
+    const { formatTimestamp } = useTimestamp();
+
+    return {
+      formatTimestamp
+    }
+  },
   data() {
     return {
       showSubscriptionMetrics: false,
@@ -201,7 +209,7 @@ export default {
     }
   },
   computed: {
-    httpStatusCode: function() {
+    httpStatusCode: function () {
       let s = this.info.httpStatusCode;
       if (s) {
         return s;
@@ -213,7 +221,7 @@ export default {
       }
       return null;
     },
-    httpStatusMessage: function() {
+    httpStatusMessage: function () {
       let s = this.info.httpStatusMessage;
       if (s) {
         return s;
@@ -225,10 +233,10 @@ export default {
       }
       return null;
     },
-    usefulSubscriptionMetrics: function() {
+    usefulSubscriptionMetrics: function () {
       return this.info.subscriptionMetrics ? this.info.subscriptionMetrics.filter(f => f.persistCt > 0) : null;
     },
-    hasChips: function() {
+    hasChips: function () {
       return this.info.author || 
         this.info.copyright ||
         this.info.publishedDate || 
@@ -242,32 +250,6 @@ export default {
         this.info.isUrlUpgradable === true;
     },
   },
-  methods: {
-    isHtmlContent(contentObj) {
-      return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;
-    },
-    hasThumbnail(postMedia) {
-      if (postMedia) {
-        let metadata = postMedia.postMediaMetadata;
-        if (metadata) {
-          let thumbnails = metadata.thumbnails;
-          return thumbnails && thumbnails.length > 0;
-        }
-      }
-      return false;
-    },
-    formatTimestamp(timestamp) {
-      if (!timestamp) {
-        return null;
-      }
-      try {
-        let d = new Date(Date.parse(timestamp));
-        return d.toLocaleString();
-      } catch (error) {
-        console.debug("Unable to format timestamp due to: " + error);
-      }
-    }
-  }
 }
 </script>
 

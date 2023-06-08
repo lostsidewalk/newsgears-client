@@ -1,16 +1,16 @@
 <template>
   <v-card>
     <v-card-title class="text-center pa-4">
-      <h3 class="view-header-no-count">
+      <h3 class="queue-settings">
         <v-icon icon="fa-rss" />
-        {{ (queue && queue.id) ? $t('queueSettings') : $t('createANewQueue') }}
+        {{ queueId ? $t('queueSettings') : $t('createANewQueue') }}
       </h3>
     </v-card-title>
     <v-divider />
     <v-card-text>
       <!-- tab panel -->
       <v-tabs
-        v-if="queue && queue.id"
+        v-if="queueId"
         v-model="selectedTab"
       >
         <!-- tab 1: add subscription -->
@@ -43,33 +43,215 @@
           value="ADD_SUBSCRIPTIONS"
         >
           <!-- add subscriptions -->
-          <AddSubscriptions
-            v-if="queue"
-            :auth="auth"
-            :base-url="baseUrl"
-            :subscriptions="subscriptions" 
-            :queue-id="queue.id"
-            @addSubscription="addSubscription" 
-            @authError="handleAuthError" 
-            @updateServerMessage="setLastServerMessage"
-          /> 
+          <v-sheet
+            align="left"
+            justify="center"
+          >
+            <!-- add subscription from URL -->
+            <v-card
+              class="ma-4"
+              elevation="6"
+            >
+              <v-card-title class="pa-4">
+                {{ $t('addANewSubscription') }}
+              </v-card-title>
+              <v-divider />
+              <v-alert
+                v-if="shouldShowAlert('addANewSubscriptionHere')"
+                closable
+                variant="outlined"
+                border="top"
+                icon="fa-question-circle"
+                :text="$t('addANewSubscriptionHere')"
+                class="ma-4"
+                @click.close="dismissAlert('addANewSubscriptionHere')"
+              />
+              <v-card-text>
+                <!-- text field -->
+                <v-text-field
+                  v-model="newSubscription.url"
+                  variant="solo-filled"
+                  type="text"
+                  autofocus
+                  :label="$t('feedUrl')"
+                  :placeholder="$t('feedUrl')"
+                >
+                  <template #append>
+                    <v-btn
+                      variant="tonal"
+                      :size="buttonSize" 
+                      prepend-icon="fa-refresh"
+                      :loading="discoveryIsLoading"
+                      :disabled="!newSubscription.url"
+                      :title="$t('discovery')"
+                      :text="$t('discovery')"
+                      @click="doDiscovery(newSubscription)"
+                    />
+                  </template>
+                </v-text-field>
+                <v-alert
+                  type="info"
+                  closable
+                  :variant="newSubscription.url ? 'tonal' : 'outlined'"
+                  class="mb-4"
+                >
+                  {{ $t("credentialsUseMessage") }}
+                </v-alert>
+                <!-- username text field -->
+                <v-text-field
+                  v-model="newSubscription.username"
+                  variant="solo-filled"
+                  type="text"
+                  :label="$t('username')"
+                  :placeholder="$t('username')"
+                  :disabled="!newSubscription.url"
+                />
+                <!-- password text field -->
+                <v-text-field
+                  v-model="newSubscription.password"
+                  variant="solo-filled"
+                  type="password"
+                  :label="$t('password')"
+                  :placeholder="$t('password')"
+                  :disabled="!newSubscription.url"
+                />
+                <SubscriptionInfo
+                  v-if="newSubscription.discoveryUrl && !newSubscription.error"
+                  elevation="6"
+                  :info="newSubscription"
+                >
+                  <template #additional>
+                    <v-btn
+                      :size="buttonSize" 
+                      prepend-icon="fa-plus"
+                      :loading="addNewIsLoading"
+                      :title="$t('subscribe')"
+                      :text="$t('subscribe')"
+                      @click="addNewSubscription"
+                    />
+                  </template>
+                </SubscriptionInfo>
+                <v-alert
+                  v-if="newSubscription.error"
+                  closable 
+                  type="error"
+                >
+                  {{ newSubscription.error }}
+                </v-alert>
+              </v-card-text>
+            </v-card>
+          </v-sheet>
         </v-window-item>
         <!-- manage subscriptions -->
         <v-window-item
           key="MANAGE_SUBSCRIPTIONS"
           value="MANAGE_SUBSCRIPTIONS"
         >
-          <ManageSubscriptions
-            v-if="queue"
-            :auth="auth"
-            :base-url="baseUrl"
-            :subscriptions="subscriptions" 
-            :queue-id="queue.id"
-            @deleteSubscription="deleteSubscription" 
-            @updateSubscriptionAuth="updateSubscriptionAuth"
-            @authError="handleAuthError" 
-            @updateServerMessage="setLastServerMessage"
-          /> 
+          <v-sheet
+            align="left"
+            justify="center"
+          >
+            <!-- manage existing RSS/ATOM feed subscriptions -->
+            <v-card
+              v-if="subscriptions && subscriptions.length > 0"
+              class="ma-4"
+              elevation="6"
+            >
+              <v-card-title class="pa-4">
+                {{ $t('yourSubscriptions') }}
+              </v-card-title>
+              <v-divider />
+              <v-alert
+                v-if="shouldShowAlert('manageYourSubscriptionsHere')"
+                closable
+                variant="outlined"
+                border="top"
+                icon="fa-question-circle"
+                :text="$t('manageYourSubscriptionsHere')"
+                class="ma-4"
+                @click.close="dismissAlert('manageYourSubscriptionsHere')"
+              />
+              <v-card-text
+                v-for="(subscription, idx) in subscriptions"
+                :key="idx" 
+              >
+                <SubscriptionInfo
+                  elevation="6"
+                  :info="subscription"
+                  :filter-support="false"
+                >
+                  <template #additional>
+                    <v-btn
+                      :size="buttonSize"  
+                      prepend-icon="fa-expand"
+                      :title="$t('auth')"
+                      :text="$t('auth')"
+                      @click="configAuth(subscription)"
+                    />
+                    <v-btn
+                      :size="buttonSize" 
+                      prepend-icon="fa-trash"
+                      :loading="deleteIsLoading"
+                      :title="$t('unsubscribe')"
+                      :text="$t('unsubscribe')"
+                      @click="deleteSubscription(subscription.id)"
+                    />
+                  </template>
+                </SubscriptionInfo>
+              </v-card-text>
+            </v-card>
+            <!-- auth config dialog (existing subscriptions) -->
+            <v-dialog
+              v-model="showAuthConfig"
+              fullscreen
+              scrollable
+            >
+              <v-card>
+                <v-card-title class="pa-4">
+                  {{ $t('updateAuth') }}
+                </v-card-title>
+                <v-divider />
+                <v-card-text>
+                  <v-alert
+                    type="info"
+                    :closable="false"
+                    variant="outlined"
+                    class="mb-4"
+                  >
+                    {{ $t("credentialsUseMessage") }}
+                  </v-alert>
+                  <v-text-field
+                    v-model="subscriptionToUpdate.username"
+                    variant="solo-filled"
+                    type="text"
+                    :label="$t('username')"
+                    :placeholder="$t('username')"
+                  />
+                  <v-text-field
+                    v-model="subscriptionToUpdate.password"
+                    variant="solo-filled"
+                    type="password"
+                    :label="$t('password')"
+                    :placeholder="$t('password')"
+                  />
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn
+                    :size="buttonSize" 
+                    prepend-icon="fa-save"
+                    :loading="updateAuthIsLoading"
+                    :text="$t('update')" 
+                    @click="updateSubscriptionAuth(subscriptionToUpdate)"
+                  />
+                  <v-btn
+                    :size="buttonSize" 
+                    :text="$t('cancel')"
+                    @click="showAuthConfig = false"
+                  />
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-sheet>
         </v-window-item>
         <!-- queue properties -->
         <v-window-item
@@ -79,10 +261,10 @@
           <v-sheet>
             <v-card variant="flat">
               <v-card-title class="pa-4">
-                {{ (queue && queue.id) ? $t('updateQueueSettings') : $t('createANewQueue') }}
+                {{ queueId ? $t('updateQueueSettings') : $t('createANewQueue') }}
               </v-card-title>
-              <v-card-subtitle v-if="(queue && queue.id && queue.title)">
-                {{ queue.title }}
+              <v-card-subtitle v-if="queueTitle">
+                {{ queueTitle }}
               </v-card-subtitle>
               <v-divider class="mb-1 mt-1" />
               <v-alert
@@ -91,7 +273,7 @@
                 variant="outlined"
                 border="top"
                 icon="fa-question-circle"
-                :text="(queue && queue.id) ? $t('updateQueueSettingsHere') : $t('createANewQueueHere')"
+                :text="queueId ? $t('updateQueueSettingsHere') : $t('createANewQueueHere')"
                 class="ma-4"
                 @click.close="dismissAlert('updateQueueSettingsHere')"
               />
@@ -133,8 +315,8 @@
                   :hint="$t('queueFeedGeneratorHint')"
                   :required="false"
                   :placeholder="$t('queueFeedGenerator')"
-                  :model-value="queueFeedGenerator" 
-                  @update:modelValue="queueFeedGenerator = $event"
+                  :model-value="queueGenerator" 
+                  @update:modelValue="queueGenerator = $event"
                 />
                 <!-- queue (starred) feed copyright -->
                 <QueueConfigTextField 
@@ -143,8 +325,8 @@
                   :hint="$t('queueFeedCopyrightHint')"
                   :required="false"
                   :placeholder="$t('queueFeedCopyright')"
-                  :model-value="queueFeedCopyright" 
-                  @update:modelValue="queueFeedCopyright = $event"
+                  :model-value="queueCopyright" 
+                  @update:modelValue="queueCopyright = $event"
                 />
                 <!-- queue (starred) feed language -->
                 <QueueConfigTextField 
@@ -153,16 +335,16 @@
                   :hint="$t('queueFeedLanguageHint')"
                   :required="false"
                   :placeholder="$t('queueFeedLanguage')"
-                  :model-value="queueFeedLanguage" 
-                  @update:modelValue="queueFeedLanguage = $event"
+                  :model-value="queueLanguage" 
+                  @update:modelValue="queueLanguage = $event"
                 />
               </v-card-text>
-              <v-divider v-if="(!queue || !queue.id)" />
-              <v-card-actions v-if="(!queue || !queue.id)">
+              <v-divider v-if="!queueId" />
+              <v-card-actions v-if="!queueId">
                 <v-btn
                   :size="buttonSize" 
                   :text="$t('save')"
-                  @click="saveQueueConfig"
+                  @click="save"
                 />
               </v-card-actions>
             </v-card>
@@ -182,47 +364,76 @@
 </template>
 
 <script>
+import { useNotifications } from '@/composable/notifications/HomeNotifications';
 import QueueConfigTextField from '@/components/queue-config-panel/QueueConfigTextField.vue';
-import AddSubscriptions from '@/components/queue-config-panel/AddSubscriptions.vue';
-import ManageSubscriptions from '@/components/queue-config-panel/ManageSubscriptions.vue';
+import SubscriptionInfo from '@/components/subscription-info/SubscriptionInfo.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "QueueConfigPanel", 
   components: {
     QueueConfigTextField,
-    AddSubscriptions,
-    ManageSubscriptions,
+    SubscriptionInfo,
   },
   mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
     auth: { type: Object, required: true },
+    queueUnderConfig: { type: Object, required: true },
   },
-  emits: [ "save", "update", "dismiss", "authError", "updateServerMessage", "refreshQueueDefinitions" ],
+  emits: [ 
+    "save", 
+    "update", 
+    "addSubscription", 
+    "deleteSubscription", 
+    "updateSubscriptionAuth", 
+    "dismiss" 
+  ],
+  setup() {
+    const { 
+      shouldShowAlert,
+      dismissAlert, 
+      handleServerError, 
+      setLastServerMessage 
+    } = useNotifications();
+
+    return {
+      shouldShowAlert,
+      dismissAlert, 
+      handleServerError,
+      setLastServerMessage,
+    }
+  },
   data() {
     return {
       // 
       tabs: null,
       // 
-      showModal: false,
+      showQueueConfigPanel: false,
+      // add/manage subscriptions
+      newSubscription: {},
+      addNewIsLoading: false,
+      discoveryIsLoading: false,
+      subscriptionToUpdate: null,
+      showAuthConfig: false,
+      deleteIsLoading: false,
+      updateAuthIsLoading: false,
       // queue properties 
-      queue: null,
-      queueId: null,
-      queueIdent: '',
-      queueTitle: '',
-      queueDescription: '',
-      queueGenerator: '',
-      queueCopyright: '',
-      queueLanguage: '',
-      subscriptions: [],
-      selectedTab: null,
+      queueId: this.queueUnderConfig.id,
+      queueIdent: this.queueUnderConfig.ident,
+      queueTitle: this.queueUnderConfig.title,
+      queueDescription: this.queueUnderConfig.description,
+      queueGenerator: this.queueUnderConfig.generator,
+      queueCopyright: this.queueUnderConfig.copyright,
+      queueLanguage: this.queueUnderConfig.language,
+      subscriptions: this.queueUnderConfig.subscriptions,
+      selectedTab: this.queueId ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES',
     };
   },
   computed: {
-    tabModel: function() {
+    tabModel: function () {
       let arr = [];
-      if (this.queue.id) {
+      if (this.queueId) {
         arr.push({
           name: "ADD_SUBSCRIPTIONS",
           description: this.$t('rssFeedDiscovery'),
@@ -243,142 +454,148 @@ export default {
     },
   },
   methods: {
-    shouldShowAlert(alertName) {
-      return !localStorage.getItem(alertName); 
-    },
-    dismissAlert(alertName) {
-      localStorage.setItem(alertName, new Date().toISOString())
-    },
-    // setup is called to initialize the panel for updates 
-    setup(queue) {
-      this.queue = queue;
-      // setup queue 
-      this.queueId = this.queue.id;
-      this.queueIdent = this.queue.ident;
-      this.queueTitle = this.queue.title;
-      this.queueDescription = this.queue.description;
-      this.queueFeedGenerator = this.queue.generator;
-      this.queueFeedCopyright = this.queue.copyright;
-      this.queueFeedLanguage = this.queue.language;
-      this.subscriptions = this.queue.subscriptions;
-      this.selectedTab = (queue && queue.id) ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
-      this.showModal = true;
-    },
-    tearDown() {
-      this.showModal = false;
-    },
-    // 
-    handleAuthError(error) {
-      this.$emit('authError', error);
-    },
-    setLastServerMessage(message) {
-      if (message) {
-        this.$emit('updateServerMessage', message);
-      }
-    },
-    // 
-    // invoked when the user saves the queue to complete step 1 
-    // (after step 1 is complete, we transition to an update operation on an existing queue)
-    // 
-    saveQueueConfig() {
+    // emit save 
+    save() {
       let saveObj = {
         ident: this.queuedIdent,
         title: this.queueTitle,
         description: this.queueDescription,
-        generator: this.queueFeedGenerator,
-        copyright: this.queueFeedCopyright,
-        language: this.queueFeedLanguage,
+        generator: this.queueGenerator,
+        copyright: this.queueCopyright,
+        language: this.queueLanguage,
       };
+      // invokes HomeQuues->createQueue
       this.$emit('save', saveObj);
     },
-    updateQueueConfig() {
-      let updateObj = {
-        id: this.queue.id,
-        ident: this.queueIdent,
+    // emit update 
+    update() {
+      let saveObj = {
+        id: this.queueId, 
+        ident: this.queuedIdent,
         title: this.queueTitle,
         description: this.queueDescription,
-        generator: this.queueFeedGenerator,
-        copyright: this.queueFeedCopyright,
-        language: this.queueFeedLanguage,
+        generator: this.queueGenerator,
+        copyright: this.queueCopyright,
+        language: this.queueLanguage,
       };
-      this.$emit('update', updateObj);
+      // invokes HomeQuues->updateQueue
+      this.$emit('update', saveObj);
     },
-    addSubscription(source) {
-      if (!this.subscriptions) {
-        this.subscriptions = [];
-      }
-      if (source === undefined) {
-        source = {};
-      } else {
-        source = JSON.parse(JSON.stringify(source));
-      }
-      let qd = source.subscriptionDefinition;
-      let r = {
-        id: qd.id,
-        url: qd.url,
-        queueId: qd.queueId,
-        title: qd.title
-      }
-      // auth 
-      let queryConfig = qd.queryConfig ? JSON.parse(qd.queryConfig) : qd.queryConfig;
-      if (queryConfig) {
-        r.username = queryConfig.username;
-        r.password = queryConfig.password;
-      }
-      // image 
-      let sourceImgUrl = source.imgUrl;
-      if (sourceImgUrl) {
-        r.image = {
-          title: null,
-          url: sourceImgUrl,
-        }
-      }
-
-      this.subscriptions.unshift(r);
-      
-      this.$emit('refreshQueueDefinitions', this.queue.id);
+    // emit addSubscription 
+    addSubscription() {
+      this.$emit('addSubscription', this.newSubscription);
     },
+    // emit deleteSubscription 
     deleteSubscription(id) {
-      let deleteIdx = -1;
-      for (let i = 0; i < this.subscriptions.length; i++) {
-        if (this.subscriptions[i].id === id) {
-          deleteIdx = i;
-          break;
-        }
-      }
-      if (deleteIdx > -1) {
-        this.subscriptions.splice(deleteIdx, 1);
-        this.$emit('refreshQueueDefinitions', this.queue.id);
+      this.$emit('deleteSubscription', id);
+    },
+    // emit updateSubscriptionAuth 
+    updateSubscriptionAuth(source) {
+      this.$emit('updateSubscriptionAuth', source);
+    },
+    // internal 
+    doDiscovery(r) {
+      if (r.url) {
+        r.error = null;
+        this.discoveryIsLoading = true;
+        this.auth.getTokenSilently().then((token) => {
+          const controller = new AbortController();
+          const requestOptions = {
+            method: 'POST', 
+            headers: { 
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            credentials: 'include', 
+            body: JSON.stringify({
+              url: r.url,
+              username: r.username,
+              password: r.password,
+              includeRecommendations: false,
+            }),
+            signal: controller.signal
+          };
+          const timeoutId = setTimeout(() => controller.abort(), 45000);
+          fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : {};
+            } else {
+              return isJson ? response.json().then(j => {throw new Error(null, {cause: j})}) : response.text().then(t => {throw new Error(t)});
+            }
+          }).then((data) => {
+            if (data.error) {
+              r.error = data.error;
+            } else {
+              r.url = data.feedUrl; 
+              r.discoveryUrl = data.feedUrl;
+              r.title = data.title ? data.title.value : data.feedUrl;
+              r.description = data.description;
+              r.author = data.author;
+              r.categories = data.categories;
+              r.copyright = data.copyright;
+              r.docs = data.docs;
+              r.encoding = data.encoding;
+              r.feedType = data.feedType;
+              r.generator = data.generator;
+              r.icon = data.icon;
+              r.image = data.image;
+              r.language = data.language;
+              r.link = data.link;
+              r.managingEditor = data.managingEditor;
+              r.publishedDate = data.publishedDate;
+              r.styleSheet = data.styleSheet;
+              r.supportedTypes = data.supportedTypes;
+              r.webMaster = data.webMaster;
+              r.sampleEntries = data.sampleEntries;
+              r.feedRecommendationInfo = data.feedRecommendationInfo;
+              r.httpStatusCode = data.httpStatusCode;
+              r.httpStatusMessage = data.httpStatusMessage;
+              r.redirectFeedUrl = data.redirectFeedUrl;
+              r.redirectHttpStatusCode = data.redirectHttpStatusCode;
+              r.redirectHttpStatusMessage = data.redirectHttpStatusMessage;
+            }
+          }).catch((error) => {
+            if (error.name === 'TypeError') {
+              r.error = this.$t('somethingHorribleHappened');
+            } else if (error.name === 'AbortError') {
+              r.error = this.$t('requestTimedOut');
+            } else {
+              let cause = error.cause;
+              if (cause) {
+                r.error = cause.details;
+                r.httpStatusCode = cause.httpStatusCode;
+                r.httpStatusMessage = cause.httpStatusMessage;
+                r.redirectFeedUrl = cause.redirectFeedUrl;
+                r.redirectHttpStatusCode = cause.redirectHttpStatusCode;
+                r.redirectHttpStatusMessage = cause.redirectHttpStatusMessage;
+              } else {
+                r.error = error.message;
+              }
+            }
+          })
+          .finally(() => {
+            this.discoveryIsLoading = false;
+            clearTimeout(timeoutId);
+          });
+        }).catch((error) => {
+          this.handleServerError(error);
+          this.discoveryIsLoading = false;
+        });
       }
     },
-    updateSubscriptionAuth(source) {
-      let updateIdx = -1;
-      let qd = source.subscriptionDefinition;
-      for (let i = 0; i < this.subscriptions.length; i++) {
-        if (this.subscriptions[i].id === qd.id) {
-          updateIdx = i;
-          break;
-        }
-      }
-      if (updateIdx > -1) {
-        let queryConfigStr = qd.queryConfig;
-        if (queryConfigStr) {
-          let queryConfig = JSON.parse(queryConfigStr);
-          this.subscriptions[updateIdx].username = queryConfig.username;
-          this.subscriptions[updateIdx].password = queryConfig.password;
-        } else {
-          this.subscriptions[updateIdx].username = null;
-          this.subscriptions[updateIdx].password = null;
-        }
-        this.$emit('refreshQueueDefinitions', this.queue.id);
-      }
+    // internal
+    configAuth(subscription) {
+      this.subscriptionToUpdate = subscription;
+      this.showAuthConfig = true;
     },
   }
 }
 </script>
 
 <style scoped>
-.view-header-no-count {
+.queue-settings {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;

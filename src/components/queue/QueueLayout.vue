@@ -3,14 +3,14 @@
     <v-btn
       :size="buttonSize"
       icon="fa-list"
-      :disabled="showListLayout"
+      :disabled="disableListLayout"
       :title="$t('listLayout')"
       @click="$emit('list')"
     />
     <v-btn
       :size="buttonSize"
       icon="fa-th"
-      :disabled="showCardLayout"
+      :disabled="disableCardLayout"
       :title="$t('cardLayout')"
       @click="$emit('card')"
     />
@@ -24,8 +24,8 @@ export default {
   name: "QueueLayout",
   mixins: [buttonSizeMixin],
   props: {
-    showListLayout: { type: Boolean, required: true },
-    showCardLayout: { type: Boolean, required: true }
+    disableListLayout: { type: Boolean, required: true },
+    disableCardLayout: { type: Boolean, required: true }
   },
   emits: [
     "list",

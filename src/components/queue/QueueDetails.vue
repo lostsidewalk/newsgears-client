@@ -132,6 +132,8 @@
 </template>
 
 <script>
+import { useNotifications } from '@/composable/notifications/HomeNotifications';
+import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
@@ -144,13 +146,16 @@ export default {
     atomPubUrl: { type: String, required: true },
   },
   emits: ["updateFilter", "showSubscriptionMetrics"],
+  setup() {
+    const { shouldShowAlert } = useNotifications();
+    const { formatTimestamp } = useTimestamp();
+
+    return {
+      shouldShowAlert,
+      formatTimestamp,
+    }
+  },
   methods: {
-    shouldShowAlert(alertName) {
-      return !localStorage.getItem(alertName);
-    },
-    dismissAlert(alertName) {
-      localStorage.setItem(alertName, new Date().toISOString());
-    },
     // shown on hover 
     buildMetricStatusMessage(subscriptionMetrics) {
       if (subscriptionMetrics) {
@@ -221,18 +226,6 @@ export default {
     openSubscriptionMetrics(subscription) {
       this.$emit('showSubscriptionMetrics', subscription);
     },
-    formatTimestamp(timestamp) {
-      if (!timestamp) {
-        return null;
-      }
-      try {
-        let d = new Date(Date.parse(timestamp));
-        return d.toLocaleString();
-      }
-      catch (error) {
-        console.debug("Unable to format timestamp due to: " + error);
-      }
-    }
   }
 }
 </script>

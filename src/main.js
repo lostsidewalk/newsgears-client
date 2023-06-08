@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import useAuthService from '@/services/auth/AuthService.vue';
+import useAuthService from '@/services/auth/AuthService.js';
 import App from "./App.vue";
 import router from "./router";
 import VuePlyr from "vue-plyr";
@@ -1053,8 +1053,11 @@ const vuetify = createVuetify({
   },
 });
 
+const { auth, isAuthenticated } = useAuthService();
+
 createApp(App, {})
-  .provide("auth", useAuthService())
+  .provide("auth", auth)
+  .provide("isAuthenticated", isAuthenticated)
   .use(router)
   .use(VuePlyr, {
     plyr: {},

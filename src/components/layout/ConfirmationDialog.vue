@@ -13,7 +13,7 @@
         autofocus 
         accesskey="c" 
         :text="$t('confirm')" 
-        @click="confirm"
+        @click="$emit('confirm')"
       />
       <v-btn
         :size="buttonSize"
@@ -34,10 +34,5 @@ export default {
     prompt: { type: String, required: true },
   },
   emits: ["confirm", "cancel"],
-  methods: {
-    confirm() {
-      this.$emit('confirm');
-    },
-  },
 }
 </script>

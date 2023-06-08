@@ -1,4 +1,4 @@
-import { ref, reactive, inject } from 'vue';
+import { ref, reactive, inject, readonly } from 'vue';
 import { useRouter} from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useNotifications } from '../notifications/HomeNotifications';
@@ -7,13 +7,64 @@ export function useSettings(props) {
   const auth = inject('auth');
   const { router } = useRouter();
   const { t } = useI18n();
-  const { handleServerError, setLastServerMessage } = useNotifications();
+  const { 
+    handleServerError, 
+    setLastServerMessage 
+  } = useNotifications();
   const settingsIsLoading = ref(false);
+  const showSettingsPanel = ref(false);
   const account = reactive({});
   const subscription = reactive({});
 
   const { baseUrl } = props;
 
+  function openSettings() {
+    settingsIsLoading.value = true;
+    auth.getTokenSilently().then((token) => {
+      const controller = new AbortController();
+      const requestOptions = {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        credentials: 'include',
+        signal: controller.signal
+      };
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      fetch(baseUrl + "/settings", requestOptions)
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+              response.text().then(t => { throw new Error(t) });
+          }
+        }).then((data) => {
+          Object.assign(account, {
+            username: data.username,
+            emailAddress: data.emailAddress,
+            authProvider: data.authProvider,
+            authProviderProfileImgUrl: data.authProviderProfileImgUrl,
+            authProviderUsername: data.authProviderUsername
+          })
+          Object.assign(subscription, data.subscription);
+          showSettingsPanel.value = true;
+        }).catch((error) => {
+          handleServerError(error);
+          settingsIsLoading.value = false; // top-level 
+        }).finally(() => {
+          settingsIsLoading.value = false; // top-level 
+          clearTimeout(timeoutId);
+        });
+    }).catch((error) => {
+      handleServerError(error);
+      settingsIsLoading.value = false; // top-level
+    });
+  }
+  
   function updateNotificationPreferences(updateNotificationRequest) {
     let enableAccountAlerts = updateNotificationRequest.enableAccountAlerts;
     let enableDailyFeedReport = updateNotificationRequest.enableDailyFeedReport;
@@ -403,11 +454,18 @@ export function useSettings(props) {
     });
   }
 
+  const roAccount = readonly(account);
+  const roSubscription = readonly(subscription);
+  const roSettingsIsLoading = readonly(settingsIsLoading);
+
   return {
-    account,
-    subscription, 
-    settingsIsLoading, 
+    roAccount,
+    roSubscription, 
+    roSettingsIsLoading, 
     // 
+    showSettingsPanel, // rw
+    // 
+    openSettings, 
     updateNotificationPreferences, 
     exportOpml,
     finalizeDeactivation,

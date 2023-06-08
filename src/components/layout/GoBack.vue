@@ -5,7 +5,7 @@
     :title="$t('goBack')" 
     prepend-icon="fa-arrow-left"
     :text="$t('goBack')"
-    @click="goBack()"
+    @click="$router.back()"
   />
 </template>
 
@@ -15,10 +15,5 @@ import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 export default {
   name: "GoBack",
   mixins: [buttonSizeMixin], 
-  methods: {
-    goBack() {
-      this.$router.back();
-    }
-  },
 }
 </script>

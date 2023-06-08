@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
@@ -89,17 +90,11 @@ export default {
     subscriptionMetrics: { type: Array, required: true },
   },
   emits: ["dismiss"],
-  methods: {
-    formatTimestamp(timestamp) {
-      if (!timestamp) {
-        return null;
-      }
-      try {
-        let d = new Date(Date.parse(timestamp));
-        return d.toLocaleString();
-      } catch (error) {
-        console.debug("Unable to format timestamp due to: " + error);
-      }
+  setup() {
+    const { formatTimestamp } = useTimestamp();
+
+    return {
+      formatTimestamp 
     }
   }
 }

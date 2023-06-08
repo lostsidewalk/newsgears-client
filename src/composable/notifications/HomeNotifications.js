@@ -1,4 +1,4 @@
-import { ref, inject } from 'vue';
+import { ref, inject, readonly } from 'vue';
 import { useAnnouncer } from '@vue-a11y/announcer';
 import { useI18n } from 'vue-i18n';
 
@@ -39,9 +39,22 @@ export function useNotifications() {
     }
   }
 
+  function shouldShowAlert(alertName) {
+    return !localStorage.getItem(alertName); 
+  }
+
+  function dismissAlert(alertName) {
+    localStorage.setItem(alertName, new Date().toISOString())
+  }
+
+  const roShowNotificationWarning = readonly(showNotificationWarning);
+
   return {
+    roShowNotificationWarning, 
+    // 
     handleServerError, 
     setLastServerMessage,
-    showNotificationWarning, 
+    shouldShowAlert, 
+    dismissAlert, 
   }
 }

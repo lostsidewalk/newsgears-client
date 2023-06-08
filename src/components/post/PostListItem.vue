@@ -22,7 +22,7 @@
       /> 
       <div class="d-flex flex-column flex-auto flex-grow-1">
         <div
-          v-if="isHtmlContent(post.postTitle)" 
+          v-if="isHtmlTitle" 
           class="post-html-frame"
           frameborder="0"
           v-html="post.postTitle.value"
@@ -53,7 +53,7 @@
     >
       <!-- post description (hidden w/no detials) -->
       <div
-        v-if="isHtmlContent(post.postDesc)"
+        v-if="isHtmlDesc"
         class="post-html-frame mb-2" 
         frameborder="0"
         v-html="post.postDesc.value"
@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import { useTimestamp } from '@/composable/timestamp/HomeTimestamp';
+
 export default {
   name: "PostListItem",
   props: {
@@ -78,16 +80,32 @@ export default {
   emits: [
     "openPost",
   ],
+  setup() {
+    const { formatTimestamp } = useTimestamp();
+
+    return {
+      formatTimestamp
+    }
+  },
   data() {
     return {
       showPostCategories: false,
       showPostSharing: false,
     };
   },
-  methods: {
-    isHtmlContent(contentObj) {
-      return contentObj != null && contentObj.type != null && contentObj.type.toLowerCase().indexOf('html') >= 0;
+  computed: {
+    isHtmlTitle: function() {
+      return this.post.postTitle != null && 
+        this.post.postTitle.type != null && 
+        this.post.postTitle.type.toLowerCase().indexOf('html') >= 0;
     },
+    isHtmlDesc: function() {
+      return this.post.postDesc != null && 
+        this.post.postDesc.type != null && 
+        this.post.postDesc.type.toLowerCase().indexOf('html') >= 0;
+    }
+   },
+  methods: {
     stagePost() {
       console.log("post: publishing post id=" + this.post.id);
       this.updatePostPubStatus(this.post.queueIdent, 'PUB_PENDING', 'stagePost');
@@ -140,17 +158,6 @@ export default {
             originator: successSignal
           });
     },
-    formatTimestamp(timestamp) {
-      if (!timestamp) {
-        return null;
-      }
-      try {
-        let d = new Date(Date.parse(timestamp));
-        return d.toLocaleString();
-      } catch (error) {
-        console.debug("Unable to format timestamp due to: " + error);
-      }
-    }
   }
 };
 </script>

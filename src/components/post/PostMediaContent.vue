@@ -16,7 +16,7 @@
         fullscreen
         scrollable
       >
-        <vue-plyr v-if="isVideo()">
+        <vue-plyr v-if="isVideo">
           <div class="plyr__video-embed">
             <iframe
               allowfullscreen 
@@ -143,14 +143,14 @@ export default {
     }
   },
   computed: {
-    hasUseableMetadata: function() {
+    hasUseableMetadata: function () {
       let m = false;
       if (this.mediaContent.metadata.thumbnail) {
         m = this.mediaContent.metadata.thumbnail.length > 0;
       }
       return m;
     },
-    hasUseableProperties: function() {
+    hasUseableProperties: function () {
       let p = false;
       if (this.mediaContent.audioChannels || 
         this.mediaContent.bitRate || 
@@ -166,12 +166,10 @@ export default {
         }
       return p;
     },
-  },
-  methods: {
-    isVideo() {
+    isVideo: function() {
       return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("video/mp4") >= 0);
     },
-  }
+  },
 }
 </script>
 

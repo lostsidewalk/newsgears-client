@@ -40,9 +40,9 @@
     <v-btn
       :size="buttonSize" 
       icon="fa-tag"
-      :title="$t('toggleFilterPills')"  
+      :title="$t('toggleFilterPills')" 
       :aria-label="$t('toggleFilterPills')"
-      @click.stop="$emit('toggleFilterPills')"
+      @click.stop="$emit('toggleQueueFilterPills')"
     />
   </v-toolbar-items>
 </template>
@@ -60,7 +60,7 @@ export default {
   },
   emits: [
     "toggleSortOrder",
-    "toggleFilterPills",
+    "toggleQueueFilterPills",
     "refreshQueues", 
     "markAsRead", 
     "update:modelValue",

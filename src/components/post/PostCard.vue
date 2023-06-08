@@ -281,6 +281,7 @@
 </template>
 
 <script>
+import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
 import PostEnclosure from "@/components/post/PostEnclosure.vue";
 import PostMedia from "@/components/post/PostMedia.vue";
 import PostITunes from "@/components/post/PostITunes.vue";
@@ -306,6 +307,13 @@ export default {
     "openPostUrl",
     "share",
   ],
+  setup() {
+    const { formatTimestamp } = useTimestamp();
+
+    return {
+      formatTimestamp
+    }
+  },
   data() {
     return {
       showPostCategories: false,
@@ -377,17 +385,6 @@ export default {
         queueIdent: queueIdent,
         originator: successSignal,
       });
-    },
-    formatTimestamp(timestamp) {
-      if (!timestamp) {
-        return null;
-      }
-      try {
-        let d = new Date(Date.parse(timestamp));
-        return d.toLocaleString();
-      } catch (error) {
-        console.debug("Unable to format timestamp due to: " + error);
-      }
     },
   },
 };

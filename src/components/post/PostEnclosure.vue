@@ -2,7 +2,7 @@
   <div class="d-flex">
     <!-- image -->
     <v-img 
-      v-if="isImage()" 
+      v-if="isImage" 
       :src="enclosure.url"
       class="post-enclosure-image" 
       tabindex="0" 
@@ -10,7 +10,7 @@
     />
     <!-- audio -->
     <div
-      v-if="isAudio()"
+      v-if="isAudio"
       class="d-flex audio-player w-100 h-auto ma-2 pa-4"
     >
       <vue-plyr
@@ -24,7 +24,7 @@
     </div>
     <!-- video -->
     <vue-plyr
-      v-if="isVideo()"
+      v-if="isVideo"
       ref="player"
     >
       <div
@@ -53,25 +53,26 @@ export default {
       showContents: false,
     }
   },
-  methods: {
-    isImage() {
+  computed: {
+    isImage: function() {
       return this.enclosure.type === "image" || this.enclosure.type.indexOf("image") === 0;
     },
-    isAudio() {
+    isAudio: function() {
       let a = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("audio") >= 0;
       console.debug("enclosureType=" + this.enclosure.type + ", isAudio=" + a);
       return a;
     },
-    isVideo() {
+    isVideo: function() {
       let v = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("video/mp4") >= 0;
       console.debug("enclosureType=" + this.enclosure.type + ", isVideo=" + v);
       return v;
     },
+  },
+  methods: {
     show() {
       this.showContents = true;
     }
   }
-
 }
 </script>
 

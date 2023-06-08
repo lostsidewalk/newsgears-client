@@ -4,16 +4,6 @@
   </router-view>
 </template>
 
-<script>
-export default {
-  methods: {
-    isLoading() {
-      return false;
-    },
-  }
-};
-</script>
-
 <style scoped>
 #apphome {
   -webkit-font-smoothing: antialiased;

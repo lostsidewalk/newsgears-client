@@ -1,6 +1,5 @@
-<script>
+import { ref, reactive } from "vue";
 import axios from "axios";
-import { reactive } from "vue";
 
 function useAuthService() {
   const auth = reactive({
@@ -14,9 +13,12 @@ function useAuthService() {
     logout: logout,
     tearDownLoggedInSession: tearDownLoggedInSession,
     token: null,
-    isAuthenticated: false,
-    user: reactive({})
+    user: reactive({
+      username: null,
+      hasSubscription: false,
+    })
   });
+  const isAuthenticated = ref(false);
 
   // URLs
   const currentUserUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/currentuser";
@@ -51,7 +53,7 @@ function useAuthService() {
 
   function setupLoggedInSession(data) {
     log("setting up a logged session");
-    auth.isAuthenticated = true;
+    isAuthenticated.value = true;
     auth.token = data.authToken;
     auth.user.username = data.username;
     auth.user.hasSubscription = data.hasSubscription;
@@ -67,9 +69,9 @@ function useAuthService() {
 
   function tearDownLoggedInSession() {
     log("tearing down logged session");
-    auth.isAuthenticated = false;
+    isAuthenticated.value = false;
     auth.user.username = null;
-    auth.user.hasSubscription = null;
+    auth.user.hasSubscription = false;
   }
 
   function __getToken() {
@@ -78,7 +80,7 @@ function useAuthService() {
         return Date.now() >= JSON.parse(atob(t.split(".")[1])).exp * 1000;
       };
       if (
-        !auth.isAuthenticated ||
+        !isAuthenticated.value ||
         !auth.token ||
         isTokenExpired(auth.token)
       ) {
@@ -171,6 +173,7 @@ function useAuthService() {
         });
     });
   }
+  
   function pwUpdateWithSupplied(newPassword, newPasswordConfirmed) {
     return new Promise((resolve, reject) => {
       log(
@@ -253,8 +256,10 @@ function useAuthService() {
     });
   }
 
-  return auth;
+  return {
+    auth,
+    isAuthenticated, 
+  }
 }
 
 export default useAuthService;
-</script>

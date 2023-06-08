@@ -6,7 +6,7 @@
       :scrol-behavior="'elevate'"
     >
       <template #title>
-        <span class="view-header-no-count">
+        <span class="feedgears-rss">
           FeedGears RSS
         </span>
       </template>
@@ -92,3 +92,11 @@ export default {
   },
 };
 </script>
+  
+<style scoped>
+.feedgears-rss {
+  font-family: "Russo One", system-ui, sans-serif;
+  font-weight: bold;
+  font-size: larger;
+}
+</style>

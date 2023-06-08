@@ -32,7 +32,7 @@ export default {
     community: { type: Object, required: true },
   },
   computed: {
-    starCount: function() {
+    starCount: function () {
       return Math.min(this.community.postMediaStarRating.max, 10);
     }
   },

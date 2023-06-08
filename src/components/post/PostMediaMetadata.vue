@@ -38,7 +38,5 @@ export default {
   props: {
     metadata: { type: Object, required: true },
   },
-  methods: {
-  }
 }
 </script>

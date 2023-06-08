@@ -6,7 +6,7 @@
       :scrol-behavior="'elevate'"
     >
       <template #title>
-        <span class="view-header-no-count">
+        <span class="feedgears-rss">
           FeedGears RSS
         </span>
       </template>
@@ -23,7 +23,7 @@
 
     <v-main>
       <!-- container -->
-      <BannerPanel :is-authenticated="auth.isAuthenticated" />
+      <BannerPanel :is-authenticated="isAuthenticated" />
 
       <!-- container -->
       <DemoPanel class="mb-4" /> 
@@ -63,12 +63,12 @@ export default {
   },
   setup() {
     const auth = inject('auth');
+    const isAuthenticated = inject('isAuthenticated');
 
     onMounted(() => {
       auth.getTokenSilently()
-        .catch(() => {})
         .finally(() => {
-          if (auth.isAuthenticated) {
+          if (isAuthenticated.value) {
             console.log("landing: authenticated on mount");
           } else {
             console.log("landing: not authenticated on mount");
@@ -77,14 +77,15 @@ export default {
     });
 
     return {
-      auth
+      auth,
+      isAuthenticated, 
     }
   },
 };
 </script>
   
 <style scoped>
-.view-header-no-count {
+.feedgears-rss {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;
