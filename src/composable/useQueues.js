@@ -25,8 +25,6 @@ export function useQueues(props) {
   const articleListFilter = ref(''); // user-supplied filter text (lunrjs query expression) 
   const articleListSortOrder = ref('DSC');
   const showQueueFilterPills = ref(false);
-  const showQueueDeleteConfirmation = ref(false);
-  const showQueueMarkAsReadConfirmation = ref(false);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
   const atStep2 = ref(false);
@@ -46,7 +44,7 @@ export function useQueues(props) {
     let results = [];
     if (articleList) {
       // if a lunr query expression is specified .. 
-      // then fetch the preliminary results from lunrjs 
+      // then retrieve the preliminary results from lunrjs 
       if (articleListFilter.value) {
         let lunrLambda = () => articleList.index.search(articleListFilter.value);
         try {
@@ -242,7 +240,7 @@ export function useQueues(props) {
     return localStorage.getItem('articleListsByQueue');
   }
 
-  async function refreshQueues(queuesToFetch, fetchQueueDefinitions) {
+  async function refreshQueues(queuesToRetrieve, retrieveQueueDefinitions) {
     console.log("refreshing queues");
     let rawPosts = [];
     refreshQueuesIsLoading.value = true;
@@ -253,7 +251,7 @@ export function useQueues(props) {
       const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
       let queueDefinitionRefreshTimeoutId;
       let refreshPromises = [
-        fetch(baseUrl + "/staging" + (queuesToFetch ? ("?queueIds=" + queuesToFetch) : ''), {
+        fetch(baseUrl + "/staging" + (queuesToRetrieve ? ("?queueIds=" + queuesToRetrieve) : ''), {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -293,7 +291,7 @@ export function useQueues(props) {
           })
       ];
 
-      if (fetchQueueDefinitions) {
+      if (retrieveQueueDefinitions) {
         const queueDefinitionRefreshController = new AbortController();
         queueDefinitionRefreshTimeoutId = setTimeout(() => queueDefinitionRefreshController.abort(), 5000);
         refreshPromises.push(
@@ -347,7 +345,7 @@ export function useQueues(props) {
         const queuedId = queues[i].id;
         const iq = articleListsByQueue[queuedId];
         if (iq) {
-          if (!queuesToFetch || queuesToFetch.indexOf(queues[i].id) >= 0) {
+          if (!queuesToRetrieve || queuesToRetrieve.indexOf(queues[i].id) >= 0) {
             iq.values.splice(0);
             iq.index = null;
           }
@@ -399,7 +397,7 @@ export function useQueues(props) {
         }
 
         // image
-        let imgUrl = wrapper.imgUrl;
+        let imgUrl = subscriptionDefinition.imgUrl;
         if (imgUrl) {
           r.image = {
             title: null,
@@ -536,11 +534,20 @@ export function useQueues(props) {
               response.text().then(t => { throw new Error(t) });
           }
         }).then(() => {
+          let p = getPostFromQueue(result.id);
           let originator = result.originator;
           if (originator === "togglePostReadStatus") { // NOTE: this happens when the user toggles the 'mark as read' button 
-            onTogglePostReadStatus(result);
+            p.isRead = !p.isRead;
+            p.postReadStatus = p.isRead ? 'READ' : null;
+            if (p.isRead) {
+              p.isReadLater = false;
+            }
           } else if (originator === "togglePostReadLaterStatus") { // NOTE: this happens when the user toggles the 'mark as read-later' button 
-            onTogglePostReadLaterStatus(result);
+            p.isReadLater = !p.isReadLater;
+            p.postReadStatus = p.isReadLater ? 'READ_LATER' : null;
+            if (p.isReadLater) {
+              p.isRead = false;
+            }
           }
           rebuildLunrIndexes();
         }).catch((error) => {
@@ -615,24 +622,6 @@ export function useQueues(props) {
       handleServerError(error);
       refreshQueuesIsLoading.value = false;
     });
-  }
-
-  function onTogglePostReadStatus(result) {
-    let p = getPostFromQueue(result.id);
-    p.isRead = !p.isRead;
-    p.postReadStatus = p.isRead ? 'READ' : null;
-    if (p.isRead) {
-      p.isReadLater = false;
-    }
-  }
-
-  function onTogglePostReadLaterStatus(result) {
-    let p = getPostFromQueue(result.id);
-    p.isReadLater = !p.isReadLater;
-    p.postReadStatus = p.isReadLater ? 'READ_LATER' : null;
-    if (p.isReadLater) {
-      p.isRead = false;
-    }
   }
 
   function getPostFromQueue(id) {
@@ -743,14 +732,7 @@ export function useQueues(props) {
   function deleteSelectedQueue() {
     document.activeElement.blur();
     queueIdToDelete.value = selectedQueueId.value;
-    showQueueDeleteConfirmation.value = true;
   }
-
-  // function deleteQueue(queueId) {
-  //   document.activeElement.blur();
-  //   queueIdToDelete.value = queueId;
-  //   showQueueDeleteConfirmation.value = true;
-  // }
 
   function performQueueDelete() {
     console.log("deleting queue id=" + queueIdToDelete.value);
@@ -803,33 +785,28 @@ export function useQueues(props) {
         handleServerError(error);
       }).finally(() => {
         queueIdToDelete.value = null;
-        showQueueDeleteConfirmation.value = false;
         refreshQueuesIsLoading.value = false;
         clearTimeout(timeoutId);
       });
     }).catch((error) => {
       handleServerError(error);
       queueIdToDelete.value = null;
-      showQueueDeleteConfirmation.value = false;
       refreshQueuesIsLoading.value = false;
     });
   }
 
   function cancelQueueDelete() {
     queueIdToDelete.value = null;
-    showQueueDeleteConfirmation.value = false;
   }
 
   function markSelectedQueueAsRead() {
     document.activeElement.blur();
     queueIdToMarkAsRead.value = selectedQueueId.value;
-    showQueueMarkAsReadConfirmation.value = true;
   }
 
   function markQueueAsRead(queueId) {
     document.activeElement.blur();
     queueIdToMarkAsRead.value = queueId;
-    showQueueMarkAsReadConfirmation.value = true;
   }
 
   function performQueueMarkAsRead() {
@@ -872,21 +849,18 @@ export function useQueues(props) {
           handleServerError(error);
         }).finally(() => {
           queueIdToMarkAsRead.value = null;
-          showQueueMarkAsReadConfirmation.value = false;
           refreshQueuesIsLoading.value = false;
           clearTimeout(timeoutId);
         });
     }).catch((error) => {
       handleServerError(error);
       queueIdToMarkAsRead.value = null;
-      showQueueMarkAsReadConfirmation.value = false;
       refreshQueuesIsLoading.value = false;
     });
   }
 
   function cancelQueueMarkAsRead() {
     queueIdToMarkAsRead.value = null;
-    showQueueMarkAsReadConfirmation.value = false;
   }
 
   function updateArticleListFilter(value) {
@@ -1449,8 +1423,6 @@ export function useQueues(props) {
   const roArticleListFilter = readonly(articleListFilter);
   const roArticleListSortOrder = readonly(articleListSortOrder);
   const roShowQueueFilterPills = readonly(showQueueFilterPills);
-  const roShowQueueDeleteConfirmation = readonly(showQueueDeleteConfirmation);
-  const roShowQueueMarkAsReadConfirmation = readonly(showQueueMarkAsReadConfirmation);
   const roContinueIsLoading = readonly(continueIsLoading);
   const roAtStep2 = readonly(atStep2);
   const roQueueConfigRequests = readonly(queueConfigRequests);
@@ -1474,8 +1446,6 @@ export function useQueues(props) {
     roArticleListFilter, 
     roArticleListSortOrder, 
     roShowQueueFilterPills, 
-    roShowQueueDeleteConfirmation,
-    roShowQueueMarkAsReadConfirmation, 
     roContinueIsLoading, 
     roAtStep2, 
     roQueueConfigRequests, 
@@ -1515,7 +1485,7 @@ export function useQueues(props) {
     // optionally makes server call to pull queue definitions; 
     // rebuilds all dependent entities and updates local storage; 
     refreshQueues, 
-    // utility method to add subscription data fetched from server to queue definition 
+    // utility method to add subscription data retrieved from server to queue definition 
     decorateQueueWithSubscriptionDefinitions,
     // rebuild all lunr indexes--this needs to be invoked any time any indexed data changes (e.g., post read status) 
     rebuildLunrIndexes,
@@ -1596,27 +1566,22 @@ export function useQueues(props) {
     // 
     // invoked by HomeView to continue the queue save when the hits 'save' on a new queue; 
     // makes a server call to create the queue (from queueUnderConfig); 
-    // sets queueConfigErrors on error 
     createQueue, 
     // 
     // invoked by HomeView to continue the queue save when the user hits 'update' on queue properties; 
     // makes a server call to update the queue basic properties; 
-    // sets queueConfigErrors on error 
     updateQueue, 
     // 
     // invoked by HomeView to add a subscription when the user hits 'subscribe' after discovering a feed; 
     // makes a server call to add the subscription to the queue (then refresh); 
-    // sets queueConfigErrors on error 
     addSubscription, 
     // 
     // invoked by HomeView to delete a subscription when the user hits 'unsubscribe' while managing existing subscriptions; 
     // makes a server call to delete the subscription from the queue (then refresh); 
-    // sets queueConfigErrors on error 
     deleteSubscription, 
     // 
     // invoked by HomeView to update a subscriptoin when the user hits 'save' while changing the auth properties; 
     // makes a server call to update the subscription auth; 
-    // sets queueConfigErrors on error 
     updateSubscriptionAuth, 
     // 
     dismissQueueConfigPanel,

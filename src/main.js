@@ -142,8 +142,6 @@ const i18n = createI18n({
         "REDIRIGIDO A {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable:
         "Las métricas aún no están disponibles para esta fuente RSS.",
-      theseAreYourSubscriptions: "Estas son sus suscripciones. Las suscripciones se actualizan periódicamente. Utilice este panel para ver el historial de importación de sus suscripciones y para filtrar rápidamente la cola de artículos.",
-      theseAreYourPublications: "Estas son sus publicaciones. FeedGears publica sus artículos 'destacados' en cada cola en un nuevo feed que está disponible en múltiples formatos en los siguientes enlaces:",
       // buttons
       update: "Actualizar",
       save: "Guardar",
@@ -601,8 +599,6 @@ const i18n = createI18n({
       redirectedTo:
         "REDIRECT TO {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable: "Metrics are not yet available for this feed.",
-      theseAreYourSubscriptions: "These are your subscriptions.  Subscriptions are updated periodically.  Use this panel to view the import history for your subscriptions, and to quickly filter the article queue.",
-      theseAreYourPublications: "These are your publications.  FeedGears publishes your 'starred' articles in each queue to a new feed that is available in multiple formats at the following links:",
       // buttons
       update: "Update",
       save: "Save",

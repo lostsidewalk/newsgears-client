@@ -104,7 +104,7 @@
           @toggleSortOrder="toggleArticleListSortOrder"
           @toggleQueueFilterPills="toggleQueueFilterPills"
           @refreshQueues="refreshQueues(null, true)"
-          @markAsRead="markQueueAsRead(roSelectedQueueId)"
+          @markAsRead="$event => { markQueueAsRead(roSelectedQueueId); showQueueMarkAsReadConfirmation = true; }"
           @update:modelValue="updateArticleListFilter"
         />
         <!-- help buton -->
@@ -185,8 +185,8 @@
         <ConfirmationDialog
           class="rounded"
           :prompt="t('confirmDeleteQueue')"
-          @confirm="performQueueDelete"
-          @cancel="cancelQueueDelete"
+          @confirm="$event => { performQueueDelete(); showQueueDeleteConfirmation = false; }"
+          @cancel="$event => { cancelQueueDelete(); showQueueDeleteConfirmation = false; }"
         />
       </v-dialog>
       <!-- mark as read confirmation modal -->
@@ -197,8 +197,8 @@
         <ConfirmationDialog
           class="rounded"
           :prompt="t('confirmMarkQueueAsRead')"
-          @confirm="performQueueMarkAsRead"
-          @cancel="cancelQueueMarkAsRead"
+          @confirm="$event => { performQueueMarkAsRead(); showQueueMarkAsReadConfirmation = false; }"
+          @cancel="$event => { cancelQueueMarkAsRead(); showQueueMarkAsReadConfirmation = false; }"
         />
       </v-dialog>
       <!-- settings modal -->
@@ -242,7 +242,7 @@
         scrollable
       >
         <QueueConfigPanel
-          :errors="queueConfigErrors"
+          :base-url="baseUrl"
           :queue-under-config="roQueueUnderConfig"
           @save="createQueue"
           @update="updateQueue"
@@ -540,9 +540,6 @@ export default {
       roSubscriptionToShow,
       roQueueUnderConfig,
       roQueueConfigIsLoading,
-      // 
-      showQueueDeleteConfirmation, // rw 
-      showQueueMarkAsReadConfirmation, // rw 
       showOpmlUploadPanel, //rw 
       showSubscriptionMetrics, // rw 
       showQueueConfigPanel, // rw 
@@ -617,6 +614,9 @@ export default {
     const showHelpPanel = ref(false);
     const showSelectedPost = ref(false);
     const selectedItem = reactive({}); // selected post list item (i.e., scrolling through the list in list view) 
+    const showQueueDeleteConfirmation = ref(false);
+    const showQueueMarkAsReadConfirmation = ref(false);
+
     // 
     const isModalShowing = computed(() => {
       return showSettingsPanel.value || showHelpPanel.value || showQueueConfigPanel.value || showOpmlUploadPanel.value || showSubscriptionMetrics.value;
@@ -703,6 +703,7 @@ export default {
           // 
         } else if (event.key === 'A' && event.shiftKey === true) {
           markSelectedQueueAsRead();
+          showQueueMarkAsReadConfirmation.value = true;
           event.stopPropagation();
           event.preventDefault();
           // 
@@ -710,6 +711,7 @@ export default {
           // 
         } else if (event.key === 'D' && event.shiftKey === true) {
           deleteSelectedQueue();
+          showQueueDeleteConfirmation.value = true;
           event.stopPropagation();
           event.preventDefault();
         }
@@ -795,9 +797,7 @@ export default {
       // queues module data 
       roQueues,
       roShowQueueFilterPills,
-      showQueueDeleteConfirmation,
       roQueueIdToDelete,
-      showQueueMarkAsReadConfirmation,
       roQueueIdToMarkAsRead,
       roSelectedPost, // selected post to show on the post card modal (while in list view) 
       roSelectedQueueId, // currently selected queue Id 
@@ -831,6 +831,8 @@ export default {
       showFilterHelp,
       showQueueDashboard,
       showHelpPanel,
+      showQueueDeleteConfirmation,
+      showQueueMarkAsReadConfirmation,
       showSelectedPost, 
       selectedItem, // selected post list item (i.e., scrolling through the list in list view) 
       // auth module functions 

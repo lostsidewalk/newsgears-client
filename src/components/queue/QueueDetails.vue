@@ -1,22 +1,11 @@
 <template>
   <v-sheet>
+    <!-- subscriptions -->
     <v-card class="ma-4">
-      <!-- subscriptions label -->
       <v-card-title>
         {{ $t('subscriptions') }}
       </v-card-title>
-      <!-- subscriptions -->
       <v-divider />
-      <v-alert
-        v-if="shouldShowAlert('theseAreYourSubscriptions')"
-        closable
-        variant="outlined"
-        border="top"
-        icon="fa-question-circle"
-        :text="$t('theseAreYourSubscriptions')"
-        class="ma-4"
-        @click.close="dismissAlert('theseAreYourSubscriptions')"
-      />
       <v-list>
         <v-list-item
           v-for="subscription of subscriptions"
@@ -77,22 +66,12 @@
         </v-list-item>
       </v-list>
     </v-card>
+    <!-- publications -->
     <v-card class="ma-4">
-      <!-- publications label -->
       <v-card-title>
         {{ $t('publications') }}
       </v-card-title>
       <v-divider />
-      <v-alert
-        v-if="shouldShowAlert('theseAreYourPublications')"
-        closable
-        variant="outlined"
-        border="top"
-        icon="fa-question-circle"
-        :text="$t('theseAreYourPublications')"
-        class="ma-4"
-        @click.close="dismissAlert('theseAreYourPublications')"
-      />
       <v-card-actions>
         <v-btn-group>
           <v-btn
@@ -132,7 +111,6 @@
 </template>
 
 <script>
-import { useNotifications } from '@/composable/useNotifications';
 import { useTimestamp } from '@/composable/useTimestamp.js';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
@@ -147,11 +125,9 @@ export default {
   },
   emits: ["updateFilter", "showSubscriptionMetrics"],
   setup() {
-    const { shouldShowAlert } = useNotifications();
     const { formatTimestamp } = useTimestamp();
 
     return {
-      shouldShowAlert,
       formatTimestamp,
     }
   },

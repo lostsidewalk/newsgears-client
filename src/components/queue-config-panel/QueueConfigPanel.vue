@@ -124,10 +124,9 @@
                     <v-btn
                       :size="buttonSize" 
                       prepend-icon="fa-plus"
-                      :loading="addNewIsLoading"
                       :title="$t('subscribe')"
                       :text="$t('subscribe')"
-                      @click="addNewSubscription"
+                      @click="addSubscription"
                     />
                   </template>
                 </SubscriptionInfo>
@@ -191,7 +190,6 @@
                     <v-btn
                       :size="buttonSize" 
                       prepend-icon="fa-trash"
-                      :loading="deleteIsLoading"
                       :title="$t('unsubscribe')"
                       :text="$t('unsubscribe')"
                       @click="deleteSubscription(subscription.id)"
@@ -239,7 +237,6 @@
                   <v-btn
                     :size="buttonSize" 
                     prepend-icon="fa-save"
-                    :loading="updateAuthIsLoading"
                     :text="$t('update')" 
                     @click="updateSubscriptionAuth(subscriptionToUpdate)"
                   />
@@ -364,6 +361,7 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 import { useNotifications } from '@/composable/useNotifications';
 import QueueConfigTextField from '@/components/queue-config-panel/QueueConfigTextField.vue';
 import SubscriptionInfo from '@/components/subscription-info/SubscriptionInfo.vue';
@@ -378,7 +376,6 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     baseUrl: { type: String, required: true },
-    auth: { type: Object, required: true },
     queueUnderConfig: { type: Object, required: true },
   },
   emits: [ 
@@ -390,6 +387,7 @@ export default {
     "dismiss" 
   ],
   setup() {
+    const auth = inject('auth');
     const { 
       shouldShowAlert,
       dismissAlert, 
@@ -398,6 +396,7 @@ export default {
     } = useNotifications();
 
     return {
+      auth,
       shouldShowAlert,
       dismissAlert, 
       handleServerError,
@@ -406,18 +405,11 @@ export default {
   },
   data() {
     return {
-      // 
-      tabs: null,
-      // 
-      showQueueConfigPanel: false,
       // add/manage subscriptions
       newSubscription: {},
-      addNewIsLoading: false,
       discoveryIsLoading: false,
       subscriptionToUpdate: null,
       showAuthConfig: false,
-      deleteIsLoading: false,
-      updateAuthIsLoading: false,
       // queue properties 
       queueId: this.queueUnderConfig.id,
       queueIdent: this.queueUnderConfig.ident,
@@ -587,7 +579,7 @@ export default {
     },
     // internal
     configAuth(subscription) {
-      this.subscriptionToUpdate = subscription;
+      this.subscriptionToUpdate = [...subscription];
       this.showAuthConfig = true;
     },
   }
