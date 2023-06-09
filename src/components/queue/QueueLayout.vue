@@ -9,10 +9,17 @@
     />
     <v-btn
       :size="buttonSize"
-      icon="fa-th"
+      icon="fa-bars"
       :disabled="disableCardLayout"
       :title="$t('cardLayout')"
       @click="$emit('card')"
+    />
+    <v-btn
+      :size="buttonSize"
+      icon="fa-table"
+      :disabled="disableTableLayout"
+      :title="$t('tableLayout')"
+      @click="$emit('table')"
     />
   </v-btn-group>
 </template>
@@ -25,11 +32,13 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     disableListLayout: { type: Boolean, required: true },
-    disableCardLayout: { type: Boolean, required: true }
+    disableCardLayout: { type: Boolean, required: true },
+    disableTableLayout: { type: Boolean, required: true }
   },
   emits: [
     "list",
     "card",
+    "table",
   ]
 }
 </script>

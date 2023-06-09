@@ -360,37 +360,37 @@ export default {
     }
   },
   computed: {
-    productDescription: function() {
+    productDescription: function () {
       return this.subscription ? null : this.subscription.lastInvoice.productDescription;
     },
-    hostedInvoiceUrl: function() {
+    hostedInvoiceUrl: function () {
       return this.subscription ? null : this.subscription.lastInvoice.hostedUrl;
     },
-    customerEmailAddress: function() {
+    customerEmailAddress: function () {
       return this.subscription ? null : this.subscription.lastInvoice.customerEmail;
     },
-    customerName: function() {
+    customerName: function () {
       return this.subscription ? null : this.subscription.lastInvoice.customerName;
     },
-    amountDue: function() {
+    amountDue: function () {
       return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountDue);
     },
-    amountPaid: function() {
+    amountPaid: function () {
       return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountPaid);
     },
-    amountRemaining: function() {
+    amountRemaining: function () {
       return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountRemaining);
     },
-    lastInvoiceCreated: function() {
+    lastInvoiceCreated: function () {
       return this.subscription ? null : this.toLocalDate(this.subscription.lastInvoice.created);
     },
-    lastInvoiceStatus: function() {
+    lastInvoiceStatus: function () {
       return this.subscription ? null : this.subscription.lastInvoice.status;
     },
-    subscriptionStarted: function() {
+    subscriptionStarted: function () {
       return this.subscription ? null : this.toLocalDate(this.subscription.startDate);
     },
-    subscriptionCurrentPeriod: function() {
+    subscriptionCurrentPeriod: function () {
       if (!this.subscription) {
         return null;
       } else {
@@ -399,25 +399,25 @@ export default {
         return startDate + ' - ' + endDate;
       }
     },
-    subscriptionCurrentPeriodEnd: function() {
+    subscriptionCurrentPeriodEnd: function () {
       return this.toLocalDate(this.subscription.currentPeriodEnd);
     },
-    subscriptionEndedAt: function() {
+    subscriptionEndedAt: function () {
       return this.toLocalDate(this.subscription.endedAt);
     },
-    subscriptionStatus: function() {
+    subscriptionStatus: function () {
       return this.subscription.status;
     },
-    isActive: function() {
+    isActive: function () {
       return this.subscription.status === "active";
     },
-    isCanceled: function() {
+    isCanceled: function () {
       return this.subscription.cancelAtPeriodEnd === true;
     },
-    hasEnded: function() {
+    hasEnded: function () {
       return this.subscription.endedAt;
     },
-    hasLastInvoice: function() {
+    hasLastInvoice: function () {
       return this.subscription.lastInvoice;
     },
   },

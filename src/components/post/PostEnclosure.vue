@@ -54,15 +54,15 @@ export default {
     }
   },
   computed: {
-    isImage: function() {
+    isImage: function () {
       return this.enclosure.type === "image" || this.enclosure.type.indexOf("image") === 0;
     },
-    isAudio: function() {
+    isAudio: function () {
       let a = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("audio") >= 0;
       console.debug("enclosureType=" + this.enclosure.type + ", isAudio=" + a);
       return a;
     },
-    isVideo: function() {
+    isVideo: function () {
       let v = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("video/mp4") >= 0;
       console.debug("enclosureType=" + this.enclosure.type + ", isVideo=" + v);
       return v;

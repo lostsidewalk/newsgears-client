@@ -277,6 +277,7 @@ const i18n = createI18n({
       // layout
       cardLayout: "Cambiar a diseño de tarjeta",
       listLayout: "Cambiar a diseño de lista",
+      tableLayout: "Cambiar al diseño de la tabla",
       // iTunes
       explicit: "EXPLÍCITO",
       closedCaptioned: "Subtitulado",
@@ -539,7 +540,7 @@ const i18n = createI18n({
         "Username, email address, and password are required in order to register.",
       // landing
       createAnAccount: "Create an account",
-      whatIsFeedGears: "A secure, private, accessible feed reader.",
+      whatIsFeedGears: "A secure, private, accessible news reader.",
       whyIsFeedGearsFree: "Free forever because we love RSS.",
       devBlog: "Dev Blog",
       docs: "Docs",
@@ -734,6 +735,7 @@ const i18n = createI18n({
       // layout
       cardLayout: "Switch to card layout",
       listLayout: "Switch to list layout",
+      tableLayout: "Switch to table layout",
       // iTunes
       explicit: "EXPLICIT",
       closedCaptioned: "Closed Captioned",

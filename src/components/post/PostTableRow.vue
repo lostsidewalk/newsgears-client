@@ -1,84 +1,89 @@
 <template>
-  <v-list-item
-    elevation="6"
-    :value="post"
-    class="rounded"
+  <tr
+    class="clickable"
     :class="{ 'post-read' : post.isRead }"
     @click.stop="$emit('openPost', post.id)"
   >
-    <!-- title + thumbnail -->
-    <v-list-item-title 
-      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto mt-2"
-      style="gap: 1rem;white-space: normal;"
-    >
-      <v-img
-        v-if="post.postImgSrc" 
-        class="post-thumbnail rounded"
-        :src="post.postImgSrc"
-        :alt="$t('postThumbnailImage')" 
-        width="140"
-        max-height="140"
-        max-width="140"
-      /> 
-      <div class="d-flex flex-column flex-auto flex-grow-1">
-        <div
-          v-if="isHtmlTitle" 
-          class="post-html-frame"
-          frameborder="0"
-          v-html="post.postTitle.value"
-        />
-        <div
-          v-else
-        >
-          {{ post.postTitle.value }}
-        </div>
-        <div
-          v-if="post.lastUpdatedTimestamp && post.lastUpdatedTimestamp !== post.publishTimestamp" 
-          class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
-        >
-          {{ $t('updatedColon') }}
-          {{ formatTimestamp(post.lastUpdatedTimestamp) }}
-        </div>
-        <div class="d-flex flex-grow-1 justify-start align-center text-subtitle-2">
-          {{ $t('publishedColon') }}
-          {{ formatTimestamp(post.publishTimestamp) }}
-        </div>
-        <div class="d-flex flex-grow-1 justify-start align-center text-subtitle-2">
-          {{ post.importerDesc }}
-        </div>
-      </div>
-    </v-list-item-title>
-    <v-list-item-subtitle
-      class="mt-2"
-    >
-      <!-- post description (hidden w/no detials) -->
-      <div
-        v-if="isHtmlDesc"
-        class="post-html-frame mb-2" 
-        frameborder="0"
-        v-html="post.postDesc.value"
+    <td>{{ isHtmlTitle ? '<HTML not shown>' : postTitle }}</td>
+    <td>{{ isHtmlDesc ? '<HTML not shown>' : postDesc }}</td>
+    <td>{{ importerDesc }}</td>
+    <td>{{ formatTimestamp(postTimestamp) }}</td>
+    <!-- mark as read/unread button -->
+    <td> 
+      <v-btn
+        :size="buttonSize"
+        variant="text"
+        :title="post.isRead ? $t('markPostAsUnread') : $t('markPostAsRead')"
+        :aria-label="$t('markPostAsUnread')"
+        :icon="post.isRead ? 'fa-check-square-o' : 'fa-eye'"
+        @click.stop="togglePostReadStatus"
       />
-      <div
-        v-else-if="post.postDesc"
-        class="mt-2 mb-2"
-      >
-        {{ post.postDesc.value }}
-      </div>
-    </v-list-item-subtitle>
-  </v-list-item>
+    </td>
+    <!-- toggle read-later button -->
+    <td>
+      <v-btn
+        :size="buttonSize"
+        variant="text"
+        :title="
+          post.isReadLater
+            ? $t('unmarkPostAsReadLater')
+            : $t('markPostAsReadLater')
+        "
+        :aria-label="$t('markPostAsReadLater')"
+        :icon="post.isReadLater ? 'fa-bullseye' : 'fa-circle-o'"
+        @click.stop="togglePostReadLaterStatus"
+      />
+    </td>
+    <!-- mark as starred/unstarred button -->
+    <td>
+      <v-btn
+        v-if="!post.isPublished"
+        :size="buttonSize"
+        variant="text"
+        :title="$t('starThisPost')"
+        :aria-label="$t('starThisPost')"
+        icon="fa-star-o"
+        @click.stop="stagePost"
+      />
+      <!-- un-star button -->
+      <v-btn
+        v-if="post.isPublished"
+        class="star-colored"
+        size="buttonSize"
+        variant="text"
+        :title="$t('unstarThisPost')"
+        :aria-label="$t('unstarThisPost')"
+        icon="fa-star"
+        @click.stop="unstagePost"
+      />
+    </td>
+    <td>
+      <v-btn
+        :size="buttonSize"
+        variant="text"
+        :title="$t('openOriginalArticle')"
+        :aria-label="$t('openOriginalArticle')"
+        icon="fa-link"
+        @click.stop="$emit('openPostUrl')"
+      />
+    </td>
+  </tr>
 </template>
 
 <script>
 import { useTimestamp } from '@/composable/useTimestamp';
+import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-  name: "PostListItem",
+  name: "PostTableRow",
+  mixins: [buttonSizeMixin],
   props: {
     post: { type: Object, required: true },
     sharingOptions: { type: Array, default: null },
   },
   emits: [
     "openPost",
+    "openPostUrl",
     "updatePostReadStatus",
     "updatePostPubStatus",
   ],
@@ -88,12 +93,6 @@ export default {
     return {
       formatTimestamp
     }
-  },
-  data() {
-    return {
-      showPostCategories: false,
-      showPostSharing: false,
-    };
   },
   computed: {
     isHtmlTitle: function () {
@@ -105,7 +104,32 @@ export default {
       return this.post.postDesc != null && 
         this.post.postDesc.type != null && 
         this.post.postDesc.type.toLowerCase().indexOf('html') >= 0;
-    }
+    }, 
+    postTitle: function () {
+      return this.post.postTitle ? this.post.postTitle.value : null;
+    },
+    postDesc: function () {
+      return this.post.postDesc ? this.post.postDesc.value : null;
+    },
+    importerDesc: function () {
+      return this.post.importerDesc;
+    },
+    postTimestamp: function () {
+      let lastUpdated = this.post.lastUpdatedTimestamp;
+      if (lastUpdated) {
+        return lastUpdated;
+      }
+      return this.post.publishTimestamp;
+    },
+    isPublished: function () {
+      return this.post.isPublished;
+    },
+    isRead: function () {
+      return this.post.isRead;
+    },
+    isReadLater: function () {
+      return this.post.isReadLater;
+    },
    },
   methods: {
     stagePost() {
@@ -163,13 +187,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.post-thumbnail {
-  background-color: transparent;
-}
-
-.post-html-frame {
-  overflow: auto;
-}
-</style>

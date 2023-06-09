@@ -937,9 +937,9 @@ export function useQueues(props) {
     if (selectedPost) {
       const id = selectedPost.id;
       const queue = filteredArticleList;
-      const nextIdx = queue.findIndex((post) => post.id === id) + 1;
-      if (nextIdx < queue.length) {
-        Object.assign(selectedPost, queue[nextIdx]);
+      const nextIdx = queue.value.findIndex((post) => post.id === id) + 1;
+      if (nextIdx < queue.value.length) {
+        Object.assign(selectedPost, queue.value[nextIdx]);
       }
     }
   }
@@ -948,9 +948,9 @@ export function useQueues(props) {
     if (selectedPost) {
       const id = selectedPost.id;
       const queue = filteredArticleList;
-      const prevIdx = queue.findIndex((post) => post.id === id) - 1;
+      const prevIdx = queue.value.findIndex((post) => post.id === id) - 1;
       if (prevIdx >= 0) {
-        Object.assign(selectedPost, queue[prevIdx]);
+        Object.assign(selectedPost, queue.value[prevIdx]);
       }
     }
   }

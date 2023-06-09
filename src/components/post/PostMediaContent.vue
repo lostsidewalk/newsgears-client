@@ -166,7 +166,7 @@ export default {
         }
       return p;
     },
-    isVideo: function() {
+    isVideo: function () {
       return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("video/mp4") >= 0);
     },
   },

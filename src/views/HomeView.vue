@@ -286,8 +286,10 @@
         <QueueLayout
           :disable-list-layout="showListLayout"
           :disable-card-layout="showCardLayout"
+          :disable-table-layout="showTableLayout"
           @list="switchToListLayout"
           @card="switchToCardLayout"
+          @table="switchToTableLayout"
         />
         <v-label
           v-if="roSelectedQueueId"
@@ -299,79 +301,93 @@
       <!-- divider -->
       <v-divider />
       <!-- queue container (cards) -->
+      <div v-if="showCardLayout && filteredArticleList.length > 0">
+        <PostCard
+          v-for="post in filteredArticleList"
+          :id="'post_' + post.id"
+          :key="post.id"
+          :post="post"
+          :sharing-options="sharingOptions"
+          :collapsed="true"
+          class="ma-4"
+          @openPostUrl="openPostUrl(post.id)"
+          @updatePostReadStatus="updatePostReadStatus"
+          @updatePostPubStatus="updatePostPubStatus"
+          @updateFilter="updateFilter"
+          @share="$event => share($event.sharingOption, $event.post)"
+        />
+      </div>
+      <v-dialog
+        v-if="showListLayout || showTableLayout"
+        v-model="showSelectedPost"
+        scrollable
+        fullscreen
+      >
+        <PostCard
+          :id="'post_' + roSelectedPost.id"
+          :post="roSelectedPost"
+          :sharing-options="sharingOptions"
+          @openPostUrl="openPostUrl(roSelectedPost.id);"
+          @updatePostReadStatus="updatePostReadStatus"
+          @updatePostPubStatus="updatePostPubStatus"
+          @updateFilter="updateFilter"
+          @share="$event => share($event.sharingOption, $event.post)"
+        >
+          <template #additional>
+            <v-btn
+              :size="buttonSize"
+              accesskey="n"
+              icon="fa-arrow-down"
+              class="ma-1"
+              :title="t('goToNextPost')"
+              @click.stop="selectNextPost"
+            />
+            <v-btn
+              :size="buttonSize"
+              accesskey="p"
+              icon="fa-arrow-up"
+              class="ma-1"
+              :title="t('goToPreviousPost')"
+              @click.stop="selectPreviousPost"
+            />
+          </template>
+        </PostCard>
+      </v-dialog>
+      <v-list
+        v-if="showListLayout && filteredArticleList.length > 0"
+        v-model="selectedItem"
+        class="rounded"
+      >
+        <PostListItem
+          v-for="post in filteredArticleList"
+          :id="'post_' + post.id"
+          :key="post"
+          :post="post"
+          :sharing-options="sharingOptions"
+          class="ma-4 rounded"
+          @openPost="openPost(post.id); showSelectedPost = true;"
+          @updatePostReadStatus="updatePostReadStatus"
+          @updatePostPubStatus="updatePostPubStatus"
+        />
+      </v-list>
       <v-container
-        v-if="roSelectedQueueId && showCardLayout"
+        v-if="!filteredArticleList || filteredArticleList.length === 0"
         class="queue-container d-flex flex-column flex-grow-1 rounded"
       >
-        <div v-if="filteredArticleList.length > 0">
-          <PostCard
-            v-for="post in filteredArticleList"
-            :id="'post_' + post.id"
-            :key="post.id"
-            :post="post"
-            :sharing-options="sharingOptions"
-            :collapsed="true"
-            class="mb-4"
-            @openPostUrl="openPostUrl(post.id)"
-            @updatePostReadStatus="updatePostReadStatus"
-            @updatePostPubStatus="updatePostPubStatus"
-            @updateFilter="updateFilter"
-            @share="$event => share($event.sharingOption, $event.post)"
-          />
-        </div>
         <v-alert
-          v-else
           info
         >
           {{ t('noArticlesInThisQueue') }}
         </v-alert>
       </v-container>
-      <!-- queue container (list) -->
-      <v-container
-        v-if="roSelectedQueueId && showListLayout"
-        class="queue-container d-flex flex-column flex-grow-1 rounded"
+      <v-table
+        v-if="showTableLayout && filteredArticleList.length > 0"
+        class="ma-4 overflow-auto flex-grow-1" 
+        style="white-space: nowrap;"
+        fixed-header
       >
-        <v-dialog
-          v-model="showSelectedPost"
-          scrollable
-          fullscreen
-        >
-          <PostCard
-            :id="'post_' + roSelectedPost.id"
-            :post="roSelectedPost"
-            :sharing-options="sharingOptions"
-            @openPostUrl="openPostUrl(roSelectedPost.id);"
-            @updatePostReadStatus="updatePostReadStatus"
-            @updatePostPubStatus="updatePostPubStatus"
-            @updateFilter="updateFilter"
-            @share="$event => share($event.sharingOption, $event.post)"
-          >
-            <template #additional>
-              <v-btn
-                :size="buttonSize"
-                accesskey="n"
-                icon="fa-arrow-down"
-                class="ma-1"
-                :title="t('goToNextPost')"
-                @click.stop="selectNextPost"
-              />
-              <v-btn
-                :size="buttonSize"
-                accesskey="p"
-                icon="fa-arrow-up"
-                class="ma-1"
-                :title="t('goToPreviousPost')"
-                @click.stop="selectPreviousPost"
-              />
-            </template>
-          </PostCard>
-        </v-dialog>
-        <v-list
-          v-if="filteredArticleList.length > 0"
-          v-model="selectedItem"
-          class="rounded"
-        >
-          <PostListItem
+        <tbody>
+          <PostTableRow
             v-for="post in filteredArticleList"
             :id="'post_' + post.id"
             :key="post"
@@ -379,19 +395,12 @@
             :sharing-options="sharingOptions"
             class="ma-4 rounded"
             @openPost="openPost(post.id); showSelectedPost = true;"
+            @openPostUrl="openPostUrl(post.id)"
             @updatePostReadStatus="updatePostReadStatus"
             @updatePostPubStatus="updatePostPubStatus"
-            @updateFilter="updateFilter"
-            @share="$event => share($event.sharingOption, $event.post)"
           />
-        </v-list>
-        <v-alert
-          v-else
-          info
-        >
-          {{ t('noArticlesInThisQueue') }}
-        </v-alert>
-      </v-container>
+        </tbody>
+      </v-table>
     </v-main>
   </v-app>
 </template>
@@ -436,6 +445,7 @@ import QueueFilterHelp from "@/components/queue/QueueFilterHelp.vue";
 // post 
 import PostCard from "@/components/post/PostCard.vue";
 import PostListItem from "@/components/post/PostListItem.vue";
+import PostTableRow from "@/components/post/PostTableRow.vue";
 // queue dashboard 
 import QueueSelectButton from '@/components/queue/QueueSelectButton.vue';
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
@@ -468,6 +478,7 @@ export default {
     // item 
     PostCard,
     PostListItem,
+    PostTableRow,
     // dashboard 
     QueueSelectButton,
     FooterPanel
@@ -590,8 +601,10 @@ export default {
       roLayout,
       showCardLayout,
       showListLayout,
+      showTableLayout, 
       switchToListLayout,
       switchToCardLayout,
+      switchToTableLayout, 
     } = useLayout();
     const {
       sharingOptions,
@@ -810,6 +823,7 @@ export default {
       roLayout,
       showCardLayout,
       showListLayout,
+      showTableLayout, 
       // notifications module data 
       roShowNotificationWarning,
       // other data 
@@ -871,6 +885,7 @@ export default {
       // layout module functions 
       switchToListLayout,
       switchToCardLayout,
+      switchToTableLayout, 
       // other functions 
       uploadOpml,
       finalizeOpmlUpload,
@@ -906,5 +921,10 @@ export default {
 
 .queue-container {
   background-color: transparent;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

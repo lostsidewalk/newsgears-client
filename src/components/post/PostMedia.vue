@@ -54,7 +54,7 @@ export default {
     }
   },
   computed: {
-    isUseableMetadata: function() {
+    isUseableMetadata: function () {
       return this.media.postMediaMetadata.thumbnails && this.media.postMediaMetadata.thumbnails.length > 0;
     }
   },
