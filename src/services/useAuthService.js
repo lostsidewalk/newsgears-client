@@ -48,15 +48,17 @@ function useAuthService() {
       }
       return message;
     }
-    return "Network error, please try again later.";
+    return error.message;
   }
 
   function setupLoggedInSession(data) {
     log("setting up a logged session");
     isAuthenticated.value = true;
-    auth.token = data.authToken;
-    auth.user.username = data.username;
-    auth.user.hasSubscription = data.hasSubscription;
+    if (data) {
+      auth.token = data.authToken;
+      auth.user.username = data.username;
+      auth.user.hasSubscription = data.hasSubscription;
+    }
   }
 
   function subscribeLoggedInSession() {
@@ -101,8 +103,8 @@ function useAuthService() {
             if (isError(error)) {
               // check for 401, 403
               log("*** please re-authenticate ***");
-              tearDownLoggedInSession();
             }
+            tearDownLoggedInSession();
             reject(getError(error));
           });
       } else {
