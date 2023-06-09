@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { useTimestamp } from '@/composable/timestamp/HomeTimestamp';
+import { useTimestamp } from '@/composable/useTimestamp';
 
 export default {
   name: "PostListItem",

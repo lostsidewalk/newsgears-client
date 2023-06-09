@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { useNotifications } from '@/composable/notifications/HomeNotifications';
+import { useNotifications } from '@/composable/useNotifications';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {

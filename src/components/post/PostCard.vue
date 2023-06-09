@@ -281,7 +281,7 @@
 </template>
 
 <script>
-import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
+import { useTimestamp } from '@/composable/useTimestamp.js';
 import PostEnclosure from "@/components/post/PostEnclosure.vue";
 import PostMedia from "@/components/post/PostMedia.vue";
 import PostITunes from "@/components/post/PostITunes.vue";

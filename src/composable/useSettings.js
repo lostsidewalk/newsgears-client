@@ -1,7 +1,7 @@
 import { ref, reactive, inject, readonly } from 'vue';
 import { useRouter} from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { useNotifications } from '../notifications/HomeNotifications';
+import { useNotifications } from '@/composable/useNotifications';
 
 export function useSettings(props) {
   const auth = inject('auth');

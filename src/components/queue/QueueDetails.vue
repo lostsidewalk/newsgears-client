@@ -132,8 +132,8 @@
 </template>
 
 <script>
-import { useNotifications } from '@/composable/notifications/HomeNotifications';
-import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
+import { useNotifications } from '@/composable/useNotifications';
+import { useTimestamp } from '@/composable/useTimestamp.js';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {

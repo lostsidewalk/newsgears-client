@@ -402,12 +402,12 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
-import { useAuth } from '@/composable/auth/HomeAuth.js';
-import { useSettings } from '@/composable/settings/HomeSettings.js';
-import { useNotifications } from '@/composable/notifications/HomeNotifications.js';
-import { useQueues } from '@/composable/queues/HomeQueues.js';
-import { useLayout } from '@/composable/layout/HomeLayout.js';
-import { useSharing } from '@/composable/sharing/HomeSharing.js';
+import { useAuth } from '@/composable/useAuth.js';
+import { useSettings } from '@/composable/useSettings.js';
+import { useNotifications } from '@/composable/useNotifications.js';
+import { useQueues } from '@/composable/useQueues.js';
+import { useLayout } from '@/composable/useLayout.js';
+import { useSharing } from '@/composable/useSharing.js';
 
 // import debounce from 'lodash.debounce';
 // components 

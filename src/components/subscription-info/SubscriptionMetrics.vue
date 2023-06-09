@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
+import { useTimestamp } from '@/composable/useTimestamp.js';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {

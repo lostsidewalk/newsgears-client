@@ -364,7 +364,7 @@
 </template>
 
 <script>
-import { useNotifications } from '@/composable/notifications/HomeNotifications';
+import { useNotifications } from '@/composable/useNotifications';
 import QueueConfigTextField from '@/components/queue-config-panel/QueueConfigTextField.vue';
 import SubscriptionInfo from '@/components/subscription-info/SubscriptionInfo.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';

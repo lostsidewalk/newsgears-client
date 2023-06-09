@@ -2,8 +2,8 @@ import lunr from 'lunr';
 
 import { ref, reactive, inject, computed, nextTick, readonly } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useNotifications } from '../notifications/HomeNotifications';
-import { useTimestamp } from '../timestamp/HomeTimestamp';
+import { useNotifications } from '@/composable/useNotifications';
+import { useTimestamp } from '@/composable/useTimestamp';
 
 export function useQueues(props) {
   const auth = inject('auth');

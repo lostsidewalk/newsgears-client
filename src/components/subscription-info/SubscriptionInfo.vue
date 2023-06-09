@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { useTimestamp } from '@/composable/timestamp/HomeTimestamp.js';
+import { useTimestamp } from '@/composable/useTimestamp.js';
 import SubscriptionMetrics from './SubscriptionMetrics.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
