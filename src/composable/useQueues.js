@@ -27,7 +27,6 @@ export function useQueues(props) {
   const showQueueFilterPills = ref(false);
   const showQueueDeleteConfirmation = ref(false);
   const showQueueMarkAsReadConfirmation = ref(false);
-  const showSelectedPost = ref(false);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
   const atStep2 = ref(false);
@@ -927,7 +926,6 @@ export function useQueues(props) {
 
   function openPost(postId) {
     Object.assign(selectedPost, getPostFromQueue(postId));
-    showSelectedPost.value = true;
   }
 
   function openPostUrl(postId) {
@@ -1453,7 +1451,6 @@ export function useQueues(props) {
   const roShowQueueFilterPills = readonly(showQueueFilterPills);
   const roShowQueueDeleteConfirmation = readonly(showQueueDeleteConfirmation);
   const roShowQueueMarkAsReadConfirmation = readonly(showQueueMarkAsReadConfirmation);
-  const roShowSelectedPost = readonly(showSelectedPost);
   const roContinueIsLoading = readonly(continueIsLoading);
   const roAtStep2 = readonly(atStep2);
   const roQueueConfigRequests = readonly(queueConfigRequests);
@@ -1479,7 +1476,6 @@ export function useQueues(props) {
     roShowQueueFilterPills, 
     roShowQueueDeleteConfirmation,
     roShowQueueMarkAsReadConfirmation, 
-    roShowSelectedPost, 
     roContinueIsLoading, 
     roAtStep2, 
     roQueueConfigRequests, 

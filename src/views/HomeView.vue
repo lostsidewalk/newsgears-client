@@ -242,7 +242,7 @@
         scrollable
       >
         <QueueConfigPanel
-          :errors="queueConfigErrors" 
+          :errors="queueConfigErrors"
           :queue-under-config="roQueueUnderConfig"
           @save="createQueue"
           @update="updateQueue"
@@ -337,10 +337,10 @@
           fullscreen
         >
           <PostCard
-            :id="'post_' + selectedPost.id"
-            :post="selectedPost"
+            :id="'post_' + roSelectedPost.id"
+            :post="roSelectedPost"
             :sharing-options="sharingOptions"
-            @openPostUrl="openPostUrl(selectedPost.id)"
+            @openPostUrl="openPostUrl(roSelectedPost.id);"
             @updatePostReadStatus="updatePostReadStatus"
             @updatePostPubStatus="updatePostPubStatus"
             @updateFilter="updateFilter"
@@ -378,7 +378,7 @@
             :post="post"
             :sharing-options="sharingOptions"
             class="ma-4 rounded"
-            @openPost="openPost(post.id)"
+            @openPost="openPost(post.id); showSelectedPost = true;"
             @updatePostReadStatus="updatePostReadStatus"
             @updatePostPubStatus="updatePostPubStatus"
             @updateFilter="updateFilter"
@@ -532,7 +532,6 @@ export default {
       // 
       showQueueDeleteConfirmation, // rw 
       showQueueMarkAsReadConfirmation, // rw 
-      showSelectedPost, // rw 
       showOpmlUploadPanel, //rw 
       showSubscriptionMetrics, // rw 
       showQueueConfigPanel, // rw 
@@ -551,7 +550,7 @@ export default {
       updatePostPubStatus,
       getPostFromQueue,
       toggleArticleListSortOrder,
-      toggleQueueFilterPills, 
+      toggleQueueFilterPills,
       toggleFilterMode,
       updateFilter,
       countArticleList,
@@ -575,13 +574,13 @@ export default {
       continueOpmlUpload,
       finalizeOpmlUpload,
       returnToStep1,
-      cancelOpmlUpload, 
+      cancelOpmlUpload,
       checkForNewSubscriptionMetrics,
       openSubscriptionMetrics,
       newQueue,
       openQueueConfigPanel,
       createQueue,
-      updateQueue, 
+      updateQueue,
       dismissQueueConfigPanel,
       addSubscription,
       deleteSubscription,
@@ -591,7 +590,7 @@ export default {
       roLayout,
       showCardLayout,
       showListLayout,
-      switchToListLayout, 
+      switchToListLayout,
       switchToCardLayout,
     } = useLayout();
     const {
@@ -603,6 +602,7 @@ export default {
     const showFilterHelp = ref(false);
     const showQueueDashboard = ref(false);
     const showHelpPanel = ref(false);
+    const showSelectedPost = ref(false);
     const selectedItem = reactive({}); // selected post list item (i.e., scrolling through the list in list view) 
     // 
     const isModalShowing = computed(() => {
@@ -786,7 +786,6 @@ export default {
       roQueueIdToDelete,
       showQueueMarkAsReadConfirmation,
       roQueueIdToMarkAsRead,
-      showSelectedPost,
       roSelectedPost, // selected post to show on the post card modal (while in list view) 
       roSelectedQueueId, // currently selected queue Id 
       roPreviousQueueId, // previously selected queue Id 
@@ -818,6 +817,7 @@ export default {
       showFilterHelp,
       showQueueDashboard,
       showHelpPanel,
+      showSelectedPost, 
       selectedItem, // selected post list item (i.e., scrolling through the list in list view) 
       // auth module functions 
       logout,
@@ -840,7 +840,7 @@ export default {
       selectNextPost,
       selectPreviousPost,
       toggleArticleListSortOrder,
-      toggleQueueFilterPills, 
+      toggleQueueFilterPills,
       toggleFilterMode,
       updateFilter,
       countArticleList,
@@ -869,8 +869,8 @@ export default {
       checkForNewSubscriptionMetrics,
       openSubscriptionMetrics,
       // layout module functions 
-      switchToListLayout, 
-      switchToCardLayout, 
+      switchToListLayout,
+      switchToCardLayout,
       // other functions 
       uploadOpml,
       finalizeOpmlUpload,

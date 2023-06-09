@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import useAuthService from '@/services/auth/AuthService.js';
+import useAuthService from '@/services/useAuthService.js';
 import App from "./App.vue";
 import router from "./router";
 import VuePlyr from "vue-plyr";
