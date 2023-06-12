@@ -13,13 +13,6 @@
         v-if="queueId"
         v-model="selectedTab"
       >
-        <!-- tab 1: add subscription -->
-        <v-tab
-          key="ADD_SUBSCRIPTIONS"
-          value="ADD_SUBSCRIPTIONS"
-        >
-          {{ $t('addSubscriptions') }}
-        </v-tab>
         <!-- tab 2: manage subscriptions -->
         <v-tab
           key="MANAGE_SUBSCRIPTIONS"
@@ -37,12 +30,11 @@
       </v-tabs>
       <!-- config window -->
       <v-window v-model="selectedTab">
-        <!-- subscriptions -->
+        <!-- manage subscriptions -->
         <v-window-item
-          key="ADD_SUBSCRIPTIONS"
-          value="ADD_SUBSCRIPTIONS"
+          key="MANAGE_SUBSCRIPTIONS"
+          value="MANAGE_SUBSCRIPTIONS"
         >
-          <!-- add subscriptions -->
           <v-sheet
             align="left"
             justify="center"
@@ -50,9 +42,12 @@
             <!-- add subscription from URL -->
             <v-card
               class="ma-4"
-              elevation="6"
+              elevation="0"
             >
-              <v-card-title class="pa-4">
+              <v-card-title
+                class="pa-4"
+                @click="showAddSubscription = !showAddSubscription"
+              >
                 {{ $t('addANewSubscription') }}
               </v-card-title>
               <v-divider />
@@ -66,7 +61,7 @@
                 class="ma-4"
                 @click.close="dismissAlert('addANewSubscriptionHere')"
               />
-              <v-card-text>
+              <v-card-text v-show="showAddSubscription || subscriptions.length === 0">
                 <!-- text field -->
                 <v-text-field
                   v-model="newSubscription.url"
@@ -122,6 +117,15 @@
                 >
                   <template #additional>
                     <v-btn
+                      v-if="alreadySubscribed(newSubscription.discoveryUrl)"
+                      :size="buttonSize" 
+                      :disabled="true"
+                      prepend-icon="fa-plus"
+                      :title="$t('alreadySubscribed')"
+                      :text="$t('alreadySubscribed')"
+                    />
+                    <v-btn
+                      v-else
                       :size="buttonSize" 
                       prepend-icon="fa-plus"
                       :title="$t('subscribe')"
@@ -139,24 +143,16 @@
                 </v-alert>
               </v-card-text>
             </v-card>
-          </v-sheet>
-        </v-window-item>
-        <!-- manage subscriptions -->
-        <v-window-item
-          key="MANAGE_SUBSCRIPTIONS"
-          value="MANAGE_SUBSCRIPTIONS"
-        >
-          <v-sheet
-            align="left"
-            justify="center"
-          >
             <!-- manage existing RSS/ATOM feed subscriptions -->
             <v-card
               v-if="subscriptions && subscriptions.length > 0"
               class="ma-4"
-              elevation="6"
+              elevation="0"
             >
-              <v-card-title class="pa-4">
+              <v-card-title
+                class="pa-4"
+                @click.stop="showSubscriptions = !showSubscriptions"
+              >
                 {{ $t('yourSubscriptions') }}
               </v-card-title>
               <v-divider />
@@ -172,6 +168,7 @@
               />
               <v-card-text
                 v-for="(subscription, idx) in subscriptions"
+                v-show="showSubscriptions"
                 :key="idx" 
               >
                 <SubscriptionInfo
@@ -406,6 +403,8 @@ export default {
   data() {
     return {
       // add/manage subscriptions
+      showAddSubscription: true,
+      showSubscriptions: true,
       newSubscription: {},
       discoveryIsLoading: false,
       subscriptionToUpdate: null,
@@ -427,11 +426,6 @@ export default {
       let arr = [];
       if (this.queueId) {
         arr.push({
-          name: "ADD_SUBSCRIPTIONS",
-          description: this.$t('rssFeedDiscovery'),
-          icon: "feed",
-        });
-        arr.push({
           name: "MANAGE_SUBSCRIPTIONS",
           description: this.$t('manageSubscriptions', { ct: this.subscriptions.length }),
           icon: "feed",
@@ -446,6 +440,22 @@ export default {
     },
   },
   methods: {
+    alreadySubscribed(url) {
+      if (url && this.subscriptions) {
+        let u = new String(url).trim().toLowerCase();
+        for (let i = 0; i < this.subscriptions.length; i++) {
+          let existingUrl = this.subscriptions[i].url;
+          if (!existingUrl) {
+            continue;
+          }
+          if (new String(existingUrl).trim().toLowerCase() === u) {
+            return true;
+          }
+        }
+      } else {
+        return false;
+      }
+    },
     // emit save 
     save() {
       let saveObj = {
@@ -475,6 +485,7 @@ export default {
     },
     // emit addSubscription 
     addSubscription() {
+      this.newSubscription.discoveryUrl = null;
       this.$emit('addSubscription', this.newSubscription);
     },
     // emit deleteSubscription 
@@ -579,7 +590,7 @@ export default {
     },
     // internal
     configAuth(subscription) {
-      this.subscriptionToUpdate = [...subscription];
+      this.subscriptionToUpdate = { ...subscription };
       this.showAuthConfig = true;
     },
   }

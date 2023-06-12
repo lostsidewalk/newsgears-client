@@ -9,34 +9,101 @@
     <v-divider />
     <!-- icon -->
     <v-card-subtitle>
-      <v-img
-        v-if="info.icon"
-        class="mt-4 rounded h-auto" 
-        :src="info.icon.url" 
-        :title="info.icon.title" 
-        :alt="$t('feedLogoImage')" 
-        width="128" 
-        max-width="128"
-        max-height="128"
-      />
-      <v-img
-        v-if="info.image && !info.icon"
-        class="mt-4 rounded h-auto" 
-        :src="info.image.url" 
-        :title="info.image.title" 
-        :alt="$t('feedLogoImage')" 
-        width="128" 
-        max-width="128"
-        max-height="128"
-      />
+      <v-row>
+        <v-col cols="2">
+          <v-img
+            v-if="info.icon"
+            class="mt-4 mb-4 rounded h-auto" 
+            :src="info.icon.url" 
+            :title="info.icon.title" 
+            :alt="$t('feedLogoImage')" 
+            contain
+          />
+          <v-img
+            v-if="info.image && !info.icon"
+            class="mt-4 mb-4 rounded h-auto" 
+            :src="info.image.url" 
+            :title="info.image.title" 
+            :alt="$t('feedLogoImage')" 
+            contain
+          />
+          <v-img
+            v-if="!info || (!info.image && !info.icon)"
+            class="mt-4 mb-4 rounded h-auto" 
+            src="rss_logo.svg"
+            :alt="$t('rssLogo')"
+            contain
+          />
+        </v-col>
+        <v-col cols="10">
+          <v-list
+            v-if="mostRecentSubscriptionMetric"
+            density="compact"
+          >
+            <v-list-item>
+              {{ $t('lastImportedAt', { timestamp: formatTimestamp(mostRecentSubscriptionMetric.importTimestamp) }) }}
+            </v-list-item>
+            <v-list-item>
+              {{ $t('nNewArticlesSaved', { n: mostRecentSubscriptionMetric.persistCt }) }}
+            </v-list-item>
+            <v-list-item>
+              {{ $t('nArticlesArchived', { n: mostRecentSubscriptionMetric.archiveCt }) }}
+            </v-list-item>
+            <v-list-item>
+              <v-chip-group>
+                <!-- HTTP status -->
+                <v-chip
+                  v-if="httpStatusCode"
+                  variant="tonal"
+                  label
+                  :ripple="false"
+                >
+                  {{ $t('httpStatus', { 
+                    httpStatusCode: httpStatusCode, 
+                    httpStatusMessage: httpStatusMessage 
+                  }) }}
+                </v-chip>
+                <!-- HTTP redirect status -->
+                <v-chip
+                  v-if="info.redirectHttpStatusCode"
+                  variant="tonal"
+                  label
+                  :ripple="false"
+                >
+                  {{ $t('redirectedTo', { 
+                    redirectFeedUrl: info.redirectFeedUrl, 
+                    redirectHttpStatusCode: info.redirectHttpStatusCode, 
+                    redirectHttpStatusMessage: info.redirectHttpStatusMessage
+                  }) }}
+                </v-chip>
+                <!-- URL is upgradable -->
+                <v-chip
+                  v-if="info.isUrlUpgradable === true"
+                  variant="tonal"
+                  label
+                  :ripple="false"
+                >
+                  {{ $t('feedAlsoAvailableInHttps') }}
+                </v-chip>
+              </v-chip-group>
+            </v-list-item>
+          </v-list>
+          <v-label
+            v-else
+            class="mt-4 mb-4"
+          >
+            {{ $t('subscriptionDetailsNotAvailable') }}
+          </v-label>
+        </v-col>
+      </v-row>
     </v-card-subtitle>
     <!-- description -->
     <v-card-text v-if="info.description">
       {{ info.description ? info.description.value : '' }}
     </v-card-text>
     <!-- chips -->
-    <v-card-text>
-      <v-chip-group v-if="hasChips">
+    <v-card-text v-if="hasChips">
+      <v-chip-group>
         <!-- author -->
         <v-chip
           v-if="info.author"
@@ -117,43 +184,6 @@
         >
           {{ $t('webmasterColon') }} {{ info.webMaster }}
         </v-chip>
-        <!-- HTTP status -->
-        <v-chip
-          v-if="httpStatusCode"
-          class="ma-1" 
-          variant="text"
-          label
-          :ripple="false"
-        >
-          {{ $t('httpStatus', { 
-            httpStatusCode: httpStatusCode, 
-            httpStatusMessage: httpStatusMessage 
-          }) }}
-        </v-chip>
-        <!-- HTTP redirect status -->
-        <v-chip
-          v-if="info.redirectHttpStatusCode"
-          class="ma-1" 
-          variant="text"
-          label
-          :ripple="false"
-        >
-          {{ $t('redirectedTo', { 
-            redirectFeedUrl: info.redirectFeedUrl, 
-            redirectHttpStatusCode: info.redirectHttpStatusCode, 
-            redirectHttpStatusMessage: info.redirectHttpStatusMessage
-          }) }}
-        </v-chip>
-        <!-- URL is upgradable -->
-        <v-chip
-          v-if="info.isUrlUpgradable === true"
-          class="ma-1" 
-          variant="text"
-          label
-          :ripple="false"
-        >
-          {{ $t('feedAlsoAvailableInHttps') }}
-        </v-chip>
       </v-chip-group>
     </v-card-text>
     <v-divider />
@@ -172,7 +202,7 @@
       >
         <SubscriptionMetrics
           :title="info.title ? info.title : info.url"
-          :subscription-metrics="usefulSubscriptionMetrics"
+          :subscription-metrics="info.subscriptionMetrics"
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
@@ -233,8 +263,12 @@ export default {
       }
       return null;
     },
-    usefulSubscriptionMetrics: function () {
-      return this.info.subscriptionMetrics ? this.info.subscriptionMetrics.filter(f => f.persistCt > 0) : null;
+    mostRecentSubscriptionMetric: function() {
+      let len = this.info.subscriptionMetrics ? this.info.subscriptionMetrics.length : 0;
+      if (len > 0) {
+        return this.info.subscriptionMetrics[len - 1];
+      }
+      return null;
     },
     hasChips: function () {
       return this.info.author || 
@@ -244,10 +278,7 @@ export default {
         this.info.docs || 
         this.info.encoding || 
         this.info.managingEditor || 
-        this.info.webMaster || 
-        this.httpStatusCode || 
-        this.info.redirectHttpStatusCode || 
-        this.info.isUrlUpgradable === true;
+        this.info.webMaster;
     },
   },
 }
@@ -256,5 +287,13 @@ export default {
 <style scoped>
 .clickable:hover {
   cursor: pointer;
+}
+
+.text-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  word-break: break-word;
 }
 </style>

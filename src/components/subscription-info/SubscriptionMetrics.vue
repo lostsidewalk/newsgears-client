@@ -37,8 +37,45 @@
             <td class="pa-1">
               {{ formatTimestamp(subscriptionMetric.importTimestamp) }}
             </td>
-            <td class="pa-1">
-              {{ $t('importedNArticles', { n: subscriptionMetric.persistCt }) }}
+            <!-- imported/persisted/archived -->
+            <td
+              v-if="subscriptionMetric.importCt > 0 && subscriptionMetric.persisCt > 0 && subscriptionMetric.archiveCt > 0"
+              class="pa-1"
+            >
+              {{ $t('importedPersistedAndArchived', { 
+                importCt: subscriptionMetric.importCt, 
+                persistCt: subscriptionMetric.persistCt,
+                archiveCt: subscriptionMetric.archiveCt, 
+              }) }}
+            </td>
+            <!-- imported/persisted -->
+            <td
+              v-else-if="subscriptionMetric.importCt > 0 && subscriptionMetric.persisCt > 0"
+              class="pa-1"
+            >
+              {{ $t('importedPersisted', { 
+                importCt: subscriptionMetric.importCt, 
+                persistCt: subscriptionMetric.persistCt,
+              }) }}
+            </td>
+            <!-- imported/persisted -->
+            <td
+              v-else-if="subscriptionMetric.importCt > 0 && subscriptionMetric.archiveCt > 0"
+              class="pa-1"
+            >
+              {{ $t('importedAndArchived', { 
+                importCt: subscriptionMetric.importCt, 
+                archiveCt: subscriptionMetric.archiveCt,  
+              }) }}
+            </td>
+            <!-- imported/persisted -->
+            <td
+              v-else-if="subscriptionMetric.importCt > 0"
+              class="pa-1"
+            >
+              {{ $t('importedNArticles', { 
+                n: subscriptionMetric.importCt, 
+              }) }}
             </td>
             <!-- HTTP status -->
             <td class="pa-1">
