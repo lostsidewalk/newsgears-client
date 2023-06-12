@@ -1,5 +1,26 @@
 <template>
   <v-sheet>
+    <!-- article list -->
+    <v-card
+      v-if="recentArticleList"
+      class="ma-4"
+    >
+      <v-card-title>
+        {{ $t('recentArticles') }}
+      </v-card-title>
+      <v-divider />
+      <v-card-text>
+        <v-list density="compact">
+          <v-list-item
+            v-for="article in recentArticleList"
+            :key="article"
+            density="compact"
+          >
+            {{ article.postTitle.value }}
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </v-card>
     <!-- subscriptions -->
     <v-card class="ma-4">
       <v-card-title>
@@ -122,6 +143,7 @@ export default {
     jsonPubUrl: { type: String, required: true },
     rssPubUrl: { type: String, required: true },
     atomPubUrl: { type: String, required: true },
+    recentArticleList: { type: Array, default: null },
   },
   emits: ["updateFilter", "showSubscriptionMetrics"],
   setup() {

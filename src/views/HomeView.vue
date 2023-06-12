@@ -98,7 +98,7 @@
           :filter="roArticleListFilter"
           :sort-order="roArticleListSortOrder"
           :queue-length="filteredArticleList.length"
-          :queue-name="getSelectedQueue().title"
+          :queue-name="roSelectedQueueTitle"
           :show-queue-refresh-indicator="showQueueRefreshIndicator"
           :queues="roQueues"
           @toggleSortOrder="toggleArticleListSortOrder"
@@ -294,7 +294,7 @@
           v-if="roSelectedQueueId"
           class="ma-2 font-weight-bold"
         >
-          {{ getSelectedQueue().title }}
+          {{ roSelectedQueueTitle }}
         </v-label>
       </v-container>
       <!-- divider -->
@@ -520,6 +520,7 @@ export default {
     } = useNotifications();
     const {
       roSelectedQueueId,
+      roSelectedQueueTitle,
       roPreviousQueueId,
       roQueueIdToDelete,
       roQueueIdToMarkAsRead,
@@ -797,6 +798,7 @@ export default {
       roQueueIdToMarkAsRead,
       roSelectedPost, // selected post to show on the post card modal (while in list view) 
       roSelectedQueueId, // currently selected queue Id 
+      roSelectedQueueTitle, // currently selected queue title 
       roPreviousQueueId, // previously selected queue Id 
       roArticleListsByQueue, // all queues 
       roArticleList, // inbound queue for the currently selected queue  

@@ -12,24 +12,16 @@
     </v-card-subtitle>
     <v-card-text>
       <v-chip-group>
-        <v-chip
-          label
-          size="x-large"
-          variant="text"
-          :ripple="false"
-        >
+        <!-- inbound count -->
+        <v-chip>
           <v-icon
             start
             icon="fa-eye"
           /> 
           {{ inboundCount }}
         </v-chip>
-        <v-chip
-          label
-          size="x-large"
-          variant="text"
-          :ripple="false"
-        >
+        <!-- published count -->
+        <v-chip>
           <v-icon
             start
             icon="fa-star"
@@ -61,6 +53,7 @@
     <v-expand-transition>
       <QueueDetails 
         v-if="showMoreInformation"
+        :recent-article-list="recentArticleList"
         :subscriptions="queue.subscriptions" 
         :json-pub-url="feedUrl + '/feed/json/' + queue.transportIdent" 
         :rss-pub-url="feedUrl + '/feed/rss/' + queue.transportIdent" 
@@ -97,17 +90,29 @@ export default {
     }
   },
   computed: {
-    inboundCount: function() {
+    inboundCount: function () {
       if (this.articleList) {
         return this.articleList.values.filter((post) => !post.isRead).length;
       }
       return 0;
     },
-    publishedCount: function() {
+    publishedCount: function () {
       if (this.articleList) {
         return this.articleList.values.filter((post) => post.isPublished).length; 
       }
       return 0;
+    },
+    mostRecentArticle: function () {
+      if (this.articleList) {
+        return this.articleList.values[0];
+      }
+      return null;
+    },
+    recentArticleList: function() {
+      if (this.articleList) {
+        return this.articleList.values.slice(0, 5);
+      }
+      return [];
     }
   },
 }

@@ -14,6 +14,7 @@ export function useQueues(props) {
   } = useNotifications();
   const { formatTimestamp } = useTimestamp();
   const selectedQueueId = ref(null); // currently selected queue Id 
+  const selectedQueueTitle = ref(null); // currently selected queue title 
   const previousQueueId = ref(null); // previously selected queue Id 
   const queueIdToDelete = ref(null);
   const queueIdToMarkAsRead = ref(null);
@@ -867,6 +868,10 @@ export function useQueues(props) {
   function setSelectedQueueId(queueId) {
     previousQueueId.value = selectedQueueId.value;
     selectedQueueId.value = queueId;
+    let selectedQueue = getSelectedQueue();
+    if (selectedQueue) {
+      selectedQueueTitle.value = selectedQueue.title;
+    }
     if (queueId) {
       Object.assign(articleList, articleListsByQueue[queueId]);
     }
@@ -878,12 +883,17 @@ export function useQueues(props) {
   }
 
   function getSelectedQueue() {
-    if (selectedQueueId.value) {
-      for (let i = 0; i < queues.length; i++) {
-        if (queues[i].id === selectedQueueId.value) {
-          return queues[i];
+    try {
+      let s = parseInt(selectedQueueId.value);
+      if (s) {
+        for (let i = 0; i < queues.length; i++) {
+          if (queues[i].id === s) {
+            return queues[i];
+          }
         }
       }
+    } catch (error) {
+      console.error("selectedQueueId is not a number");
     }
     return {};
   }
@@ -1409,6 +1419,7 @@ export function useQueues(props) {
   }
 
   const roSelectedQueueId = readonly(selectedQueueId);
+  const roSelectedQueueTitle = readonly(selectedQueueTitle);
   const roPreviousQueueId = readonly(previousQueueId);
   const roQueueIdToDelete = readonly(queueIdToDelete);
   const roQueueIdToMarkAsRead = readonly(queueIdToMarkAsRead);
@@ -1432,6 +1443,7 @@ export function useQueues(props) {
 
   return {
     roSelectedQueueId,
+    roSelectedQueueTitle, 
     roPreviousQueueId,
     roQueueIdToDelete,
     roQueueIdToMarkAsRead,

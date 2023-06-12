@@ -42,12 +42,14 @@
           >
             <v-list-item>
               {{ $t('lastImportedAt', { timestamp: formatTimestamp(mostRecentSubscriptionMetric.importTimestamp) }) }}
-            </v-list-item>
-            <v-list-item>
-              {{ $t('nNewArticlesSaved', { n: mostRecentSubscriptionMetric.persistCt }) }}
-            </v-list-item>
-            <v-list-item>
-              {{ $t('nArticlesArchived', { n: mostRecentSubscriptionMetric.archiveCt }) }}
+              <ul>
+                <li>
+                  {{ $t('nNewArticlesSaved', { n: mostRecentSubscriptionMetric.persistCt }) }}
+                </li>
+                <li>
+                  {{ $t('nArticlesArchived', { n: mostRecentSubscriptionMetric.archiveCt }) }}
+                </li>
+              </ul>
             </v-list-item>
             <v-list-item>
               <v-chip-group>
@@ -263,7 +265,7 @@ export default {
       }
       return null;
     },
-    mostRecentSubscriptionMetric: function() {
+    mostRecentSubscriptionMetric: function () {
       let len = this.info.subscriptionMetrics ? this.info.subscriptionMetrics.length : 0;
       if (len > 0) {
         return this.info.subscriptionMetrics[len - 1];
