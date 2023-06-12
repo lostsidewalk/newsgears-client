@@ -726,19 +726,6 @@ export function useQueues(props) {
     }
   }
 
-  function countArticleList(queueId) {
-    const iq = articleListsByQueue[queueId];
-    if (iq) {
-      return iq.values.filter((post) => !post.isRead).length;
-    }
-    return 0;
-  }
-
-  function countPublished(queueId) {
-    const iq = articleListsByQueue[queueId];
-    return iq ? iq.values.filter((post) => post.isPublished).length : 0;
-  }
-  
   function deleteSelectedQueue() {
     document.activeElement.blur();
     queueIdToDelete.value = selectedQueueId.value;
@@ -1503,10 +1490,6 @@ export function useQueues(props) {
     toggleQueueFilterPills, 
     // adds the given subscription/category to t he articleListFilter 
     updateFilter, 
-    // returns the number of items in the articleList for the given queueId 
-    countArticleList,
-    // returns the number of published items in the articleList for the given queueId 
-    countPublished,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 
     deleteSelectedQueue, 
     // completes the queue delete process by making a server call to delete the queue (given by queueIdToDelete) 

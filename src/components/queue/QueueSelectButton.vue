@@ -85,9 +85,8 @@ export default {
   mixins: [buttonSizeMixin], 
   props: {
     queue: { type: Object, required: true },
+    articleList: { type: Object, default: null },
     feedUrl: { type: String, required: true },
-    inboundCount: { type: Number, required: true },
-    publishedCount: { type: Number, required: true },
     variant: { type: String, default: null },
     isSelected: { type: Boolean, default: false },
   },
@@ -95,6 +94,20 @@ export default {
   data() {
     return {
       showMoreInformation: false,
+    }
+  },
+  computed: {
+    inboundCount: function() {
+      if (this.articleList) {
+        return this.articleList.values.filter((post) => !post.isRead).length;
+      }
+      return 0;
+    },
+    publishedCount: function() {
+      if (this.articleList) {
+        return this.articleList.values.filter((post) => post.isPublished).length; 
+      }
+      return 0;
     }
   },
 }

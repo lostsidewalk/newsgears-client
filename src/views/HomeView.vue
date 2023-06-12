@@ -154,9 +154,8 @@
               variant="flat"
               :elevation="isHovering ? 12 : 0"
               :queue="queue"
+              :article-list="roArticleListsByQueue[queue.id]"
               :feed-url="feedUrl"
-              :inbound-count="countArticleList(queue.id)"
-              :published-count="countPublished(queue.id)"
               class="ma-4"
               :class="roSelectedQueueId === queue.id ? 'selected-queue' : ''"
               :is-selected="roSelectedQueueId === queue.id"
@@ -560,8 +559,6 @@ export default {
       toggleQueueFilterPills,
       toggleFilterMode,
       updateFilter,
-      countArticleList,
-      countPublished,
       deleteSelectedQueue,
       performQueueDelete,
       cancelQueueDelete,
@@ -858,8 +855,6 @@ export default {
       toggleQueueFilterPills,
       toggleFilterMode,
       updateFilter,
-      countArticleList,
-      countPublished,
       updatePostReadStatus,
       updatePostPubStatus,
       createQueue,
