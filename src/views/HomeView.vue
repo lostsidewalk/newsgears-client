@@ -553,7 +553,6 @@ export default {
       // 
       restoreQueuesFromLocalStorage,
       refreshQueues,
-      rebuildLunrIndexes,
       updatePostReadStatus,
       updatePostPubStatus,
       getPostFromQueue,
@@ -861,7 +860,6 @@ export default {
       updateFilter,
       countArticleList,
       countPublished,
-      rebuildLunrIndexes,
       updatePostReadStatus,
       updatePostPubStatus,
       createQueue,

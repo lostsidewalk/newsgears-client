@@ -204,11 +204,15 @@ export function useQueues(props) {
     queues.push(queue);
   }
 
-  function updateQueueLocalStorage() {
+  function updateSelectedQueueIdLocalStorage() {
+    localStorage.setItem('selectedQueueId', selectedQueueId.value);
+  }
+
+  function updateQueuesLocalStorage() {
     localStorage.setItem('queues', JSON.stringify(queues));
   }
 
-  function updateArticleListLocalStorage() {
+  function updateArticleListsLocalStorage() {
     localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
   }
 
@@ -223,13 +227,19 @@ export function useQueues(props) {
     }
     rebuildLunrIndexes();
     if (queues.length > 0 && articleListsByQueue) { // remove 
-      if (!selectedQueueId.value) {
-        setSelectedQueueId(queues[0].id);
+      const storedSelectedQueueId = getSelectedQueueIdLocalStorage();
+      if (storedSelectedQueueId) {
+        console.debug("restoring selected queueId=" + storedSelectedQueueId);
+        setSelectedQueueId(storedSelectedQueueId);
       }
       Object.assign(articleList, articleListsByQueue[selectedQueueId.value]);
     } else {
       refreshQueues(null, true); // need staging posts for all queues and queues definitions 
     }
+  }
+
+  function getSelectedQueueIdLocalStorage() {
+    return localStorage.getItem('selectedQueueId');
   }
 
   function getQueuesLocalStorage() {
@@ -329,7 +339,7 @@ export function useQueues(props) {
                   qd.exportConfig = qd.exportConfig ? JSON.parse(qd.exportConfig) : qd.exportConfig;
                   queues.push(qd);
                 }
-                updateQueueLocalStorage();
+                updateQueuesLocalStorage();
               }
             })
         );
@@ -361,7 +371,7 @@ export function useQueues(props) {
 
       console.log("rebuilding lunr indexes due to refresh");
       rebuildLunrIndexes();
-      updateArticleListLocalStorage();
+      updateArticleListsLocalStorage();
       if (queues.length > 0 && !selectedQueueId.value) {
         setSelectedQueueId(queues[0].id);
       } else {
@@ -609,7 +619,7 @@ export function useQueues(props) {
           }
           if (updateLocalStorage) {
             // update queues localStorage 
-            updateQueueLocalStorage();
+            updateQueuesLocalStorage();
           }
           rebuildLunrIndexes();
         }).catch((error) => {
@@ -762,7 +772,7 @@ export function useQueues(props) {
         console.log("deleted queueId=" + queueIdToDelete.value);
         delete articleListsByQueue[queueIdToDelete.value];
         // update queues localStorage 
-        updateArticleListLocalStorage();
+        updateArticleListsLocalStorage();
         let idxToSplice = -1;
         for (let i = 0; i < queues.length; i++) {
           if (queues[i].id === queueIdToDelete.value) {
@@ -774,7 +784,7 @@ export function useQueues(props) {
           let nextQueueId = queues.length > idxToSplice + 1 ? queues[idxToSplice + 1].id : null;
           queues.splice(idxToSplice, 1);
           // update queues localStorage 
-          updateQueueLocalStorage();
+          updateQueuesLocalStorage();
           if (selectedQueueId.value === queueIdToDelete.value) {
             setSelectedQueueId(nextQueueId); // TODO: (enhancement) should be a configurable 'default' queue 
           }
@@ -842,7 +852,7 @@ export function useQueues(props) {
             p.isReadLater = false;
           });
           // update queue localStorage
-          updateArticleListLocalStorage();
+          updateArticleListsLocalStorage();
           setLastServerMessage(data.message);
           rebuildLunrIndexes();
         }).catch((error) => {
@@ -873,6 +883,7 @@ export function useQueues(props) {
     if (queueId) {
       Object.assign(articleList, articleListsByQueue[queueId]);
     }
+    updateSelectedQueueIdLocalStorage();
   }
 
   function restorePreviousQueueId() {
@@ -1026,7 +1037,7 @@ export function useQueues(props) {
             queueIds.push(queue.id);
           }
           // update queues localStorage 
-          updateQueueLocalStorage();
+          updateQueuesLocalStorage();
           setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
           showOpmlUploadPanel.value = false;
           refreshQueues(queueIds, false);
@@ -1049,7 +1060,6 @@ export function useQueues(props) {
 
   function cancelOpmlUpload() {
     showOpmlUploadPanel.value = false;
-    restorePreviousQueueId();
   }
 
   function checkForNewSubscriptionMetrics() {
@@ -1149,10 +1159,10 @@ export function useQueues(props) {
           let created = data[0].queueDefinition;
           roQueues.push(created);
           // update queues localStorage 
-          updateQueueLocalStorage();
+          updateQueuesLocalStorage();
           roArticleListsByQueue[created.id] = { values: [] };
           // update queues localStorage 
-          updateArticleListLocalStorage();
+          updateArticleListsLocalStorage();
           setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
           setSelectedQueueId(created.id);
           rebuildLunrIndexes();
@@ -1469,26 +1479,16 @@ export function useQueues(props) {
     // 
     // push item onto queues 
     addQueue, 
-    // serializes queues and writes to local storage 
-    updateQueueLocalStorage, 
-    // serializes articlieListsByQueue and writes to local storage 
-    updateArticleListLocalStorage, 
     // restores queues and articleListsByQueue from local storage; 
     // rebuilds lunr indexes, sets selected queue Id;
     // resfreshses queues from server if necessary 
     restoreQueuesFromLocalStorage, 
-    // retrieves queues from local storage 
-    getQueuesLocalStorage,
-    // retrieves articleListsByQueue from local storage 
-    getArticleListsLocalStorage,
     // makes server call to pull new stagingPosts for each queue; 
     // optionally makes server call to pull queue definitions; 
     // rebuilds all dependent entities and updates local storage; 
     refreshQueues, 
     // utility method to add subscription data retrieved from server to queue definition 
     decorateQueueWithSubscriptionDefinitions,
-    // rebuild all lunr indexes--this needs to be invoked any time any indexed data changes (e.g., post read status) 
-    rebuildLunrIndexes,
     // makes a server call to update the post read status 
     updatePostReadStatus,
     // makes a server call to update the post pub status 

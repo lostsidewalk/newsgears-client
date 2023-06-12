@@ -49,7 +49,7 @@
       <v-btn
         v-if="post.isPublished"
         class="star-colored"
-        size="buttonSize"
+        :size="buttonSize"
         variant="text"
         :title="$t('unstarThisPost')"
         :aria-label="$t('unstarThisPost')"
