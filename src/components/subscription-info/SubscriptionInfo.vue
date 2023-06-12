@@ -94,7 +94,7 @@
             v-else
             class="mt-4 mb-4"
           >
-            {{ $t('subscriptionDetailsNotAvailable') }}
+            {{ $t('metricsNotYetAvailable') }}
           </v-label>
         </v-col>
       </v-row>

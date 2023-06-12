@@ -101,7 +101,7 @@ export default {
           },
           {
             label: this.$t('createNewQueue'),
-            key: "SHIFT + Q" // key handler from anywhere 
+            key: "ALT + Q" // key handler from anywhere 
           },
           {
             label: this.$t('refreshQueues'),
@@ -120,10 +120,6 @@ export default {
           {
             label: this.$t('deleteSelectedQueue'),
             key: "SHIFT + D", // key handler when queue is selected 
-          },
-          {
-            label: this.$t('addSubscriptionToSelectedQueue'),
-            key: "SHIFT + S", // key handler when queue is selected 
           },
           {
             label: this.$t('showStarred'),

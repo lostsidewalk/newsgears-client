@@ -149,6 +149,7 @@ const i18n = createI18n({
       // queue config panel
       queueProperties: "Propiedades de la cola",
       rssFeedDiscovery: "Descubrimiento de fuentes RSS",
+      configuringQueue: "Configurando cola: {name}",
       // queue properties
       createANewQueue: "Crear una nueva cola",
       createANewQueueHere: "Cree una nueva cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones de fuentes relacionadas. Los artículos en la misma cola se leen, indexan y filtran juntos. Del mismo modo, los artículos en la misma cola que están 'destacados' se publican en una nueva fuente específica de la cola, que está disponible en varios formatos. Utilice este panel para crear una nueva cola, definir sus propiedades básicas y configurar los ajustes relacionados con la publicación de artículos destacados. Una vez que se crea una cola, puede agregar suscripciones para importar artículos.",
@@ -265,8 +266,7 @@ const i18n = createI18n({
       globalShortcutKeys: "TECLAS DE ACCESO DIRECTO GLOBALES",
       key: "Tecla",
       action: "Acción",
-      configureSelectedQueue:
-        "Administrar suscripciones en la cola seleccionada",
+      configureSelectedQueue: "Configurar la cola seleccionada",
       markSelectedQueueAsRead: "Marcar la cola seleccionada como leída",
       deleteSelectedQueue: "Eliminar la cola seleccionada",
       addSubscriptionToSelectedQueue:
@@ -605,6 +605,7 @@ const i18n = createI18n({
       // queue config panel
       queueProperties: "Queue Properties",
       rssFeedDiscovery: "RSS Feed Discovery",
+      configuringQueue: "Configuring queue: {name}",
       // queue properties
       createANewQueue: "Create a new queue",
       createANewQueueHere: "Create a new queue here.  Queues are used to group and organize articles from related feed subscriptions.  Articles in the same queue are read, indexed, and filtered together.  Similarly, articles in the same queue that are 'starred' are published to a new queue-specific feed, which is available in multiple formats.  Use this panel to create a new queue, define its basic properties, and configure settings related to publishing starred articles.  Once a queue is created, you can add subscriptions to import articles.",
@@ -722,7 +723,7 @@ const i18n = createI18n({
       globalShortcutKeys: "GLOBAL SHORTCUT KEYS",
       key: "Key",
       action: "Action",
-      configureSelectedQueue: "Manage subscriptions in the selected queue",
+      configureSelectedQueue: "Configure the selected queue",
       markSelectedQueueAsRead: "Mark the selected queue as read",
       deleteSelectedQueue: "Delete the selected queue",
       addSubscriptionToSelectedQueue: "Add a subscription to selected queue",

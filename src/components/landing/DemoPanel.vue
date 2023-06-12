@@ -1,13 +1,14 @@
 <template>
   <v-container>
     <v-carousel
-      height="750"
+      height="850"
       class="rounded"
     >
       <!-- simplified organization -->
       <v-carousel-item>
         <v-card
           class="h-100"
+          style="overflow-y: auto;"
           variant="flat"
         >
           <v-card-title class="text-center pa-4">

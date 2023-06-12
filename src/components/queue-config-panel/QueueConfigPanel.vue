@@ -6,6 +6,9 @@
         {{ queueId ? $t('queueSettings') : $t('createANewQueue') }}
       </h3>
     </v-card-title>
+    <v-card-subtitle class="text-center pa-4">
+      {{ $t('configuringQueue' , { name: queueUnderConfig.ident }) }}
+    </v-card-subtitle>
     <v-divider />
     <v-card-text>
       <!-- tab panel -->
@@ -418,7 +421,7 @@ export default {
       queueCopyright: this.queueUnderConfig.copyright,
       queueLanguage: this.queueUnderConfig.language,
       subscriptions: this.queueUnderConfig.subscriptions,
-      selectedTab: this.queueId ? 'SUBSCRIPTIONS' : 'QUEUE_PROPERTIES',
+      selectedTab: null,
     };
   },
   computed: {
@@ -438,6 +441,9 @@ export default {
       }
       return arr;
     },
+  },
+  mounted() {
+    this.selectedTab = this.queueId ? 'MANAGE_SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
   },
   methods: {
     alreadySubscribed(url) {

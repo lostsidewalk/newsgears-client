@@ -5,7 +5,6 @@
     @click.stop="$emit('openPost', post.id)"
   >
     <td>{{ isHtmlTitle ? '<HTML not shown>' : postTitle }}</td>
-    <td>{{ isHtmlDesc ? '<HTML not shown>' : postDesc }}</td>
     <td>{{ importerDesc }}</td>
     <td>{{ formatTimestamp(postTimestamp) }}</td>
     <!-- mark as read/unread button -->

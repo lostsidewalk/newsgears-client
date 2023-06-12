@@ -206,15 +206,27 @@ export function useQueues(props) {
   }
 
   function updateSelectedQueueIdLocalStorage() {
-    localStorage.setItem('selectedQueueId', selectedQueueId.value);
+    try {
+      localStorage.setItem('selectedQueueId', selectedQueueId.value);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function updateQueuesLocalStorage() {
-    localStorage.setItem('queues', JSON.stringify(queues));
+    try {
+      localStorage.setItem('queues', JSON.stringify(queues));
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function updateArticleListsLocalStorage() {
-    localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
+    try {
+      localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function restoreQueuesFromLocalStorage() {
@@ -373,9 +385,7 @@ export function useQueues(props) {
       console.log("rebuilding lunr indexes due to refresh");
       rebuildLunrIndexes();
       updateArticleListsLocalStorage();
-      if (queues.length > 0 && !selectedQueueId.value) {
-        setSelectedQueueId(queues[0].id);
-      } else {
+      if (queues.length > 0 && selectedQueueId.value) {
         Object.assign(articleList, articleListsByQueue[selectedQueueId.value]);
       }
     } catch (error) {
@@ -424,98 +434,98 @@ export function useQueues(props) {
 
   function rebuildLunrIndexes() {
     console.log("rebuilding lunr indexes");
-    for (let i = 0; i < queues.length; i++) {
-      let iq = articleListsByQueue[queues[i].id];
-      if (iq) {
-        const trueStr = t('trueStr');
-        const falseStr = t('falseStr');
-        iq.index = lunr(function () {
-          this.ref('id')
-          // title 
-          this.field('title', {
-            extractor: function (doc = {}) {
-              return doc.postTitle ? doc.postTitle.value : null;
-            },
-            boost: 10,
-          });
-          // description 
-          this.field('description', {
-            extractor: function (doc = {}) {
-              return doc.postDesc ? doc.postDesc.value : null;
-            }
-          });
-          // feed 
-          this.field('feed', {
-            extractor: function (doc = {}) {
-              return doc.importerDesc;
-            },
-          });
-          // category 
-          this.field('category', {
-            extractor: function (doc = {}) {
-              return doc.postCategories;
-            }
-          });
-          // author 
-          this.field('author', {
-            extractor: function (doc = {}) {
-              return (doc.authors && doc.authors.length > 0) ? doc.authors[0].name : null;
-            }
-          });
-          // authors
-          this.field('authors', {
-            extractor: function (doc = {}) {
-              return (doc.authors && doc.authors.length > 0) ?
-                doc.authors.map(function (author) { return author.name; }) : null;
-            }
-          });
-          // contributors
-          this.field('contributors', {
-            extractor: function (doc = {}) {
-              return (doc.contributors && doc.contributors.length > 0) ?
-                doc.contributors.map(function (contributor) { return contributor.name; }) : null;
-            }
-          });
-          // published
-          this.field('published', {
-            extractor: function (doc = {}) {
-              return doc.publishTimestamp ? doc.publishTimestamp.toString('YYYY-MM-DD') : null;
-            },
-          });
-          // updated
-          this.field('updated', {
-            extractor: function (doc = {}) {
-              return doc.lastUpdatedTimestamp ? doc.lastUpdatedTimestamp.toString('YYYY-MM-DD') : null;
-            }
-          });
-          // contents
-          this.field('contents', {
-            extractor: function (doc = {}) {
-              return (doc.postContents && doc.postContents.length > 0) ? doc.postContents[0].value : null;
-            }
-          })
-          // url
-          this.field('url', {
-            extractor: function (doc = {}) {
-              return doc.postUrl;
-            }
-          });
-          this.field('status', {
-            extractor: function (doc = {}) {
-              return doc.postReadStatus ? doc.postReadStatus : 'UNREAD';
-            }
-          });
-          this.field('starred', {
-            extractor: function (doc = {}) {
-              return doc.isPublished ? trueStr : falseStr;
-            }
-          });
-          iq.values.forEach(function (doc) {
-            this.add(doc)
-          }, this)
-        }); 
-      }
-    }
+        for (let i = 0; i < queues.length; i++) {
+          let iq = articleListsByQueue[queues[i].id];
+          if (iq) {
+            const trueStr = t('trueStr');
+            const falseStr = t('falseStr');
+            iq.index = lunr(function () {
+              this.ref('id')
+              // title 
+              this.field('title', {
+                extractor: function (doc = {}) {
+                  return doc.postTitle ? doc.postTitle.value : null;
+                },
+                boost: 10,
+              });
+              // description 
+              this.field('description', {
+                extractor: function (doc = {}) {
+                  return doc.postDesc ? doc.postDesc.value : null;
+                }
+              });
+              // feed 
+              this.field('feed', {
+                extractor: function (doc = {}) {
+                  return doc.importerDesc;
+                },
+              });
+              // category 
+              this.field('category', {
+                extractor: function (doc = {}) {
+                  return doc.postCategories;
+                }
+              });
+              // author 
+              this.field('author', {
+                extractor: function (doc = {}) {
+                  return (doc.authors && doc.authors.length > 0) ? doc.authors[0].name : null;
+                }
+              });
+              // authors
+              this.field('authors', {
+                extractor: function (doc = {}) {
+                  return (doc.authors && doc.authors.length > 0) ?
+                    doc.authors.map(function (author) { return author.name; }) : null;
+                }
+              });
+              // contributors
+              this.field('contributors', {
+                extractor: function (doc = {}) {
+                  return (doc.contributors && doc.contributors.length > 0) ?
+                    doc.contributors.map(function (contributor) { return contributor.name; }) : null;
+                }
+              });
+              // published
+              this.field('published', {
+                extractor: function (doc = {}) {
+                  return doc.publishTimestamp ? doc.publishTimestamp.toString('YYYY-MM-DD') : null;
+                },
+              });
+              // updated
+              this.field('updated', {
+                extractor: function (doc = {}) {
+                  return doc.lastUpdatedTimestamp ? doc.lastUpdatedTimestamp.toString('YYYY-MM-DD') : null;
+                }
+              });
+              // contents
+              this.field('contents', {
+                extractor: function (doc = {}) {
+                  return (doc.postContents && doc.postContents.length > 0) ? doc.postContents[0].value : null;
+                }
+              })
+              // url
+              this.field('url', {
+                extractor: function (doc = {}) {
+                  return doc.postUrl;
+                }
+              });
+              this.field('status', {
+                extractor: function (doc = {}) {
+                  return doc.postReadStatus ? doc.postReadStatus : 'UNREAD';
+                }
+              });
+              this.field('starred', {
+                extractor: function (doc = {}) {
+                  return doc.isPublished ? trueStr : falseStr;
+                }
+              });
+              iq.values.forEach(function (doc) {
+                this.add(doc)
+              }, this)
+            }); 
+          }
+        }
   }
 
   function updatePostReadStatus(result) {
@@ -677,10 +687,13 @@ export function useQueues(props) {
   }
 
   function toggleFilterMode(filterMode) {
-    if (articleListFilter.value.includes('status:' + filterMode)) {
-      articleListFilter.value = articleListFilter.value.replace('status:' + filterMode, '');
+    let newStatus = 'status:' + filterMode;
+    if (articleListFilter.value.length === 0) {
+      articleListFilter.value = newStatus;
+    } else if (articleListFilter.value.includes(newStatus)) {
+      articleListFilter.value = articleListFilter.value.replace(newStatus, '');
     } else {
-      articleListFilter.value += 'status:' + filterMode;
+      articleListFilter.value += (' ' + newStatus);
     }
   }
 
@@ -866,6 +879,7 @@ export function useQueues(props) {
   }
 
   function setSelectedQueueId(queueId) {
+    console.log("setting selectedQueueId=" + queueId);
     previousQueueId.value = selectedQueueId.value;
     selectedQueueId.value = queueId;
     let selectedQueue = getSelectedQueue();
@@ -899,10 +913,15 @@ export function useQueues(props) {
   }
 
   function getQueueById(queueId) {
-    for (let i = 0; i < queues.length; i++) {
-      if (queues[i].id === queueId) {
-        return queues[i];
+    try {
+      let q = parseInt(queueId);
+      for (let i = 0; i < queues.length; i++) {
+        if (queues[i].id === q) {
+          return queues[i];
+        }
       }
+    } catch (error) {
+      console.error("queueId is not a number");
     }
   }
 

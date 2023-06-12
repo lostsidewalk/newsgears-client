@@ -385,7 +385,7 @@
         style="white-space: nowrap;"
         fixed-header
       >
-        <tbody>
+        <tbody style="text-align: left;white-space: nowrap;">
           <PostTableRow
             v-for="post in filteredArticleList"
             :id="'post_' + post.id"
@@ -655,9 +655,9 @@ export default {
           openQueueConfigPanel(roSelectedQueueId.value);
           event.stopPropagation();
           event.preventDefault();
-          // 
-          // SLASH KEY (SEARCH SELECTED QUEUE)
-          // 
+        // 
+        // SLASH KEY (SEARCH SELECTED QUEUE)
+        // 
         } else if (event.key === '/') {
           nextTick(() => {
             let filterElem = document.getElementById('queue-filter');
@@ -718,13 +718,6 @@ export default {
       // 
       if (event.key === 'R' && event.shiftKey === true) {
         refreshQueues(null, true);
-        event.stopPropagation();
-        event.preventDefault();
-        // 
-        // SHIFT + Q KEY (NEW QUEUE)
-        // 
-      } else if (event.key === 'Q' && event.shiftKey === true) {
-        newQueue();
         event.stopPropagation();
         event.preventDefault();
       }

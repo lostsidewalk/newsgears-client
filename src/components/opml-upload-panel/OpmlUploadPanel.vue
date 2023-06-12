@@ -171,10 +171,11 @@ export default {
   },
   emits: [ "continueUpload", "finalizeUpload", "returnToStep1", "cancel" ],
   setup() {
-    const { shouldShowAlert } = useNotifications();
+    const { shouldShowAlert, dismissAlert } = useNotifications();
 
     return {
       shouldShowAlert,
+      dismissAlert,
     }
   },
   data() {

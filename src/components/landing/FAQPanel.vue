@@ -5,7 +5,6 @@
     </v-card-title>
     <v-divider />
     <v-card-text
-      class="answer"
       align="left"
     >
       <p class="mb-2">

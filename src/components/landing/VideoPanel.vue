@@ -5,7 +5,6 @@
     </v-card-title>
     <v-divider />
     <v-card-text
-      class="answer"
       align="center"
     >
       <vue-plyr style="width: 100%;height: auto;">
