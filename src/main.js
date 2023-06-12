@@ -377,16 +377,11 @@ const i18n = createI18n({
       resetPassword: "Restablecer la contraseña",
       emailNotifications: "Notificaciones por correo electrónico",
       updateNotificationPreferences: "Actualizar preferencias de notificación",
-      emailNotificationsAreDisabled:
-        "Las notificaciones por correo electrónico están actualmente deshabilitadas.",
-      emailNotificationsAreEnabled:
-        "Las notificaciones por correo electrónico están habilitadas actualmente.",
       enableAccountAlertsNotifications:
         "Habilite esta opción para recibir alertas de cuenta y notificaciones de mantenimiento.",
       enableProductNotifications:
         "Habilite esta opción para recibir correos electrónicos ocasionales sobre notificaciones de producción y nuevas funciones.",
       enableSelectedNotifications: "Habilitar notificaciones seleccionadas",
-      disableSelectedNotifications: "Deshabilitar todas las notificaciones",
       yourSubscriptionWasCanceled:
         "Su suscripción fue cancelada y no se renovará.",
       currentPeriod: "PERÍODO ACTUAL",
@@ -837,16 +832,11 @@ const i18n = createI18n({
       resetPassword: "Reset Password",
       emailNotifications: "Email Notifications",
       updateNotificationPreferences: "Update Notification Preferences",
-      emailNotificationsAreDisabled:
-        "Email notifications are currently disabled.",
-      emailNotificationsAreEnabled:
-        "Email notifications are currently enabled.",
       enableAccountAlertsNotifications:
         "Enable this option to receive account alerts and maintenance notifications.",
       enableProductNotifications:
         "Enable this option to receive occasional emails about production notifications and new features.",
       enableSelectedNotifications: "Enable Selected Notifications",
-      disableSelectedNotifications: "Disable All Notifications",
       yourSubscriptionWasCanceled:
         "Your subscription was canceled, and will not renew.",
       currentPeriod: "CURRENT PERIOD",

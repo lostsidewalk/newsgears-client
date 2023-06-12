@@ -136,7 +136,6 @@
       >
         <v-card-item 
           :title="$t('emailNotifications')" 
-          :subtitle="notificationsDisabled ? $t('emailNotificationsAreDisabled') : $t('emailNotificationsAreEnabled')"
         />
         <v-divider />
         <v-card-actions>
@@ -145,14 +144,12 @@
             v-model="enableAccountAlerts" 
             name="enableAccountAlerts"
             :label="$t('enableAccountAlertsNotifications')" 
-            :disabled="notificationsDisabled"
           />
           <v-checkbox
             id="enableProductNotifications" 
             v-model="enableProductNotifications" 
             name="enableProductNotifications"
             :label="$t('enableProductNotifications')" 
-            :disabled="notificationsDisabled"
           />
         </v-card-actions>
         <v-divider />
@@ -161,21 +158,8 @@
           <v-btn
             id="updateNotificationPreferences"
             :size="buttonSize" 
-            :disabled="notificationsDisabled" 
             :text="$t('updateNotificationPreferences')"
             @click="$emit('updateNotificationPreferences', {
-              notificationsDisabled: false,
-              enableAccountAlerts: enableAccountAlerts,
-              enableDailyFeedReport: enableDailyFeedReport, 
-              enableProductNotifications: enableProductNotifications
-            })"
-          />
-          <!-- toggle (all) notifications button -->
-          <v-btn 
-            :size="buttonSize"
-            :text="notificationsDisabled ? $t('enableSelectedNotifications') : $t('disableSelectedNotifications')"
-            @click="$emit('toggleNotifications', {
-              notificationsDisabled: !notificationsDisabled, 
               enableAccountAlerts: enableAccountAlerts,
               enableDailyFeedReport: enableDailyFeedReport, 
               enableProductNotifications: enableProductNotifications
@@ -185,7 +169,7 @@
       </v-card>
       <!-- subscription -->
       <v-card
-        v-if="subscription"
+        v-if="subscriptionStatus"
         elevation="6"
         class="mb-4 pa-1"
       >
@@ -356,7 +340,6 @@ export default {
       enableProductNotifications: null,
       showDeactivateUser: false,
       showResetPassword: false,
-      notificationsDisabled: false,
     }
   },
   computed: {
@@ -430,14 +413,24 @@ export default {
 
     let frameworkConfig = this.account.frameworkConfig;
     if (frameworkConfig) {
-      this.enableAccountAlerts = frameworkConfig.accountAlerts;
-      this.enableDailyFeedReport = frameworkConfig.dailyFeedReport;
-      this.enableProductNotifications = frameworkConfig.productNotifications;
-      this.notificationsDisabled = frameworkConfig.notifications.disabled;
-    } else {
-      this.notificationsDisabled = false;
+      let notifications = frameworkConfig.notifications;
+      if (notifications) {
+        this.enableAccountAlerts = this.isTrue(notifications.accountAlerts);
+        this.enableDailyFeedReport = this.isTrue(notifications.dailyFeedReport);
+        this.enableProductNotifications = this.isTrue(notifications.productNotifications);
+      }
     }
   },
+  methods: {
+    isTrue(b) {
+      if (!b) {
+        return false;
+      } else if (b.toLowerCase() === 'true') {
+        return true;
+      }
+      return false;
+    }
+  }
 }
 </script>
 

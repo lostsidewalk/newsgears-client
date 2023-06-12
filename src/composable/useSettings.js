@@ -48,9 +48,12 @@ export function useSettings(props) {
             emailAddress: data.emailAddress,
             authProvider: data.authProvider,
             authProviderProfileImgUrl: data.authProviderProfileImgUrl,
-            authProviderUsername: data.authProviderUsername
+            authProviderUsername: data.authProviderUsername,
+            frameworkConfig: data.frameworkConfig, 
           })
-          Object.assign(subscription, data.subscription);
+          if (data.subscription) {
+            Object.assign(subscription, data.subscription);
+          }
           showSettingsPanel.value = true;
         }).catch((error) => {
           handleServerError(error);
@@ -111,8 +114,12 @@ export function useSettings(props) {
           account.emailAddress = newSettings.emailAddress;
         }
         if (newSettings.frameworkConfig) {
+          if (!account.frameworkConfig) {
+            account.frameworkConfig = {};
+          }
           Object.assign(account.frameworkConfig, newSettings.frameworkConfig);
         }
+        setLastServerMessage(t('settingsUpdated'));
       }).catch((error) => {
         handleServerError(error);
       }).finally(() => {
@@ -392,6 +399,9 @@ export function useSettings(props) {
           account.emailAddress = newSettings.emailAddress;
         }
         if (newSettings.frameworkConfig) {
+          if (!account.frameworkConfig) {
+            account.frameworkConfig = {};
+          }
           Object.assign(account.frameworkConfig, newSettings.frameworkConfig);
         }
         setLastServerMessage(t('settingsUpdated'));
