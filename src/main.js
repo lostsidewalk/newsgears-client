@@ -6,6 +6,7 @@ import VuePlyr from "vue-plyr";
 import VueAnnouncer from "@vue-a11y/announcer";
 import { createI18n } from "vue-i18n";
 import Vue3NativeNotification from "vue3-native-notification";
+import { createPinia } from "pinia";
 
 import "@vue-a11y/announcer/dist/style.css";
 import "vue-plyr/dist/vue-plyr.css";
@@ -92,6 +93,15 @@ const i18n = createI18n({
       copyright: "DERECHOS DE AUTOR",
       contactUsWithQuestionsViaEmail:
         "Contacta a Lost Sidewalk Software con preguntas por correo electrónico.",
+      // demo
+      dashboardCardScreenshot: 'Captura de pantalla de la tarjeta del panel de cola',
+      queueSettingsScreenshot: 'Captura de pantalla de configuración de la cola',
+      filterScreenshot: 'Captura de pantalla del filtro de cola',
+      listLayoutsScreenshot: 'Captura de pantalla de diseño de lista',
+      cardLayoutsScreenshot: 'Captura de pantalla del diseño de la tarjeta',
+      tableLayoutsScreenshot: 'Captura de pantalla del diseño de la tabla',
+      postCardScreenshot: 'Captura de pantalla de la tarjeta postal',
+      opmlUploadScreenshot: 'Captura de pantalla de carga OPML',
       // faq
       whatIsRSS: "¿Qué es RSS/ATOM?",
       rssIs:
@@ -140,7 +150,7 @@ const i18n = createI18n({
       nArticlesArchived: "{n} artículos archivados",
       httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
       redirectedTo:
-        "REDIRIGIDO A {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
+        "Redirigido a {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable:
         "Las métricas aún no están disponibles para esta fuente RSS.",
       // buttons
@@ -302,6 +312,7 @@ const i18n = createI18n({
       languageColon: "IDIOMA:",
       samplingRateColon: "TASA DE MUESTREO:",
       // opml
+      uploadOpmlHere: 'Utilice esta pantalla para cargar un archivo OPML que contenga información sobre sus suscripciones a feeds desde otra plataforma.',
       createQueuesFromOPML: "Cargue OPML para crear colas",
       selectAnOpmlFile: "Seleccione un archivo OPML",
       addAnOpmlFile: "Agregar un archivo OPML",
@@ -537,7 +548,7 @@ const i18n = createI18n({
         "Username, email address, and password are required in order to register.",
       // landing
       createAnAccount: "Create an account",
-      whatIsFeedGears: "A secure, private, accessible news reader.",
+      whatIsFeedGears: "A modern, customizable, feed reader.",
       whyIsFeedGearsFree: "Free forever because we love RSS.",
       devBlog: "Dev Blog",
       docs: "Docs",
@@ -550,6 +561,15 @@ const i18n = createI18n({
       copyright: "COPYRIGHT",
       contactUsWithQuestionsViaEmail:
         "Contact Lost Sidewalk Software with questions via email.",
+      // demo 
+      dashboardCardScreenshot: 'Queue dashboard card screenshot',
+      queueSettingsScreenshot: 'Queue settings screenshot',
+      filterScreenshot: 'Queue filter screenshot',
+      listLayoutsScreenshot: 'List layout screenshot',
+      cardLayoutsScreenshot: 'Card layout screenshot',
+      tableLayoutsScreenshot: 'Table layout screenshot',
+      postCardScreenshot: 'Post card sscreenshot',
+      opmlUploadScreenshot: 'OPML upload screenshot',
       // faq
       whatIsRSS: "What is RSS/ATOM?",
       rssIs:
@@ -597,7 +617,7 @@ const i18n = createI18n({
       nArticlesArchived: "{n} articles archived",
       httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
       redirectedTo:
-        "REDIRECT TO {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
+        "Redirected to {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
       metricsNotYetAvailable: "Metrics are not yet available for this feed.",
       // buttons
       update: "Update",
@@ -737,6 +757,12 @@ const i18n = createI18n({
       listLayout: "Switch to list layout",
       tableLayout: "Switch to table layout",
       // iTunes
+      iTunesTitle: "TITLE: {title}",
+      iTunesSubTitle: "SUBTITLE: {subTitle}",
+      iTunesAuthor: "AUTHOR: {author}",
+      iTunesEpisode: "EPISODE: {episode}",
+      iTunesEpisodeType: "EPISODE TYPE: {episodeType}",
+      iTunesDuration: "DURATION: {duration}",
       explicit: "EXPLICIT",
       closedCaptioned: "Closed Captioned",
       episode: "Episode {episode}",
@@ -758,6 +784,7 @@ const i18n = createI18n({
       languageColon: "LANGUAGE:",
       samplingRateColon: "SAMPLING RATE:",
       // opml
+      uploadOpmlHere: 'Use this screen to upload an OPML file containing information about your feed subscriptions from another platform.',
       createQueuesFromOPML: "Upload OPML to create queues",
       selectAnOpmlFile: "Select an OPML file",
       addAnOpmlFile: "Add an OPML file",
@@ -813,6 +840,7 @@ const i18n = createI18n({
       unstarThisPost: "Un-star this post",
       openOriginalArticle: "Open original article",
       description: "DESCRIPTION",
+      contentsNofM: "CONTENTS ({n}/{m})",
       links: "LINKS",
       postComments: "COMMENTS",
       author: "AUTHOR",
@@ -1052,9 +1080,12 @@ const vuetify = createVuetify({
 
 const { auth, isAuthenticated } = useAuthService();
 
+const pinia = createPinia();
+
 createApp(App, {})
   .provide("auth", auth)
   .provide("isAuthenticated", isAuthenticated)
+  .use(pinia)
   .use(router)
   .use(VuePlyr, {
     plyr: {},

@@ -4,21 +4,21 @@
     align="left"
     justify="left"
   >
-    <v-card-subtitle v-if="isUseableMetadata(mediaGroup.postMediaMetadata)">
-      <!-- metadata -->
-      <PostMediaMetadata
-        class="ma-2 pa-2"
-        :metadata="mediaGroup.postMediaMetadata"
-      />
-    </v-card-subtitle>
-    <v-sheet v-if="mediaGroup.postMediaContents && showContents">
-      <PostMediaContent
-        v-for="(mc,idx) of mediaGroup.postMediaContents"
-        :key="mc" 
-        :ref="'postMediaContent_' + idx"
-        :media-content="mc" 
-      />
-    </v-sheet>
+    <!-- metadata -->
+    <PostMediaMetadata
+      v-if="mediaGroup.postMediaMetadata"
+      :metadata="mediaGroup.postMediaMetadata"
+    />
+    <v-card-text v-if="mediaGroup.postMediaContents && showContents">
+      <v-sheet>
+        <PostMediaContent
+          v-for="(mc,idx) of mediaGroup.postMediaContents"
+          :key="mc" 
+          :ref="'postMediaContent_' + idx"
+          :media-content="mc" 
+        />
+      </v-sheet>
+    </v-card-text>
   </v-card>
 </template>
 

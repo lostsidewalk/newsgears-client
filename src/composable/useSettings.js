@@ -43,6 +43,9 @@ export function useSettings(props) {
               response.text().then(t => { throw new Error(t) });
           }
         }).then((data) => {
+          Object.keys(account).forEach((key) => {
+            delete account[key];
+          });
           Object.assign(account, {
             username: data.username,
             emailAddress: data.emailAddress,
@@ -52,6 +55,9 @@ export function useSettings(props) {
             frameworkConfig: data.frameworkConfig, 
           })
           if (data.subscription) {
+            Object.keys(subscription).forEach((key) => {
+              delete subscription[key];
+            });
             Object.assign(subscription, data.subscription);
           }
           showSettingsPanel.value = true;

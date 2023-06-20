@@ -90,7 +90,7 @@
       </v-app-bar>
       <!-- app bar (queue filter) -->
       <v-app-bar
-        v-show="roSelectedQueueId"
+        v-show="queueStore.selectedQueueId"
         app
       >
         <!-- queue filter  -->
@@ -100,11 +100,11 @@
           :queue-length="filteredArticleList.length"
           :queue-name="roSelectedQueueTitle"
           :show-queue-refresh-indicator="showQueueRefreshIndicator"
-          :queues="roQueues"
+          :queues="queueStore.queues"
           @toggleSortOrder="toggleArticleListSortOrder"
           @toggleQueueFilterPills="toggleQueueFilterPills"
           @refreshQueues="refreshQueues(null, true)"
-          @markAsRead="$event => { markQueueAsRead(roSelectedQueueId); showQueueMarkAsReadConfirmation = true; }"
+          @markAsRead="$event => { markQueueAsRead(queueStore.selectedQueueId); showQueueMarkAsReadConfirmation = true; }"
           @update:modelValue="updateArticleListFilter"
         />
         <!-- help buton -->
@@ -119,7 +119,7 @@
       <!-- app bar (filter pills) -->
       <v-expand-transition>
         <v-app-bar
-          v-if="roSelectedQueueId && allFilterPills.length > 0 && roShowQueueFilterPills"
+          v-if="queueStore.selectedQueueId && allFilterPills.length > 0 && roShowQueueFilterPills"
           app
         >
           <QueueFilterPills :filter-pills="allFilterPills" />
@@ -146,7 +146,7 @@
             @click.close="dismissAlert('thisIsYourQueueDashboard')"
           />
           <v-hover
-            v-for="queue in filteredQueueIdentOptions"
+            v-for="queue in queueStore.queues"
             v-slot="{ isHovering, props }"
             :key="queue.value"
           >
@@ -154,11 +154,11 @@
               variant="flat"
               :elevation="isHovering ? 12 : 0"
               :queue="queue"
-              :article-list="roArticleListsByQueue[queue.id]"
+              :article-list="queueStore.articleListsByQueue[queue.id]"
               :feed-url="feedUrl"
               class="ma-4"
-              :class="roSelectedQueueId === queue.id ? 'selected-queue' : ''"
-              :is-selected="roSelectedQueueId === queue.id"
+              :class="queueStore.selectedQueueId === queue.id ? 'selected-queue' : ''"
+              :is-selected="queueStore.selectedQueueId === queue.id"
               v-bind="props"
               @click.stop="$event => { setSelectedQueueId(queue.id); showQueueDashboard = false; }"
               @manageSubscriptions="openQueueConfigPanel(queue.id)"
@@ -291,7 +291,7 @@
           @table="switchToTableLayout"
         />
         <v-label
-          v-if="roSelectedQueueId"
+          v-if="queueStore.selectedQueueId"
           class="ma-2 font-weight-bold"
         >
           {{ roSelectedQueueTitle }}
@@ -519,14 +519,12 @@ export default {
       dismissAlert,
     } = useNotifications();
     const {
-      roSelectedQueueId,
+      queueStore, 
       roSelectedQueueTitle,
       roPreviousQueueId,
       roQueueIdToDelete,
       roQueueIdToMarkAsRead,
-      roQueues,
       roSelectedPost,
-      roArticleListsByQueue,
       roArticleList,
       roRefreshQueuesIsLoading,
       roArticleListFilter,
@@ -545,13 +543,11 @@ export default {
       showQueueConfigPanel, // rw 
       // 
       filteredArticleList, // computed 
-      filteredQueueIdentOptions, // computed 
       allFilterPills, // computed 
       showQueueRefreshIndicator, // computed 
       selectedTab, // computed 
       tabModel, // computed 
       // 
-      restoreQueuesFromLocalStorage,
       refreshQueues,
       updatePostReadStatus,
       updatePostPubStatus,
@@ -643,7 +639,7 @@ export default {
       // 
       // queue-related key handling 
       // 
-      if (roSelectedQueueId.value) {
+      if (queueStore.selectedQueueId) {
         let t = event.target.getAttribute("type") || event.target.type;
         if (t === 'text') {
           return;
@@ -652,7 +648,7 @@ export default {
         // SHIFT + E KEY (CONFIGURE SELECTED QUEUE)
         // 
         if (event.key === 'E' && event.shiftKey === true) {
-          openQueueConfigPanel(roSelectedQueueId.value);
+          openQueueConfigPanel(queueStore.selectedQueueId);
           event.stopPropagation();
           event.preventDefault();
         // 
@@ -727,7 +723,7 @@ export default {
     // 
     watch(isAuthenticated, (newIsAuthenticated) => {
       if (newIsAuthenticated) {
-        restoreQueuesFromLocalStorage();
+        refreshQueues(null, true);
         // schedule the subscription-metrics refresh timer 
         refreshIntervalId.value = setInterval(() => {
           checkForNewSubscriptionMetrics();
@@ -785,20 +781,16 @@ export default {
       roSettingsIsLoading,
       showSettingsPanel,
       // queues module data 
-      roQueues,
       roShowQueueFilterPills,
       roQueueIdToDelete,
       roQueueIdToMarkAsRead,
       roSelectedPost, // selected post to show on the post card modal (while in list view) 
-      roSelectedQueueId, // currently selected queue Id 
       roSelectedQueueTitle, // currently selected queue title 
       roPreviousQueueId, // previously selected queue Id 
-      roArticleListsByQueue, // all queues 
       roArticleList, // inbound queue for the currently selected queue  
       roArticleListFilter, // user-supplied filter text (lunrjs query expression) 
       roArticleListSortOrder,
       roRefreshQueuesIsLoading,
-      filteredQueueIdentOptions,
       allFilterPills,
       filteredArticleList,
       // queue config module data 
@@ -842,6 +834,7 @@ export default {
       toggleNotifications,
       updateAccount,
       // queues module functions 
+      queueStore,
       refreshQueues,
       openPost,
       selectNextPost,

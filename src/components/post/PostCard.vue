@@ -26,7 +26,10 @@
           frameborder="0"
           v-html="post.postTitle.value"
         />
-        <div v-else>
+        <div
+          v-else
+          class="post-text-frame"
+        >
           {{ post.postTitle.value }}
         </div>
         <v-divider class="mb-1 mt-0" />
@@ -59,6 +62,7 @@
       v-if="showFullPost"
     >
       <v-card>
+        <!-- description -->
         <v-card-text
           v-if="post.postDesc"
           class="overflow-auto"
@@ -67,45 +71,61 @@
           <v-label>
             {{ $t("description") }} ({{ post.postDesc.type }})
           </v-label>
+          <v-divider class="pt-1 pb-1" />
           <div
             v-if="isHtmlContent(post.postDesc)"
             class="post-html-frame"
             frameborder="0"
             v-html="post.postDesc.value"
           />
-          <div v-else>
+          <div
+            v-else
+            class="post-text-frame"
+          >
             {{ post.postDesc.value }}
           </div>
         </v-card-text>
+        <!-- contents -->
+        <v-divider v-if="post.postContents" />
         <v-card-text
           v-if="post.postContents"
           class="overflow-auto"
         >
           <div
-            v-for="c in post.postContents"
+            v-for="(c,idx) in post.postContents"
             :key="c"
           >
+            <!-- post contents (hidden w/no detials) -->
+            <v-label>
+              {{ $t("contentsNofM", { n: idx + 1, m: post.postContents.length }) }} ({{ c.type }})
+            </v-label>
+            <v-divider class="pt-1 pb-1" />
             <div
               v-if="isHtmlContent(c)"
               class="post-html-frame"
               v-html="c.value"
             />
-            <div v-else>
+            <div
+              v-else
+              class="post-text-frame"
+            >
               {{ c.value }}
             </div>
           </div>
         </v-card-text>
         <!-- post media -->
+        <v-divider v-if="post.postMedia" />
         <PostMedia
           v-if="post.postMedia"
           ref="postMedia"
-          class="ma-4"
+          class="ma-2"
           :media="post.postMedia"
         />
         <!-- post itunes -->
+        <v-divider v-if="post.postITunes" />
         <PostITunes
           v-if="post.postITunes"
-          class="ma-4"
+          class="ma-2"
           :i-tunes="post.postITunes"
           @playFirstEnclosure="showFirstEnclosure = true"
         />
@@ -121,6 +141,7 @@
             :enclosure="enclosure"
           />
         </v-sheet>
+        <v-divider v-if="post.postUrls" />
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
         <v-card-text v-if="post.postUrls">
           <v-label>{{ $t("links") }}</v-label>
@@ -143,6 +164,7 @@
             }}
           </div>
         </v-card-text>
+        <v-divider v-if="post.postComment" />
         <!-- post comment (hidden w/no details) -->
         <v-card-text v-if="post.postComment">
           <v-label>{{ $t("postComments") }}</v-label>
@@ -397,6 +419,12 @@ export default {
 
 .post-html-frame {
   overflow: auto;
+  white-space-collapse: preserve-breaks;
+}
+
+.post-text-frame {
+  overflow: auto;
+  white-space-collapse: preserve-breaks;
 }
 
 .post-read {

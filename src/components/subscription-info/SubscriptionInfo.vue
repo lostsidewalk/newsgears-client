@@ -18,6 +18,7 @@
             :title="info.icon.title" 
             :alt="$t('feedLogoImage')" 
             contain
+            max-height="128px"
           />
           <v-img
             v-if="info.image && !info.icon"
@@ -26,6 +27,7 @@
             :title="info.image.title" 
             :alt="$t('feedLogoImage')" 
             contain
+            max-height="128px"
           />
           <v-img
             v-if="!info || (!info.image && !info.icon)"
@@ -33,6 +35,7 @@
             src="rss_logo.svg"
             :alt="$t('rssLogo')"
             contain
+            max-height="128px"
           />
         </v-col>
         <v-col cols="10">
@@ -59,6 +62,7 @@
                   variant="tonal"
                   label
                   :ripple="false"
+                  :title="info.url"
                 >
                   {{ $t('httpStatus', { 
                     httpStatusCode: httpStatusCode, 
@@ -67,15 +71,16 @@
                 </v-chip>
                 <!-- HTTP redirect status -->
                 <v-chip
-                  v-if="info.redirectHttpStatusCode"
+                  v-if="redirectHttpStatusCode"
                   variant="tonal"
                   label
                   :ripple="false"
+                  :title="redirectFeedUrl"
                 >
                   {{ $t('redirectedTo', { 
-                    redirectFeedUrl: info.redirectFeedUrl, 
-                    redirectHttpStatusCode: info.redirectHttpStatusCode, 
-                    redirectHttpStatusMessage: info.redirectHttpStatusMessage
+                    redirectFeedUrl: redirectFeedUrl, 
+                    redirectHttpStatusCode: redirectHttpStatusCode, 
+                    redirectHttpStatusMessage: redirectHttpStatusMessage
                   }) }}
                 </v-chip>
                 <!-- URL is upgradable -->
@@ -84,6 +89,7 @@
                   variant="tonal"
                   label
                   :ripple="false"
+                  :title="$t('feedAlsoAvailableInHttps')"
                 >
                   {{ $t('feedAlsoAvailableInHttps') }}
                 </v-chip>
@@ -242,26 +248,37 @@ export default {
   },
   computed: {
     httpStatusCode: function () {
-      let s = this.info.httpStatusCode;
-      if (s) {
-        return s;
-      }
-      let subscriptionMetrics = this.info.subscriptionMetrics;
-      if (subscriptionMetrics && subscriptionMetrics.length > 0) {
-        let mostRecentMetric = subscriptionMetrics[0];
-        return mostRecentMetric.httpStatusCode;
+      let m = this.mostRecentSubscriptionMetric;
+      if (m) {
+        return m.httpStatusCode;
       }
       return null;
     },
     httpStatusMessage: function () {
-      let s = this.info.httpStatusMessage;
-      if (s) {
-        return s;
+      let m = this.mostRecentSubscriptionMetric;
+      if (m) {
+        return m.httpStatusMessage;
       }
-      let subscriptionMetrics = this.info.subscriptionMetrics;
-      if (subscriptionMetrics && subscriptionMetrics.length > 0) {
-        let mostRecentMetric = subscriptionMetrics[0];
-        return mostRecentMetric.httpStatusMessage;
+      return null;
+    },
+    redirectFeedUrl: function() {
+      let m = this.mostRecentSubscriptionMetric;
+      if (m) {
+        return m.redirectFeedUrl;
+      }
+      return null;
+    },
+    redirectHttpStatusCode: function() {
+      let m = this.mostRecentSubscriptionMetric;
+      if (m) {
+        return m.redirectHttpStatusCode;
+      }
+      return null;
+    },
+    redirectHttpStatusMessage: function() {
+      let m = this.mostRecentSubscriptionMetric;
+      if (m) {
+        return m.redirectHttpStatusMessage;
       }
       return null;
     },

@@ -59,12 +59,10 @@ export default {
     },
     isAudio: function () {
       let a = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("audio") >= 0;
-      console.debug("enclosureType=" + this.enclosure.type + ", isAudio=" + a);
       return a;
     },
     isVideo: function () {
-      let v = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("video/mp4") >= 0;
-      console.debug("enclosureType=" + this.enclosure.type + ", isVideo=" + v);
+      let v = this.enclosure.type.indexOf("shockwave-flash") >= 0 || this.enclosure.type.indexOf("video") >= 0;
       return v;
     },
   },

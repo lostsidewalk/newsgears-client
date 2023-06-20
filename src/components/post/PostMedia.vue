@@ -4,7 +4,7 @@
     align="left"
     justify="left"
   >
-    <v-card-subtitle v-if="isUseableMetadata">
+    <v-card-subtitle v-if="hasMediaMetadata">
       <!-- top-level metadata -->
       <PostMediaMetadata
         class="ma-2 pa-2"
@@ -54,9 +54,12 @@ export default {
     }
   },
   computed: {
-    isUseableMetadata: function () {
-      return this.media.postMediaMetadata.thumbnails && this.media.postMediaMetadata.thumbnails.length > 0;
+    hasMediaMetadata: function () {
+      return this.media.postMediaMetadata && Object.keys(this.media.postMediaMetadata).length > 0;
     }
+  },
+  mounted() {
+    console.log("media=" + JSON.stringify(this.media));
   },
   methods: {
     pause() {

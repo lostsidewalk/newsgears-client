@@ -4,23 +4,22 @@ import { ref, reactive, inject, computed, nextTick, readonly } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composable/useNotifications';
 import { useTimestamp } from '@/composable/useTimestamp';
+import { useQueueStore } from '@/composable/useQueueStore';
 
 export function useQueues(props) {
   const auth = inject('auth');
   const { t } = useI18n();
-  const { 
-    handleServerError, 
-    setLastServerMessage 
+  const {
+    handleServerError,
+    setLastServerMessage
   } = useNotifications();
   const { formatTimestamp } = useTimestamp();
-  const selectedQueueId = ref(null); // currently selected queue Id 
+  const queueStore = useQueueStore();
   const selectedQueueTitle = ref(null); // currently selected queue title 
   const previousQueueId = ref(null); // previously selected queue Id 
   const queueIdToDelete = ref(null);
   const queueIdToMarkAsRead = ref(null);
-  const queues = reactive([]); // all queues 
   const selectedPost = reactive({}); // selected post to show on the post card modal (while in list view) 
-  const articleListsByQueue = reactive({}); // all queues 
   const articleList = reactive({}); // inbound queue for the currently selected queue  
   const refreshQueuesIsLoading = ref(false);
   const articleListFilter = ref(''); // user-supplied filter text (lunrjs query expression) 
@@ -80,33 +79,6 @@ export function useQueues(props) {
     return results;
   });
 
-  const filteredQueueIdentOptions = computed(() => {
-    let queueIdentOptions = [];
-    let t = Array.from(queues);
-    for (let i = 0; i < Math.min(128, t.length); i++) {
-      queueIdentOptions.push({
-        "label": t[i].title ? t[i].title : t[i].ident,
-        "value": t[i].ident,
-        "description": t[i].description,
-        "title": t[i].title,
-        "id": t[i].id,
-        "queueStatus": t[i].queueStatus,
-        "lastDeployed": t[i].lastDeployed,
-        "subscriptions": t[i].subscriptions,
-        "transportIdent": t[i].transportIdent,
-      });
-    }
-    queueIdentOptions.sort((a, b) => {
-      if (a.id < b.id) {
-        return -1;
-      } else if (a.id > b.id) {
-        return 1;
-      }
-      return 0;
-    });
-    return queueIdentOptions;
-  });
-
   const allFilterPills = computed(() => {
     let filterPills = [
       {
@@ -140,7 +112,7 @@ export function useQueues(props) {
       return false;
     }
     // ensure we have a latest subscription metrics for the selected queue 
-    let latestSubscriptionMetric = latestSubscriptionMetricsByQueue[roSelectedQueueId.value];
+    let latestSubscriptionMetric = latestSubscriptionMetricsByQueue[queueStore.selectedQueueId];
     if (!latestSubscriptionMetric) {
       // console.debug("showQueueRefreshIndicator: returning early due to missing latest subscription metrics for selected queue");
       return false;
@@ -200,68 +172,6 @@ export function useQueues(props) {
     }
     return arr;
   });
-
-  function addQueue(queue) {
-    queues.push(queue);
-  }
-
-  function updateSelectedQueueIdLocalStorage() {
-    try {
-      localStorage.setItem('selectedQueueId', selectedQueueId.value);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function updateQueuesLocalStorage() {
-    try {
-      localStorage.setItem('queues', JSON.stringify(queues));
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function updateArticleListsLocalStorage() {
-    try {
-      localStorage.setItem('articleListsByQueue', JSON.stringify(articleListsByQueue));
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function restoreQueuesFromLocalStorage() {
-    const storedQueues = getQueuesLocalStorage()
-    if (storedQueues) {
-      Object.assign(queues, JSON.parse(storedQueues));
-    }
-    const storedArticleLists = getArticleListsLocalStorage();
-    if (storedArticleLists) {
-      Object.assign(articleListsByQueue, JSON.parse(storedArticleLists));
-    }
-    rebuildLunrIndexes();
-    if (queues.length > 0 && articleListsByQueue) { // remove 
-      const storedSelectedQueueId = getSelectedQueueIdLocalStorage();
-      if (storedSelectedQueueId) {
-        console.debug("restoring selected queueId=" + storedSelectedQueueId);
-        setSelectedQueueId(storedSelectedQueueId);
-      }
-      Object.assign(articleList, articleListsByQueue[selectedQueueId.value]);
-    } else {
-      refreshQueues(null, true); // need staging posts for all queues and queues definitions 
-    }
-  }
-
-  function getSelectedQueueIdLocalStorage() {
-    return localStorage.getItem('selectedQueueId');
-  }
-
-  function getQueuesLocalStorage() {
-    return localStorage.getItem('queues');
-  }
-
-  function getArticleListsLocalStorage() {
-    return localStorage.getItem('articleListsByQueue');
-  }
 
   async function refreshQueues(queuesToRetrieve, retrieveQueueDefinitions) {
     console.log("refreshing queues");
@@ -341,7 +251,7 @@ export function useQueues(props) {
               }
             })
             .then((data) => {
-              queues.splice(0);
+              queueStore.clearQueues();
               const queueDefinitionData = data.queueDefinitions;
               const subscriptionDefinitions = data.subscriptionDefinitions;
               if (queueDefinitionData) {
@@ -350,9 +260,8 @@ export function useQueues(props) {
                   const sd = subscriptionDefinitions[qd.id];
                   decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics);
                   qd.exportConfig = qd.exportConfig ? JSON.parse(qd.exportConfig) : qd.exportConfig;
-                  queues.push(qd);
+                  queueStore.addQueue(qd);
                 }
-                updateQueuesLocalStorage();
               }
             })
         );
@@ -364,29 +273,15 @@ export function useQueues(props) {
         clearTimeout(queueDefinitionRefreshTimeoutId);
       }
 
-      for (let i = 0; i < queues.length; i++) {
-        const queuedId = queues[i].id;
-        const iq = articleListsByQueue[queuedId];
-        if (iq) {
-          if (!queuesToRetrieve || queuesToRetrieve.indexOf(queues[i].id) >= 0) {
-            iq.values.splice(0);
-            iq.index = null;
-          }
-        } else {
-          articleListsByQueue[queuedId] = { values: [] };
-        }
-      }
+      queueStore.rebuildQueues(queuesToRetrieve, rawPosts);
 
-      for (let i = 0; i < rawPosts.length; i++) {
-        const post = rawPosts[i];
-        articleListsByQueue[post.queueId].values.push(post);
-      }
+      queueStore.rebuildLunrIndexes();
 
-      console.log("rebuilding lunr indexes due to refresh");
-      rebuildLunrIndexes();
-      updateArticleListsLocalStorage();
-      if (queues.length > 0 && selectedQueueId.value) {
-        Object.assign(articleList, articleListsByQueue[selectedQueueId.value]);
+      if (queueStore.queues.length > 0 && queueStore.selectedQueueId) {
+        Object.keys(articleList).forEach((key) => {
+          delete articleList[key];
+        });
+        Object.assign(articleList, queueStore.articleListsByQueue[queueStore.selectedQueueId]);
       }
     } catch (error) {
       handleServerError(error);
@@ -432,102 +327,6 @@ export function useQueues(props) {
     }
   }
 
-  function rebuildLunrIndexes() {
-    console.log("rebuilding lunr indexes");
-        for (let i = 0; i < queues.length; i++) {
-          let iq = articleListsByQueue[queues[i].id];
-          if (iq) {
-            const trueStr = t('trueStr');
-            const falseStr = t('falseStr');
-            iq.index = lunr(function () {
-              this.ref('id')
-              // title 
-              this.field('title', {
-                extractor: function (doc = {}) {
-                  return doc.postTitle ? doc.postTitle.value : null;
-                },
-                boost: 10,
-              });
-              // description 
-              this.field('description', {
-                extractor: function (doc = {}) {
-                  return doc.postDesc ? doc.postDesc.value : null;
-                }
-              });
-              // feed 
-              this.field('feed', {
-                extractor: function (doc = {}) {
-                  return doc.importerDesc;
-                },
-              });
-              // category 
-              this.field('category', {
-                extractor: function (doc = {}) {
-                  return doc.postCategories;
-                }
-              });
-              // author 
-              this.field('author', {
-                extractor: function (doc = {}) {
-                  return (doc.authors && doc.authors.length > 0) ? doc.authors[0].name : null;
-                }
-              });
-              // authors
-              this.field('authors', {
-                extractor: function (doc = {}) {
-                  return (doc.authors && doc.authors.length > 0) ?
-                    doc.authors.map(function (author) { return author.name; }) : null;
-                }
-              });
-              // contributors
-              this.field('contributors', {
-                extractor: function (doc = {}) {
-                  return (doc.contributors && doc.contributors.length > 0) ?
-                    doc.contributors.map(function (contributor) { return contributor.name; }) : null;
-                }
-              });
-              // published
-              this.field('published', {
-                extractor: function (doc = {}) {
-                  return doc.publishTimestamp ? doc.publishTimestamp.toString('YYYY-MM-DD') : null;
-                },
-              });
-              // updated
-              this.field('updated', {
-                extractor: function (doc = {}) {
-                  return doc.lastUpdatedTimestamp ? doc.lastUpdatedTimestamp.toString('YYYY-MM-DD') : null;
-                }
-              });
-              // contents
-              this.field('contents', {
-                extractor: function (doc = {}) {
-                  return (doc.postContents && doc.postContents.length > 0) ? doc.postContents[0].value : null;
-                }
-              })
-              // url
-              this.field('url', {
-                extractor: function (doc = {}) {
-                  return doc.postUrl;
-                }
-              });
-              this.field('status', {
-                extractor: function (doc = {}) {
-                  return doc.postReadStatus ? doc.postReadStatus : 'UNREAD';
-                }
-              });
-              this.field('starred', {
-                extractor: function (doc = {}) {
-                  return doc.isPublished ? trueStr : falseStr;
-                }
-              });
-              iq.values.forEach(function (doc) {
-                this.add(doc)
-              }, this)
-            }); 
-          }
-        }
-  }
-
   function updatePostReadStatus(result) {
     console.log("updating post status");
     refreshQueuesIsLoading.value = true;
@@ -570,7 +369,7 @@ export function useQueues(props) {
               p.isRead = false;
             }
           }
-          rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes();
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -619,20 +418,8 @@ export function useQueues(props) {
             p.isPublished = false;
           }
           p.postPubStatus = null;
-          // update the queue last deployed timestamp 
-          let updateLocalStorage = false;
-          for (let i = 0; i < queues.length; i++) {
-            if (queues[i].id === result.queueId) {
-              queues[i].lastDeployed = formatTimestamp(data.timestamp);
-              updateLocalStorage = true;
-              break;
-            }
-          }
-          if (updateLocalStorage) {
-            // update queues localStorage 
-            updateQueuesLocalStorage();
-          }
-          rebuildLunrIndexes();
+          queueStore.updateLastDeployed(result.queueId, formatTimestamp(data.timestamp));
+          queueStore.rebuildLunrIndexes();
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -703,7 +490,7 @@ export function useQueues(props) {
 
   function updateFilter(f) {
     if (f.name === "subscription") {
-      if (f.queueId !== selectedQueueId.value) {
+      if (f.queueId !== queueStore.selectedQueueId) {
         setSelectedQueueId(f.queueId);
         articleListFilter.value = '';
         nextTick(() => {
@@ -742,7 +529,7 @@ export function useQueues(props) {
 
   function deleteSelectedQueue() {
     document.activeElement.blur();
-    queueIdToDelete.value = selectedQueueId.value;
+    queueIdToDelete.value = queueStore.selectedQueueId;
   }
 
   function performQueueDelete() {
@@ -771,27 +558,9 @@ export function useQueues(props) {
         }
       }).then((data) => {
         console.log("deleted queueId=" + queueIdToDelete.value);
-        delete articleListsByQueue[queueIdToDelete.value];
-        // update queues localStorage 
-        updateArticleListsLocalStorage();
-        let idxToSplice = -1;
-        for (let i = 0; i < queues.length; i++) {
-          if (queues[i].id === queueIdToDelete.value) {
-            idxToSplice = i;
-            break;
-          }
-        }
-        if (idxToSplice > -1) {
-          let nextQueueId = queues.length > idxToSplice + 1 ? queues[idxToSplice + 1].id : null;
-          queues.splice(idxToSplice, 1);
-          // update queues localStorage 
-          updateQueuesLocalStorage();
-          if (selectedQueueId.value === queueIdToDelete.value) {
-            setSelectedQueueId(nextQueueId); // TODO: (enhancement) should be a configurable 'default' queue 
-          }
-        }
+        queueStore.deleteQueueById(queueIdToDelete.value);
         setLastServerMessage(data.message);
-        rebuildLunrIndexes();
+        queueStore.rebuildLunrIndexes();
       }).catch((error) => {
         handleServerError(error);
       }).finally(() => {
@@ -812,7 +581,7 @@ export function useQueues(props) {
 
   function markSelectedQueueAsRead() {
     document.activeElement.blur();
-    queueIdToMarkAsRead.value = selectedQueueId.value;
+    queueIdToMarkAsRead.value = queueStore.selectedQueueId;
   }
 
   function markQueueAsRead(queueId) {
@@ -847,15 +616,9 @@ export function useQueues(props) {
               response.text().then(t => { throw new Error(t) });
           }
         }).then((data) => {
-          articleListsByQueue[queueIdToMarkAsRead.value].values.forEach((p) => {
-            p.isRead = true;
-            p.postReadStatus = 'READ';
-            p.isReadLater = false;
-          });
-          // update queue localStorage
-          updateArticleListsLocalStorage();
+          queueStore.markQueueAsRead(queueIdToMarkAsRead.value);
           setLastServerMessage(data.message);
-          rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes();
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -880,16 +643,18 @@ export function useQueues(props) {
 
   function setSelectedQueueId(queueId) {
     console.log("setting selectedQueueId=" + queueId);
-    previousQueueId.value = selectedQueueId.value;
-    selectedQueueId.value = queueId;
+    previousQueueId.value = queueStore.selectedQueueId;
+    queueStore.setSelectedQueueId(queueId);
     let selectedQueue = getSelectedQueue();
     if (selectedQueue) {
       selectedQueueTitle.value = selectedQueue.title;
     }
     if (queueId) {
-      Object.assign(articleList, articleListsByQueue[queueId]);
+      Object.keys(articleList).forEach((key) => {
+        delete articleList[key];
+      });
+      Object.assign(articleList, queueStore.articleListsByQueue[queueId]);
     }
-    updateSelectedQueueIdLocalStorage();
   }
 
   function restorePreviousQueueId() {
@@ -898,11 +663,11 @@ export function useQueues(props) {
 
   function getSelectedQueue() {
     try {
-      let s = parseInt(selectedQueueId.value);
+      let s = parseInt(queueStore.selectedQueueId);
       if (s) {
-        for (let i = 0; i < queues.length; i++) {
-          if (queues[i].id === s) {
-            return queues[i];
+        for (let i = 0; i < queueStore.queues.length; i++) {
+          if (queueStore.queues[i].id === s) {
+            return queueStore.queues[i];
           }
         }
       }
@@ -915,9 +680,9 @@ export function useQueues(props) {
   function getQueueById(queueId) {
     try {
       let q = parseInt(queueId);
-      for (let i = 0; i < queues.length; i++) {
-        if (queues[i].id === q) {
-          return queues[i];
+      for (let i = 0; i < queueStore.queues.length; i++) {
+        if (queueStore.queues[i].id === q) {
+          return queueStore.queues[i];
         }
       }
     } catch (error) {
@@ -926,6 +691,9 @@ export function useQueues(props) {
   }
 
   function openPost(postId) {
+    Object.keys(selectedPost).forEach((key) => {
+      delete selectedPost[key];
+    });
     Object.assign(selectedPost, getPostFromQueue(postId));
   }
 
@@ -933,13 +701,16 @@ export function useQueues(props) {
     const post = getPostFromQueue(postId);
     window.open(post.postUrl, '_blank');
   }
-  
+
   function selectNextPost() {
     if (selectedPost) {
       const id = selectedPost.id;
       const queue = filteredArticleList;
       const nextIdx = queue.value.findIndex((post) => post.id === id) + 1;
       if (nextIdx < queue.value.length) {
+        Object.keys(selectedPost).forEach((key) => {
+          delete selectedPost[key];
+        });
         Object.assign(selectedPost, queue.value[nextIdx]);
       }
     }
@@ -951,6 +722,9 @@ export function useQueues(props) {
       const queue = filteredArticleList;
       const prevIdx = queue.value.findIndex((post) => post.id === id) - 1;
       if (prevIdx >= 0) {
+        Object.keys(selectedPost).forEach((key) => {
+          delete selectedPost[key];
+        });
         Object.assign(selectedPost, queue.value[prevIdx]);
       }
     }
@@ -996,8 +770,12 @@ export function useQueues(props) {
           }
         }).then((data) => {
           if (data.errors && data.errors.length > 0) {
+            Object.keys(opmlErrors).forEach((key) => {
+              delete opmlErrors[key];
+            });
             Object.assign(opmlErrors, data.errors);
           } else {
+            queueConfigRequests.splice(0);
             Object.assign(queueConfigRequests, data.queueConfigRequests);
             atStep2.value = true;
           }
@@ -1049,11 +827,9 @@ export function useQueues(props) {
             let subscriptionDefinitions = data[i].subscriptionDefinitions;
             let subscriptionMetrics = data[i].subscriptionMetrics;
             decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
-            addQueue(queue);
+            queueStore.addQueue(queue);
             queueIds.push(queue.id);
           }
-          // update queues localStorage 
-          updateQueuesLocalStorage();
           setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
           showOpmlUploadPanel.value = false;
           refreshQueues(queueIds, false);
@@ -1101,6 +877,9 @@ export function useQueues(props) {
               response.text().then(t => { throw new Error(t) });
           }
         }).then((data) => {
+          Object.keys(latestSubscriptionMetricsByQueue).forEach((key) => {
+            delete latestSubscriptionMetricsByQueue[key];
+          });
           Object.assign(latestSubscriptionMetricsByQueue, data);
         }).catch((error) => {
           handleServerError(error);
@@ -1113,6 +892,9 @@ export function useQueues(props) {
   }
 
   function openSubscriptionMetrics(subscriptionInfo) {
+    Object.keys(subscriptionToShow).forEach((key) => {
+      delete subscriptionToShow[key];
+    });
     Object.assign(subscriptionToShow, subscriptionInfo);
     showSubscriptionMetrics.value = true;
   }
@@ -1137,6 +919,9 @@ export function useQueues(props) {
     document.activeElement.blur();
     const q = getQueueById(queueId);
     removePropertyValues(queueUnderConfig);
+    Object.keys(queueUnderConfig).forEach((key) => {
+      delete queueUnderConfig[key];
+    });
     Object.assign(queueUnderConfig, q);
     showQueueConfigPanel.value = true;
   }
@@ -1173,15 +958,11 @@ export function useQueues(props) {
         })
         .then((data) => {
           let created = data[0].queueDefinition;
-          roQueues.push(created);
-          // update queues localStorage 
-          updateQueuesLocalStorage();
-          roArticleListsByQueue[created.id] = { values: [] };
-          // update queues localStorage 
-          updateArticleListsLocalStorage();
+          queueStore.addQueue(created); 
+          queueStore.initializeArticleList(created.id);
           setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
           setSelectedQueueId(created.id);
-          rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes();
           openQueueConfigPanel(created);
         }).catch((error) => {
           handleServerError(error);
@@ -1255,11 +1036,11 @@ export function useQueues(props) {
 
   function dismissQueueConfigPanel() {
     showQueueConfigPanel.value = false;
-    if (!roSelectedQueueId.value) {
+    if (!queueStore.selectedQueueId) {
       restorePreviousQueueId();
     }
   }
-  
+
   function addSubscription(newSubscription) {
     queueConfigIsLoading.value = true;
     console.log("subscription-config: pushing new subscription to remote..");
@@ -1267,7 +1048,7 @@ export function useQueues(props) {
       const controller = new AbortController();
       const requestOptions = {
         method: 'POST',
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
@@ -1276,56 +1057,56 @@ export function useQueues(props) {
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
       fetch(baseUrl + "/queues/" + queueUnderConfig.id + '/subscriptions/', requestOptions)
-      .then((response) => {
-        let contentType = response.headers.get("content-type");
-        let isJson = contentType && contentType.indexOf("application/json") !== -1;
-        if (response.status === 200) {
-          return isJson ? response.json() : {};
-        } else {
-          return isJson ? 
-            response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
-            response.text().then(t => {throw new Error(t, { cause: {} })});
-        }
-      }).then((data) => {
-        let subscriptionDefinitions = data.subscriptionDefinitions;
-        if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
-          let source = subscriptionDefinitions[0];
-          let qd = source.subscriptionDefinition;
-          let r = {
-            id: qd.id,
-            url: qd.url,
-            queueId: qd.queueId,
-            title: qd.title
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} }) }) :
+              response.text().then(t => { throw new Error(t, { cause: {} }) });
           }
-          // auth 
-          let queryConfig = qd.queryConfig ? JSON.parse(qd.queryConfig) : qd.queryConfig;
-          if (queryConfig) {
-            r.username = queryConfig.username;
-            r.password = queryConfig.password;
-          }
-          // image 
-          let sourceImgUrl = source.imgUrl;
-          if (sourceImgUrl) {
-            r.image = {
-              title: null,
-              url: sourceImgUrl,
+        }).then((data) => {
+          let subscriptionDefinitions = data.subscriptionDefinitions;
+          if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
+            let source = subscriptionDefinitions[0];
+            let qd = source.subscriptionDefinition;
+            let r = {
+              id: qd.id,
+              url: qd.url,
+              queueId: qd.queueId,
+              title: qd.title
             }
+            // auth 
+            let queryConfig = qd.queryConfig ? JSON.parse(qd.queryConfig) : qd.queryConfig;
+            if (queryConfig) {
+              r.username = queryConfig.username;
+              r.password = queryConfig.password;
+            }
+            // image 
+            let sourceImgUrl = source.imgUrl;
+            if (sourceImgUrl) {
+              r.image = {
+                title: null,
+                url: sourceImgUrl,
+              }
+            }
+            queueUnderConfig.subscriptions.unshift(r);
+            setLastServerMessage(t('subscriptionAdded'));
           }
-          queueUnderConfig.subscriptions.unshift(r);
-          setLastServerMessage(t('subscriptionAdded'));
-        }
-      }).catch((error) => {
-        handleServerError(error); 
-      }).finally(() => {
-        queueConfigIsLoading.value = false;
-        clearTimeout(timeoutId);
-      });
+        }).catch((error) => {
+          handleServerError(error);
+        }).finally(() => {
+          queueConfigIsLoading.value = false;
+          clearTimeout(timeoutId);
+        });
     }).catch((error) => {
-      handleServerError(error); 
+      handleServerError(error);
       queueConfigIsLoading.value = false;
     });
   }
- 
+
   function deleteSubscription(id) {
     queueConfigIsLoading.value = true;
     console.log("subscription-config: deleteing subscription..");
@@ -1333,7 +1114,7 @@ export function useQueues(props) {
       const controller = new AbortController();
       const requestOptions = {
         method: 'DELETE',
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
@@ -1341,36 +1122,36 @@ export function useQueues(props) {
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
       fetch(baseUrl + "/queues/" + queueUnderConfig.id + '/subscriptions/' + id, requestOptions)
-      .then((response) => {
-        let contentType = response.headers.get("content-type");
-        let isJson = contentType && contentType.indexOf("application/json") !== -1;
-        if (response.status === 200) {
-          return isJson ? response.json() : {};
-        } else {
-          return isJson ? 
-            response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
-            response.text().then(t => {throw new Error(t, { cause: {} })});
-        }
-      }).then(() => {
-        let deleteIdx = -1;
-        for (let i = 0; i < queueUnderConfig.subscriptions.length; i++) {
-          if (queueUnderConfig.subscriptions[i].id === id) {
-            deleteIdx = i;
-            break;
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} }) }) :
+              response.text().then(t => { throw new Error(t, { cause: {} }) });
           }
-        }
-        if (deleteIdx > -1) {
-          queueUnderConfig.subscriptions.splice(deleteIdx, 1);
-        }
-        setLastServerMessage(t('subscriptionDeleted'));
-      }).catch((error) => {
-        handleServerError(error); 
-      }).finally(() => {
-        queueConfigIsLoading.value = false;
-        clearTimeout(timeoutId);
-      });
+        }).then(() => {
+          let deleteIdx = -1;
+          for (let i = 0; i < queueUnderConfig.subscriptions.length; i++) {
+            if (queueUnderConfig.subscriptions[i].id === id) {
+              deleteIdx = i;
+              break;
+            }
+          }
+          if (deleteIdx > -1) {
+            queueUnderConfig.subscriptions.splice(deleteIdx, 1);
+          }
+          setLastServerMessage(t('subscriptionDeleted'));
+        }).catch((error) => {
+          handleServerError(error);
+        }).finally(() => {
+          queueConfigIsLoading.value = false;
+          clearTimeout(timeoutId);
+        });
     }).catch((error) => {
-      handleServerError(error); 
+      handleServerError(error);
       queueConfigIsLoading.value = false;
     });
   }
@@ -1382,7 +1163,7 @@ export function useQueues(props) {
       const controller = new AbortController();
       const requestOptions = {
         method: 'PUT',
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
@@ -1391,60 +1172,57 @@ export function useQueues(props) {
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
       fetch(baseUrl + "/queues/" + queueUnderConfig.id + '/subscriptions/' + source.id, requestOptions)
-      .then((response) => {
-        let contentType = response.headers.get("content-type");
-        let isJson = contentType && contentType.indexOf("application/json") !== -1;
-        if (response.status === 200) {
-          return isJson ? response.json() : {};
-        } else {
-          return isJson ? 
-            response.json().then(j => {throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} })}) : 
-            response.text().then(t => {throw new Error(t, { cause: {} })});
-        }
-      }).then((data) => {
-        let subscriptionDefinitions = data.subscriptionDefinitions;
-        if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
-          let qd = subscriptionDefinitions[0];
-          let updateIdx = -1;
-          for (let i = 0; i < queueUnderConfig.subscriptions.length; i++) {
-            if (queueUnderConfig.subscriptions[i].id === qd.id) {
-              updateIdx = i;
-              break;
-            }
+        .then((response) => {
+          let contentType = response.headers.get("content-type");
+          let isJson = contentType && contentType.indexOf("application/json") !== -1;
+          if (response.status === 200) {
+            return isJson ? response.json() : {};
+          } else {
+            return isJson ?
+              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : ''), { cause: {} }) }) :
+              response.text().then(t => { throw new Error(t, { cause: {} }) });
           }
-          if (updateIdx > -1) {
-            let queryConfigStr = qd.queryConfig;
-            if (queryConfigStr) {
-              let queryConfig = JSON.parse(queryConfigStr);
-              queueUnderConfig.subscriptions[updateIdx].username = queryConfig.username;
-              queueUnderConfig.subscriptions[updateIdx].password = queryConfig.password;
-            } else {
-              queueUnderConfig.subscriptions[updateIdx].username = null;
-              queueUnderConfig.subscriptions[updateIdx].password = null;
+        }).then((data) => {
+          let subscriptionDefinitions = data.subscriptionDefinitions;
+          if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
+            let qd = subscriptionDefinitions[0];
+            let updateIdx = -1;
+            for (let i = 0; i < queueUnderConfig.subscriptions.length; i++) {
+              if (queueUnderConfig.subscriptions[i].id === qd.id) {
+                updateIdx = i;
+                break;
+              }
             }
+            if (updateIdx > -1) {
+              let queryConfigStr = qd.queryConfig;
+              if (queryConfigStr) {
+                let queryConfig = JSON.parse(queryConfigStr);
+                queueUnderConfig.subscriptions[updateIdx].username = queryConfig.username;
+                queueUnderConfig.subscriptions[updateIdx].password = queryConfig.password;
+              } else {
+                queueUnderConfig.subscriptions[updateIdx].username = null;
+                queueUnderConfig.subscriptions[updateIdx].password = null;
+              }
+            }
+            setLastServerMessage(t('subscriptionUpdated'));
           }
-          setLastServerMessage(t('subscriptionUpdated'));
-        }
-      }).catch((error) => {
-        handleServerError(error); 
-      }).finally(() => {
-        queueConfigIsLoading.value = false;
-        clearTimeout(timeoutId);
-      });
+        }).catch((error) => {
+          handleServerError(error);
+        }).finally(() => {
+          queueConfigIsLoading.value = false;
+          clearTimeout(timeoutId);
+        });
     }).catch((error) => {
-      handleServerError(error); 
+      handleServerError(error);
       queueConfigIsLoading.value = false;
     });
   }
 
-  const roSelectedQueueId = readonly(selectedQueueId);
   const roSelectedQueueTitle = readonly(selectedQueueTitle);
   const roPreviousQueueId = readonly(previousQueueId);
   const roQueueIdToDelete = readonly(queueIdToDelete);
   const roQueueIdToMarkAsRead = readonly(queueIdToMarkAsRead);
-  const roQueues = readonly(queues);
   const roSelectedPost = readonly(selectedPost);
-  const roArticleListsByQueue = readonly(articleListsByQueue);
   const roArticleList = readonly(articleList);
   const roRefreshQueuesIsLoading = readonly(refreshQueuesIsLoading);
   const roArticleListFilter = readonly(articleListFilter);
@@ -1461,50 +1239,43 @@ export function useQueues(props) {
   const roQueueConfigIsLoading = readonly(queueConfigIsLoading);
 
   return {
-    roSelectedQueueId,
-    roSelectedQueueTitle, 
+    queueStore: queueStore, 
+    roSelectedQueueTitle,
     roPreviousQueueId,
     roQueueIdToDelete,
     roQueueIdToMarkAsRead,
-    roQueues,
     roSelectedPost,
-    roArticleListsByQueue, 
-    roArticleList, 
-    roRefreshQueuesIsLoading, 
-    roArticleListFilter, 
-    roArticleListSortOrder, 
-    roShowQueueFilterPills, 
-    roContinueIsLoading, 
-    roAtStep2, 
-    roQueueConfigRequests, 
-    roFinalizeIsLoading, 
-    roOpmlErrors, 
+    roArticleList,
+    roRefreshQueuesIsLoading,
+    roArticleListFilter,
+    roArticleListSortOrder,
+    roShowQueueFilterPills,
+    roContinueIsLoading,
+    roAtStep2,
+    roQueueConfigRequests,
+    roFinalizeIsLoading,
+    roOpmlErrors,
     roLatestSubscriptionMetricsByQueue,
-    roSubscriptionToShow, 
+    roSubscriptionToShow,
     roQueueUnderConfig,
-    roQueueConfigIsLoading, 
+    roQueueConfigIsLoading,
     // 
     showOpmlUploadPanel, // rw 
     showSubscriptionMetrics, // rw
     showQueueConfigPanel, // rw
     // 
-    filteredArticleList, 
-    filteredQueueIdentOptions,
-    allFilterPills, 
-    showQueueRefreshIndicator, 
+    filteredArticleList,
+    allFilterPills,
+    showQueueRefreshIndicator,
     tabModel,
     // 
     // 
     // push item onto queues 
-    addQueue, 
-    // restores queues and articleListsByQueue from local storage; 
-    // rebuilds lunr indexes, sets selected queue Id;
-    // resfreshses queues from server if necessary 
-    restoreQueuesFromLocalStorage, 
+    addQueue: queueStore.addQueue,
     // makes server call to pull new stagingPosts for each queue; 
     // optionally makes server call to pull queue definitions; 
     // rebuilds all dependent entities and updates local storage; 
-    refreshQueues, 
+    refreshQueues,
     // utility method to add subscription data retrieved from server to queue definition 
     decorateQueueWithSubscriptionDefinitions,
     // makes a server call to update the post read status 
@@ -1512,17 +1283,17 @@ export function useQueues(props) {
     // makes a server call to update the post pub status 
     updatePostPubStatus,
     // returns a post from the current articleList, by Id 
-    getPostFromQueue, 
+    getPostFromQueue,
     // changes the articleList sort order from ASC <=> DSC 
     toggleArticleListSortOrder,
     // adds a 'status:' field to the articleListFilter 
     toggleFilterMode,
     // show/hide the queue filter pills 
-    toggleQueueFilterPills, 
+    toggleQueueFilterPills,
     // adds the given subscription/category to t he articleListFilter 
-    updateFilter, 
+    updateFilter,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 
-    deleteSelectedQueue, 
+    deleteSelectedQueue,
     // completes the queue delete process by making a server call to delete the queue (given by queueIdToDelete) 
     performQueueDelete,
     // cancels the queue delete prorcess (unsets queueIdToDelete and hides the confirmation modal) 
@@ -1536,11 +1307,11 @@ export function useQueues(props) {
     // cancels the queue MAR prorcess (unsets queueIdToMarkAsRead and hides the confirmation modal) 
     cancelQueueMarkAsRead,
     // sets the value of articleListFilter 
-    updateArticleListFilter, 
+    updateArticleListFilter,
     // sets the value of selectedQueueId; 
     // memoizes the value of previousQueueId; 
     // sets up the articleList for the selected queue 
-    setSelectedQueueId, 
+    setSelectedQueueId,
     // invokes setSelectedQueueId to restore the previous queue Id 
     restorePreviousQueueId,
     // return the selected queue 
@@ -1550,19 +1321,19 @@ export function useQueues(props) {
     // 
     openPostUrl,
     // 
-    selectNextPost, 
+    selectNextPost,
     // 
     selectPreviousPost,
     // 
-    uploadOpml, 
+    uploadOpml,
     // 
-    continueOpmlUpload, 
+    continueOpmlUpload,
     // 
     finalizeOpmlUpload,
     // 
     returnToStep1,
     // 
-    cancelOpmlUpload, 
+    cancelOpmlUpload,
     // 
     checkForNewSubscriptionMetrics,
     // 
@@ -1571,32 +1342,32 @@ export function useQueues(props) {
     // called by HomeView to initiate the queue creation process ('new queue' button); 
     // clears the contents of queueUnderconfig; 
     // shows the queue config panel 
-    newQueue, 
+    newQueue,
     // 
     // called by HomeView to initiate the queue update process; 
     // sets the contents of queueUnderConfig to the queue given by queueId; 
     // shows the queue config panel 
-    openQueueConfigPanel, 
+    openQueueConfigPanel,
     // 
     // invoked by HomeView to continue the queue save when the hits 'save' on a new queue; 
     // makes a server call to create the queue (from queueUnderConfig); 
-    createQueue, 
+    createQueue,
     // 
     // invoked by HomeView to continue the queue save when the user hits 'update' on queue properties; 
     // makes a server call to update the queue basic properties; 
-    updateQueue, 
+    updateQueue,
     // 
     // invoked by HomeView to add a subscription when the user hits 'subscribe' after discovering a feed; 
     // makes a server call to add the subscription to the queue (then refresh); 
-    addSubscription, 
+    addSubscription,
     // 
     // invoked by HomeView to delete a subscription when the user hits 'unsubscribe' while managing existing subscriptions; 
     // makes a server call to delete the subscription from the queue (then refresh); 
-    deleteSubscription, 
+    deleteSubscription,
     // 
     // invoked by HomeView to update a subscriptoin when the user hits 'save' while changing the auth properties; 
     // makes a server call to update the subscription auth; 
-    updateSubscriptionAuth, 
+    updateSubscriptionAuth,
     // 
     dismissQueueConfigPanel,
   }

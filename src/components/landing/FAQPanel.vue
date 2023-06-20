@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="6">
+  <v-card elevation="1">
     <v-card-title class="question-verbiage text-center pa-4">
       {{ $t('whatIsRSS') }}
     </v-card-title>
@@ -7,19 +7,19 @@
     <v-card-text
       align="left"
     >
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('rssIs') }}
       </p>
       
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('rssAllows') }}
       </p>
       
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('feedGearsIs') }}
       </p>
       
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('overTheYears') }}
 
         <v-list density="compact">
@@ -58,56 +58,58 @@
         {{ $t('eachVersionAdded') }}
       </p>
       
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('atomOTOH') }}
       </p>
       
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('keyDifferences') }}
       </p>
       
-      <p class="mb-2">
+      <p class="mb-2 faq-detail">
         {{ $t('overallRoles') }}
       </p>
       
-      <v-list density="compact">
-        <v-list-item>
-          <a
-            href="https://aboutfeeds.com/"
-            target="_blank"
-          >About Feeds</a>
-        </v-list-item>
-        <v-list-item>
-          <a
-            href="https://en.wikipedia.org/wiki/RSS"
-            target="_blank"
-          >Wikipedia: RSS</a>
-        </v-list-item>
-        <v-list-item>
-          <a
-            href="https://meganesulli.com/blog/how-rss-works"
-            target="_blank"
-          >An Intro to RSS Feeds</a>
-        </v-list-item>
-        <v-list-item>
-          <a
-            href="https://www.youneedfeeds.com/"
-            target="_blank"
-          >You Need Feeds</a>
-        </v-list-item>
-        <v-list-item>
-          <a
-            href="https://huey.xyz/posts/2021-07-18-rss"
-            target="_blank"
-          >Why you should consider using RSS</a>
-        </v-list-item>
-        <v-list-item>
-          <a
-            href="https://ncase.me/rss/"
-            target="_blank"
-          >Back to the Future with RSS</a>
-        </v-list-item>
-      </v-list>
+      <p class="mb-2 faq-detail">
+        <v-list density="compact">
+          <v-list-item>
+            <a
+              href="https://aboutfeeds.com/"
+              target="_blank"
+            >About Feeds</a>
+          </v-list-item>
+          <v-list-item>
+            <a
+              href="https://en.wikipedia.org/wiki/RSS"
+              target="_blank"
+            >Wikipedia: RSS</a>
+          </v-list-item>
+          <v-list-item>
+            <a
+              href="https://meganesulli.com/blog/how-rss-works"
+              target="_blank"
+            >An Intro to RSS Feeds</a>
+          </v-list-item>
+          <v-list-item>
+            <a
+              href="https://www.youneedfeeds.com/"
+              target="_blank"
+            >You Need Feeds</a>
+          </v-list-item>
+          <v-list-item>
+            <a
+              href="https://huey.xyz/posts/2021-07-18-rss"
+              target="_blank"
+            >Why you should consider using RSS</a>
+          </v-list-item>
+          <v-list-item>
+            <a
+              href="https://ncase.me/rss/"
+              target="_blank"
+            >Back to the Future with RSS</a>
+          </v-list-item>
+        </v-list>
+      </p>
     </v-card-text>
     <v-card-actions>
       <v-dialog v-model="showVideo">
@@ -152,5 +154,9 @@ export default {
 <style scoped>
 .question-verbiage {
   font-family: "Russo One", system-ui, sans-serif;
+}
+
+.faq-detail {
+  font-size: larger;
 }
 </style>

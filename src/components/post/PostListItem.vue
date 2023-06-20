@@ -29,6 +29,7 @@
         />
         <div
           v-else
+          class="post-text-frame"
         >
           {{ post.postTitle.value }}
         </div>
@@ -60,7 +61,7 @@
       />
       <div
         v-else-if="post.postDesc"
-        class="mt-2 mb-2"
+        class="post-text-frame"
       >
         {{ post.postDesc.value }}
       </div>
@@ -171,5 +172,11 @@ export default {
 
 .post-html-frame {
   overflow: auto;
+  white-space-collapse: preserve-breaks;
+}
+
+.post-text-frame {
+  overflow: auto;
+  white-space-collapse: preserve-breaks;
 }
 </style>

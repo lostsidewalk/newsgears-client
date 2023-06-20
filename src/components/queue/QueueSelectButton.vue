@@ -5,7 +5,7 @@
   >
     <!-- queue name -->
     <v-card-title>
-      {{ queue.label }}
+      {{ queue.title }}
     </v-card-title>
     <v-card-subtitle v-if="queue.description">
       {{ queue.description }}

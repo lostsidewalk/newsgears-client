@@ -48,14 +48,22 @@
               elevation="0"
             >
               <v-card-title
-                class="pa-4"
-                @click="showAddSubscription = !showAddSubscription"
+                class="pa-4 clickable"
+                @click.stop="showAddSubscription = !showAddSubscription"
               >
+                <v-btn
+                  :size="buttonSize"
+                  :title="$t('addANewSubscription')"
+                  :aria-label="$t('addANewSubscription')"
+                  :icon="showAddSubscription ? 'fa-minus-square-o' : 'fa-plus-square-o'"
+                  variant="text"
+                />
                 {{ $t('addANewSubscription') }}
               </v-card-title>
               <v-divider />
               <v-alert
                 v-if="shouldShowAlert('addANewSubscriptionHere')"
+                v-show="showAddSubscription"
                 closable
                 variant="outlined"
                 border="top"
@@ -64,7 +72,7 @@
                 class="ma-4"
                 @click.close="dismissAlert('addANewSubscriptionHere')"
               />
-              <v-card-text v-show="showAddSubscription || subscriptions.length === 0">
+              <v-card-text v-show="showAddSubscription">
                 <!-- text field -->
                 <v-text-field
                   v-model="newSubscription.url"
@@ -153,14 +161,22 @@
               elevation="0"
             >
               <v-card-title
-                class="pa-4"
-                @click.stop="showSubscriptions = !showSubscriptions"
+                class="pa-4 clickable"
+                @click="showSubscriptions = !showSubscriptions"
               >
+                <v-btn
+                  :size="buttonSize"
+                  :title="$t('addANewSubscription')"
+                  :aria-label="$t('addANewSubscription')"
+                  :icon="showAddSubscription ? 'fa-minus-square-o' : 'fa-plus-square-o'"
+                  variant="text"
+                />
                 {{ $t('yourSubscriptions') }}
               </v-card-title>
               <v-divider />
               <v-alert
                 v-if="shouldShowAlert('manageYourSubscriptionsHere')"
+                v-show="showSubscriptions"
                 closable
                 variant="outlined"
                 border="top"
@@ -608,5 +624,10 @@ export default {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;
+}
+
+.clickable {
+  user-select: none;
+  cursor: pointer;
 }
 </style>

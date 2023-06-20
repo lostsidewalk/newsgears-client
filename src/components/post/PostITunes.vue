@@ -19,66 +19,70 @@
       />
       <div class="d-flex flex-column flex-auto flex-grow-1">
         <div>
-          {{ iTunes.title }}
+          {{ $t('iTunesTitle', { title: iTunes.title }) }}
         </div>
         <v-divider />
         <div
           v-if="iTunes.subTitle"
           class="text-subtitle-2"
         >
-          {{ iTunes.subTitle }}
+          {{ $t('iTunesSubTitle', { subTitle: iTunes.subTitle }) }}
         </div>
         <div
           v-if="iTunes.author"
           class="text-subtitle-2"
         >
-          {{ iTunes.author }}
-        </div>
-        <div
-          v-if="iTunes.explicit"
-          class="text-subtitle-2"
-        >
-          {{ $t('explicit') }}
+          {{ $t('iTunesAuthor', { author: iTunes.author }) }}
         </div>
         <div
           v-if="iTunes.episode"
           class="text-subtitle-2"
         >
-          {{ $t('episode', { episode: iTunes.episode }) }}
+          {{ $t('iTunesEpisode', { episode: iTunes.episode }) }}
         </div>
         <div
           v-if="iTunes.episodeType"
           class="text-subtitle-2"
         >
-          ({{ $t('episodeType', { episodeType: iTunes.episodeType }) }})
-        </div>
-        <div
-          v-for="keyword of iTunes.keywords"
-          :key="keyword"
-          class="text-subtitle-2"
-        >
-          {{ keyword }}
-        </div>
-        <div
-          v-if="iTunes.closeCaptioned === true"
-          class="text-subtitle-2"
-        >
-          {{ $t('closedCaptioned') }}
-        </div>
-        <div
-          v-if="iTunes.summary"
-          class="text-subtitle-2"
-        >
-          {{ iTunes.summary }}
+          {{ $t('iTunesEpisodeType', { episodeType: iTunes.episodeType }) }}
         </div>
         <div
           v-if="iTunes.duration"
           class="text-subtitle-2"
         >
-          {{ formattedDuration }}
+          {{ $t('iTunesDuration', { duration: formattedDuration }) }}
         </div>
+        <v-chip-group v-if="iTunes.keywords.length > 0">
+          <v-chip
+            v-for="keyword of iTunes.keywords"
+            :key="keyword"
+            class="text-subtitle-2"
+          >
+            {{ keyword }}
+          </v-chip>
+        </v-chip-group>
+        <v-chip-group v-if="iTunes.closeCaptioned === true || iTunes.explicit === true">
+          <v-chip
+            v-if="iTunes.closeCaptioned"
+            class="text-subtitle-2"
+          >
+            {{ $t('closedCaptioned') }}
+          </v-chip>
+          <v-chip
+            v-if="iTunes.explicit"
+            class="text-subtitle-2"
+          >
+            {{ $t('explicit') }}
+          </v-chip>
+        </v-chip-group>
       </div>
     </v-card-title>
+    <v-card-text v-if="iTunes.summary">
+      <div
+        class="post-html-frame"
+        v-html="iTunes.summary"
+      />
+    </v-card-text>
     <v-card-actions style="justify-content: start;">
       <v-btn
         variant="tonal" 
