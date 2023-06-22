@@ -29,7 +29,7 @@ function useAuthService() {
   const logoutUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/deauthenticate";
 
   function log(msg) {
-    console.log("newsgears-web: " + msg);
+    console.log("auth-service: " + msg);
   }
 
   function isError(error) {

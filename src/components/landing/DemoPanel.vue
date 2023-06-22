@@ -46,7 +46,10 @@
                   cols="12"
                   class="mb-16"
                 >
-                  <v-col cols="6">
+                  <v-col
+                    md="6"
+                    sm="12"
+                  >
                     <v-card elevation="12">
                       <v-card-title>
                         Queue Dashboard Card
@@ -60,7 +63,10 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                  <v-col cols="6">
+                  <v-col
+                    md="6"
+                    sm="12"
+                  >
                     <v-card elevation="12">
                       <v-card-title>
                         Subscription Management
@@ -155,7 +161,10 @@
             >
               <template #body>
                 <v-row cols="12">
-                  <v-col cols="6">
+                  <v-col
+                    md="4"
+                    sm="12"
+                  >
                     <v-card elevation="12">
                       <v-card-title>List Layout</v-card-title>
                       <v-card-text>
@@ -166,7 +175,10 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                  <v-col cols="6">
+                  <v-col
+                    md="4"
+                    sm="12"
+                  >
                     <v-card elevation="12">
                       <v-card-title>Card Layout</v-card-title>
                       <v-card-text>
@@ -177,12 +189,10 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                </v-row>
-                <v-row
-                  cols="12"
-                  class="mb-16"
-                >
-                  <v-col cols="6">
+                  <v-col
+                    md="4"
+                    sm="12"
+                  >
                     <v-card elevation="12">
                       <v-card-title>Table Layout</v-card-title>
                       <v-card-text>
@@ -209,7 +219,10 @@
             >
               <template #body>
                 <v-row cols="12">
-                  <v-col cols="6">
+                  <v-col
+                    md="6"
+                    sm="12"
+                  >
                     <v-card
                       elevation="12"
                       class="mt-4"
@@ -225,7 +238,10 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                  <v-col cols="6">
+                  <v-col
+                    md="6"
+                    sm="12"
+                  >
                     <v-card
                       elevation="12"
                       class="mt-4"
@@ -242,11 +258,17 @@
                     </v-card>
                   </v-col>
                 </v-row>
-                <v-row cols="12">
-                  <v-col cols="6">
+                <v-row
+                  cols="12"
+                  class="mb-16"
+                >
+                  <v-col
+                    md="6"
+                    sm="12"
+                  >
                     <v-card
                       elevation="12"
-                      class="mt-4 mb-16"
+                      class="mt-4"
                     >
                       <v-card-title>
                         YouTube Video
@@ -259,10 +281,13 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                  <v-col cols="6">
+                  <v-col
+                    md="6"
+                    sm="12"
+                  >
                     <v-card
                       elevation="12"
-                      class="mt-4 mb-16"
+                      class="mt-4"
                     >
                       <v-card-title>
                         Article with Images

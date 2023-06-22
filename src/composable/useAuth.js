@@ -12,7 +12,7 @@ export function useAuth() {
       .catch((error) => {
         console.error("unable to logout due to: " + error);
       }).finally(() => {
-        console.log("logout complete");
+        console.log("auth: logout complete");
       });
   }
 

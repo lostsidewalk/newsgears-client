@@ -58,9 +58,6 @@ export default {
       return this.media.postMediaMetadata && Object.keys(this.media.postMediaMetadata).length > 0;
     }
   },
-  mounted() {
-    console.log("media=" + JSON.stringify(this.media));
-  },
   methods: {
     pause() {
       if (this.media.postMediaContents) {

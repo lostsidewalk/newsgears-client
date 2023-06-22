@@ -11,6 +11,10 @@ export const useQueueStore = defineStore('queueStore', {
   actions: {
     setSelectedQueueId(queueId) {
       this.selectedQueueId = queueId;
+      let iq = this.articleListsByQueue[queueId];
+      if (!iq.index) {
+        this.rebuildLunrIndexes([queueId]);
+      }
     },
     setQueues(queues) {
       this.queues = queues;
@@ -28,7 +32,7 @@ export const useQueueStore = defineStore('queueStore', {
       this.queues.splice(0);
     },
     rebuildQueues(queuesToRetrieve, rawPosts) {
-      console.log("rebuilding queues");
+      console.log("queue-store: rebuilding queues");
       for (let i = 0; i < this.queues.length; i++) {
         const queuedId = this.queues[i].id;
         const iq = this.articleListsByQueue[queuedId];
@@ -48,10 +52,10 @@ export const useQueueStore = defineStore('queueStore', {
         v.push(post);
       }
     },
-    rebuildLunrIndexes() {
-      console.log("rebuilding lunr indexes");
-      for (let i = 0; i < this.queues.length; i++) {
-        let iq = this.articleListsByQueue[this.queues[i].id];
+    rebuildLunrIndexes(queueIdsToIndex) {
+      console.log("queue-store: rebuilding lunr indexes for queueIds=" + queueIdsToIndex);
+      for (let i = 0; i < queueIdsToIndex.length; i++) {
+        let iq = this.articleListsByQueue[queueIdsToIndex[i]];
         if (iq) {
           const trueStr = 'true';
           const falseStr = 'false'; 
@@ -142,7 +146,7 @@ export const useQueueStore = defineStore('queueStore', {
           });
         }
       }
-      console.log("lunr index rebuild complete");
+      console.log("queue-store: lunr index rebuild complete for queueIds=" + queueIdsToIndex);
     },
     updateLastDeployed(queueId, timestamp) {
       // update the queue last deployed timestamp 

@@ -173,8 +173,8 @@ export function useQueues(props) {
     return arr;
   });
 
-  async function refreshQueues(queuesToRetrieve, retrieveQueueDefinitions) {
-    console.log("refreshing queues");
+  async function refreshQueues(queueIdsToRetrieve, retrieveQueueDefinitions) {
+    console.log("queues: refreshing queues");
     let rawPosts = [];
     refreshQueuesIsLoading.value = true;
 
@@ -184,7 +184,7 @@ export function useQueues(props) {
       const stagingPostRefreshTimeoutId = setTimeout(() => stagingPostRefreshController.abort(), 45000);
       let queueDefinitionRefreshTimeoutId;
       let refreshPromises = [
-        fetch(baseUrl + "/staging" + (queuesToRetrieve ? ("?queueIds=" + queuesToRetrieve) : ''), {
+        fetch(baseUrl + "/staging" + (queueIdsToRetrieve ? ("?queueIds=" + queueIdsToRetrieve) : ''), {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -219,7 +219,7 @@ export function useQueues(props) {
                 rawPosts.push(p);
                 ct++;
               }
-              console.log("staging post refresh complete, ct=" + ct);
+              console.log("queues: staging post refresh complete, ct=" + ct);
             }
           })
       ];
@@ -273,11 +273,12 @@ export function useQueues(props) {
         clearTimeout(queueDefinitionRefreshTimeoutId);
       }
 
-      queueStore.rebuildQueues(queuesToRetrieve, rawPosts);
+      queueStore.rebuildQueues(queueIdsToRetrieve, rawPosts);
 
-      queueStore.rebuildLunrIndexes();
-
-      if (queueStore.queues.length > 0 && queueStore.selectedQueueId) {
+      if (queueStore.queues.length > 0) {
+        if (!queueStore.selectedQueueId) {
+          setSelectedQueueId(queueStore.queues[0].id);
+        }
         Object.keys(articleList).forEach((key) => {
           delete articleList[key];
         });
@@ -328,7 +329,7 @@ export function useQueues(props) {
   }
 
   function updatePostReadStatus(result) {
-    console.log("updating post status");
+    console.log("queues: updating post status");
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -369,7 +370,7 @@ export function useQueues(props) {
               p.isRead = false;
             }
           }
-          queueStore.rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes([result.queueId]);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -383,7 +384,7 @@ export function useQueues(props) {
   }
 
   function updatePostPubStatus(result) {
-    console.log("updating post status");
+    console.log("queues: updating post status");
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -419,7 +420,7 @@ export function useQueues(props) {
           }
           p.postPubStatus = null;
           queueStore.updateLastDeployed(result.queueId, formatTimestamp(data.timestamp));
-          queueStore.rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes([result.queueId]);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -533,7 +534,7 @@ export function useQueues(props) {
   }
 
   function performQueueDelete() {
-    console.log("deleting queue id=" + queueIdToDelete.value);
+    console.log("queues: deleting queue id=" + queueIdToDelete.value);
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -557,10 +558,10 @@ export function useQueues(props) {
             response.text().then(t => { throw new Error(t) });
         }
       }).then((data) => {
-        console.log("deleted queueId=" + queueIdToDelete.value);
+        console.log("queues: deleted queueId=" + queueIdToDelete.value);
         queueStore.deleteQueueById(queueIdToDelete.value);
         setLastServerMessage(data.message);
-        queueStore.rebuildLunrIndexes();
+        queueStore.rebuildLunrIndexes([queueIdToDelete.value]);
       }).catch((error) => {
         handleServerError(error);
       }).finally(() => {
@@ -590,7 +591,7 @@ export function useQueues(props) {
   }
 
   function performQueueMarkAsRead() {
-    console.log("updating queue status, id=" + queueIdToMarkAsRead.value);
+    console.log("queues: updating queue status, id=" + queueIdToMarkAsRead.value);
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -618,7 +619,7 @@ export function useQueues(props) {
         }).then((data) => {
           queueStore.markQueueAsRead(queueIdToMarkAsRead.value);
           setLastServerMessage(data.message);
-          queueStore.rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes([queueIdToMarkAsRead.value]);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -642,7 +643,7 @@ export function useQueues(props) {
   }
 
   function setSelectedQueueId(queueId) {
-    console.log("setting selectedQueueId=" + queueId);
+    console.log("queues: setting selectedQueueId=" + queueId);
     previousQueueId.value = queueStore.selectedQueueId;
     queueStore.setSelectedQueueId(queueId);
     let selectedQueue = getSelectedQueue();
@@ -795,7 +796,7 @@ export function useQueues(props) {
   function finalizeOpmlUpload() {
     let method = 'POST';
     finalizeIsLoading.value = true;
-    console.log("pushing queues to remote, ct=" + queueConfigRequests.length);
+    console.log("queues: pushing queues to remote, ct=" + queueConfigRequests.length);
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -908,14 +909,14 @@ export function useQueues(props) {
   }
 
   function newQueue() {
-    console.log("creating queue");
+    console.log("queues: creating queue");
     document.activeElement.blur();
     removePropertyValues(queueUnderConfig);
     showQueueConfigPanel.value = true;
   }
 
   function openQueueConfigPanel(queueId) {
-    console.log("configuring queueId=" + queueId);
+    console.log("queues: configuring queueId=" + queueId);
     document.activeElement.blur();
     const q = getQueueById(queueId);
     removePropertyValues(queueUnderConfig);
@@ -929,7 +930,7 @@ export function useQueues(props) {
   function createQueue(newQueue) {
     let method = 'POST';
     queueConfigIsLoading.value = true;
-    console.log("pushing new queue to remote..");
+    console.log("queues: pushing new queue to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -962,7 +963,7 @@ export function useQueues(props) {
           queueStore.initializeArticleList(created.id);
           setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
           setSelectedQueueId(created.id);
-          queueStore.rebuildLunrIndexes();
+          queueStore.rebuildLunrIndexes([created.id]);
           openQueueConfigPanel(created);
         }).catch((error) => {
           handleServerError(error);
@@ -979,7 +980,7 @@ export function useQueues(props) {
   function updateQueue() {
     let method = 'PUT';
     refreshQueuesIsLoading.value = true;
-    console.log("pushing updated queue to remote..");
+    console.log("queues: pushing updated queue to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1043,7 +1044,7 @@ export function useQueues(props) {
 
   function addSubscription(newSubscription) {
     queueConfigIsLoading.value = true;
-    console.log("subscription-config: pushing new subscription to remote..");
+    console.log("queues: pushing new subscription to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1109,7 +1110,7 @@ export function useQueues(props) {
 
   function deleteSubscription(id) {
     queueConfigIsLoading.value = true;
-    console.log("subscription-config: deleteing subscription..");
+    console.log("queues: deleteing subscription..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1158,7 +1159,7 @@ export function useQueues(props) {
 
   function updateSubscriptionAuth(source) {
     queueConfigIsLoading.value = true;
-    console.log("subscription-config: pushing updated subscription to remote..");
+    console.log("queues: pushing updated subscription to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
