@@ -23,8 +23,8 @@
         <!-- title -->
         <div
           v-if="hasHtmlTitle"
+          v-dompurify-html="metadata.title"
           class="post-html-frame"
-          v-html="metadata.title"
         />
         <div
           v-else-if="hasTitle"
@@ -79,8 +79,8 @@
       <!-- description (html) -->
       <div
         v-if="hasHtmlDesc"
+        v-dompurify-html="metadata.desc"
         class="post-html-frame"
-        v-html="metadata.desc"
       />
       <!-- description (non-html) -->
       <div

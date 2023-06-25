@@ -22,9 +22,9 @@
       <div class="d-flex flex-column flex-auto flex-grow-1">
         <div
           v-if="isHtmlContent(post.postTitle)"
+          v-dompurify-html="post.postTitle.value"
           class="post-html-frame"
           frameborder="0"
-          v-html="post.postTitle.value"
         />
         <div
           v-else
@@ -74,9 +74,9 @@
           <v-divider class="pt-1 pb-1" />
           <div
             v-if="isHtmlContent(post.postDesc)"
+            v-dompurify-html="post.postDesc.value"
             class="post-html-frame"
             frameborder="0"
-            v-html="post.postDesc.value"
           />
           <div
             v-else
@@ -102,8 +102,8 @@
             <v-divider class="pt-1 pb-1" />
             <div
               v-if="isHtmlContent(c)"
+              v-dompurify-html="c.value"
               class="post-html-frame"
-              v-html="c.value"
             />
             <div
               v-else

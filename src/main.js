@@ -7,6 +7,7 @@ import VueAnnouncer from "@vue-a11y/announcer";
 import { createI18n } from "vue-i18n";
 import Vue3NativeNotification from "vue3-native-notification";
 import { createPinia } from "pinia";
+import VueDOMPurifyHTML from 'vue-dompurify-html';
 
 import "@vue-a11y/announcer/dist/style.css";
 import "vue-plyr/dist/vue-plyr.css";
@@ -1096,4 +1097,5 @@ createApp(App, {})
   .use(Vue3NativeNotification, {
     requestOnNotify: true,
   })
+  .use(VueDOMPurifyHTML)
   .mount("#app");

@@ -79,8 +79,8 @@
     </v-card-title>
     <v-card-text v-if="iTunes.summary">
       <div
+        v-dompurify-html="iTunes.summary"
         class="post-html-frame"
-        v-html="iTunes.summary"
       />
     </v-card-text>
     <v-card-actions style="justify-content: start;">

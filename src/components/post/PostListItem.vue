@@ -23,9 +23,9 @@
       <div class="d-flex flex-column flex-auto flex-grow-1">
         <div
           v-if="isHtmlTitle" 
+          v-dompurify-html="post.postTitle.value"
           class="post-html-frame"
           frameborder="0"
-          v-html="post.postTitle.value"
         />
         <div
           v-else
@@ -55,9 +55,9 @@
       <!-- post description (hidden w/no detials) -->
       <div
         v-if="isHtmlDesc"
-        class="post-html-frame mb-2" 
+        v-dompurify-html="post.postDesc.value" 
+        class="post-html-frame mb-2"
         frameborder="0"
-        v-html="post.postDesc.value"
       />
       <div
         v-else-if="post.postDesc"
