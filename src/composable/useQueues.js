@@ -279,10 +279,6 @@ export function useQueues(props) {
         if (!queueStore.selectedQueueId) {
           setSelectedQueueId(queueStore.queues[0].id);
         }
-        Object.keys(articleList).forEach((key) => {
-          delete articleList[key];
-        });
-        Object.assign(articleList, queueStore.articleListsByQueue[queueStore.selectedQueueId]);
       }
     } catch (error) {
       handleServerError(error);
@@ -794,56 +790,64 @@ export function useQueues(props) {
   }
 
   function finalizeOpmlUpload() {
-    let method = 'POST';
-    finalizeIsLoading.value = true;
-    console.log("queues: pushing queues to remote, ct=" + queueConfigRequests.length);
-    auth.getTokenSilently().then((token) => {
-      const controller = new AbortController();
-      const requestOptions = {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(queueConfigRequests),
-        signal: controller.signal
-      };
-      const timeoutId = setTimeout(() => controller.abort(), 45000);
-      fetch(baseUrl + "/queues/", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : [];
-          } else {
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        })
-        .then((data) => {
-          let queueIds = [];
-          for (let i = 0; i < data.length; i++) {
-            let queue = data[i].queueDefinition;
-            let subscriptionDefinitions = data[i].subscriptionDefinitions;
-            let subscriptionMetrics = data[i].subscriptionMetrics;
-            decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
-            queueStore.addQueue(queue);
-            queueIds.push(queue.id);
-          }
-          setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
-          showOpmlUploadPanel.value = false;
-          refreshQueues(queueIds, false);
-        })
-        .catch((error) => {
-          handleServerError(error);
-        }).finally(() => {
-          finalizeIsLoading.value = false;
-          clearTimeout(timeoutId);
-        });
-    }).catch((error) => {
-      handleServerError(error);
-      finalizeIsLoading.value = false;
+    return new Promise((resolve, reject) => {
+      let method = 'POST';
+      finalizeIsLoading.value = true;
+      console.log("queues: pushing queues to remote, ct=" + queueConfigRequests.length);
+      auth.getTokenSilently().then((token) => {
+        const controller = new AbortController();
+        const requestOptions = {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(queueConfigRequests),
+          signal: controller.signal
+        };
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        fetch(baseUrl + "/queues/", requestOptions)
+          .then((response) => {
+            let contentType = response.headers.get("content-type");
+            let isJson = contentType && contentType.indexOf("application/json") !== -1;
+            if (response.status === 200) {
+              return isJson ? response.json() : [];
+            } else {
+              return isJson ?
+                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
+                response.text().then(t => { throw new Error(t) });
+            }
+          })
+          .then((data) => {
+            let queueIds = [];
+            for (let i = 0; i < data.length; i++) {
+              let queue = data[i].queueDefinition;
+              let subscriptionDefinitions = data[i].subscriptionDefinitions;
+              let subscriptionMetrics = data[i].subscriptionMetrics;
+              decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
+              queueStore.addQueue(queue);
+              queueIds.push(queue.id);
+            }
+            setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
+            showOpmlUploadPanel.value = false;
+            refreshQueues(queueIds, false);
+            if (resolve) {
+              resolve();
+            }
+          })
+          .catch((error) => {
+            handleServerError(error);
+            if (reject) {
+              reject(error);
+            }
+          }).finally(() => {
+            finalizeIsLoading.value = false;
+            clearTimeout(timeoutId);
+          });
+      }).catch((error) => {
+        handleServerError(error);
+        finalizeIsLoading.value = false;
+      });
     });
   }
 

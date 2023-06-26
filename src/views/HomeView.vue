@@ -263,7 +263,7 @@
           :errors="roOpmlErrors"
           :queue-config-requests="roQueueConfigRequests"
           @continueUpload="continueOpmlUpload"
-          @finalizeUpload="finalizeOpmlUpload"
+          @finalizeUpload="$event => finalizeOpmlUpload().then(() => showQueueDashboard = true)"
           @returnToStep1="returnToStep1"
           @cancel="cancelOpmlUpload"
         />
