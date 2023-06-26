@@ -516,12 +516,19 @@ export function useQueues(props) {
     }
   }
 
-  function toLunrToken(str) {
-    if (str) {
-      let pieces = str.split(' ');
-      let token = pieces[0];
-      return token + (pieces.length > 1 ? '*' : '');
+  function toLunrToken(inputString) {
+    let token = '';
+    for (let i = 0; i < inputString.length; i++) {
+      const currentChar = inputString[i];
+      // Break the loop if a symbol or whitespace is encountered
+      if (currentChar === ' ' || currentChar === ':') {
+        break;
+      }
+  
+      token += currentChar;
     }
+  
+    return token;
   }
 
   function deleteSelectedQueue() {
