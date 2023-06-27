@@ -521,8 +521,17 @@ export function useQueues(props) {
     }
   }
 
+  function setFilterToSubAndMode(subValue, modeValue) {
+    let newSubStatus = "+feed:" + toLunrToken(subValue);
+    articleListFilter.value = newSubStatus;
+    setFilterToMode(modeValue);
+  }
+
   function setFilterToMode(filterMode) {
-    console.log("adding mode to filter: " + filterMode);
+    showUnreadPosts.value = false;
+    showReadPosts.value = false;
+    showReadLaterPosts.value = false;
+    showStarredPosts.value = false;
     if (filterMode === 'UNREAD') {
       showUnreadPosts.value = true;
     } else if (filterMode === 'READ') {
@@ -530,23 +539,6 @@ export function useQueues(props) {
     } else if (filterMode === 'READ_LATER') {
       showReadLaterPosts.value = true;
     } else if (filterMode === 'STARRED') {
-      showStarredPosts.value = true;
-    }
-  }
-
-  function setFilterToSubAndMode(subValue, modeValue) {
-    let newSubStatus = "+feed:" + toLunrToken(subValue);
-    articleListFilter.value = newSubStatus;
-    if (!modeValue || modeValue === 'UNREAD') {
-      showUnreadPosts.value = true;
-    }
-    if (!modeValue || modeValue === 'READ') {
-      showReadPosts.value = true;
-    }
-    if (!modeValue || modeValue === 'READ_LATER') {
-      showReadLaterPosts.value = true;
-    }
-    if (!modeValue || modeValue === 'STARRED') {
       showStarredPosts.value = true;
     }
   }
