@@ -39,6 +39,7 @@
           />
         </v-col>
         <v-col cols="10">
+          <!-- TODO: extract component -->
           <v-list
             v-if="mostRecentSubscriptionMetric"
             density="compact"
@@ -111,6 +112,7 @@
     </v-card-text>
     <!-- chips -->
     <v-card-text v-if="hasChips">
+      <!-- TODO: extract component -->
       <v-chip-group>
         <!-- author -->
         <v-chip

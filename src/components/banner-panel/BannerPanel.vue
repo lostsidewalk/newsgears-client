@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-row>
+      <!-- FeedGears RSS -->
       <v-col
         cols="12"
         align="center"
@@ -9,12 +10,14 @@
           FeedGears RSS
         </h1>
       </v-col>
+      <!-- (logo) -->
       <v-col
         cols="12"
         align="center"
       >
         <i class="fa fa-rss fa-5x" />
       </v-col>
+      <!-- (subtitle 1) -->
       <v-col
         cols="12"
         align="center"
@@ -23,6 +26,7 @@
           {{ $t('whatIsFeedGears') }}
         </h2>
       </v-col>
+      <!-- (subtitle 2) -->
       <v-col
         cols="12"
         align="center"

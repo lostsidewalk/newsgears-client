@@ -1,5 +1,4 @@
 <template>
-  <!-- post item (everything after the dark grey box): title, description, image, url, comment -->
   <v-card
     elevation="6"
     :class="{ 'post-read': post.isRead }"
@@ -57,7 +56,9 @@
         </div>
       </div>
     </v-card-title>
+    <!-- divider -->
     <v-divider v-if="showFullPost" />
+    <!-- -->
     <v-card-text
       v-if="showFullPost"
     >
@@ -85,8 +86,9 @@
             {{ post.postDesc.value }}
           </div>
         </v-card-text>
-        <!-- contents -->
+        <!-- divider -->
         <v-divider v-if="post.postContents" />
+        <!-- contents -->
         <v-card-text
           v-if="post.postContents"
           class="overflow-auto"
@@ -113,16 +115,18 @@
             </div>
           </div>
         </v-card-text>
-        <!-- post media -->
+        <!-- divider -->
         <v-divider v-if="post.postMedia" />
+        <!-- post media -->
         <PostMedia
           v-if="post.postMedia"
           ref="postMedia"
           class="ma-2"
           :media="post.postMedia"
         />
-        <!-- post itunes -->
+        <!-- divider -->
         <v-divider v-if="post.postITunes" />
+        <!-- post itunes -->
         <PostITunes
           v-if="post.postITunes"
           class="ma-2"
@@ -141,6 +145,7 @@
             :enclosure="enclosure"
           />
         </v-sheet>
+        <!-- divider -->
         <v-divider v-if="post.postUrls" />
         <!-- post urls, i.e., 'other links' (hidden w/no details) -->
         <v-card-text v-if="post.postUrls">
@@ -164,6 +169,7 @@
             }}
           </div>
         </v-card-text>
+        <!-- divider (no further dividers at this level) -->
         <v-divider v-if="post.postComment" />
         <!-- post comment (hidden w/no details) -->
         <v-card-text v-if="post.postComment">
@@ -204,7 +210,9 @@
         </v-card-text>
       </v-card>
     </v-card-text>
+    <!-- divider -->
     <v-divider />
+    <!-- actions -->
     <v-card-actions
       class="d-flex flex-wrap"
       style="justify-content: start"
@@ -257,6 +265,7 @@
         icon="fa-link"
         @click.stop="$emit('openPostUrl')"
       />
+      <!-- toggle post categories button -->
       <v-btn
         v-if="post.postCategories && post.postCategories.length > 0"
         :size="buttonSize"
@@ -265,6 +274,7 @@
         :icon="showPostCategories ? 'fa-compress' : 'fa-tags'"
         @click.stop="showPostCategories = !showPostCategories"
       />
+      <!-- post category buttons (the actual categories) -->
       <v-btn
         v-for="postCategory in post.postCategories"
         v-show="showPostCategories"
@@ -279,6 +289,7 @@
           })
         "
       />
+      <!-- toggle sharing options button -->
       <v-btn
         :size="buttonSize"
         :title="$t('showPostSharing')"
@@ -286,6 +297,7 @@
         :icon="showPostSharing ? 'fa-compress' : 'fa-share-alt'"
         @click.stop="showPostSharing = !showPostSharing"
       />
+      <!-- post sharing buttons (the actual sharing options) -->
       <v-btn
         v-for="sharingOption in sharingOptions"
         v-show="showPostSharing"

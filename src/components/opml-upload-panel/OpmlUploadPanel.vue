@@ -28,13 +28,13 @@
         @click.close="dismissAlert('uploadOpmlHere')"
       />
       <v-sheet>
-        <!-- add OPML file button (for step 1) --> 
         <v-card variant="flat">
           <v-card-title class="pa-4">
             {{ atStep2 ? $t('weWillCreateTheFollowingSubscriptions') : $t('createQueuesFromOPML') }}
           </v-card-title>
           <v-divider class="mb-1 mt-1" />
           <v-card-text>
+            <!-- TODO: extract this -->
             <!-- OPML file list -- shows a list of files waiting to upload (step 1) -->
             <v-list
               v-if="!atStep2 && files.length > 0"
@@ -72,6 +72,7 @@
                 {{ $t('selectAtLeastOneFile') }}
               </v-list-item>
             </v-list>
+            <!-- TODO: extract this -->
             <!-- OPML parse errors (if any, shown at step 2) -->
             <v-card class="mb-4">
               <v-card-item
@@ -90,6 +91,7 @@
                 />
               </v-card-text>
             </v-card>
+            <!-- TODO: extract this -->
             <!-- OPML parse results (if any, shown at step 2)-->
             <v-card
               v-if="atStep2 && queueConfigRequests.length > 0"

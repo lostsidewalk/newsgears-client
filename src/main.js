@@ -96,14 +96,69 @@ const i18n = createI18n({
       contactUsWithQuestionsViaEmail:
         "Contacta a Lost Sidewalk Software con preguntas por correo electrónico.",
       // demo
-      dashboardCardScreenshot: 'Captura de pantalla de la tarjeta del panel de cola',
-      queueSettingsScreenshot: 'Captura de pantalla de configuración de la cola',
       filterScreenshot: 'Captura de pantalla del filtro de cola',
       listLayoutsScreenshot: 'Captura de pantalla de diseño de lista',
       cardLayoutsScreenshot: 'Captura de pantalla del diseño de la tarjeta',
       tableLayoutsScreenshot: 'Captura de pantalla del diseño de la tabla',
-      postCardScreenshot: 'Captura de pantalla de la tarjeta postal',
       opmlUploadScreenshot: 'Captura de pantalla de carga OPML',
+      comingSoon: '¡Próximamente!',
+      // demo (api access) 
+      apiAccess: 'Acceso a la API', 
+      // demo (enhanced filtering) 
+      enhancedFiltering: 'Filtrado y búsqueda mejorados utilizando LunrJS',
+      enhancedFiltering_detail1: 'Aplica filtros y busca dentro de una cola de artículos para enfocar tus opciones de lectura según tus preferencias o temas específicos de interés.',
+      enhancedFiltering_detail2: 'Localiza fácilmente artículos utilizando diversos puntos de datos, ahorrando tiempo y agilizando tu experiencia de lectura. Las capacidades de búsqueda de FeedGears están respaldadas por LunrJS.',
+      // demo (about LS) 
+      aboutLS_detail1: '', // TODO: finish this 
+      // demo (feed dashboard)
+      feedDashboard: 'Panel de Control de Feeds',
+      feedDashboard_detail1: 'El panel de control de feeds muestra información resumida sobre cada cola de artículos. Cada tarjeta del panel es configurable; puedes agregar y quitar detalles y botones de acción según tus necesidades.',
+      feedDashboard_detail2: 'Por defecto, FeedGears muestra el número de elementos no leídos, el número de elementos "marcados" y el artículo más recientemente publicado o actualizado en todas las suscripciones de una cola. La tarjeta del panel también brinda acceso rápido para gestionar las suscripciones y obtener detalles rápidos sobre cada feed en una cola:',
+      dashboardCardScreenshot: 'Captura de pantalla de la tarjeta del panel de la cola',
+      queueSettingsScreenshot: 'Captura de pantalla de la configuración de la cola',
+      // demo (layout options)
+      layoutOptions: 'Diseños y Temas',
+      layoutOptions_detail1: 'Elige entre tres diseños de lectura: vistas en forma de tabla, lista o tarjetas. La vista en lista ofrece una presentación simplificada que te permite desplazarte por los artículos. La vista de tarjetas muestra imágenes destacadas y fragmentos para una experiencia de lectura más atractiva. La vista en forma de tabla proporciona un formato estructurado, útil para obtener una visión general rápida de los titulares.',
+      layoutOptions_detail2: 'Hay disponibles temas claros y oscuros para reducir la tensión ocular en entornos con poca luz.',
+      // demo (misc) 
+      aboutFeedGears: 'Acerca de FeedGears',
+      accessible: 'Accesible',
+      accessible_detail1: 'La accesibilidad es una prioridad principal. Nos comprometemos a garantizar una experiencia inclusiva para todos los usuarios de FeedGears. Para lograr esto, utilizamos vue-announcer, una herramienta que hace que los mensajes importantes sean accesibles para lectores de pantalla y otras tecnologías de asistencia. Al aprovechar vue-announcer, aseguramos que todos puedan acceder a la información que necesitan de manera fluida.',
+      accessible_detail2: 'Además, nos esforzamos por cumplir con las pautas de accesibilidad de contenido web (WCAG). WCAG proporciona un conjunto de pautas para hacer que el contenido digital sea más accesible para personas con discapacidades. Al adherirnos a estas pautas, aseguramos que FeedGears esté diseñado y desarrollado teniendo en cuenta la accesibilidad, brindando una experiencia óptima para todos los usuarios.',
+      mobileOptimized: 'Optimizado para Dispositivos Móviles',
+      mobileOptimized_detail1: 'FeedGears tiene una interfaz optimizada y receptiva para dispositivos móviles, diseñada pensando en la practicidad. Nuestra interfaz de usuario garantiza una experiencia fluida y consistente en diferentes dispositivos, incluidos teléfonos inteligentes y tabletas.',
+      mobileOptimized_detail2: 'Los principios de diseño receptivo de Vuetify permiten que nuestra interfaz se adapte sin problemas a diferentes tamaños de pantalla. Ya sea que utilices un dispositivo móvil más pequeño o una tableta más grande, la funcionalidad y la presentación visual se mantienen consistentes. Esto significa que puedes disfrutar de las mismas características e interfaz fácil de usar, independientemente del dispositivo que elijas utilizar.',
+      mobileOptimized_detail3: 'Hemos diseñado cuidadosamente nuestra interfaz para que sea intuitiva y eficiente en dispositivos móviles. Navegar por los artículos, explorar categorías y personalizar tus preferencias de lectura es fácil y conveniente. El diseño y los controles están optimizados para la interacción táctil, lo que garantiza una experiencia fluida en tu dispositivo móvil.',
+      secure: 'Seguro',
+      secure_detail1: 'Una de nuestras características clave de privacidad es el proxy de imágenes seguro. Con esta función, todas las imágenes dentro de los feeds RSS se enrutan a través de nuestro servidor seguro antes de mostrarse. Esto ayuda a evitar posibles riesgos de privacidad asociados con la carga directa de imágenes externas. Al proxyar las imágenes, podemos analizarlas y sanearlas, reduciendo la probabilidad de que contenido malicioso o no deseado llegue a tu dispositivo.',
+      secure_detail2: 'Además, implementamos una Política de Seguridad de Contenido (CSP) sensata para protegernos contra ataques de scripting entre sitios (XSS) y otras posibles vulnerabilidades de seguridad. La CSP nos permite definir fuentes confiables para varios tipos de contenido. Al hacer cumplir estas políticas, mitigamos los riesgos asociados con la ejecución de código no autorizado y el acceso no autorizado a datos.',
+      secure_detail3: 'Tu privacidad y seguridad son de suma importancia para nosotros. Al utilizar un proxy de imágenes seguro e implementar una Política de Seguridad de Contenido sensata, nuestro objetivo es brindarte una experiencia de navegación sin preocupaciones. Disfruta de la tranquilidad mientras exploras tus feeds RSS, sabiendo que hemos tomado medidas proactivas para proteger tu privacidad y garantizar la integridad de tus datos.',
+      localized: 'Localizado',
+      localized_detail1: 'FeedGears está disponible actualmente en inglés y español. Agregar soporte para otros idiomas está en nuestro plan a corto plazo.',
+      freeAsInBeer: 'Gratis como en cerveza',
+      freeAsInBeer_detail1: 'Lost Sidewalk Software adopta los principios del software libre y de código abierto (FOSS) para todos nuestros productos. Todo nuestro código fuente está disponible de forma gratuita en GitHub y está cubierto por la Licencia Pública General de GNU versión 3 (GPLv3). Esto significa que cualquiera puede acceder, estudiar, modificar y distribuir nuestro software.',
+      freeAsInBeer_detail2: 'Damos la bienvenida a desarrolladores y entusiastas a unirse a nuestra comunidad y contribuir al proyecto. Ya sea a través de contribuciones de código, correcciones de errores, sugerencias de funciones o mejoras de documentación, valoramos y apreciamos todas las formas de participación. Juntos, podemos mejorar la plataforma FeedGears y satisfacer las necesidades cambiantes de nuestros usuarios.',
+      freeAsInBeer_detail3: 'En el espíritu del FOSS, creemos en la libertad de usar, examinar, modificar y redistribuir software. Nuestro objetivo es fomentar la colaboración, el intercambio de conocimientos y la innovación. Te invitamos a unirte a nuestro viaje, donde buscamos construir una comunidad activa y solidaria de desarrolladores, colaboradores y usuarios. Tus contribuciones, independientemente de su tamaño, son muy valoradas e instrumentales para dar forma al futuro de FeedGears. Celebremos el poder del FOSS y trabajemos juntos para crear una experiencia mejor y más inclusiva para todos.',
+      selfHostable: 'Autohospedado / Contenedores preconstruidos',
+      selfHostable_detail1: 'Puedes ejecutar FeedGears en tu entorno preferido. Nuestros contenedores preconstruidos son compatibles con varios entornos de ejecución compatibles con OCI, como Docker y Podman. Esto te brinda la libertad de implementar y administrar FeedGears según tus requisitos específicos.',
+      selfHostable_detail2: 'El autohospedaje te permite mantener tus datos dentro de tu propio entorno, ofreciéndote un control total sobre todo el proceso de agregación de RSS. Tú decides si ejecutarlo en tu máquina local, servidor privado o dentro de tu infraestructura en contenedores.',
+      // demo (opml) 
+      opmlSupport: 'Soporte de OPML',
+      opmlSupport_detail1: 'FeedGears admite la importación/exportación de OPML, lo que facilita la migración de tus suscripciones RSS. Importa feeds desde archivos OPML producidos por otros lectores y consolida múltiples fuentes. Exporta tus feeds, estructuras de cola y metadatos como archivos OPML para hacer copias de seguridad o compartir con otros.',
+      opmlSupport_detail2: 'OPML garantiza la compatibilidad y la interoperabilidad con otros lectores de RSS.',
+      // demo (reading experience)
+      readingExperience: 'Experiencia de lectura simplificada',
+      readingExperience_detail1: 'La vista de artículo de FeedGears integra un potente reproductor de medios, lo que te permite ver cómodamente el contenido multimedia directamente dentro de la aplicación.',
+      readingExperience_detail2: 'Comparte artículos sin esfuerzo a través de plataformas populares como Twitter, LinkedIn, Facebook, Telegram y Blogger.',
+      readingExperience_detail3: 'Filtra los artículos por sus categorías de RSS para una navegación rápida.',
+      textArticleScreenshot: 'Artículo de texto/HTML',
+      podcastAudioScreenshot: 'Podcasts de audio',
+      youtubeVideoScreenshot: 'Video de Youtube',
+      imageArticleScreenshot: 'Artículo con Imágenes',
+      // demo (simplified organization)
+      simplifiedOrganization: 'Organización simplificada',
+      simplifiedOrganization_detail1: 'Con el sistema de cola de artículos de FeedGears, puedes organizar fácilmente tus suscripciones de feeds RSS en grupos temáticos. Puedes crear colas para diferentes temas de interés, como juegos, tecnología o deportes, lo que te permite mantener el enfoque y acceder a artículos de múltiples fuentes en un solo lugar.',
+      simplifiedOrganization_detail2: 'Al importar artículos de todos los feeds en una cola, FeedGears crea una colección unificada de artículos. Esto significa que no tienes que navegar por múltiples feeds individuales o cambiar manualmente entre diferentes fuentes. Puedes disfrutar de una experiencia de lectura fluida con todos los artículos relevantes accesibles de manera conveniente en una sola cola.',
       // faq
       whatIsRSS: "¿Qué es RSS/ATOM?",
       rssIs:
@@ -575,14 +630,69 @@ const i18n = createI18n({
       contactUsWithQuestionsViaEmail:
         "Contact Lost Sidewalk Software with questions via email.",
       // demo 
-      dashboardCardScreenshot: 'Queue dashboard card screenshot',
-      queueSettingsScreenshot: 'Queue settings screenshot',
       filterScreenshot: 'Queue filter screenshot',
       listLayoutsScreenshot: 'List layout screenshot',
       cardLayoutsScreenshot: 'Card layout screenshot',
       tableLayoutsScreenshot: 'Table layout screenshot',
-      postCardScreenshot: 'Post card sscreenshot',
       opmlUploadScreenshot: 'OPML upload screenshot',
+      comingSoon: 'Coming soon!',
+      // demo (api access) 
+      apiAccess: 'API Access', 
+      // demo (enhanced filtering) 
+      enhancedFiltering: 'Enhanced Filtering and Searching Using LunrJS',
+      enhancedFiltering_detail1: 'Apply filters and search within an article queue to focus your reading options based on your preferences or specific topics of interest.',
+      enhancedFiltering_detail2: 'Easily locate articles using a variety of data points, saving time and streamlining your reading experience.  FeedGears search capabilities are backed by lunrjs.',
+      // demo (about LS) 
+      aboutLS_detail1: '', // TODO: finish this 
+      // demo (feed dashboard)
+      feedDashboard: 'Feed Dashboard', 
+      feedDashboard_detail1: 'The feed dashboard shows summary information about each article queue.  Each dashboard card is configurable; you can add and remove details and action buttons according to your needs.',
+      feedDashboard_detail2: 'By default, FeedGears shows the number of unread items, number of \'starred\' items, and the most recently published or updated article across all subscriptions in a queue.  The dashboard card also gives quick access to manage subscriptions, and get at-a-glance details about each feed in a queue: ',
+      dashboardCardScreenshot: 'Queue dashboard card screenshot',
+      queueSettingsScreenshot: 'Queue settings screenshot',
+      // demo (layout options)
+      layoutOptions: 'Layouts and Themes',
+      layoutOptions_detail1: 'Choose from three reading layouts: tabular, list, or card views. The list view offers a streamlined presentation, allowing you to scroll through articles. The card view displays featured images and snippets for a more engaging reading experience. The tabular view provides a structured format, useful for a quick overview of headlines.',
+      layoutOptions_detail2: 'Light and dark themes are available to reduce eye strain in low-light environments.',
+      // demo (misc) 
+      aboutFeedGears: 'About FeedGears', 
+      accessible: 'Accessible', 
+      accessible_detail1: 'Accessibility is a top priority. We are committed to ensuring an inclusive experience for all users of FeedGears. To achieve this, we utilize vue-announcer, a tool that makes important messages accessible to screen readers and other assistive technologies. By leveraging vue-announcer, we ensure that everyone can access the information they need seamlessly.',
+      accessible_detail2: 'Moreover, we strive to meet the Web Content Accessibility Guidelines (WCAG) compliance standards. WCAG provides a set of guidelines to make digital content more accessible to people with disabilities. By adhering to these guidelines, we ensure that FeedGears is designed and developed with accessibility in mind, providing an optimal experience for all users.',
+      mobileOptimized: 'Mobile Optimized',
+      mobileOptimized_detail1: 'FeedGears has a mobile-optimized and responsive interface, designed with practicality in mind. Our UI ensures a smooth and consistent experience across different devices, including smartphones and tablets.',
+      mobileOptimized_detail2: 'The responsive design principles of Vuetify allow our interface to adapt seamlessly to various screen sizes. Whether you\'re using a smaller mobile device or a larger tablet, the functionality and visual presentation remain consistent. This means you can enjoy the same features and user-friendly interface, regardless of the device you choose to use.',
+      mobileOptimized_detail3: 'We\'ve carefully designed our interface to be intuitive and efficient on mobile devices. Navigating through articles, exploring categories, and customizing your reading preferences is easy and convenient. The layout and controls are optimized for touch interaction, ensuring a seamless experience on your mobile device.',
+      secure: 'Secure',
+      secure_detail1: 'One of our key privacy features is the secure image proxy. With this feature, all images within the RSS feeds are routed through our secure server before being displayed. This helps prevent any potential privacy risks associated with loading external images directly. By proxying the images, we can analyze and sanitize them, reducing the likelihood of malicious or unwanted content reaching your device.',
+      secure_detail2: 'Additionally, we implement a sensible Content Security Policy (CSP) to safeguard against cross-site scripting (XSS) attacks and other potential security vulnerabilities. The CSP allows us to define trusted sources for various types of content. By enforcing these policies, we mitigate the risks associated with unauthorized code execution and unauthorized data access.',
+      secure_detail3: 'Your privacy and security are of utmost importance to us. By utilizing a secure image proxy and implementing a sensible Content Security Policy, we aim to provide you with a worry-free browsing experience. Enjoy peace of mind as you explore your RSS feeds, knowing that we have taken proactive steps to protect your privacy and ensure the integrity of your data.',
+      localized: 'Localized',
+      localized_detail1: 'FeedGears is presently available in English and Spanish.  Adding support for additional languages is our on short-term roadmap.',
+      freeAsInBeer: 'Free As In Beer',
+      freeAsInBeer_detail1: 'Lost Sidewalk Software embraces the principles of free and open source software (FOSS) for all of our products. All our source code is freely available on GitHub and covered by the GNU General Public License version 3 (GPLv3). This means that anyone can access, study, modify, and distribute our software.',
+      freeAsInBeer_detail2: 'We welcome developers and enthusiasts to join our community and contribute to the project. Whether it\'s through code contributions, bug fixes, feature suggestions, or documentation improvements, we value and appreciate all forms of involvement. Together, we can make the FeedGears platform even better and meet the evolving needs of our users.',
+      freeAsInBeer_detail3: 'In the spirit of FOSS, we believe in the freedom to use, examine, modify, and redistribute software. Our goal is to foster collaboration, knowledge sharing, and innovation. We invite you to join our journey, where we aim to build an active and supportive community of developers, contributors, and users. Your contributions, regardless of their size, are highly valued and instrumental in shaping the future of FeedGears. Let\'s celebrate the power of FOSS and work together to create a better and more inclusive experience for all.',
+      selfHostable: 'Self-Hostable / Pre-Built Containers',
+      selfHostable_detail1: 'You can run FeedGears in your preferred environment. Our pre-built containers and compatible with various OCI-compliant runtimes such as Docker and Podman. This gives you the freedom to deploy and manage FeedGears according to your specific requirements.',
+      selfHostable_detail2: 'Self-hosting allows you to keep your data within your own environment, offering you full control over the entire RSS aggration process. You decide to run it on your local machine, private server, or within your containerized infrastructure.',
+      // demo (opml) 
+      opmlSupport: 'OPML Support',
+      opmlSupport_detail1: 'FeedGears supports OPML import/export, making it easy to migrate your RSS subscriptions. Import feeds from OPML files produced by other readers, and consolidate multiple sources. Export your feeds, queue structures, and metadata as OPML files for backups or sharing with others.', 
+      opmlSupport_detail2: 'OPML ensures compatibility and interoperability with other RSS readers.',
+      // demo (reading experience)
+      readingExperience: 'Streamlined Reading Experience', 
+      readingExperience_detail1: 'The FeedGears article view integrates a robust media player, allowing you to conveniently view media content directly within the application.',
+      readingExperience_detail2: 'Share articles effortlessly through popular platforms like Twitter, LinkedIn, Facebook, Telegram, and Blogger.',
+      readingExperience_detail3: 'Filter articles by their RSS categories for quick navigation.',
+      textArticleScreenshot: 'Text/HTML Article',
+      podcastAudioScreenshot: 'Podcast Audio',
+      youtubeVideoScreenshot: 'Youtube Video',
+      imageArticleScreenshot: 'Article with Images',
+      // demo (simplified organization)
+      simplifiedOrganization: 'Simplified Organization',
+      simplifiedOrganization_detail1: 'With FeedGears article queue system, you can easily organize your RSS feed subscriptions into topical groups. You can create queues for different topics of interest, such as gaming, technology, or sports, allowing you to stay focused and access articles from multiple sources in one place.',
+      simplifiedOrganization_detail2: 'By importing articles from all the feeds in a queue, FeedGears creates a unified collection of articles. This means you don\'t have to navigate through multiple individual feeds or switch between different sources manually. You can enjoy a seamless reading experience with all relevant articles conveniently accessible in a single queue.',
       // faq
       whatIsRSS: "What is RSS/ATOM?",
       rssIs:

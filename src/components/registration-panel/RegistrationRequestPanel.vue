@@ -18,96 +18,90 @@
             v-bind="props"
             variant="outlined"
           >
-            <!-- window -->
-            <v-window>
-              <!-- window item -->
-              <v-window-item>
-                <!-- row -->
-                <v-row>
-                  <!-- col -->
-                  <v-col cols="12">
-                    <!-- card-text -->
-                    <v-card-text class="mt-12 mb-12">
-                      <!-- banner (large) -->
-                      <div class="text-h5 text-center mt-4 mb-4 logotext">
-                        {{ $t("accountRegistration") }}
+            <!-- row -->
+            <v-row>
+              <!-- col -->
+              <v-col cols="12">
+                <!-- card-text -->
+                <v-card-text class="mt-12 mb-12">
+                  <!-- banner (large) -->
+                  <div class="text-h5 text-center mt-4 mb-4 logotext">
+                    {{ $t("accountRegistration") }}
+                  </div>
+                  <!-- row -->
+                  <v-row
+                    align="center"
+                    justify="center"
+                  >
+                    <!-- col -->
+                    <v-col
+                      cols="12"
+                      sm="8"
+                    >
+                      <!-- email address -->
+                      <AuthTextField
+                        class="mt-4 mb-4"
+                        :label="$t('emailAddress')" 
+                        :placeholder="$t('emailAddress')" 
+                        :model-value="email" 
+                        @update:modelValue="email = $event"
+                      />
+                      <!-- username -->
+                      <AuthTextField
+                        class="mt-4 mb-4"
+                        :label="$t('username')" 
+                        :placeholder="$t('username')" 
+                        :model-value="username" 
+                        @update:modelValue="username = $event"
+                      />
+                      <!-- password -->
+                      <AuthTextField
+                        type="password"
+                        class="mt-4 mb-4"
+                        :label="$t('password')" 
+                        :placeholder="$t('password')" 
+                        :model-value="password" 
+                        @update:modelValue="password = $event"
+                      />
+                      <div class="d-flex flex-row flex-wrap">
+                        <!-- submit button -->
+                        <AuthButton
+                          class="ma-4"
+                          :label="$t('submit')"
+                          :is-loading="isLoading"
+                          @clicked="$emit('submitRegistration', { username: username, email: email, password: password, userType: userType })"
+                        />
                       </div>
-                      <!-- row -->
-                      <v-row
-                        align="center"
-                        justify="center"
+                      <AuthPanelLink
+                        :to="'/app'"
+                        :message="$t('alreadyHaveAnAccount')"
+                      />
+                      <AuthPanelLink
+                        :to="'/pw_reset'"
+                        :message="$t('accountRecoveryHere')"
+                      />
+                      <AuthServerResponse
+                        :server-message="serverMessage"
+                      />
+                      <v-btn
+                        variant="text"
+                        class="mt-4 mb-4 pa-2"
+                        block 
+                        :text="$t('privacyPolicy')" 
+                        @click="showPrivacyPolicy = !showPrivacyPolicy"
+                      />
+                      <v-dialog
+                        v-model="showPrivacyPolicy"
+                        fullscreen
+                        scrollable
                       >
-                        <!-- col -->
-                        <v-col
-                          cols="12"
-                          sm="8"
-                        >
-                          <!-- email address -->
-                          <AuthTextField
-                            class="mt-4 mb-4"
-                            :label="$t('emailAddress')" 
-                            :placeholder="$t('emailAddress')" 
-                            :model-value="email" 
-                            @update:modelValue="email = $event"
-                          />
-                          <!-- username -->
-                          <AuthTextField
-                            class="mt-4 mb-4"
-                            :label="$t('username')" 
-                            :placeholder="$t('username')" 
-                            :model-value="username" 
-                            @update:modelValue="username = $event"
-                          />
-                          <!-- password -->
-                          <AuthTextField
-                            type="password"
-                            class="mt-4 mb-4"
-                            :label="$t('password')" 
-                            :placeholder="$t('password')" 
-                            :model-value="password" 
-                            @update:modelValue="password = $event"
-                          />
-                          <div class="d-flex flex-row flex-wrap">
-                            <!-- submit button -->
-                            <AuthButton
-                              class="ma-4"
-                              :label="$t('submit')"
-                              :is-loading="isLoading"
-                              @clicked="$emit('submitRegistration', { username: username, email: email, password: password, userType: userType })"
-                            />
-                          </div>
-                          <AuthPanelLink
-                            :to="'/app'"
-                            :message="$t('alreadyHaveAnAccount')"
-                          />
-                          <AuthPanelLink
-                            :to="'/pw_reset'"
-                            :message="$t('accountRecoveryHere')"
-                          />
-                          <AuthServerResponse
-                            :server-message="serverMessage"
-                          />
-                          <v-btn
-                            variant="text"
-                            class="mt-4 mb-4 pa-2"
-                            block 
-                            :text="$t('privacyPolicy')" 
-                            @click="showPrivacyPolicy = !showPrivacyPolicy"
-                          />
-                          <v-dialog
-                            v-model="showPrivacyPolicy"
-                            fullscreen
-                            scrollable
-                          >
-                            <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
-                          </v-dialog>
-                        </v-col>
-                      </v-row>  
-                    </v-card-text>
-                  </v-col>
-                </v-row>
-              </v-window-item>
-            </v-window>
+                        <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
+                      </v-dialog>
+                    </v-col>
+                  </v-row>  
+                </v-card-text>
+              </v-col>
+            </v-row>
           </v-card>
         </v-hover>
       </v-col>

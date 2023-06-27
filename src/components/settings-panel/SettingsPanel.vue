@@ -8,6 +8,7 @@
     </v-card-title>
     <v-divider />
     <v-card-text>
+      <!-- TODO: extract component -->
       <!-- profile -->
       <v-card
         elevation="6"
@@ -95,6 +96,7 @@
           />
         </v-card-actions>
       </v-card>
+      <!-- TODO: extract component -->
       <!-- email address (local) -->
       <v-card
         v-if="authProvider === 'LOCAL'"
@@ -129,6 +131,7 @@
           />
         </v-card-actions>
       </v-card>
+      <!-- TODO: extract component -->
       <!-- email notifications -->
       <v-card
         elevation="6"
@@ -167,6 +170,7 @@
           />
         </v-card-actions>
       </v-card>
+      <!-- TODO: extract component -->
       <!-- subscription -->
       <v-card
         v-if="subscriptionStatus"
@@ -257,6 +261,7 @@
           />
         </v-card-actions>
       </v-card>
+      <!-- TODO: extract component -->
       <!-- checkout -->
       <v-card
         v-if="!subscription"

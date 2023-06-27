@@ -1,5 +1,6 @@
 <template>
   <v-sheet>
+    <!-- TODO: extract compoennt -->
     <!-- article list -->
     <v-card
       v-if="recentArticleList"
@@ -21,6 +22,7 @@
         </v-list>
       </v-card-text>
     </v-card>
+    <!-- TODO: extract compoennt -->
     <!-- subscriptions -->
     <v-card class="ma-4">
       <v-card-title>
@@ -87,6 +89,7 @@
         </v-list-item>
       </v-list>
     </v-card>
+    <!-- TODO: extract compoennt -->
     <!-- publications -->
     <v-card class="ma-4">
       <v-card-title>

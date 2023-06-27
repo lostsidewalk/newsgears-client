@@ -11,6 +11,7 @@
     </v-card-subtitle>
     <v-divider />
     <v-card-text>
+      <!-- TODO: extract component -->
       <!-- tab panel -->
       <v-tabs
         v-if="queueId"
@@ -33,6 +34,7 @@
       </v-tabs>
       <!-- config window -->
       <v-window v-model="selectedTab">
+        <!-- TODO: extract component -->
         <!-- manage subscriptions -->
         <v-window-item
           key="MANAGE_SUBSCRIPTIONS"
@@ -266,6 +268,7 @@
             </v-dialog>
           </v-sheet>
         </v-window-item>
+        <!-- TODO: extract component -->
         <!-- queue properties -->
         <v-window-item
           key="QUEUE_PROPERTIES"

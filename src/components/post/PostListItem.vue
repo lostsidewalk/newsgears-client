@@ -49,10 +49,10 @@
         </div>
       </div>
     </v-list-item-title>
+    <!-- post description -->
     <v-list-item-subtitle
       class="mt-2"
     >
-      <!-- post description (hidden w/no detials) -->
       <div
         v-if="isHtmlDesc"
         v-dompurify-html="post.postDesc.value" 
