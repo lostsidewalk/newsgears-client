@@ -10,18 +10,38 @@
     <v-card-subtitle v-if="queue.description">
       {{ queue.description }}
     </v-card-subtitle>
+    <v-card-subtitle>
+      {{ $t('nTotalArticlesInQueue', { n: totalCount }) }}
+    </v-card-subtitle>
     <v-card-text>
       <v-chip-group>
-        <!-- inbound count -->
-        <v-chip>
+        <!-- unread count -->
+        <v-chip
+          :title="$t('unreadCount', { n: unreadCount })"
+          @click="$emit('updateFilter', { name: 'mode', value: 'UNREAD' })"
+        >
           <v-icon
             start
             icon="fa-eye"
           /> 
-          {{ inboundCount }}
+          {{ unreadCount }}
+        </v-chip>
+        <!-- read count -->
+        <v-chip
+          :title="$t('readCount', { n: readCount })"
+          @click="$emit('updateFilter', { name: 'mode', value: 'READ' })"
+        >
+          <v-icon
+            start
+            icon="fa-check-square-o"
+          /> 
+          {{ readCount }}
         </v-chip>
         <!-- published count -->
-        <v-chip>
+        <v-chip
+          :title="$t('publishedCount', { n: publishedCount })"
+          @click="$emit('updateFilter', { name: 'mode', value: 'STARRED' })"
+        >
           <v-icon
             start
             icon="fa-star"
@@ -83,24 +103,29 @@ export default {
     variant: { type: String, default: null },
     isSelected: { type: Boolean, default: false },
   },
-  emits: [ "selectQueue", "manageSubscriptions", "updateFilter", "showSubscriptionMetrics" ],
+  emits: [ 
+    "selectQueue", 
+    "manageSubscriptions", 
+    "updateFilter", 
+    "showSubscriptionMetrics" 
+  ],
   data() {
     return {
       showMoreInformation: false,
     }
   },
   computed: {
-    inboundCount: function () {
-      if (this.articleList) {
-        return this.articleList.values.filter((post) => !post.isRead).length;
-      }
-      return 0;
+    unreadCount: function () {
+      return this.articleList ? this.articleList.values.filter((post) => !post.isRead).length : 0;
+    },
+    readCount : function() {
+      return this.articleList ? this.articleList.values.filter((post) => post.isRead).length : 0;
+    },
+    totalCount: function () {
+      return this.articleList ? this.articleList.values.length : 0;
     },
     publishedCount: function () {
-      if (this.articleList) {
-        return this.articleList.values.filter((post) => post.isPublished).length; 
-      }
-      return 0;
+      return this.articleList ? this.articleList.values.filter((post) => post.isPublished).length : 0;
     },
     mostRecentArticle: function () {
       if (this.articleList) {

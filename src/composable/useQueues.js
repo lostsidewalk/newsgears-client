@@ -25,6 +25,10 @@ export function useQueues(props) {
   const articleListFilter = ref(''); // user-supplied filter text (lunrjs query expression) 
   const articleListSortOrder = ref('DSC');
   const showQueueFilterPills = ref(false);
+  const showUnreadPosts = ref(true);
+  const showReadPosts = ref(true);
+  const showReadLaterPosts = ref(false);
+  const showStarredPosts = ref(true);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
   const atStep2 = ref(false);
@@ -68,40 +72,30 @@ export function useQueues(props) {
         results = articleList.values;
       }
       // 
-      // sort the filtered result 
+      // filter and sort the result 
       // 
       if (results) {
-        sortQueue(results, articleListSortOrder.value);
+       results = results.filter((r) => {
+        if (!showUnreadPosts.value && !r.isRead && !r.isReadLater && !r.isPublished) {
+          return false;
+        }
+        if (!showReadPosts.value && r.isRead && !r.isPublished) {
+          return false;
+        }
+        if (!showReadLaterPosts.value && r.isReadLater && !r.isPublished) {
+          return false;
+        }
+        if (!showStarredPosts.value && r.isPublished) {
+          return false;
+        }
+        return true;
+       });
+       sortQueue(results, articleListSortOrder.value);
       } else {
         results = [];
       }
     }
     return results;
-  });
-
-  const allFilterPills = computed(() => {
-    let filterPills = [
-      {
-        isSelected: articleListFilter.value.indexOf('status:READ_LATER') >= 0,
-        invoke: () => toggleFilterMode('READ_LATER'),
-        label: t('readLater'),
-        title: 'View items marked as read-later',
-      },
-      {
-        isSelected: articleListFilter.value.indexOf('status:PUBLISHED') >= 0,
-        invoke: () => toggleFilterMode('PUBLISHED'),
-        label: t('starred'),
-        title: 'View starred items',
-      },
-      {
-        isSelected: false,
-        invoke: () => articleListFilter.value = '',
-        label: t('clear'),
-        title: 'Clear filter',
-      }
-    ];
-
-    return filterPills;
   });
 
   const showQueueRefreshIndicator = computed(() => {
@@ -353,20 +347,19 @@ export function useQueues(props) {
         }).then(() => {
           let p = getPostFromQueue(result.id);
           let originator = result.originator;
-          if (originator === "togglePostReadStatus") { // NOTE: this happens when the user toggles the 'mark as read' button 
+          if (originator === "togglePostReadStatus") {
             p.isRead = !p.isRead;
             p.postReadStatus = p.isRead ? 'READ' : null;
             if (p.isRead) {
               p.isReadLater = false;
             }
-          } else if (originator === "togglePostReadLaterStatus") { // NOTE: this happens when the user toggles the 'mark as read-later' button 
+          } else if (originator === "togglePostReadLaterStatus") {
             p.isReadLater = !p.isReadLater;
             p.postReadStatus = p.isReadLater ? 'READ_LATER' : null;
             if (p.isReadLater) {
               p.isRead = false;
             }
           }
-          queueStore.rebuildLunrIndexes([result.queueId]);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -471,13 +464,14 @@ export function useQueues(props) {
   }
 
   function toggleFilterMode(filterMode) {
-    let newStatus = 'status:' + filterMode;
-    if (articleListFilter.value.length === 0) {
-      articleListFilter.value = newStatus;
-    } else if (articleListFilter.value.includes(newStatus)) {
-      articleListFilter.value = articleListFilter.value.replace(newStatus, '');
-    } else {
-      articleListFilter.value += (' ' + newStatus);
+    if (filterMode === 'UNREAD') {
+      showUnreadPosts.value = !showUnreadPosts.value;
+    } else if (filterMode === 'READ') {
+      showReadPosts.value = !showReadPosts.value;
+    } else if (filterMode === 'READ_LATER') {
+      showReadLaterPosts.value = !showReadLaterPosts.value;
+    } else if (filterMode === 'STARRED') {
+      showStarredPosts.value = !showStarredPosts.value;
     }
   }
 
@@ -498,6 +492,17 @@ export function useQueues(props) {
       }
     } else if (f.name === "category") {
       addCategoryToFilter(f.value);
+    } else if (f.name === "mode") {
+      setFilterToMode(f.value);
+    } else if (f.name === "subAndMode") {
+      if (f.queueId !== queueStore.selectedQueueId) {
+        setSelectedQueueId(f.queueId);
+        nextTick(() => {
+          setFilterToSubAndMode(f.subValue, f.modeValue);
+        })
+      } else {
+        setFilterToSubAndMode(f.subValue, f.modeValue);
+      }
     }
   }
 
@@ -513,6 +518,36 @@ export function useQueues(props) {
       }
     } else {
       articleListFilter.value = ' +category:' + category;
+    }
+  }
+
+  function setFilterToMode(filterMode) {
+    console.log("adding mode to filter: " + filterMode);
+    if (filterMode === 'UNREAD') {
+      showUnreadPosts.value = true;
+    } else if (filterMode === 'READ') {
+      showReadPosts.value = true;
+    } else if (filterMode === 'READ_LATER') {
+      showReadLaterPosts.value = true;
+    } else if (filterMode === 'STARRED') {
+      showStarredPosts.value = true;
+    }
+  }
+
+  function setFilterToSubAndMode(subValue, modeValue) {
+    let newSubStatus = "+feed:" + toLunrToken(subValue);
+    articleListFilter.value = newSubStatus;
+    if (!modeValue || modeValue === 'UNREAD') {
+      showUnreadPosts.value = true;
+    }
+    if (!modeValue || modeValue === 'READ') {
+      showReadPosts.value = true;
+    }
+    if (!modeValue || modeValue === 'READ_LATER') {
+      showReadLaterPosts.value = true;
+    }
+    if (!modeValue || modeValue === 'STARRED') {
+      showStarredPosts.value = true;
     }
   }
 
@@ -622,7 +657,6 @@ export function useQueues(props) {
         }).then((data) => {
           queueStore.markQueueAsRead(queueIdToMarkAsRead.value);
           setLastServerMessage(data.message);
-          queueStore.rebuildLunrIndexes([queueIdToMarkAsRead.value]);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -1230,6 +1264,22 @@ export function useQueues(props) {
     });
   }
 
+  function toggleReadPosts() {
+    showReadPosts.value = !showReadPosts.value;
+  }
+
+  function toggleUnreadPosts() {
+    showUnreadPosts.value = !showUnreadPosts.value;
+  }
+
+  function toggleReadLaterPosts() {
+    showReadLaterPosts.value = !showReadLaterPosts.value;
+  }
+
+  function toggleStarredPosts() {
+    showStarredPosts.value = !showStarredPosts.value;
+  }
+
   const roSelectedQueueTitle = readonly(selectedQueueTitle);
   const roPreviousQueueId = readonly(previousQueueId);
   const roQueueIdToDelete = readonly(queueIdToDelete);
@@ -1249,6 +1299,10 @@ export function useQueues(props) {
   const roSubscriptionToShow = readonly(subscriptionToShow);
   const roQueueUnderConfig = readonly(queueUnderConfig);
   const roQueueConfigIsLoading = readonly(queueConfigIsLoading);
+  const roShowUnreadPosts = readonly(showUnreadPosts);
+  const roShowReadPosts = readonly(showReadPosts);
+  const roShowReadLaterPosts = readonly(showReadLaterPosts);
+  const roShowStarredPosts = readonly(showStarredPosts);
 
   return {
     queueStore: queueStore, 
@@ -1271,13 +1325,20 @@ export function useQueues(props) {
     roSubscriptionToShow,
     roQueueUnderConfig,
     roQueueConfigIsLoading,
+    roShowUnreadPosts, 
+    roShowReadPosts, 
+    roShowReadLaterPosts, 
+    roShowStarredPosts, 
     // 
     showOpmlUploadPanel, // rw 
     showSubscriptionMetrics, // rw
     showQueueConfigPanel, // rw
     // 
     filteredArticleList,
-    allFilterPills,
+    showUnreadPosts,
+    showReadPosts,
+    showReadLaterPosts,
+    showStarredPosts,
     showQueueRefreshIndicator,
     tabModel,
     // 
@@ -1302,6 +1363,14 @@ export function useQueues(props) {
     toggleFilterMode,
     // show/hide the queue filter pills 
     toggleQueueFilterPills,
+    // 
+    toggleUnreadPosts,
+    // 
+    toggleReadPosts,
+    // 
+    toggleReadLaterPosts,
+    // 
+    toggleStarredPosts, 
     // adds the given subscription/category to t he articleListFilter 
     updateFilter,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 

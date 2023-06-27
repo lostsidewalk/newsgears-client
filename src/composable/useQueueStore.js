@@ -8,6 +8,19 @@ export const useQueueStore = defineStore('queueStore', {
     queues: [],
     articleListsByQueue: {},
   }),
+  getters: {
+    allSubscriptions: (state) => {
+      let subscriptions = [];
+      for (let queue of state.queues) {
+        let queueSubscriptions = queue.subscriptions;
+        if (queueSubscriptions) {
+          subscriptions.push(...queueSubscriptions);
+        }
+      }
+      
+      return subscriptions;
+    },
+  },
   actions: {
     setSelectedQueueId(queueId) {
       this.selectedQueueId = queueId;
@@ -53,12 +66,10 @@ export const useQueueStore = defineStore('queueStore', {
       }
     },
     rebuildLunrIndexes(queueIdsToIndex) {
-      console.log("queue-store: rebuilding lunr indexes for queueIds=" + queueIdsToIndex);
+      console.debug("queue-store: rebuilding lunr indexes for queueIds=" + queueIdsToIndex);
       for (let i = 0; i < queueIdsToIndex.length; i++) {
         let iq = this.articleListsByQueue[queueIdsToIndex[i]];
         if (iq) {
-          const trueStr = 'true';
-          const falseStr = 'false'; 
           iq.index = lunr(function () {
             this.ref('id')
             // title 
@@ -130,23 +141,13 @@ export const useQueueStore = defineStore('queueStore', {
                 return doc.postUrl;
               }
             });
-            this.field('status', {
-              extractor: function (doc = {}) {
-                return doc.postReadStatus ? doc.postReadStatus : 'UNREAD';
-              }
-            });
-            this.field('starred', {
-              extractor: function (doc = {}) {
-                return doc.isPublished ? trueStr : falseStr;
-              }
-            });
             iq.values.forEach(function (doc) {
               this.add(doc)
             }, this)
           });
         }
       }
-      console.log("queue-store: lunr index rebuild complete for queueIds=" + queueIdsToIndex);
+      console.debug("queue-store: lunr index rebuild complete for queueIds=" + queueIdsToIndex);
     },
     updateLastDeployed(queueId, timestamp) {
       // update the queue last deployed timestamp 

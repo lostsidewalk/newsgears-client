@@ -96,15 +96,9 @@
         <!-- queue filter  -->
         <QueueFilter
           :filter="roArticleListFilter"
-          :sort-order="roArticleListSortOrder"
           :queue-length="filteredArticleList.length"
           :queue-name="roSelectedQueueTitle"
-          :show-queue-refresh-indicator="showQueueRefreshIndicator"
           :queues="queueStore.queues"
-          @toggleSortOrder="toggleArticleListSortOrder"
-          @toggleQueueFilterPills="toggleQueueFilterPills"
-          @refreshQueues="refreshQueues(null, true)"
-          @markAsRead="$event => { markQueueAsRead(queueStore.selectedQueueId); showQueueMarkAsReadConfirmation = true; }"
           @update:modelValue="updateArticleListFilter"
         />
         <!-- help buton -->
@@ -116,15 +110,6 @@
           @click="showFilterHelp = !showFilterHelp"
         />
       </v-app-bar>
-      <!-- app bar (filter pills) -->
-      <v-expand-transition>
-        <v-app-bar
-          v-if="queueStore.selectedQueueId && allFilterPills.length > 0 && roShowQueueFilterPills"
-          app
-        >
-          <QueueFilterPills :filter-pills="allFilterPills" />
-        </v-app-bar>
-      </v-expand-transition>
       <!-- navigation drawer / left side -->
       <v-navigation-drawer
         v-model="showQueueDashboard"
@@ -134,7 +119,15 @@
         elevation="12"
         temporary
       >
-        <v-sheet>
+        <v-btn-group>
+          <v-btn @click.stop="showQueueCards = true">
+            {{ $t('queueCardView') }}
+          </v-btn>
+          <v-btn @click.stop="showQueueCards = false">
+            {{ $t('subscriptionListView') }}
+          </v-btn>
+        </v-btn-group>
+        <v-sheet v-if="showQueueCards">
           <v-alert
             v-if="shouldShowAlert('thisIsYourQueueDashboard')"
             closable
@@ -160,12 +153,157 @@
               :class="queueStore.selectedQueueId === queue.id ? 'selected-queue' : ''"
               :is-selected="queueStore.selectedQueueId === queue.id"
               v-bind="props"
-              @click.stop="$event => { setSelectedQueueId(queue.id); showQueueDashboard = false; }"
+              @click.stop="$event => { setSelectedQueueId(queue.id); $nextTick(() => showQueueDashboard = false); }"
               @manageSubscriptions="openQueueConfigPanel(queue.id)"
               @updateFilter="updateFilter"
               @showSubscriptionMetrics="openSubscriptionMetrics"
             />
           </v-hover>
+        </v-sheet>
+        <v-sheet v-else>
+          <v-alert
+            v-if="shouldShowAlert('theseAreAllOfYourSubscriptions')"
+            closable
+            variant="outlined"
+            border="top"
+            icon="fa-question-circle"
+            :text="t('theseAreAllOfYourSubscriptions')"
+            class="ma-4"
+            @click.close="dismissAlert('theseAreAllOfYourSubscriptions')"
+          />
+          <v-table
+            class="ma-4 overflow-auto flex-grow-1"
+            fixed-header
+          >
+            <thead style="text-align: center;">
+              <th
+                class="pa-1 h-auto"
+                style="min-width: 70px;max-width:140px;"
+              />
+              <th class="pa-1">
+                &nbsp;
+              </th>
+              <!-- unread count -->
+              <th class="pa-1">
+                <v-icon
+                  :title="$t('unreadCount', { n: 0 })"
+                  size="small"
+                  icon="fa-eye"
+                />
+              </th>
+              <!-- read count -->
+              <th class="pa-1">
+                <v-icon
+                  :title="$t('readCount', { n: 0 })"
+                  size="small"
+                  icon="fa-check-square-o"
+                />
+              </th>
+              <!-- published count -->
+              <th class="pa-1">
+                <v-icon
+                  :title="$t('publishedCount', { n: 0 })"
+                  size="small"
+                  icon="fa-star"
+                />
+              </th>
+              <!-- total count -->
+              <th class="pa-1">
+                <v-icon
+                  :title="$t('totalCount', { n: 0 })"
+                  size="small"
+                  icon="fa-newspaper-o"
+                />
+              </th>
+            </thead>
+            <tbody style="text-align: left;">
+              <tr
+                v-for="subscription in queueStore.allSubscriptions"
+                :key="subscription"
+              >
+                <td>
+                  <v-img
+                    v-if="subscription.icon"
+                    class="rounded h-auto"
+                    :src="subscription.icon.url"
+                    :title="subscription.icon.title"
+                    :alt="$t('feedLogoImage')"
+                    contain
+                  />
+                  <v-img
+                    v-if="subscription.image && !subscription.icon"
+                    class="rounded h-auto"
+                    :src="subscription.image.url"
+                    :title="subscription.image.title"
+                    :alt="$t('feedLogoImage')"
+                    contain
+                  />
+                  <v-img
+                    v-if="!subscription.image && !subscription.icon"
+                    class="rounded h-auto"
+                    src="rss_logo.svg"
+                    :alt="$t('rssLogo')"
+                    contain
+                  />
+                </td>
+                <td>{{ subscription.title }}</td>
+                <!-- unread count-->
+                <td
+                  style="text-align: center;"
+                  class="clickable"
+                  @click="$event => {
+                    setSelectedQueueId(subscription.queueId);
+                    $nextTick(() => updateFilter({ name: 'subAndMode', queueId: subscription.queueId, subValue: subscription.title, modeValue: 'UNREAD' }));
+                  }"
+                >
+                  {{ articleListsBySubscription[subscription.id] ?
+                    articleListsBySubscription[subscription.id].filter((post) => !post.isRead).length :
+                    0
+                  }}
+                </td>
+                <!-- read count-->
+                <td
+                  style="text-align: center;"
+                  class="clickable"
+                  @click="$event => {
+                    setSelectedQueueId(subscription.queueId);
+                    $nextTick(() => updateFilter({ name: 'subAndMode', queueId: subscription.queueId, subValue: subscription.title, modeValue: 'READ' }));
+                  }"
+                >
+                  {{ articleListsBySubscription[subscription.id] ?
+                    articleListsBySubscription[subscription.id].filter((post) => post.isRead).length :
+                    0
+                  }}
+                </td>
+                <!-- starred count-->
+                <td
+                  style="text-align: center;"
+                  class="clickable"
+                  @click="$event => {
+                    setSelectedQueueId(subscription.queueId);
+                    $nextTick(() => updateFilter({ name: 'subAndMode', queueId: subscription.queueId, subValue: subscription.title, modeValue: 'PUBLISHED' }));
+                  }"
+                >
+                  {{ articleListsBySubscription[subscription.id] ?
+                    articleListsBySubscription[subscription.id].filter((post) => post.isPublished).length :
+                    0
+                  }}
+                </td>
+                <!-- total count-->
+                <td
+                  style="text-align: center;"
+                  class="clickable"
+                  @click="$event => {
+                    setSelectedQueueId(subscription.queueId);
+                    $nextTick(() => updateFilter({ name: 'subscription', queueId: subscription.queueId, value: subscription.title }));
+                  }"
+                >
+                  {{ articleListsBySubscription[subscription.id] ? articleListsBySubscription[subscription.id].length :
+                    0 }}
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
         </v-sheet>
       </v-navigation-drawer>
       <!-- filter help card -->
@@ -281,21 +419,40 @@
         />
       </v-dialog>
       <!-- queue layout control -->
-      <v-container class="queue-container d-flex flex-grow-1 rounded justify-space-between flex-wrap">
-        <QueueLayout
-          :disable-list-layout="showListLayout"
-          :disable-card-layout="showCardLayout"
-          :disable-table-layout="showTableLayout"
-          @list="switchToListLayout"
-          @card="switchToCardLayout"
-          @table="switchToTableLayout"
-        />
+      <v-container class="queue-container d-flex flex-grow-1 flex-column rounded justify-space-between flex-wrap">
         <v-label
           v-if="queueStore.selectedQueueId"
           class="ma-2 font-weight-bold"
         >
           {{ roSelectedQueueTitle }}
         </v-label>
+        <v-divider v-if="queueStore.selectedQueueId" />
+        <QueueLayout
+          :disable-list-layout="showListLayout"
+          :disable-card-layout="showCardLayout"
+          :disable-table-layout="showTableLayout"
+          :show-queue-refresh-indicator="showQueueRefreshIndicator"
+          :sort-order="roArticleListSortOrder"
+          @list="switchToListLayout"
+          @card="switchToCardLayout"
+          @table="switchToTableLayout"
+          @toggleQueueFilterPills="toggleQueueFilterPills"
+          @refreshQueues="refreshQueues(null, true)"
+          @markAsRead="$event => { markQueueAsRead(queueStore.selectedQueueId); showQueueMarkAsReadConfirmation = true; }"
+          @toggleSortOrder="toggleArticleListSortOrder"
+        />
+        <v-divider />
+        <QueueFilterPills
+          v-if="queueStore.selectedQueueId && roShowQueueFilterPills"
+          :show-unread="roShowUnreadPosts"
+          :show-read="roShowReadPosts"
+          :show-read-later="roShowReadLaterPosts"
+          :show-starred="roShowStarredPosts"
+          @toggleUnread="toggleUnreadPosts"
+          @toggleRead="toggleReadPosts"
+          @toggleReadLater="toggleReadLaterPosts"
+          @toggleStarred="toggleStarredPosts"
+        />
       </v-container>
       <!-- divider -->
       <v-divider />
@@ -373,19 +530,16 @@
         v-if="!filteredArticleList || filteredArticleList.length === 0"
         class="queue-container d-flex flex-column flex-grow-1 rounded"
       >
-        <v-alert
-          info
-        >
+        <v-alert info>
           {{ t('noArticlesInThisQueue') }}
         </v-alert>
       </v-container>
       <v-table
         v-if="showTableLayout && filteredArticleList.length > 0"
-        class="ma-4 overflow-auto flex-grow-1" 
-        style="white-space: nowrap;"
+        class="ma-4"
         fixed-header
       >
-        <tbody style="text-align: left;white-space: nowrap;">
+        <tbody style="text-align: left;">
           <PostTableRow
             v-for="post in filteredArticleList"
             :id="'post_' + post.id"
@@ -519,7 +673,7 @@ export default {
       dismissAlert,
     } = useNotifications();
     const {
-      queueStore, 
+      queueStore,
       roSelectedQueueTitle,
       roPreviousQueueId,
       roQueueIdToDelete,
@@ -538,12 +692,16 @@ export default {
       roSubscriptionToShow,
       roQueueUnderConfig,
       roQueueConfigIsLoading,
+      roShowUnreadPosts,
+      roShowReadPosts,
+      roShowReadLaterPosts,
+      roShowStarredPosts,
+      // 
       showOpmlUploadPanel, //rw 
       showSubscriptionMetrics, // rw 
       showQueueConfigPanel, // rw 
       // 
       filteredArticleList, // computed 
-      allFilterPills, // computed 
       showQueueRefreshIndicator, // computed 
       selectedTab, // computed 
       tabModel, // computed 
@@ -586,15 +744,19 @@ export default {
       addSubscription,
       deleteSubscription,
       updateSubscriptionAuth,
+      toggleUnreadPosts,
+      toggleReadPosts,
+      toggleReadLaterPosts,
+      toggleStarredPosts,
     } = useQueues(props);
     const {
       roLayout,
       showCardLayout,
       showListLayout,
-      showTableLayout, 
+      showTableLayout,
       switchToListLayout,
       switchToCardLayout,
-      switchToTableLayout, 
+      switchToTableLayout,
     } = useLayout();
     const {
       sharingOptions,
@@ -604,18 +766,40 @@ export default {
     const refreshIntervalId = ref(null);
     const showFilterHelp = ref(false);
     const showQueueDashboard = ref(false);
+    const showQueueCards = ref(true);
     const showHelpPanel = ref(false);
     const showSelectedPost = ref(false);
     const selectedItem = reactive({}); // selected post list item (i.e., scrolling through the list in list view) 
     const showQueueDeleteConfirmation = ref(false);
     const showQueueMarkAsReadConfirmation = ref(false);
-
     // 
     const isModalShowing = computed(() => {
       return showSettingsPanel.value || showHelpPanel.value || showQueueConfigPanel.value || showOpmlUploadPanel.value || showSubscriptionMetrics.value;
     });
     const isLoading = computed(() => {
       return roSettingsIsLoading.value || roQueueConfigIsLoading.value || roContinueIsLoading.value || roFinalizeIsLoading.value || roRefreshQueuesIsLoading.value || roSettingsIsLoading.value;
+    });
+    // 
+    const articleListsBySubscription = computed(() => {
+      const bySub = {};
+
+      for (let i = 0; i < queueStore.queues.length; i++) {
+        const q = queueStore.queues[i];
+        const a = queueStore.articleListsByQueue[q.id];
+
+        for (let j = 0; j < a.values.length; j++) {
+          const subId = a.values[j].subscriptionId;
+
+          if (bySub[subId.toString()] === undefined) {
+            bySub[subId.toString()] = [];
+          }
+
+          const l = bySub[subId.toString()];
+          l.push(a.values[j]);
+        }
+      }
+
+      return bySub;
     });
     // required 
     function keyHandler(event) {
@@ -651,9 +835,9 @@ export default {
           openQueueConfigPanel(queueStore.selectedQueueId);
           event.stopPropagation();
           event.preventDefault();
-        // 
-        // SLASH KEY (SEARCH SELECTED QUEUE)
-        // 
+          // 
+          // SLASH KEY (SEARCH SELECTED QUEUE)
+          // 
         } else if (event.key === '/') {
           nextTick(() => {
             let filterElem = document.getElementById('queue-filter');
@@ -765,6 +949,7 @@ export default {
       isModalShowing,
       sharingOptions,
       showQueueRefreshIndicator,
+      articleListsBySubscription,
       // auth module data 
       roAuthServerMessage,
       roLoginIsLoading,
@@ -791,7 +976,10 @@ export default {
       roArticleListFilter, // user-supplied filter text (lunrjs query expression) 
       roArticleListSortOrder,
       roRefreshQueuesIsLoading,
-      allFilterPills,
+      roShowUnreadPosts,
+      roShowReadPosts,
+      roShowReadLaterPosts,
+      roShowStarredPosts,
       filteredArticleList,
       // queue config module data 
       showQueueConfigPanel,
@@ -806,17 +994,18 @@ export default {
       roLayout,
       showCardLayout,
       showListLayout,
-      showTableLayout, 
+      showTableLayout,
       // notifications module data 
       roShowNotificationWarning,
       // other data 
       isLoading,
       showFilterHelp,
       showQueueDashboard,
+      showQueueCards,
       showHelpPanel,
       showQueueDeleteConfirmation,
       showQueueMarkAsReadConfirmation,
-      showSelectedPost, 
+      showSelectedPost,
       selectedItem, // selected post list item (i.e., scrolling through the list in list view) 
       // auth module functions 
       logout,
@@ -858,6 +1047,10 @@ export default {
       restorePreviousQueueId,
       getSelectedQueue,
       getPostFromQueue,
+      toggleUnreadPosts,
+      toggleReadPosts,
+      toggleReadLaterPosts,
+      toggleStarredPosts,
       // queue config module functions 
       addSubscription,
       deleteSubscription,
@@ -868,7 +1061,7 @@ export default {
       // layout module functions 
       switchToListLayout,
       switchToCardLayout,
-      switchToTableLayout, 
+      switchToTableLayout,
       // other functions 
       uploadOpml,
       finalizeOpmlUpload,

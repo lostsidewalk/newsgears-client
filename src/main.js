@@ -137,23 +137,6 @@ const i18n = createI18n({
       createNewQueue: "Crear cola",
       uploadOPML: "Subir OPML",
       pleaseEnableNotifications: "Habilite las notificaciones para recibir mensajes de FeedGears.",
-      // queue select button
-      showMoreInfo: "Mostrar suscripciones",
-      hideMoreInfo: "Ocultar suscripciones",
-      addSubscriptions: "Agregar suscripciones",
-      manageSubscriptions: "Administrar suscripciones ({ct})",
-      subscriptions: "SUSCRIPCIONES",
-      publications: "PUBLICACIONES",
-      recentArticles: "ARTÍCULOS RECIENTES",
-      zeroSubscriptions: "0 suscripciones",
-      importerRanAt: "Importadora corrió a las {importTimestamp}",
-      nNewArticlesSaved: "{n} nuevos artículos guardados",
-      nArticlesArchived: "{n} artículos archivados",
-      httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
-      redirectedTo:
-        "Redirigido a {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
-      metricsNotYetAvailable:
-        "Las métricas aún no están disponibles para esta fuente RSS.",
       // buttons
       update: "Actualizar",
       save: "Guardar",
@@ -213,21 +196,7 @@ const i18n = createI18n({
       redirectHttpStatusCode: "Redirigir el código de estado HTTP",
       feedAlsoAvailableInHttps: "Este feed también está disponible en HTTPS.",
       recommendedFeeds: "Fuentes RSS similares",
-      // feed filter
-      refreshQueues: "Actualizar colas",
-      refreshForLatest: "Actualizar esta cola para nuevos artículos",
-      markQueueAsRead: "Marcar esta cola como leída",
-      toggleSortOrder: "Alternar dirección de clasificación",
-      toggleFilterPills: "Alternar píldoras de filtro",
-      // feed filter pills
-      allSubscriptions: "todas las suscripciones",
-      all: "todos",
-      unread: "NO LEÍDO",
-      readLater: "LEER MÁS TARDE",
-      read: "LEÍDO",
-      starred: "FAVORITA",
-      clear: "CLARA",
-      // filter help
+      // post feed filter help
       filtering: "Filtración",
       filteringProvides:
         "El filtrado proporciona una forma poderosa de encontrar artículos específicos basados ​​en varios campos, como fuente, categorías, descripción, título, autor, fecha de publicación, fecha de actualización, contenido y URL.",
@@ -291,6 +260,23 @@ const i18n = createI18n({
       cardLayout: "Cambiar a diseño de tarjeta",
       listLayout: "Cambiar a diseño de lista",
       tableLayout: "Cambiar al diseño de la tabla",
+      refreshQueues: "Actualizar colas",
+      refreshForLatest: "Actualizar esta cola para nuevos artículos",
+      markQueueAsRead: "Marcar esta cola como leída",
+      toggleSortOrder: "Alternar dirección de clasificación",
+      toggleFilterPills: "Alternar píldoras de filtro",
+      allSubscriptions: "todas las suscripciones",
+      all: "todos",
+      unread: "NO LEÍDO",
+      readLater: "LEER MÁS TARDE",
+      read: "LEÍDO",
+      starred: "FAVORITA",
+      clear: "CLARA",
+      toggleUnread: 'Mostrar/ocultar artículos no leídos',
+      toggleRead: 'Mostrar/ocultar artículos leídos',
+      toggleReadLater: 'Mostrar/ocultar artículos para leer más tarde',
+      toggleStarred: 'Mostrar/ocultar artículos destacados',
+      // filter help
       // iTunes
       explicit: "EXPLÍCITO",
       closedCaptioned: "Subtitulado",
@@ -333,6 +319,23 @@ const i18n = createI18n({
         "Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:",
       // post feed
       thisIsYourQueueDashboard: "Este es su tablero de colas. El panel muestra estadísticas de resumen sobre cada cola, como la cantidad de elementos no leídos en un grupo de suscripciones. Haga clic en una tarjeta de cola para ver los artículos en esa cola. Use los botones de la tarjeta de cola para agregar, administrar, suscribirse y cancelar la suscripción a las fuentes. Presione ESC para ocultar este menú.",
+      // queue select button
+      showMoreInfo: "Mostrar suscripciones",
+      hideMoreInfo: "Ocultar suscripciones",
+      addSubscriptions: "Agregar suscripciones",
+      manageSubscriptions: "Administrar suscripciones ({ct})",
+      subscriptions: "SUSCRIPCIONES",
+      publications: "PUBLICACIONES",
+      recentArticles: "ARTÍCULOS RECIENTES",
+      zeroSubscriptions: "0 suscripciones",
+      importerRanAt: "Importadora corrió a las {importTimestamp}",
+      nNewArticlesSaved: "{n} nuevos artículos guardados",
+      nArticlesArchived: "{n} artículos archivados",
+      httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
+      redirectedTo:
+        "Redirigido a {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
+      metricsNotYetAvailable:
+        "Las métricas aún no están disponibles para esta fuente RSS.",
       confirmDeleteQueue:
         "Confirme que desea eliminar esta cola. Esta acción es irreversible.",
       confirmMarkQueueAsRead:
@@ -346,6 +349,13 @@ const i18n = createI18n({
       queueCreated: "Cola creada",
       nQueuesCreated: " colas creadas",
       noArticlesInThisQueue: "Ningún artículo en esta cola cumple con sus criterios. Ajuste su filtro, agregue más suscripciones o espere a que se importen más artículos.",
+      unreadCount: '{n} artículos no leídos',
+      readCount: '{n} leer artículos',
+      publishedCount: '{n} artículos publicados',
+      totalCount: '{n} artículos',
+      nTotalArticlesInQueue: '{n} Total de artículos en esta cola',
+      queueCardView: 'Vista de tarjeta de cola',
+      subscriptionListView: 'Vista de lista de suscripciones',
       // post item
       showPostDetails: "Mostrar detalles de la publicación",
       showPostCategories: "Mostrar categorías de publicaciones",
@@ -604,22 +614,6 @@ const i18n = createI18n({
       createNewQueue: "New queue",
       uploadOPML: "Upload OPML",
       pleaseEnableNotifications: "Please enable notifications to receive messages from FeedGears.",
-      // queue select button
-      showMoreInfo: "Show details",
-      hideMoreInfo: "Hide details",
-      addSubscriptions: "Add subscriptions",
-      manageSubscriptions: "Manage subscriptions ({ct})",
-      subscriptions: "SUBSCRIPTIONS",
-      publications: "PUBLICATIONS",
-      recentArticles: "RECENT ARTICLES",
-      zeroSubscriptions: "0 subscriptions",
-      importerRanAt: "Importer ran at {importTimestamp}",
-      nNewArticlesSaved: "{n} new articles saved",
-      nArticlesArchived: "{n} articles archived",
-      httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
-      redirectedTo:
-        "Redirected to {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
-      metricsNotYetAvailable: "Metrics are not yet available for this feed.",
       // buttons
       update: "Update",
       save: "Save",
@@ -679,21 +673,7 @@ const i18n = createI18n({
       redirectHttpStatusCode: "Redirect HTTP status code",
       feedAlsoAvailableInHttps: "This feed is also available in HTTPS.",
       recommendedFeeds: "Similar feeds",
-      // post feed filter
-      refreshQueues: "Refresh queues",
-      refreshForLatest: "Refresh this queue for new articles",
-      markQueueAsRead: "Mark this queue as read",
-      toggleSortOrder: "Toggle sort direction",
-      toggleFilterPills: "Toggle filter pills",
-      // post feed filter pills
-      allSubscriptions: "all subscriptions",
-      all: "all",
-      unread: "UNREAD",
-      readLater: "READ-LATER",
-      read: "READ",
-      starred: "STARRED",
-      clear: "CLEAR",
-      // filter help
+      // post feed filter help
       filtering: "Filtering",
       filteringProvides:
         "Filtering provides a powerful way to find specific articles based on various fields such as feed, categories, description, title, author, published date, updated date, contents, and URL.",
@@ -757,6 +737,22 @@ const i18n = createI18n({
       cardLayout: "Switch to card layout",
       listLayout: "Switch to list layout",
       tableLayout: "Switch to table layout",
+      refreshQueues: "Refresh queues",
+      refreshForLatest: "Refresh this queue for new articles",
+      markQueueAsRead: "Mark this queue as read",
+      toggleSortOrder: "Toggle sort direction",
+      toggleFilterPills: "Toggle filter pills",
+      allSubscriptions: "all subscriptions",
+      all: "all",
+      unread: "UNREAD",
+      readLater: "READ-LATER",
+      read: "READ",
+      starred: "STARRED",
+      clear: "CLEAR",
+      toggleUnread: 'toggleUnread',
+      toggleRead: 'toggleRead',
+      toggleReadLater: 'toggleReadLater',
+      toggleStarred: 'toggleStarred',
       // iTunes
       iTunesTitle: "TITLE: {title}",
       iTunesSubTitle: "SUBTITLE: {subTitle}",
@@ -803,6 +799,21 @@ const i18n = createI18n({
         "We will create the following queues from your OPML file(s):",
       // post feed
       thisIsYourQueueDashboard: "This is your queue dashboard.  The dashboard shows summary statistics about each queue, such as the number of unread items across a group of subscriptions.  Click on a queue card to view articles in that queue.  Use the queue card buttons add, manage, subscribe, and unsubscribe to feeds.  Press ESC to hide this menu.",
+      showMoreInfo: "Show details",
+      hideMoreInfo: "Hide details",
+      addSubscriptions: "Add subscriptions",
+      manageSubscriptions: "Manage subscriptions ({ct})",
+      subscriptions: "SUBSCRIPTIONS",
+      publications: "PUBLICATIONS",
+      recentArticles: "RECENT ARTICLES",
+      zeroSubscriptions: "0 subscriptions",
+      importerRanAt: "Importer ran at {importTimestamp}",
+      nNewArticlesSaved: "{n} new articles saved",
+      nArticlesArchived: "{n} articles archived",
+      httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
+      redirectedTo:
+        "Redirected to {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
+      metricsNotYetAvailable: "Metrics are not yet available for this feed.",
       confirmDeleteQueue:
         "Please confirm that you want to delete this queue. This action is irreversible.",
       confirmMarkQueueAsRead:
@@ -819,6 +830,13 @@ const i18n = createI18n({
       nQueuesCreated:
         " queues created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
       noArticlesInThisQueue: "There's nothing here!  Adjust your filter, add more subscriptions, or wait for more articles to be imported.",
+      unreadCount: '{n} unread articles',
+      readCount: '{n} read articles',
+      publishedCount: '{n} published articles',
+      totalCount: '{n} articles',
+      nTotalArticlesInQueue: '{n} Total articles in this queue',
+      queueCardView: 'Queue card view',
+      subscriptionListView: 'Subscription list view',
       // post item
       showPostDetails: "Show post details",
       showPostCategories: "Show post categories",

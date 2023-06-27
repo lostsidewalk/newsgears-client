@@ -1,27 +1,62 @@
 <template>
-  <v-toolbar-items class="flex-grow-1 align-content-center">
-    <v-chip-group
-      class="align-content-center ml-2"
+  <v-row stye="font-size: x-small !important;">
+    <!-- unread -->
+    <v-col
+      cols="12"
+      sm="3"
+      md="3"
     >
-      <v-chip
-        v-for="filterPill in filterPills"
-        :key="filterPill" 
-        elevation="2"
-        variant="text"
-        :size="buttonSize" 
-        :title="filterPill.title"
-        @click="filterPill.invoke"
-      >
-        <v-img
-          v-if="filterPill.image" 
-          :src="filterPill.image" 
-          max-height="24" 
-          max-width="24"
-        />
-        {{ filterPill.label }}
-      </v-chip>
-    </v-chip-group>
-  </v-toolbar-items>
+      <v-checkbox 
+        density="compact"
+        :title="$t('toggleUnread')"
+        :model-value="showUnread"
+        :label="$t('unread')"
+        @click="$emit('toggleUnread')"
+      />
+    </v-col>
+    <!-- read -->
+    <v-col
+      cols="12"
+      sm="3"
+      md="3"
+    >
+      <v-checkbox 
+        density="compact"
+        :title="$t('toggleRead')"
+        :model-value="showRead"
+        :label="$t('read')"
+        @click="$emit('toggleRead')"
+      />
+    </v-col>
+    <!-- read-later -->
+    <v-col
+      cols="12"
+      sm="3"
+      md="3"
+    >
+      <v-checkbox
+        density="compact"
+        :title="$t('toggleReadLater')"
+        :model-value="showReadLater"
+        :label="$t('readLater')"
+        @click="$emit('toggleReadLater')"
+      />
+    </v-col>
+    <!-- starred -->
+    <v-col
+      cols="12"
+      sm="3"
+      md="3"
+    >
+      <v-checkbox
+        density="compact"
+        :title="$t('toggleStarred')"
+        :model-value="showStarred"
+        :label="$t('starred')"
+        @click="$emit('toggleStarred')"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -30,7 +65,16 @@ import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 export default {
   mixins: [buttonSizeMixin],
   props: {
-    filterPills: { type: Array, required: true },
+    showUnread: { type: Boolean, default: false },
+    showRead: { type: Boolean, default: false },
+    showReadLater: { type: Boolean, default: false },
+    showStarred: { type: Boolean, default: false },
   }, 
+  emits: [
+    "toggleUnread",
+    "toggleRead",
+    "toggleReadLater",
+    "toggleStarred", 
+  ],
 }
 </script>
