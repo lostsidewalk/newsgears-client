@@ -1171,7 +1171,7 @@ const vuetify = createVuetify({
       color: "primary",
     },
     VTextField: {
-      bgColor: "accent",
+      bgColor: "surface",
       color: "primary",
     },
     VDivider: {
