@@ -108,8 +108,6 @@ const i18n = createI18n({
       enhancedFiltering: 'Filtrado y búsqueda mejorados utilizando LunrJS',
       enhancedFiltering_detail1: 'Aplica filtros y busca dentro de una cola de artículos para enfocar tus opciones de lectura según tus preferencias o temas específicos de interés.',
       enhancedFiltering_detail2: 'Localiza fácilmente artículos utilizando diversos puntos de datos, ahorrando tiempo y agilizando tu experiencia de lectura. Las capacidades de búsqueda de FeedGears están respaldadas por LunrJS.',
-      // demo (about LS) 
-      aboutLS_detail1: '', // TODO: finish this 
       // demo (feed dashboard)
       feedDashboard: 'Panel de Control de Feeds',
       feedDashboard_detail1: 'El panel de control de feeds muestra información resumida sobre cada cola de artículos. Cada tarjeta del panel es configurable; puedes agregar y quitar detalles y botones de acción según tus necesidades.',
@@ -642,8 +640,6 @@ const i18n = createI18n({
       enhancedFiltering: 'Enhanced Filtering and Searching Using LunrJS',
       enhancedFiltering_detail1: 'Apply filters and search within an article queue to focus your reading options based on your preferences or specific topics of interest.',
       enhancedFiltering_detail2: 'Easily locate articles using a variety of data points, saving time and streamlining your reading experience.  FeedGears search capabilities are backed by lunrjs.',
-      // demo (about LS) 
-      aboutLS_detail1: '', // TODO: finish this 
       // demo (feed dashboard)
       feedDashboard: 'Feed Dashboard', 
       feedDashboard_detail1: 'The feed dashboard shows summary information about each article queue.  Each dashboard card is configurable; you can add and remove details and action buttons according to your needs.',

@@ -40,10 +40,6 @@
           <v-carousel-item>
             <ApiAccess_DemoFeature /> 
           </v-carousel-item>
-          <!-- about Lost Sidewalk -->
-          <v-carousel-item>
-            <AboutLS_DemoFeature :is-dark="isDark" />
-          </v-carousel-item>
         </v-carousel>
       </v-card>
     </v-sheet>
@@ -59,7 +55,6 @@ import ReadingExperience_DemoFeature from './demo/ReadingExperience_DemoFeature.
 import OPML_DemoFeature from './demo/OPML_DemoFeature.vue';
 import Misc_DemoFeature from './demo/Misc_DemoFeature.vue';
 import ApiAccess_DemoFeature from './demo/ApiAccess_DemoFeature.vue';
-import AboutLS_DemoFeature from './demo/AboutLS_DemoFeature.vue'; 
 
 export default {
   name: "DemoPanel",
@@ -72,7 +67,6 @@ export default {
     OPML_DemoFeature,
     Misc_DemoFeature,
     ApiAccess_DemoFeature,
-    AboutLS_DemoFeature,
   },
   computed: {
     isDark: function () {
