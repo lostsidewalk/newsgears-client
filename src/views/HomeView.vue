@@ -13,7 +13,10 @@
         </span>
       </template>
       <template #prepend>
-        <v-app-bar-nav-icon icon="fa-rss" />
+        <v-app-bar-nav-icon
+          icon="fa-rss"
+          :aria-label="$t('feedGearsRssLogo')"
+        />
       </template>
       <v-toolbar-items>
         <GoBack />
@@ -37,7 +40,10 @@
     <!-- post-auth main -->
     <v-main v-show="isAuthenticated">
       <!-- progress bar -->
-      <v-progress-linear :indeterminate="isLoading" />
+      <v-progress-linear
+        :indeterminate="isLoading"
+        :aria-label="$t('loadingProgress')"
+      />
       <!-- app bar (top-level)-->
       <v-app-bar
         app
@@ -51,6 +57,8 @@
         <template #prepend>
           <v-app-bar-nav-icon
             icon="fa-rss"
+            :aria-label="$t('toggleDashboard')"
+            :title="$t('toggleDashboard')"
             @click.stop="showQueueDashboard = !showQueueDashboard"
           />
         </template>
@@ -92,9 +100,11 @@
       <v-app-bar
         v-show="queueStore.selectedQueueId"
         app
+        :location="'bottom'"
       >
         <!-- queue filter  -->
         <QueueFilter
+          class="flex-grow-1 ma-2"
           :filter="roArticleListFilter"
           :queue-length="filteredArticleList.length"
           :queue-name="roSelectedQueueTitle"
@@ -107,6 +117,7 @@
           :title="t('toggleSortOrder')"
           :aria-label="t('toggleSortOrder')"
           :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
+          variant="plain"
           @click="showFilterHelp = !showFilterHelp"
         />
       </v-app-bar>

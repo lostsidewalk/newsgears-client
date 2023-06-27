@@ -5,6 +5,7 @@
     variant="solo-filled"
     autocomplete="false"
     :label="label"
+    :aria-label="label"
     :placeholder="placeholder"
     :value="modelValue"
     :type="type ? type : 'text'"

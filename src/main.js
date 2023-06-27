@@ -54,6 +54,7 @@ const i18n = createI18n({
       subscribed: "¡Suscrito!",
       inDevelopment:
         "Lo sentimos, esta sección de FeedGears aún no está lista. ¡Vuelve en unos días!",
+      loadingProgress: "Progreso de carga", 
       // auth
       loginToFeedGears: "Iniciar sesión en FeedGears",
       accountRecovery: "Recuperación de cuenta",
@@ -276,7 +277,6 @@ const i18n = createI18n({
       toggleRead: 'Mostrar/ocultar artículos leídos',
       toggleReadLater: 'Mostrar/ocultar artículos para leer más tarde',
       toggleStarred: 'Mostrar/ocultar artículos destacados',
-      // filter help
       // iTunes
       explicit: "EXPLÍCITO",
       closedCaptioned: "Subtitulado",
@@ -318,6 +318,7 @@ const i18n = createI18n({
       weWillCreateTheFollowingSubscriptions:
         "Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:",
       // post feed
+      toggleDashboard: "Mostrar/ocultar tablero",
       thisIsYourQueueDashboard: "Este es su tablero de colas. El panel muestra estadísticas de resumen sobre cada cola, como la cantidad de elementos no leídos en un grupo de suscripciones. Haga clic en una tarjeta de cola para ver los artículos en esa cola. Use los botones de la tarjeta de cola para agregar, administrar, suscribirse y cancelar la suscripción a las fuentes. Presione ESC para ocultar este menú.",
       // queue select button
       showMoreInfo: "Mostrar suscripciones",
@@ -534,6 +535,7 @@ const i18n = createI18n({
       subscribed: "Subscribed!",
       inDevelopment:
         "Sorry, this section of FeedGears isn't quite ready yet.  Check back in a few days!",
+      loadingProgress: 'loadingProgress',
       // auth
       loginToFeedGears: "Login to FeedGears",
       accountRecovery: "Account Recovery",
@@ -798,7 +800,9 @@ const i18n = createI18n({
       weWillCreateTheFollowingSubscriptions:
         "We will create the following queues from your OPML file(s):",
       // post feed
+      toggleDashboard: 'Show/hide dashboard',
       thisIsYourQueueDashboard: "This is your queue dashboard.  The dashboard shows summary statistics about each queue, such as the number of unread items across a group of subscriptions.  Click on a queue card to view articles in that queue.  Use the queue card buttons add, manage, subscribe, and unsubscribe to feeds.  Press ESC to hide this menu.",
+      // queue select button
       showMoreInfo: "Show details",
       hideMoreInfo: "Hide details",
       addSubscriptions: "Add subscriptions",
@@ -995,7 +999,7 @@ const i18n = createI18n({
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import { aliases, fa } from "vuetify/iconsets/fa4";
-import { md2 } from "vuetify/blueprints";
+import colors from 'vuetify/lib/util/colors';
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
@@ -1004,9 +1008,28 @@ const defaultTheme = 'dark';
 let preferredTheme = localStorage.getItem('theme');
 
 const vuetify = createVuetify({
-  blueprint: md2,
   theme: {
     defaultTheme: preferredTheme ? preferredTheme : defaultTheme,
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          primary: colors.blue.darken3,
+          secondary: colors.green.lighten1, 
+          surface: colors.grey.lighten5,
+          accent: colors.blue.lighten5,
+        }
+      },
+      dark: {
+        dark: true, 
+        colors: {
+          primary: colors.purple.lighten2,
+          secondary: colors.green.darken1, 
+          surface: colors.grey.darken4,
+          accent: colors.purple.lighten4,
+        }
+      }
+    }
   },
   icons: {
     defaultSet: "fa",
@@ -1097,10 +1120,13 @@ const vuetify = createVuetify({
   },
 });
 
+// Auth Service 
 const { auth, isAuthenticated } = useAuthService();
 
+// Pinia 
 const pinia = createPinia();
 
+// Create and mount the app 
 createApp(App, {})
   .provide("auth", auth)
   .provide("isAuthenticated", isAuthenticated)
