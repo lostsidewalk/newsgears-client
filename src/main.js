@@ -1133,10 +1133,10 @@ const vuetify = createVuetify({
       dark: {
         dark: true, 
         colors: {
-          primary: colors.purple.lighten2,
+          primary: colors.blue.lighten2,
           secondary: colors.green.darken1, 
           surface: colors.grey.darken4,
-          accent: colors.purple.lighten4,
+          accent: colors.blue.darken4,
         }
       }
     }
