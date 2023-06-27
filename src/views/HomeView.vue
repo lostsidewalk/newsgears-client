@@ -44,6 +44,7 @@
         :indeterminate="isLoading"
         :aria-label="$t('loadingProgress')"
       />
+      <!-- TODO: extract component -->
       <!-- app bar (top-level)-->
       <v-app-bar
         app
@@ -96,6 +97,7 @@
           </ControlPanel>
         </template>
       </v-app-bar>
+      <!-- TODO: extract component -->
       <!-- app bar (queue filter) -->
       <v-app-bar
         v-show="queueStore.selectedQueueId"
@@ -121,6 +123,7 @@
           @click="showFilterHelp = !showFilterHelp"
         />
       </v-app-bar>
+      <!-- TODO: extract component -->
       <!-- navigation drawer / left side -->
       <v-navigation-drawer
         v-model="showQueueDashboard"
@@ -429,6 +432,7 @@
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
+      <!-- TODO: extract component -->
       <!-- queue layout control -->
       <v-container class="queue-container d-flex flex-grow-1 flex-column rounded justify-space-between flex-wrap">
         <v-label
@@ -467,6 +471,7 @@
       </v-container>
       <!-- divider -->
       <v-divider />
+      <!-- TODO: extract component -->
       <!-- queue container (cards) -->
       <div v-if="showCardLayout && filteredArticleList.length > 0">
         <PostCard
@@ -520,6 +525,7 @@
           </template>
         </PostCard>
       </v-dialog>
+      <!-- TODO: extract component -->
       <v-list
         v-if="showListLayout && filteredArticleList.length > 0"
         v-model="selectedItem"
@@ -545,6 +551,7 @@
           {{ t('noArticlesInThisQueue') }}
         </v-alert>
       </v-container>
+      <!-- TODO: extract component -->
       <v-table
         v-if="showTableLayout && filteredArticleList.length > 0"
         class="ma-4"

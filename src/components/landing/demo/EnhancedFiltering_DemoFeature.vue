@@ -1,6 +1,6 @@
 <template>
   <DemoFeature
-    title="$t('enhancedFiltering')"
+    :title="$t('enhancedFiltering')"
     :details="[
       $t('enhancedFiltering_detail1'),
       $t('enhancedFiltering_detail2')

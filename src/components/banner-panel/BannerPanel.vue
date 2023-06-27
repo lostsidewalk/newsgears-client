@@ -98,6 +98,26 @@ export default {
   font-size: 2.0rem;
 }
 
+@media(max-width: 320px) {
+  .logosubtext {
+    font-size: 2.0rem;
+  }
+
+  .logosubduedtext {
+    font-size: 1.0rem;
+  }
+}
+
+@media(max-width: 280px) {
+  .logosubtext {
+    font-size: 1.5rem;
+  }
+
+  .logosubduedtext {
+    font-size: 0.5rem;
+  }
+}
+
 .fancy {
   font-family: 'Merriweather' !important;
   font-weight: bold;
