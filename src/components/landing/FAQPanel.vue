@@ -22,39 +22,62 @@
       <p class="mb-2 faq-detail">
         {{ $t('overTheYears') }}
 
-        <v-list density="compact">
-          <v-list-item>
+        <v-list
+          density="compact"
+          role="list"
+          :aria-label="$t('listOfLinksToRSSSpecs')"
+        >
+          <v-list-item
+            role="listitem"
+            aria-posinset="1"
+            aria-setsize="5"
+          >
             <a
               href="https://www.rssboard.org/rss-0-9-0"
               target="_blank"
             >RSS 0.90</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="2"
+            aria-setsize="5"
+          >
             <a
               href="https://www.rssboard.org/rss-0-9-1-netscape"
               target="_blank"
             >RSS 0.91</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="3"
+            aria-setsize="5"
+          >
             <a
               href="https://web.resource.org/rss/1.0/"
               target="_blank"
             >RSS 1.0</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="4"
+            aria-setsize="5"
+          >
             <a
               href="https://www.rssboard.org/rss-specification"
               target="_blank"
             >RSS 2.0</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="5"
+            aria-setsize="5"
+          >
             <a
               href="http://www.aaronsw.com/2002/rss30"
               target="_blank"
             >RSS 3.0</a>
           </v-list-item>
         </v-list>
-
         {{ $t('eachVersionAdded') }}
       </p>
       
@@ -71,38 +94,66 @@
       </p>
       
       <p class="mb-2 faq-detail">
-        <v-list density="compact">
-          <v-list-item>
+        <v-list
+          density="compact"
+          role="list"
+          aria-label="listOfLinksOfInterest"
+        >
+          <v-list-item
+            role="listitem"
+            aria-posinset=""
+            aria-setsize="6"
+          >
             <a
               href="https://aboutfeeds.com/"
               target="_blank"
             >About Feeds</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="1"
+            aria-setsize="6"
+          >
             <a
               href="https://en.wikipedia.org/wiki/RSS"
               target="_blank"
             >Wikipedia: RSS</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="2"
+            aria-setsize="6"
+          >
             <a
               href="https://meganesulli.com/blog/how-rss-works"
               target="_blank"
             >An Intro to RSS Feeds</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="3"
+            aria-setsize="6"
+          >
             <a
               href="https://www.youneedfeeds.com/"
               target="_blank"
             >You Need Feeds</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="4"
+            aria-setsize="6"
+          >
             <a
               href="https://huey.xyz/posts/2021-07-18-rss"
               target="_blank"
             >Why you should consider using RSS</a>
           </v-list-item>
-          <v-list-item>
+          <v-list-item
+            role="listitem"
+            aria-posinset="5"
+            aria-setsize="6"
+          >
             <a
               href="https://ncase.me/rss/"
               target="_blank"

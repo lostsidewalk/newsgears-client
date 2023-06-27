@@ -5,7 +5,7 @@
       v-if="!isAuthenticated"
       app
       location="top"
-      :scrol-behavior="'elevate'"
+      :scroll-behavior="'elevate'"
     >
       <template #title>
         <span class="feedgears-rss">

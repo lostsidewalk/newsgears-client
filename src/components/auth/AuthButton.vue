@@ -12,6 +12,7 @@
       location="start"
       activator="parent"
       open-delay="2000"
+      :aria-label="toolip"
     >
       {{ tooltip }}
     </v-tooltip>

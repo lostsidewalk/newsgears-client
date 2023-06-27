@@ -175,6 +175,8 @@ const i18n = createI18n({
         "Una de las diferencias clave entre RSS y Atom es que Atom es un formato estandarizado, mientras que RSS tiene múltiples versiones y variaciones. Además, Atom está diseñado para ser más extensible y flexible que RSS, lo que permite una personalización más sencilla y soporte para metadatos adicionales.",
       overallRoles:
         "En general, RSS y Atom han jugado un papel importante en la evolución de la sindicación de contenido web y han ayudado a que sea más fácil para los usuarios acceder y consumir el contenido que les interesa.",
+      listOfLinksToRSSSpecs: 'Lista de enlaces a las especificaciones de RSS',
+      listOfLinksOfInterest: 'Lista de enlaces útiles y/o interesantes sobre RSS',
       // video panel
       rssMadeEasy: "RSS Hecho Fácil",
       // confirmation dialog
@@ -706,6 +708,8 @@ const i18n = createI18n({
         "One of the key differences between RSS and Atom is that Atom is a standardized format, while RSS has multiple versions and variations. Additionally, Atom is designed to be more extensible and flexible than RSS, allowing for easier customization and support for additional metadata.",
       overallRoles:
         "Overall, RSS and Atom have played an important role in the evolution of web content syndication and have helped to make it easier for users to access and consume the content they care about.",
+      listOfLinksToRSSSpecs: 'List of links to RSS specifications',
+      listOfLinksOfInterest: 'List of useful and/or interesting links about RSS',
       // video panel
       rssMadeEasy: "RSS Made Easy",
       // confirmation dialog

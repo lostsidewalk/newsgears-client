@@ -13,6 +13,7 @@
       location="end"
       activator="parent"
       open-delay="2000"
+      :aria-label="$t('signinWithGoogle')"
     >
       {{ $t('signinWithGoogle') }}
     </v-tooltip>

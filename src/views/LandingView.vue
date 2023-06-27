@@ -3,7 +3,7 @@
     <v-app-bar
       app
       location="top"
-      :scrol-behavior="'elevate'"
+      :scroll-behavior="'elevate'"
     >
       <template #title>
         <span class="feedgears-rss">
@@ -11,7 +11,10 @@
         </span>
       </template>
       <template #prepend>
-        <v-app-bar-nav-icon icon="fa-rss" />
+        <v-app-bar-nav-icon
+          icon="fa-rss"
+          :aria-label="$t('feedGearsRssLogo')"
+        />
       </template>
       <v-toolbar-items>
         <!-- display mode switch -->
