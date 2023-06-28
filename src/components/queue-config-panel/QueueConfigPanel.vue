@@ -85,21 +85,32 @@
                   :placeholder="$t('feedUrl')"
                 >
                   <template #append>
-                    <v-btn
-                      variant="tonal"
-                      :size="buttonSize" 
-                      prepend-icon="fa-refresh"
-                      :loading="discoveryIsLoading"
-                      :disabled="!newSubscription.url"
-                      :title="$t('discovery')"
-                      :text="$t('discovery')"
-                      @click="doDiscovery(newSubscription)"
-                    />
+                    <v-btn-group>
+                      <v-btn
+                        variant="tonal"
+                        :size="buttonSize" 
+                        prepend-icon="fa-refresh"
+                        :loading="discoveryIsLoading"
+                        :disabled="!newSubscription.url"
+                        :title="$t('discovery')"
+                        :text="$t('discovery')"
+                        @click="doDiscovery(newSubscription)"
+                      />
+                      <v-btn
+                        variant="tonal"
+                        :size="buttonSize" 
+                        prepend-icon="fa-lock"
+                        :title="$t('auth')"
+                        :text="$t('auth')"
+                        @click="showNewSubscriptionAuthConfig = !showNewSubscriptionAuthConfig"
+                      />
+                    </v-btn-group>
                   </template>
                 </v-text-field>
                 <v-alert
+                  v-if="showNewSubscriptionAuthConfig"
                   type="info"
-                  closable
+                  :closable="false"
                   :variant="newSubscription.url ? 'tonal' : 'outlined'"
                   class="mb-4"
                 >
@@ -107,6 +118,7 @@
                 </v-alert>
                 <!-- username text field -->
                 <v-text-field
+                  v-if="showNewSubscriptionAuthConfig"
                   v-model="newSubscription.username"
                   variant="solo-filled"
                   type="text"
@@ -116,6 +128,7 @@
                 />
                 <!-- password text field -->
                 <v-text-field
+                  v-if="showNewSubscriptionAuthConfig"
                   v-model="newSubscription.password"
                   variant="solo-filled"
                   type="password"
@@ -430,6 +443,7 @@ export default {
       newSubscription: {},
       discoveryIsLoading: false,
       subscriptionToUpdate: null,
+      showNewSubscriptionAuthConfig: false,
       showAuthConfig: false,
       // queue properties 
       queueId: this.queueUnderConfig.id,

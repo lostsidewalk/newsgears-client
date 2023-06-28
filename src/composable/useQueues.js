@@ -1016,7 +1016,7 @@ export function useQueues(props) {
 
   function updateQueue() {
     let method = 'PUT';
-    refreshQueuesIsLoading.value = true;
+    queueConfigIsLoading.value = true;
     console.log("queues: pushing updated queue to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -1063,12 +1063,12 @@ export function useQueues(props) {
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
-          refreshQueuesIsLoading.value = false;
+          queueConfigIsLoading.value = false;
           clearTimeout(timeoutId);
         });
     }).catch((error) => {
       handleServerError(error);
-      refreshQueuesIsLoading.value = false;
+      queueConfigIsLoading.value = false;
     });
   }
 
@@ -1132,6 +1132,7 @@ export function useQueues(props) {
             }
             queueUnderConfig.subscriptions.unshift(r);
             setLastServerMessage(t('subscriptionAdded'));
+            refreshQueues([queueUnderConfig.id], false);
           }
         }).catch((error) => {
           handleServerError(error);
