@@ -380,8 +380,6 @@ const fr = {
   publishedCount: '{n} articles publiés',
   totalCount: '{n} articles',
   nTotalArticlesInQueue: '{n} articles au total dans cette file',
-  queueCardView: 'Vue en cartes de la file',
-  subscriptionListView: 'Vue en liste des abonnements',
   // post item
   showPostDetails: "Afficher les détails de l'article",
   showPostCategories: "Afficher les catégories de l'article",

@@ -30,27 +30,6 @@
       />
       <!-- display mode switch, don't disable -->
       <DisplayModeButton />
-      <div class="d-none d-md-flex">
-        <slot name="additional" />
-      </div>
-      <div
-        v-if="$vuetify.display.xs || $vuetify.display.sm"
-        class="d-flex"
-      >
-        <v-menu>
-          <template #activator="{ props }">
-            <v-btn
-              color="primary"
-              v-bind="props"
-            >
-              ...
-            </v-btn>
-          </template>
-          <v-list>
-            <slot name="additional" />
-          </v-list>
-        </v-menu>
-      </div>
     </v-toolbar-items>
   </v-toolbar>
 </template>

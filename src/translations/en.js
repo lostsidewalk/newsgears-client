@@ -378,8 +378,6 @@ const en = {
   publishedCount: '{n} published articles',
   totalCount: '{n} articles',
   nTotalArticlesInQueue: '{n} Total articles in this queue',
-  queueCardView: 'Queue card view',
-  subscriptionListView: 'Subscription list view',
   // post item
   showPostDetails: "Show post details",
   showPostCategories: "Show post categories",

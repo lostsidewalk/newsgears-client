@@ -376,8 +376,6 @@ const es = {
   publishedCount: '{n} artículos publicados',
   totalCount: '{n} artículos',
   nTotalArticlesInQueue: '{n} Total de artículos en esta cola',
-  queueCardView: 'Vista de tarjeta de cola',
-  subscriptionListView: 'Vista de lista de suscripciones',
   // post item
   showPostDetails: "Mostrar detalles de la publicación",
   showPostCategories: "Mostrar categorías de publicaciones",

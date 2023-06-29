@@ -77,32 +77,6 @@
         </template>
       </v-app-bar>
       <!-- TODO: extract component -->
-      <!-- app bar (queue filter) -->
-      <v-app-bar
-        v-show="queueStore.selectedQueueId"
-        app
-        :location="'bottom'"
-      >
-        <!-- queue filter  -->
-        <QueueFilter
-          class="flex-grow-1 ma-2"
-          :filter="roArticleListFilter"
-          :queue-length="filteredArticleList.length"
-          :queue-name="roSelectedQueueTitle"
-          :queues="queueStore.queues"
-          @update:modelValue="updateArticleListFilter"
-        />
-        <!-- help buton -->
-        <v-btn
-          :size="buttonSize"
-          :title="t('toggleSortOrder')"
-          :aria-label="t('toggleSortOrder')"
-          :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
-          variant="plain"
-          @click="showFilterHelp = !showFilterHelp"
-        />
-      </v-app-bar>
-      <!-- TODO: extract component -->
       <!-- navigation drawer / left side -->
       <v-navigation-drawer
         v-model="showQueueDashboard"
@@ -135,14 +109,12 @@
             :size="buttonSize"
             :title="t('cardLayout')"
             prepend-icon="fa-bars"
-            :text="t('queueCardView')"
             @click.stop="showQueueCards = true"
           />
           <v-btn 
             :size="buttonSize"
             :title="t('listLayout')"
             prepend-icon="fa-table"
-            :text="t('subscriptionListView')"
             @click.stop="showQueueCards = false"
           />
         </v-btn-group>
@@ -331,14 +303,6 @@
           </v-table>
         </v-sheet>
       </v-navigation-drawer>
-      <!-- filter help card -->
-      <v-dialog
-        v-model="showFilterHelp"
-        fullscreen
-        scrollable
-      >
-        <QueueFilterHelp @dismiss="showFilterHelp = false" />
-      </v-dialog>
       <!-- delete confirmation modal -->
       <v-dialog
         v-model="showQueueDeleteConfirmation"
@@ -468,6 +432,14 @@
           @toggleSortOrder="toggleArticleListSortOrder"
         />
         <v-divider />
+        <!-- queue filter  -->
+        <QueueFilter
+          :filter="roArticleListFilter"
+          :queue-length="filteredArticleList.length"
+          :queue-name="roSelectedQueueTitle"
+          :queues="queueStore.queues"
+          @update:modelValue="updateArticleListFilter"
+        />
         <QueueFilterPills
           v-if="queueStore.selectedQueueId && roShowQueueFilterPills"
           :show-unread="roShowUnreadPosts"
@@ -480,8 +452,6 @@
           @toggleStarred="toggleStarredPosts"
         />
       </v-container>
-      <!-- divider -->
-      <v-divider />
       <!-- TODO: extract component -->
       <!-- queue container (cards) -->
       <div v-if="showCardLayout && filteredArticleList.length > 0">
@@ -623,7 +593,6 @@ import QueueLayout from "@/components/queue/QueueLayout.vue";
 // queue filter 
 import QueueFilter from "@/components/queue/QueueFilter.vue";
 import QueueFilterPills from "@/components/queue/QueueFilterPills.vue";
-import QueueFilterHelp from "@/components/queue/QueueFilterHelp.vue";
 // post 
 import PostCard from "@/components/post/PostCard.vue";
 import PostListItem from "@/components/post/PostListItem.vue";
@@ -656,7 +625,6 @@ export default {
     // filter 
     QueueFilter,
     QueueFilterPills,
-    QueueFilterHelp,
     // item 
     PostCard,
     PostListItem,
@@ -793,7 +761,6 @@ export default {
     } = useSharing();
 
     const refreshIntervalId = ref(null);
-    const showFilterHelp = ref(false);
     const showQueueDashboard = ref(false);
     const showQueueCards = ref(true);
     const showHelpPanel = ref(false);
@@ -840,11 +807,11 @@ export default {
       // 
       if (event.key === 'Escape') {
         // bail if a modal is showing
-        if (isModalShowing) {
+        if (isModalShowing.value) {
           return;
         }
         // otherwise hide the queue dashboard if it's showing 
-        if (showQueueDashboard) {
+        if (showQueueDashboard.value) {
           showQueueDashboard.value = false;
         }
         return;
@@ -1028,7 +995,6 @@ export default {
       roShowNotificationWarning,
       // other data 
       isLoading,
-      showFilterHelp,
       showQueueDashboard,
       showQueueCards,
       showHelpPanel,

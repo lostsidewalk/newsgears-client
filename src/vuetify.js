@@ -89,12 +89,11 @@ const vuetify = createVuetify({
       color: "surface",
     },
     VList: {
-      activeColor: "secondary",
       bgColor: "surface",
       color: "primary",
     },
     VListItem: {
-      activeColor: "accent",
+      baseColor: "accent",
       color: "primary",
     },
     VListSubheader: {
