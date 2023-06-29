@@ -95,7 +95,7 @@ const en = {
   secure_detail2: 'Additionally, we implement a sensible Content Security Policy (CSP) to safeguard against cross-site scripting (XSS) attacks and other potential security vulnerabilities. The CSP allows us to define trusted sources for various types of content. By enforcing these policies, we mitigate the risks associated with unauthorized code execution and unauthorized data access.',
   secure_detail3: 'Your privacy and security are of utmost importance to us. By utilizing a secure image proxy and implementing a sensible Content Security Policy, we aim to provide you with a worry-free browsing experience. Enjoy peace of mind as you explore your RSS feeds, knowing that we have taken proactive steps to protect your privacy and ensure the integrity of your data.',
   localized: 'Localized',
-  localized_detail1: 'FeedGears is presently available in English and Spanish.  Adding support for additional languages is our on short-term roadmap.',
+  localized_detail1: 'FeedGears is presently available in English, Spanish, and French.  Adding support for additional languages is our on short-term roadmap.',
   freeAsInBeer: 'Free As In Beer',
   freeAsInBeer_detail1: 'Lost Sidewalk Software embraces the principles of free and open source software (FOSS) for all of our products. All our source code is freely available on GitHub and covered by the GNU General Public License version 3 (GPLv3). This means that anyone can access, study, modify, and distribute our software.',
   freeAsInBeer_detail2: 'We welcome developers and enthusiasts to join our community and contribute to the project. Whether it\'s through code contributions, bug fixes, feature suggestions, or documentation improvements, we value and appreciate all forms of involvement. Together, we can make the FeedGears platform even better and meet the evolving needs of our users.',
@@ -497,7 +497,7 @@ const en = {
   internationalInformationTransfersDetails:
     "Our servers are located in the United States.  If you are acessing FeedGears from outside the United States, please be aware that your information may be transferred to, stored, and processed by us in our facilities and by those of third-parties with whom we may share your personal information, in the United States and other countries.",
   internationalInformationTransfersDetailsFurther:
-    "If you are a resident in the European Economic Area (EAA) or United Kingdom (UK), then these countries may not necessarily have data protection laws or other simliar laws as comprehensive as those in your country.  We will take all necessary measures to protected your personal information in accordance with this privacy notice and applicable law. ",
+    "If you are a resident in the European Economic Area (EAA) or United Kingdom (UK), then these countries may not necessarily have data protection laws or other simliar laws as comprehensive as those in your country.  We will take all necessary measures to protected your personal information in accordance with this privacy notice and applicable law.",
   whatAreYourPrivacyRights: "What are your privacy rights?",
   yourPrivacyRightsSummary:
     "You may review, change, or terminate your account at any time.",

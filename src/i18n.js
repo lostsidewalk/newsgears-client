@@ -12,16 +12,18 @@ if (shortLang.indexOf("-") !== -1) shortLang = shortLang.split("-")[0];
 
 if (shortLang.indexOf("_") !== -1) shortLang = shortLang.split("_")[0];
 
-import es from "./translations/es";
 import en from "./translations/en";
+import es from "./translations/es";
+import fr from "./translations/fr";
 
 const i18n = createI18n({
   locale: shortLang,
   fallbackLocale: "en",
   allowComposition: true,
   messages: {
-    es: es,
     en: en,
+    es: es,
+    fr: fr,
   },
 });
 
