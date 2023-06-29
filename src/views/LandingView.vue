@@ -25,17 +25,13 @@
     </v-app-bar>
 
     <v-main>
-      <!-- container -->
       <BannerPanel :is-authenticated="isAuthenticated" />
 
-      <!-- container -->
       <DemoPanel class="mb-4" /> 
 
       <v-divider /> 
 
-      <v-container class="mt-4">
-        <FAQPanel />
-      </v-container>
+      <FAQPanel class="mt-4" />
 
       <v-divider /> 
       
