@@ -3,7 +3,7 @@ const fr = {
   trueStr: "vrai",
   falseStr: "faux",
   somethingHorribleHappened:
-  "Quelque chose d'horrible s'est produit et nous ne savons pas exactement quoi ! Veuillez réessayer dans quelques instants.",
+    "Quelque chose d'horrible s'est produit et nous ne savons pas exactement quoi ! Veuillez réessayer dans quelques instants.",
   requestTimedOut: "La requête a expiré, veuillez réessayer dans quelques instants.",
   privacyPolicy: "Politique de confidentialité",
   cancel: "Annuler",
@@ -18,8 +18,11 @@ const fr = {
   subscribe: "S'abonner",
   subscribed: "Abonné !",
   inDevelopment:
-  "Désolé, cette section de FeedGears n'est pas encore tout à fait prête. Revenez dans quelques jours !",
+    "Désolé, cette section de FeedGears n'est pas encore tout à fait prête. Revenez dans quelques jours !",
   loadingProgress: "chargement en cours",
+  cardLayout: "Passer à la disposition en cartes",
+  listLayout: "Passer à la disposition en liste",
+  tableLayout: "Passer à la disposition en tableau",
   // auth
   loginToFeedGears: "Connexion à FeedGears",
   accountRecovery: "Récupération de compte",
@@ -29,20 +32,22 @@ const fr = {
   accountRecoveryHere: "Besoin d'aide pour vous connecter ?",
   registerHere: "FeedGears est gratuit. Créez un compte ici.",
   unableToCompleteYourRequest:
-  "Nous n'avons pas pu finaliser votre demande. Veuillez essayer de vous connecter avec une autre méthode.",
-  usernameAndPasswordAreRequired: "Le nom d'utilisateur et le mot de passe sont requis.",
+    "Nous n'avons pas pu finaliser votre demande. Veuillez essayer de vous connecter avec une autre méthode.",
+  usernameAndPasswordAreRequired: 
+    "Le nom d'utilisateur et le mot de passe sont requis.",
   passwordIsRequired: "Le mot de passe est requis.",
   usernameIsRequired: "Le nom d'utilisateur est requis.",
   signinWithGoogle: "Se connecter avec Google",
   pwResetRequestMessage:
-  "Saisissez votre nom d'utilisateur et votre adresse e-mail. Nous vous enverrons un lien de réinitialisation de mot de passe à votre adresse e-mail vérifiée.",
-  checkEmailForFurther: "Vérifiez votre e-mail pour obtenir de plus amples instructions.",
+    "Saisissez votre nom d'utilisateur et votre adresse e-mail. Nous vous enverrons un lien de réinitialisation de mot de passe à votre adresse e-mail vérifiée.",
+  checkEmailForFurther: 
+    "Vérifiez votre e-mail pour obtenir de plus amples instructions.",
   newPassword: "Nouveau mot de passe",
   confirmNewPassword: "Confirmez le nouveau mot de passe",
   enterAndConfirmNewPw: "Entrez et confirmez votre nouveau mot de passe.",
   pwUpdated: "Mot de passe mis à jour.",
   registrationRequirements:
-  "Le nom d'utilisateur, l'adresse e-mail et le mot de passe sont requis pour s'inscrire.",
+    "Le nom d'utilisateur, l'adresse e-mail et le mot de passe sont requis pour s'inscrire.",
   // landing
   createAnAccount: "Créer un compte",
   whatIsFeedGears: "Un lecteur de flux moderne et personnalisable.",
@@ -57,7 +62,7 @@ const fr = {
   discord: "Discord",
   copyright: "COPYRIGHT",
   contactUsWithQuestionsViaEmail:
-  "Contactez Lost Sidewalk Software par e-mail pour toute question.",
+    "Contactez Lost Sidewalk Software par e-mail pour toute question.",
   // demo
   filterScreenshot: "Capture d'écran du filtre de file d'attente",
   listLayoutsScreenshot: "Capture d'écran de la disposition en liste",
@@ -274,26 +279,6 @@ const fr = {
   showReadLater: "Afficher les à lire plus tard",
   showRead: "Afficher les lus",
   search: "Rechercher",
-  // layout
-  cardLayout: "Passer à la disposition en cartes",
-  listLayout: "Passer à la disposition en liste",
-  tableLayout: "Passer à la disposition en tableau",
-  refreshQueues: "Actualiser les files",
-  refreshForLatest: "Actualiser cette file pour les nouveaux articles",
-  markQueueAsRead: "Marquer cette file comme lue",
-  toggleSortOrder: "Basculer l'ordre de tri",
-  toggleFilterPills: "Basculer les filtres",
-  allSubscriptions: "tous les abonnements",
-  all: "tous",
-  unread: "NON LUS",
-  readLater: "À LIRE PLUS TARD",
-  read: "LUS",
-  starred: "FAVORIS",
-  clear: "EFFACER",
-  toggleUnread: "toggleUnread",
-  toggleRead: "toggleRead",
-  toggleReadLater: "toggleReadLater",
-  toggleStarred: "toggleStarred",
   // iTunes
   iTunesTitle: "TITRE : {title}",
   iTunesSubTitle: "SOUS-TITRE : {subTitle}",
@@ -341,6 +326,23 @@ const fr = {
   // post feed
   toggleDashboard: "Afficher/masquer le tableau de bord",
   thisIsYourQueueDashboard: "Ceci est votre tableau de bord des files. Le tableau de bord affiche des statistiques récapitulatives sur chaque file, telles que le nombre d'articles non lus dans un groupe d'abonnements. Cliquez sur une carte de file pour afficher les articles de cette file. Utilisez les boutons de carte de file pour ajouter, gérer, s'abonner et se désabonner des flux. Appuyez sur Échap pour masquer ce menu.",
+  // layout
+  refreshQueues: "Actualiser les files",
+  refreshForLatest: "Actualiser cette file pour les nouveaux articles",
+  markQueueAsRead: "Marquer cette file comme lue",
+  toggleSortOrder: "Basculer l'ordre de tri",
+  toggleFilterPills: "Basculer les filtres",
+  allSubscriptions: "tous les abonnements",
+  all: "tous",
+  unread: "NON LUS",
+  readLater: "À LIRE PLUS TARD",
+  read: "LUS",
+  starred: "FAVORIS",
+  clear: "EFFACER",
+  toggleUnread: "toggleUnread",
+  toggleRead: "toggleRead",
+  toggleReadLater: "toggleReadLater",
+  toggleStarred: "toggleStarred",
   // queue select button
   showMoreInfo: "Afficher les détails",
   hideMoreInfo: "Masquer les détails",

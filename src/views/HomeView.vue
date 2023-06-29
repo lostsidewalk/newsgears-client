@@ -73,28 +73,7 @@
             @showSettings="openSettings"
             @showHelp="showHelpPanel = !showHelpPanel"
             @logout="logout"
-          >
-            <template #additional>
-              <!-- upload OPML button -->
-              <v-btn
-                :size="buttonSize"
-                accesskey="m"
-                :title="t('uploadOPML')"
-                append-icon="fa-file"
-                :text="t('uploadOPML')"
-                @click.stop="uploadOpml"
-              />
-              <!-- new queue button -->
-              <v-btn
-                :size="buttonSize"
-                accesskey="q"
-                :title="t('createNewQueue')"
-                append-icon="fa-plus"
-                :text="t('createNewQueue')"
-                @click.stop="newQueue"
-              />
-            </template>
-          </ControlPanel>
+          />
         </template>
       </v-app-bar>
       <!-- TODO: extract component -->
@@ -134,12 +113,38 @@
         temporary
       >
         <v-btn-group>
-          <v-btn @click.stop="showQueueCards = true">
-            {{ $t('queueCardView') }}
-          </v-btn>
-          <v-btn @click.stop="showQueueCards = false">
-            {{ $t('subscriptionListView') }}
-          </v-btn>
+          <!-- new queue button -->
+          <v-btn
+            :size="buttonSize"
+            accesskey="q"
+            :title="t('createNewQueue')"
+            prepend-icon="fa-plus"
+            :text="t('createNewQueue')"
+            @click.stop="newQueue"
+          />
+          <!-- upload OPML button -->
+          <v-btn
+            :size="buttonSize"
+            accesskey="m"
+            :title="t('uploadOPML')"
+            prepend-icon="fa-file"
+            :text="t('uploadOPML')"
+            @click.stop="uploadOpml"
+          />
+          <v-btn 
+            :size="buttonSize"
+            :title="t('cardLayout')"
+            prepend-icon="fa-bars"
+            :text="t('queueCardView')"
+            @click.stop="showQueueCards = true"
+          />
+          <v-btn 
+            :size="buttonSize"
+            :title="t('listLayout')"
+            prepend-icon="fa-table"
+            :text="t('subscriptionListView')"
+            @click.stop="showQueueCards = false"
+          />
         </v-btn-group>
         <v-sheet v-if="showQueueCards">
           <v-alert
@@ -192,7 +197,7 @@
             <thead style="text-align: center;">
               <th
                 class="pa-1 h-auto"
-                style="min-width: 70px;max-width:140px;"
+                style="max-height: 70px;max-width: 70px;"
               />
               <th class="pa-1">
                 &nbsp;
@@ -235,7 +240,10 @@
                 v-for="subscription in queueStore.allSubscriptions"
                 :key="subscription"
               >
-                <td>
+                <td
+                  style="text-align: center;"
+                  class="pa-1"
+                >
                   <v-img
                     v-if="subscription.icon"
                     class="rounded h-auto"
@@ -243,6 +251,7 @@
                     :title="subscription.icon.title"
                     :alt="$t('feedLogoImage')"
                     contain
+                    style="max-height: 70px;max-width: 70px;"
                   />
                   <v-img
                     v-if="subscription.image && !subscription.icon"
@@ -251,6 +260,7 @@
                     :title="subscription.image.title"
                     :alt="$t('feedLogoImage')"
                     contain
+                    style="max-height: 70px;max-width: 70px;"
                   />
                   <v-img
                     v-if="!subscription.image && !subscription.icon"
@@ -258,6 +268,7 @@
                     src="rss_logo.svg"
                     :alt="$t('rssLogo')"
                     contain
+                    style="max-height: 70px;max-width: 70px;"
                   />
                 </td>
                 <td>{{ subscription.title }}</td>
