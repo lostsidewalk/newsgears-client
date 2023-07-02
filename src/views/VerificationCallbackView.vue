@@ -61,6 +61,7 @@ export default {
 
     onMounted(() => {
       auth.getTokenSilently()
+      .catch(() => {})
       .finally(() => {
         if (isAuthenticated.value) {
           console.log("verification-callback-view: authenticated on mount");

@@ -65,6 +65,7 @@ export default {
 
     onMounted(() => {
       auth.getTokenSilently()
+      .catch(() => {})
       .finally(() => {
         if (isAuthenticated.value) {
           console.log("api-view: authenticated on mount");

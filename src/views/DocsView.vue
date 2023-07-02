@@ -62,6 +62,7 @@ export default {
 
     onMounted(() => {
       auth.getTokenSilently()
+      .catch(() => {})
       .finally(() => {
         if (isAuthenticated.value) {
           console.log("docs-view: authenticated on mount");

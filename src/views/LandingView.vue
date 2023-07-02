@@ -66,6 +66,7 @@ export default {
 
     onMounted(() => {
       auth.getTokenSilently()
+        .catch(() => {})
         .finally(() => {
           if (isAuthenticated.value) {
             console.log("landing: authenticated on mount");

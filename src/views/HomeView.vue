@@ -72,7 +72,7 @@
             :is-authenticated="isAuthenticated"
             @showSettings="openSettings"
             @showHelp="showHelpPanel = !showHelpPanel"
-            @logout="logout"
+            @logout="$event => { logout(); disconnectBroker(); }"
           />
         </template>
       </v-app-bar>
@@ -703,6 +703,8 @@ export default {
       selectedTab, // computed 
       tabModel, // computed 
       // 
+      connectBroker,
+      disconnectBroker, 
       refreshQueues,
       updatePostReadStatus,
       updatePostPubStatus,
@@ -918,9 +920,12 @@ export default {
     // 
     onMounted(() => {
       auth.getTokenSilently()
+        .catch(() => {})
         .finally(() => {
           if (isAuthenticated.value) {
             console.log("home: authenticated on mount");
+            connectBroker();
+            
           } else {
             console.log("home: not authenticated on mount");
           }
@@ -929,6 +934,7 @@ export default {
     });
 
     onBeforeUnmount(() => {
+      disconnectBroker();
       window.removeEventListener("keydown", keyHandler);
     });
     // 
@@ -1019,6 +1025,8 @@ export default {
       updateAccount,
       // queues module functions 
       queueStore,
+      connectBroker,
+      disconnectBroker,
       refreshQueues,
       openPost,
       selectNextPost,

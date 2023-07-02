@@ -167,6 +167,14 @@ export function useQueues(props) {
     return arr;
   });
 
+  function connectBroker() {
+    console.log("connecting to broker");
+  }
+
+  function disconnectBroker() {
+    console.log("disconnect from broker");
+  }
+
   async function refreshQueues(queueIdsToRetrieve, retrieveQueueDefinitions) {
     console.log("queues: refreshing queues");
     let rawPosts = [];
@@ -1298,7 +1306,7 @@ export function useQueues(props) {
   const roShowStarredPosts = readonly(showStarredPosts);
 
   return {
-    queueStore: queueStore, 
+    queueStore, 
     roSelectedQueueTitle,
     roPreviousQueueId,
     roQueueIdToDelete,
@@ -1335,9 +1343,10 @@ export function useQueues(props) {
     showQueueRefreshIndicator,
     tabModel,
     // 
+    connectBroker, 
     // 
-    // push item onto queues 
-    addQueue: queueStore.addQueue,
+    disconnectBroker, 
+    // 
     // makes server call to pull new stagingPosts for each queue; 
     // optionally makes server call to pull queue definitions; 
     // rebuilds all dependent entities and updates local storage; 
