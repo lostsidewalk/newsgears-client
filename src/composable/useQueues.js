@@ -1,4 +1,6 @@
 import lunr from 'lunr';
+import { Client } from "@stomp/stompjs";
+import * as SockJS from 'sockjs-client';
 
 import { ref, reactive, inject, computed, nextTick, readonly } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -15,6 +17,8 @@ export function useQueues(props) {
   } = useNotifications();
   const { formatTimestamp } = useTimestamp();
   const queueStore = useQueueStore();
+  const client = ref(null);
+  const sessionId = ref(null);
   const selectedQueueTitle = ref(null); // currently selected queue title 
   const previousQueueId = ref(null); // previously selected queue Id 
   const queueIdToDelete = ref(null);
@@ -43,6 +47,8 @@ export function useQueues(props) {
   const queueConfigIsLoading = ref(false);
 
   const { baseUrl } = props;
+
+  const brokerUrl = process.env.VUE_APP_FEEDGEARS_BROKER_URL;
 
   const filteredArticleList = computed(() => {
     let results = [];
@@ -75,22 +81,22 @@ export function useQueues(props) {
       // filter and sort the result 
       // 
       if (results) {
-       results = results.filter((r) => {
-        if (!showUnreadPosts.value && !r.isRead && !r.isReadLater && !r.isPublished) {
-          return false;
-        }
-        if (!showReadPosts.value && r.isRead && !r.isPublished) {
-          return false;
-        }
-        if (!showReadLaterPosts.value && r.isReadLater && !r.isPublished) {
-          return false;
-        }
-        if (!showStarredPosts.value && r.isPublished) {
-          return false;
-        }
-        return true;
-       });
-       sortQueue(results, articleListSortOrder.value);
+        results = results.filter((r) => {
+          if (!showUnreadPosts.value && !r.isRead && !r.isReadLater && !r.isPublished) {
+            return false;
+          }
+          if (!showReadPosts.value && r.isRead && !r.isPublished) {
+            return false;
+          }
+          if (!showReadLaterPosts.value && r.isReadLater && !r.isPublished) {
+            return false;
+          }
+          if (!showStarredPosts.value && r.isPublished) {
+            return false;
+          }
+          return true;
+        });
+        sortQueue(results, articleListSortOrder.value);
       } else {
         results = [];
       }
@@ -167,12 +173,71 @@ export function useQueues(props) {
     return arr;
   });
 
-  function connectBroker() {
-    console.log("connecting to broker");
+  async function connectBroker() {
+    console.log("queues: connecting to broker...");
+    const token = await auth.getTokenSilently();
+    client.value = new Client({
+      // debug: console.log,
+      brokerURL: brokerUrl,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      connectHeaders: {
+        "Authorization": [`${token}`]
+      },
+      disconnectHeaders: {
+        "Authorization": [`${token}`]
+      },
+      webSocketFactory: () => new SockJS(brokerUrl),
+      onUnhandledMessage: message => console.log("queues: broker unhandled message: " + JSON.stringify(message)),
+      onUnhandledReceipt: receipt => console.log("queues: broker unhandled receipt: " + JSON.stringify(receipt)),
+      onUnhandledFrame: frame => console.log("queues: broker unhandled frame: " + JSON.stringify(frame)),
+      onDisconnect: () => console.log("queues: broker disconnected"),
+      onWebSocketError: (e) => console.error("queues: broker socket error due to: " + JSON.stringify(e)),
+      onStompError: (e) => console.error("queues: broker STOMP error due to: " + JSON.stringify(e)),
+    });
+
+    client.value.onStompError = function (frame) {
+        console.error("queues: broker reported error: " + frame.headers["message"]);
+        console.error("queues: broker error additional details: " + frame.body);
+    };
+
+    client.value.onConnect = function () {
+      console.log("queues: broker connected");
+      // store the STOMP sessionId 
+      let url = client.value.webSocket._transport.url;
+      let urlPieces = url.split('/');
+      if (urlPieces.length > 5) {
+        sessionId.value = urlPieces[urlPieces.length - 2];
+      }
+      // subscribe to this user's message feed 
+      let finalUrl = "/secured/user/queue/specific-user" + "-user" + sessionId.value;
+      console.log("queues: subscribing to: " + finalUrl);
+      client.value.subscribe(finalUrl, function (message) {
+        console.log("queues: message received in secured chat: " + message.body);
+      });
+      // publish hello broker 
+      client.value.publish({
+        from: 'me',
+        to: 'me',
+        destination: '/secured/room',
+        body: 'Hello FeedGears maintenance broker!',
+      });
+    };
+    //
+    // activate the client
+    //
+    try {
+      client.value.activate();
+    } catch (error) {
+      console.error("queues: WebSocket failed to activate, please re-authenticate");
+      console.debug("queues: WebSocket client error=" + JSON.stringify(error));
+    }
   }
 
   function disconnectBroker() {
     console.log("disconnect from broker");
+    client.value.deactivate();
   }
 
   async function refreshQueues(queueIdsToRetrieve, retrieveQueueDefinitions) {
@@ -559,10 +624,10 @@ export function useQueues(props) {
       if (currentChar === ' ' || currentChar === ':') {
         break;
       }
-  
+
       token += currentChar;
     }
-  
+
     return token;
   }
 
@@ -1004,7 +1069,7 @@ export function useQueues(props) {
         })
         .then((data) => {
           let created = data[0].queueDefinition;
-          queueStore.addQueue(created); 
+          queueStore.addQueue(created);
           queueStore.initializeArticleList(created.id);
           setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
           setSelectedQueueId(created.id);
@@ -1306,7 +1371,7 @@ export function useQueues(props) {
   const roShowStarredPosts = readonly(showStarredPosts);
 
   return {
-    queueStore, 
+    queueStore,
     roSelectedQueueTitle,
     roPreviousQueueId,
     roQueueIdToDelete,
@@ -1326,10 +1391,10 @@ export function useQueues(props) {
     roSubscriptionToShow,
     roQueueUnderConfig,
     roQueueConfigIsLoading,
-    roShowUnreadPosts, 
-    roShowReadPosts, 
-    roShowReadLaterPosts, 
-    roShowStarredPosts, 
+    roShowUnreadPosts,
+    roShowReadPosts,
+    roShowReadLaterPosts,
+    roShowStarredPosts,
     // 
     showOpmlUploadPanel, // rw 
     showSubscriptionMetrics, // rw
@@ -1343,9 +1408,8 @@ export function useQueues(props) {
     showQueueRefreshIndicator,
     tabModel,
     // 
-    connectBroker, 
-    // 
-    disconnectBroker, 
+    connectBroker,
+    disconnectBroker,
     // 
     // makes server call to pull new stagingPosts for each queue; 
     // optionally makes server call to pull queue definitions; 
@@ -1372,7 +1436,7 @@ export function useQueues(props) {
     // 
     toggleReadLaterPosts,
     // 
-    toggleStarredPosts, 
+    toggleStarredPosts,
     // adds the given subscription/category to t he articleListFilter 
     updateFilter,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 
