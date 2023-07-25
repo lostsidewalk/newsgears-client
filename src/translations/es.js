@@ -50,6 +50,7 @@ const es = {
   registrationRequirements:
     "Se requieren nombre de usuario, dirección de correo electrónico y contraseña para registrarse.",
   // landing
+  feedGearsRssLogo: "FeedGears RSS",
   createAnAccount: "Crear una cuenta",
   whatIsFeedGears: "Un lector de feeds seguro, privado y accesible.",
   whyIsFeedGearsFree: "Gratis para siempre porque amamos RSS.",
