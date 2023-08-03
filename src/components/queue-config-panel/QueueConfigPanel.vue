@@ -498,7 +498,7 @@ export default {
     // emit save 
     save() {
       let saveObj = {
-        ident: this.queuedIdent,
+        ident: this.queueIdent,
         title: this.queueTitle,
         description: this.queueDescription,
         generator: this.queueGenerator,

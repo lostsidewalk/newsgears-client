@@ -1074,7 +1074,7 @@ export function useQueues(props) {
           setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
           setSelectedQueueId(created.id);
           queueStore.rebuildLunrIndexes([created.id]);
-          openQueueConfigPanel(created);
+          showQueueConfigPanel.value = false;
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
