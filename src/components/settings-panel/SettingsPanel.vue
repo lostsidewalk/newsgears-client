@@ -173,7 +173,7 @@
       <!-- TODO: extract component -->
       <!-- subscription -->
       <v-card
-        v-if="subscriptionStatus"
+        v-if="hasSubscription"
         elevation="6"
         class="mb-4 pa-1"
       >
@@ -349,34 +349,34 @@ export default {
   },
   computed: {
     productDescription: function () {
-      return this.subscription ? null : this.subscription.lastInvoice.productDescription;
+      return this.subscription.lastInvoice.productDescription;
     },
     hostedInvoiceUrl: function () {
-      return this.subscription ? null : this.subscription.lastInvoice.hostedUrl;
+      return this.subscription.lastInvoice.hostedUrl;
     },
     customerEmailAddress: function () {
-      return this.subscription ? null : this.subscription.lastInvoice.customerEmail;
+      return this.subscription.lastInvoice.customerEmail;
     },
     customerName: function () {
-      return this.subscription ? null : this.subscription.lastInvoice.customerName;
+      return this.subscription.lastInvoice.customerName;
     },
     amountDue: function () {
-      return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountDue);
+      return this.toLocalCurrency(this.subscription.lastInvoice.amountDue);
     },
     amountPaid: function () {
-      return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountPaid);
+      return this.toLocalCurrency(this.subscription.lastInvoice.amountPaid);
     },
     amountRemaining: function () {
-      return this.subscription ? null : this.toLocalCurrency(this.subscription.lastInvoice.amountRemaining);
+      return this.toLocalCurrency(this.subscription.lastInvoice.amountRemaining);
     },
     lastInvoiceCreated: function () {
-      return this.subscription ? null : this.toLocalDate(this.subscription.lastInvoice.created);
+      return this.toLocalDate(this.subscription.lastInvoice.created);
     },
     lastInvoiceStatus: function () {
-      return this.subscription ? null : this.subscription.lastInvoice.status;
+      return this.subscription.lastInvoice.status;
     },
     subscriptionStarted: function () {
-      return this.subscription ? null : this.toLocalDate(this.subscription.startDate);
+      return this.toLocalDate(this.subscription.startDate);
     },
     subscriptionCurrentPeriod: function () {
       if (!this.subscription) {
@@ -408,6 +408,9 @@ export default {
     hasLastInvoice: function () {
       return this.subscription.lastInvoice;
     },
+    hasSubscription: function () {
+      return this.subscription ? this.subscription.status.length > 0 : false;
+    }
   },
   mounted() {
     this.username = this.account.username;
