@@ -213,16 +213,20 @@ export function useQueues(props) {
       // subscribe to this user's message feed 
       let finalUrl = "/secured/user/queue/specific-user" + "-user" + sessionId.value;
       console.log("queues: subscribing to: " + finalUrl);
-      client.value.subscribe(finalUrl, function (message) {
-        console.log("queues: message received in secured chat: " + message.body);
-      });
-      // publish hello broker 
-      client.value.publish({
-        from: 'me',
-        to: 'me',
-        destination: '/secured/room',
-        body: 'Hello FeedGears maintenance broker!',
-      });
+      try {
+        client.value.subscribe(finalUrl, function (message) {
+          console.log("queues: message received in secured chat: " + message.body);
+        });
+        // publish hello broker 
+        client.value.publish({
+          from: 'me',
+          to: 'me',
+          destination: '/secured/room',
+          body: 'Hello FeedGears maintenance broker!',
+        });
+      } catch (error) {
+        console.debug("queues: broker client bugged out; the connection probably disappeared.");
+      }
     };
     //
     // activate the client
@@ -237,7 +241,9 @@ export function useQueues(props) {
 
   function disconnectBroker() {
     console.log("disconnect from broker");
-    client.value.deactivate();
+    if (client.value) {
+      client.value.deactivate();
+    }
   }
 
   async function refreshQueues(queueIdsToRetrieve, retrieveQueueDefinitions) {

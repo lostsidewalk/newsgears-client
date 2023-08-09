@@ -905,6 +905,7 @@ export default {
     // 
     watch(isAuthenticated, (newIsAuthenticated) => {
       if (newIsAuthenticated) {
+        connectBroker();
         refreshQueues(null, true);
         // schedule the subscription-metrics refresh timer 
         refreshIntervalId.value = setInterval(() => {
@@ -913,6 +914,7 @@ export default {
       } else {
         // unschedule the refresh timer 
         refreshIntervalId.value = null;
+        disconnectBroker();
       }
     });
     // 
