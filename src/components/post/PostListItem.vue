@@ -111,11 +111,11 @@ export default {
   methods: {
     stagePost() {
       console.log("post: publishing post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueIdent, 'PUB_PENDING', 'stagePost');
+      this.updatePostPubStatus(this.post.queueId, 'PUB_PENDING', 'stagePost');
     },
     unstagePost() {
       console.log("post: unstaging post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueIdent, 'DEPUB_PENDING', "unstagePost");
+      this.updatePostPubStatus(this.post.queueId, 'DEPUB_PENDING', "unstagePost");
     },
     toggleStagePost() {
       if (this.post.isPublished) {
@@ -153,11 +153,11 @@ export default {
             originator: successSignal,
           });
     },
-    updatePostPubStatus(queueIdent, newStatus, successSignal) {
+    updatePostPubStatus(queueId, newStatus, successSignal) {
       this.$emit('updatePostPubStatus', { 
             id: this.post.id, 
             newStatus: newStatus, 
-            queueIdent: queueIdent,
+            queueId: queueId,
             originator: successSignal
           });
     },

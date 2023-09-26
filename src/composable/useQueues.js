@@ -285,7 +285,7 @@ export function useQueues(props) {
             if (stagingPosts) {
               for (let i = 0; i < stagingPosts.length; i++) {
                 const p = stagingPosts[i].post;
-                p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
+                                p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
                 p.isRead = p.postReadStatus === 'READ';
                 p.isReadLater = p.postReadStatus === 'READ_LATER';
                 p.postImgSrc = stagingPosts[i].postImgSrc;
@@ -438,6 +438,7 @@ export function useQueues(props) {
             if (p.isReadLater) {
               p.isRead = false;
             }
+            Object.assign(selectedPost, p);
           }
         }).catch((error) => {
           handleServerError(error);
@@ -487,7 +488,8 @@ export function useQueues(props) {
             p.isPublished = false;
           }
           p.postPubStatus = null;
-          queueStore.updateLastDeployed(result.queueId, formatTimestamp(data.timestamp));
+          queueStore.updateLastDeployed(result.queueId, formatTimestamp(data.RSS_20.timestamp));
+          Object.assign(selectedPost, p);
           queueStore.rebuildLunrIndexes([result.queueId]);
         }).catch((error) => {
           handleServerError(error);
