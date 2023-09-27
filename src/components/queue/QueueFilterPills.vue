@@ -42,20 +42,6 @@
         @click="$emit('toggleReadLater')"
       />
     </v-col>
-    <!-- starred -->
-    <v-col
-      cols="12"
-      sm="3"
-      md="3"
-    >
-      <v-checkbox
-        density="compact"
-        :title="$t('toggleStarred')"
-        :model-value="showStarred"
-        :label="$t('starred')"
-        @click="$emit('toggleStarred')"
-      />
-    </v-col>
   </v-row>
 </template>
 
@@ -68,13 +54,11 @@ export default {
     showUnread: { type: Boolean, default: false },
     showRead: { type: Boolean, default: false },
     showReadLater: { type: Boolean, default: false },
-    showStarred: { type: Boolean, default: false },
   }, 
   emits: [
     "toggleUnread",
     "toggleRead",
     "toggleReadLater",
-    "toggleStarred", 
   ],
 }
 </script>

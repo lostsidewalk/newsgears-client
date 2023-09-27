@@ -38,17 +38,6 @@
           /> 
           {{ readCount }}
         </v-chip>
-        <!-- published count -->
-        <v-chip
-          :title="$t('publishedCount', { n: publishedCount })"
-          @click="$emit('updateFilter', { name: 'mode', value: 'STARRED' })"
-        >
-          <v-icon
-            start
-            icon="fa-star"
-          /> 
-          {{ publishedCount }}
-        </v-chip>
       </v-chip-group>
     </v-card-text>
     <v-divider />
@@ -76,9 +65,6 @@
         v-if="showMoreInformation"
         :recent-article-list="recentArticleList"
         :subscriptions="queue.subscriptions" 
-        :json-pub-url="feedUrl + '/feed/json/' + queue.transportIdent" 
-        :rss-pub-url="feedUrl + '/feed/rss/' + queue.transportIdent" 
-        :atom-pub-url="feedUrl + '/feed/atom/' + queue.transportIdent" 
         @updateFilter="$event => $emit('updateFilter', $event)"
         @showSubscriptionMetrics="$event => $emit('showSubscriptionMetrics', $event)"
       />
@@ -124,9 +110,6 @@ export default {
     },
     totalCount: function () {
       return this.articleList ? this.articleList.values.length : 0;
-    },
-    publishedCount: function () {
-      return this.articleList ? this.articleList.values.filter((post) => post.isPublished).length : 0;
     },
     mostRecentArticle: function () {
       if (this.articleList) {

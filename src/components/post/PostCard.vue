@@ -238,25 +238,6 @@
         :icon="post.isReadLater ? 'fa-bullseye' : 'fa-circle-o'"
         @click.stop="togglePostReadLaterStatus"
       />
-      <!-- star button -->
-      <v-btn
-        v-if="!post.isPublished"
-        :size="buttonSize"
-        :title="$t('starThisPost')"
-        :aria-label="$t('starThisPost')"
-        icon="fa-star-o"
-        @click.stop="stagePost"
-      />
-      <!-- un-star button -->
-      <v-btn
-        v-if="post.isPublished"
-        class="star-colored"
-        :size="buttonSize"
-        :title="$t('unstarThisPost')"
-        :aria-label="$t('unstarThisPost')"
-        icon="fa-star"
-        @click.stop="unstagePost"
-      />
       <!-- link button -->
       <v-btn
         :size="buttonSize"
@@ -336,7 +317,6 @@ export default {
   },
   emits: [
     "updatePostReadStatus",
-    "updatePostPubStatus",
     "updateFilter",
     "openPostUrl",
     "share",
@@ -364,25 +344,6 @@ export default {
         contentObj.type.toLowerCase().indexOf("html") >= 0
       );
     },
-    stagePost() {
-      console.log("post: publishing post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueId, "PUB_PENDING", "stagePost");
-    },
-    unstagePost() {
-      console.log("post: unstaging post id=" + this.post.id);
-      this.updatePostPubStatus(
-        this.post.queueId,
-        "DEPUB_PENDING",
-        "unstagePost"
-      );
-    },
-    toggleStagePost() {
-      if (this.post.isPublished) {
-        this.unstagePost();
-      } else {
-        this.stagePost();
-      }
-    },
     togglePostReadStatus() {
       let newStatus;
       if (!this.post.isRead) {
@@ -409,14 +370,6 @@ export default {
       this.$emit("updatePostReadStatus", {
         id: this.post.id,
         newStatus: newStatus,
-        originator: successSignal,
-      });
-    },
-    updatePostPubStatus(queueId, newStatus, successSignal) {
-      this.$emit("updatePostPubStatus", {
-        id: this.post.id,
-        newStatus: newStatus,
-        queueId: queueId,
         originator: successSignal,
       });
     },

@@ -33,29 +33,6 @@
         @click.stop="togglePostReadLaterStatus"
       />
     </td>
-    <!-- mark as starred/unstarred button -->
-    <td>
-      <v-btn
-        v-if="!post.isPublished"
-        :size="buttonSize"
-        variant="text"
-        :title="$t('starThisPost')"
-        :aria-label="$t('starThisPost')"
-        icon="fa-star-o"
-        @click.stop="stagePost"
-      />
-      <!-- un-star button -->
-      <v-btn
-        v-if="post.isPublished"
-        class="star-colored"
-        :size="buttonSize"
-        variant="text"
-        :title="$t('unstarThisPost')"
-        :aria-label="$t('unstarThisPost')"
-        icon="fa-star"
-        @click.stop="unstagePost"
-      />
-    </td>
     <td>
       <v-btn
         :size="buttonSize"
@@ -84,7 +61,6 @@ export default {
     "openPost",
     "openPostUrl",
     "updatePostReadStatus",
-    "updatePostPubStatus",
   ],
   setup() {
     const { formatTimestamp } = useTimestamp();
@@ -120,9 +96,6 @@ export default {
       }
       return this.post.publishTimestamp;
     },
-    isPublished: function () {
-      return this.post.isPublished;
-    },
     isRead: function () {
       return this.post.isRead;
     },
@@ -131,21 +104,6 @@ export default {
     },
    },
   methods: {
-    stagePost() {
-      console.log("post: publishing post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueId, 'PUB_PENDING', 'stagePost');
-    },
-    unstagePost() {
-      console.log("post: unstaging post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueId, 'DEPUB_PENDING', "unstagePost");
-    },
-    toggleStagePost() {
-      if (this.post.isPublished) {
-        this.unstagePost();
-      } else {
-        this.stagePost();
-      }
-    },
     togglePostReadStatus() {
       let newStatus;
       if (!this.post.isRead) {
@@ -173,14 +131,6 @@ export default {
             id: this.post.id, 
             newStatus: newStatus, 
             originator: successSignal,
-          });
-    },
-    updatePostPubStatus(queueId, newStatus, successSignal) {
-      this.$emit('updatePostPubStatus', { 
-            id: this.post.id, 
-            newStatus: newStatus, 
-            queueId: queueId,
-            originator: successSignal
           });
     },
   }

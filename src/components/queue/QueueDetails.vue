@@ -89,48 +89,6 @@
         </v-list-item>
       </v-list>
     </v-card>
-    <!-- TODO: extract compoennt -->
-    <!-- publications -->
-    <v-card class="ma-4">
-      <v-card-title>
-        {{ $t('publications') }}
-      </v-card-title>
-      <v-divider />
-      <v-card-actions>
-        <v-btn-group>
-          <v-btn
-            :size="buttonSize"
-            label
-            :href="jsonPubUrl"
-          >
-            <v-icon
-              start
-              icon="fa-link"
-            /> JSON
-          </v-btn>
-          <v-btn
-            :size="buttonSize"
-            label
-            :href="rssPubUrl"
-          >
-            <v-icon
-              start
-              icon="fa-link"
-            /> RSS
-          </v-btn>
-          <v-btn
-            :size="buttonSize"
-            label
-            :href="atomPubUrl"
-          >
-            <v-icon
-              start
-              icon="fa-link"
-            /> ATOM
-          </v-btn>
-        </v-btn-group>
-      </v-card-actions>
-    </v-card>
   </v-sheet>
 </template>
 
@@ -143,9 +101,6 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     subscriptions: { type: Array, required: true },
-    jsonPubUrl: { type: String, required: true },
-    rssPubUrl: { type: String, required: true },
-    atomPubUrl: { type: String, required: true },
     recentArticleList: { type: Array, default: null },
   },
   emits: ["updateFilter", "showSubscriptionMetrics"],

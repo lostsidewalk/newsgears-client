@@ -81,7 +81,6 @@ export default {
   emits: [
     "openPost",
     "updatePostReadStatus",
-    "updatePostPubStatus",
   ],
   setup() {
     const { formatTimestamp } = useTimestamp();
@@ -109,21 +108,6 @@ export default {
     }
    },
   methods: {
-    stagePost() {
-      console.log("post: publishing post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueId, 'PUB_PENDING', 'stagePost');
-    },
-    unstagePost() {
-      console.log("post: unstaging post id=" + this.post.id);
-      this.updatePostPubStatus(this.post.queueId, 'DEPUB_PENDING', "unstagePost");
-    },
-    toggleStagePost() {
-      if (this.post.isPublished) {
-        this.unstagePost();
-      } else {
-        this.stagePost();
-      }
-    },
     togglePostReadStatus() {
       let newStatus;
       if (!this.post.isRead) {
@@ -151,14 +135,6 @@ export default {
             id: this.post.id, 
             newStatus: newStatus, 
             originator: successSignal,
-          });
-    },
-    updatePostPubStatus(queueId, newStatus, successSignal) {
-      this.$emit('updatePostPubStatus', { 
-            id: this.post.id, 
-            newStatus: newStatus, 
-            queueId: queueId,
-            originator: successSignal
           });
     },
   }

@@ -81,7 +81,7 @@ const es = {
   // demo (feed dashboard)
   feedDashboard: 'Panel de Control de Feeds',
   feedDashboard_detail1: 'El panel de control de feeds muestra información resumida sobre cada cola de artículos. Cada tarjeta del panel es configurable; puedes agregar y quitar detalles y botones de acción según tus necesidades.',
-  feedDashboard_detail2: 'Por defecto, FeedGears muestra el número de elementos no leídos, el número de elementos "marcados" y el artículo más recientemente publicado o actualizado en todas las suscripciones de una cola. La tarjeta del panel también brinda acceso rápido para gestionar las suscripciones y obtener detalles rápidos sobre cada feed en una cola:',
+  feedDashboard_detail2: 'FeedGears muestra la cantidad de elementos no leídos y el artículo publicado o actualizado más recientemente en todas las suscripciones en una cola. La tarjeta del panel también brinda acceso rápido para administrar suscripciones y obtener detalles de un vistazo sobre cada feed en una cola:',
   dashboardCardScreenshot: 'Captura de pantalla de la tarjeta del panel de la cola',
   queueSettingsScreenshot: 'Captura de pantalla de la configuración de la cola',
   // demo (layout options)
@@ -172,9 +172,9 @@ const es = {
   configuringQueue: "Configurando cola: {name}",
   // queue properties
   createANewQueue: "Crear una nueva cola",
-  createANewQueueHere: "Cree una nueva cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones de fuentes relacionadas. Los artículos en la misma cola se leen, indexan y filtran juntos. Del mismo modo, los artículos en la misma cola que están 'destacados' se publican en una nueva fuente específica de la cola, que está disponible en varios formatos. Utilice este panel para crear una nueva cola, definir sus propiedades básicas y configurar los ajustes relacionados con la publicación de artículos destacados. Una vez que se crea una cola, puede agregar suscripciones para importar artículos.",
+  createANewQueueHere: "Crea una nueva cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones a feeds relacionados. Los artículos de la misma cola se leen, indexan y filtran juntos. Utilice este panel para crear una nueva cola y definir sus propiedades básicas. Una vez creada una cola, puede agregar suscripciones para importar artículos.",
   updateQueueSettings: "Actualizar la configuración de la cola",
-  updateQueueSettingsHere: "Actualice la configuración de la cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones de fuentes relacionadas. Los artículos en la misma cola se leen, indexan y filtran juntos. Del mismo modo, los artículos en la misma cola que están 'destacados' se publican en una nueva fuente específica de la cola, que está disponible en varios formatos. Utilice este panel para cambiar las propiedades básicas de la cola y configurar los ajustes relacionados con la publicación de artículos destacados.",
+  updateQueueSettingsHere: "Actualice la configuración de la cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones a feeds relacionados. Los artículos de la misma cola se leen, indexan y filtran juntos. Utilice este panel para cambiar las propiedades básicas de la cola.",
   queueIdentifier: "Identificador de cola",
   queueIdentifierHint: "Un nombre corto y único para esta cola. Este valor se generará si no se proporciona. Este valor aparecerá en mensajes de registro y en otros lugares para referirse a esta cola.",
   queueTitle: "Título de la cola",
@@ -249,7 +249,6 @@ const es = {
   contentsFieldDesc: "El contenido principal del artículo.",
   urlFieldDesc: "La URL del artículo.",
   statusFieldDesc: "El estado de lectura del artículo (leído, no leído, leído más tarde).", 
-  starredFieldDesc: "El estado destacado del artículo (verdadero, falso).",
   exampleQueries: "Consultas de ejemplo",
   hereAreSomeExamples:
     "Estos son algunos ejemplos de consultas de búsqueda que puede realizar con la función de filtro de FeedGears:",
@@ -278,7 +277,6 @@ const es = {
   addSubscriptionToSelectedQueue:
     "Agregar una suscripción a la cola seleccionada",
   showUnread: "Mostrar no leídos",
-  showStarred: "Mostrar destacado",
   showReadLater: "Mostrar leer más tarde",
   showRead: "Mostrar leído",
   search: "Buscar",
@@ -336,19 +334,16 @@ const es = {
   unread: "NO LEÍDO",
   readLater: "LEER MÁS TARDE",
   read: "LEÍDO",
-  starred: "FAVORITA",
   clear: "CLARA",
   toggleUnread: 'Mostrar/ocultar artículos no leídos',
   toggleRead: 'Mostrar/ocultar artículos leídos',
   toggleReadLater: 'Mostrar/ocultar artículos para leer más tarde',
-  toggleStarred: 'Mostrar/ocultar artículos destacados',
   // queue select button
   showMoreInfo: "Mostrar suscripciones",
   hideMoreInfo: "Ocultar suscripciones",
   addSubscriptions: "Agregar suscripciones",
   manageSubscriptions: "Administrar suscripciones ({ct})",
   subscriptions: "SUSCRIPCIONES",
-  publications: "PUBLICACIONES",
   recentArticles: "ARTÍCULOS RECIENTES",
   zeroSubscriptions: "0 suscripciones",
   importerRanAt: "Importadora corrió a las {importTimestamp}",
@@ -374,7 +369,6 @@ const es = {
   noArticlesInThisQueue: "Ningún artículo en esta cola cumple con sus criterios. Ajuste su filtro, agregue más suscripciones o espere a que se importen más artículos.",
   unreadCount: '{n} artículos no leídos',
   readCount: '{n} leer artículos',
-  publishedCount: '{n} artículos publicados',
   totalCount: '{n} artículos',
   nTotalArticlesInQueue: '{n} Total de artículos en esta cola',
   // post item
@@ -395,8 +389,6 @@ const es = {
   markPostAsRead: "Marcar como leído",
   markPostAsReadLater: "Marcar como leído más tarde",
   unmarkPostAsReadLater: "Desmarcar como leído más tarde",
-  starThisPost: "Destacar esta publicación",
-  unstarThisPost: "Un-star this post",
   openOriginalArticle: "Abrir artículo original",
   description: "DESCRIPCIÓN",
   links: "ENLACES",

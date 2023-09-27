@@ -79,10 +79,6 @@
           title="status"
           :subtitle="$t('statusFieldDesc')"
         />
-        <v-list-item
-          title="starred"
-          :subtitle="$t('starredFieldDesc')"
-        />
       </v-list>
 
       <!-- -->

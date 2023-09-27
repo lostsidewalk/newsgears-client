@@ -337,36 +337,6 @@
                   :model-value="queueDescription" 
                   @update:modelValue="queueDescription = $event"
                 />
-                <!-- queue (starred) feed generator -->
-                <QueueConfigTextField 
-                  class="mb-4"
-                  :label="$t('queueFeedGenerator')"
-                  :hint="$t('queueFeedGeneratorHint')"
-                  :required="false"
-                  :placeholder="$t('queueFeedGenerator')"
-                  :model-value="queueGenerator" 
-                  @update:modelValue="queueGenerator = $event"
-                />
-                <!-- queue (starred) feed copyright -->
-                <QueueConfigTextField 
-                  class="mb-4"
-                  :label="$t('queueFeedCopyright')"
-                  :hint="$t('queueFeedCopyrightHint')"
-                  :required="false"
-                  :placeholder="$t('queueFeedCopyright')"
-                  :model-value="queueCopyright" 
-                  @update:modelValue="queueCopyright = $event"
-                />
-                <!-- queue (starred) feed language -->
-                <QueueConfigTextField 
-                  class="mb-4"
-                  :label="$t('queueFeedLanguage')"
-                  :hint="$t('queueFeedLanguageHint')"
-                  :required="false"
-                  :placeholder="$t('queueFeedLanguage')"
-                  :model-value="queueLanguage" 
-                  @update:modelValue="queueLanguage = $event"
-                />
               </v-card-text>
               <v-divider v-if="!queueId" />
               <v-card-actions v-if="!queueId">
@@ -450,9 +420,6 @@ export default {
       queueIdent: this.queueUnderConfig.ident,
       queueTitle: this.queueUnderConfig.title,
       queueDescription: this.queueUnderConfig.description,
-      queueGenerator: this.queueUnderConfig.generator,
-      queueCopyright: this.queueUnderConfig.copyright,
-      queueLanguage: this.queueUnderConfig.language,
       subscriptions: this.queueUnderConfig.subscriptions,
       selectedTab: null,
     };

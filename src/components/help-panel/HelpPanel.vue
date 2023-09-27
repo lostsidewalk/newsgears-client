@@ -122,10 +122,6 @@ export default {
             key: "SHIFT + D", // key handler when queue is selected 
           },
           {
-            label: this.$t('showStarred'),
-            key: "SHIFT + T", // key handler when queue is selected 
-          },
-          {
             label: this.$t('showReadLater'),
             key: "SHIFT + L", // key handler when queue is selected 
           },

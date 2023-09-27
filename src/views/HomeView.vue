@@ -190,14 +190,6 @@
                   icon="fa-check-square-o"
                 />
               </th>
-              <!-- published count -->
-              <th class="pa-1">
-                <v-icon
-                  :title="$t('publishedCount', { n: 0 })"
-                  size="small"
-                  icon="fa-star"
-                />
-              </th>
               <!-- total count -->
               <th class="pa-1">
                 <v-icon
@@ -269,20 +261,6 @@
                 >
                   {{ articleListsBySubscription[subscription.id] ?
                     articleListsBySubscription[subscription.id].filter((post) => post.isRead).length :
-                    0
-                  }}
-                </td>
-                <!-- starred count-->
-                <td
-                  style="text-align: center;"
-                  class="clickable"
-                  @click="$event => {
-                    setSelectedQueueId(subscription.queueId);
-                    $nextTick(() => updateFilter({ name: 'subAndMode', queueId: subscription.queueId, subValue: subscription.title, modeValue: 'PUBLISHED' }));
-                  }"
-                >
-                  {{ articleListsBySubscription[subscription.id] ?
-                    articleListsBySubscription[subscription.id].filter((post) => post.isPublished).length :
                     0
                   }}
                 </td>
@@ -445,11 +423,9 @@
           :show-unread="roShowUnreadPosts"
           :show-read="roShowReadPosts"
           :show-read-later="roShowReadLaterPosts"
-          :show-starred="roShowStarredPosts"
           @toggleUnread="toggleUnreadPosts"
           @toggleRead="toggleReadPosts"
           @toggleReadLater="toggleReadLaterPosts"
-          @toggleStarred="toggleStarredPosts"
         />
       </v-container>
       <!-- TODO: extract component -->
@@ -465,7 +441,6 @@
           class="ma-4"
           @openPostUrl="openPostUrl(post.id)"
           @updatePostReadStatus="updatePostReadStatus"
-          @updatePostPubStatus="updatePostPubStatus"
           @updateFilter="updateFilter"
           @share="$event => share($event.sharingOption, $event.post)"
         />
@@ -482,7 +457,6 @@
           :sharing-options="sharingOptions"
           @openPostUrl="openPostUrl(roSelectedPost.id);"
           @updatePostReadStatus="updatePostReadStatus"
-          @updatePostPubStatus="updatePostPubStatus"
           @updateFilter="updateFilter"
           @share="$event => share($event.sharingOption, $event.post)"
         >
@@ -521,7 +495,6 @@
           class="ma-4 rounded"
           @openPost="openPost(post.id); showSelectedPost = true;"
           @updatePostReadStatus="updatePostReadStatus"
-          @updatePostPubStatus="updatePostPubStatus"
         />
       </v-list>
       <v-container
@@ -549,7 +522,6 @@
             @openPost="openPost(post.id); showSelectedPost = true;"
             @openPostUrl="openPostUrl(post.id)"
             @updatePostReadStatus="updatePostReadStatus"
-            @updatePostPubStatus="updatePostPubStatus"
           />
         </tbody>
       </v-table>
@@ -692,7 +664,6 @@ export default {
       roShowUnreadPosts,
       roShowReadPosts,
       roShowReadLaterPosts,
-      roShowStarredPosts,
       // 
       showOpmlUploadPanel, //rw 
       showSubscriptionMetrics, // rw 
@@ -707,7 +678,6 @@ export default {
       disconnectBroker, 
       refreshQueues,
       updatePostReadStatus,
-      updatePostPubStatus,
       getPostFromQueue,
       toggleArticleListSortOrder,
       toggleQueueFilterPills,
@@ -746,7 +716,6 @@ export default {
       toggleUnreadPosts,
       toggleReadPosts,
       toggleReadLaterPosts,
-      toggleStarredPosts,
     } = useQueues(props);
     const {
       roLayout,
@@ -867,13 +836,6 @@ export default {
           event.stopPropagation();
           event.preventDefault();
           // 
-          // SHIFT + T KEY (TOGGLE QUEUE FILTER MODE)
-          // 
-        } else if (event.key === 'T' && event.shiftKey) {
-          toggleFilterMode('PUBLISHED');
-          event.stopPropagation();
-          event.preventDefault();
-          // 
           // SHIFT + A KEY (MARK QUEUE AS READ)
           // 
         } else if (event.key === 'A' && event.shiftKey === true) {
@@ -983,7 +945,6 @@ export default {
       roShowUnreadPosts,
       roShowReadPosts,
       roShowReadLaterPosts,
-      roShowStarredPosts,
       filteredArticleList,
       // queue config module data 
       showQueueConfigPanel,
@@ -1038,7 +999,6 @@ export default {
       toggleFilterMode,
       updateFilter,
       updatePostReadStatus,
-      updatePostPubStatus,
       createQueue,
       updateQueue,
       deleteSelectedQueue,
@@ -1055,7 +1015,6 @@ export default {
       toggleUnreadPosts,
       toggleReadPosts,
       toggleReadLaterPosts,
-      toggleStarredPosts,
       // queue config module functions 
       addSubscription,
       deleteSubscription,

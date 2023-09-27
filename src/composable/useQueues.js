@@ -5,7 +5,6 @@ import * as SockJS from 'sockjs-client';
 import { ref, reactive, inject, computed, nextTick, readonly } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composable/useNotifications';
-import { useTimestamp } from '@/composable/useTimestamp';
 import { useQueueStore } from '@/composable/useQueueStore';
 
 export function useQueues(props) {
@@ -15,8 +14,7 @@ export function useQueues(props) {
     handleServerError,
     setLastServerMessage
   } = useNotifications();
-  const { formatTimestamp } = useTimestamp();
-  const queueStore = useQueueStore();
+    const queueStore = useQueueStore();
   const client = ref(null);
   const sessionId = ref(null);
   const selectedQueueTitle = ref(null); // currently selected queue title 
@@ -32,7 +30,6 @@ export function useQueues(props) {
   const showUnreadPosts = ref(true);
   const showReadPosts = ref(true);
   const showReadLaterPosts = ref(false);
-  const showStarredPosts = ref(true);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
   const atStep2 = ref(false);
@@ -82,16 +79,13 @@ export function useQueues(props) {
       // 
       if (results) {
         results = results.filter((r) => {
-          if (!showUnreadPosts.value && !r.isRead && !r.isReadLater && !r.isPublished) {
+          if (!showUnreadPosts.value && !r.isRead && !r.isReadLater) {
             return false;
           }
-          if (!showReadPosts.value && r.isRead && !r.isPublished) {
+          if (!showReadPosts.value && r.isRead) {
             return false;
           }
-          if (!showReadLaterPosts.value && r.isReadLater && !r.isPublished) {
-            return false;
-          }
-          if (!showStarredPosts.value && r.isPublished) {
+          if (!showReadLaterPosts.value && r.isReadLater) {
             return false;
           }
           return true;
@@ -285,7 +279,6 @@ export function useQueues(props) {
             if (stagingPosts) {
               for (let i = 0; i < stagingPosts.length; i++) {
                 const p = stagingPosts[i].post;
-                                p.isPublished = p.published || (p.postPubStatus === 'PUB_PENDING') || (p.postPubStatus === 'DEPUB_PENDING');
                 p.isRead = p.postReadStatus === 'READ';
                 p.isReadLater = p.postReadStatus === 'READ_LATER';
                 p.postImgSrc = stagingPosts[i].postImgSrc;
@@ -452,57 +445,6 @@ export function useQueues(props) {
     });
   }
 
-  function updatePostPubStatus(result) {
-    console.log("queues: updating post status");
-    refreshQueuesIsLoading.value = true;
-    auth.getTokenSilently().then((token) => {
-      const controller = new AbortController();
-      const requestOptions = {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ newStatus: result.newStatus }),
-        signal: controller.signal
-      };
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      fetch(baseUrl + "/staging/pub-status/" + result.id, requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).then((data) => {
-          // update the post 
-          let originator = result.originator;
-          let p = getPostFromQueue(result.id);
-          if (originator === "stagePost") {
-            p.isPublished = true;
-          } else if (originator === "unstagePost") {
-            p.isPublished = false;
-          }
-          p.postPubStatus = null;
-          queueStore.updateLastDeployed(result.queueId, formatTimestamp(data.RSS_20.timestamp));
-          Object.assign(selectedPost, p);
-          queueStore.rebuildLunrIndexes([result.queueId]);
-        }).catch((error) => {
-          handleServerError(error);
-        }).finally(() => {
-          refreshQueuesIsLoading.value = false;
-          clearTimeout(timeoutId);
-        });
-    }).catch((error) => {
-      handleServerError(error);
-      refreshQueuesIsLoading.value = false;
-    });
-  }
-
   function getPostFromQueue(id) {
     let f = articleList.values;
     for (let j = 0; j < f.length; j++) {
@@ -551,8 +493,6 @@ export function useQueues(props) {
       showReadPosts.value = !showReadPosts.value;
     } else if (filterMode === 'READ_LATER') {
       showReadLaterPosts.value = !showReadLaterPosts.value;
-    } else if (filterMode === 'STARRED') {
-      showStarredPosts.value = !showStarredPosts.value;
     }
   }
 
@@ -612,15 +552,12 @@ export function useQueues(props) {
     showUnreadPosts.value = false;
     showReadPosts.value = false;
     showReadLaterPosts.value = false;
-    showStarredPosts.value = false;
     if (filterMode === 'UNREAD') {
       showUnreadPosts.value = true;
     } else if (filterMode === 'READ') {
       showReadPosts.value = true;
     } else if (filterMode === 'READ_LATER') {
       showReadLaterPosts.value = true;
-    } else if (filterMode === 'STARRED') {
-      showStarredPosts.value = true;
     }
   }
 
@@ -1350,10 +1287,6 @@ export function useQueues(props) {
     showReadLaterPosts.value = !showReadLaterPosts.value;
   }
 
-  function toggleStarredPosts() {
-    showStarredPosts.value = !showStarredPosts.value;
-  }
-
   const roSelectedQueueTitle = readonly(selectedQueueTitle);
   const roPreviousQueueId = readonly(previousQueueId);
   const roQueueIdToDelete = readonly(queueIdToDelete);
@@ -1376,7 +1309,6 @@ export function useQueues(props) {
   const roShowUnreadPosts = readonly(showUnreadPosts);
   const roShowReadPosts = readonly(showReadPosts);
   const roShowReadLaterPosts = readonly(showReadLaterPosts);
-  const roShowStarredPosts = readonly(showStarredPosts);
 
   return {
     queueStore,
@@ -1402,7 +1334,6 @@ export function useQueues(props) {
     roShowUnreadPosts,
     roShowReadPosts,
     roShowReadLaterPosts,
-    roShowStarredPosts,
     // 
     showOpmlUploadPanel, // rw 
     showSubscriptionMetrics, // rw
@@ -1412,7 +1343,6 @@ export function useQueues(props) {
     showUnreadPosts,
     showReadPosts,
     showReadLaterPosts,
-    showStarredPosts,
     showQueueRefreshIndicator,
     tabModel,
     // 
@@ -1427,8 +1357,6 @@ export function useQueues(props) {
     decorateQueueWithSubscriptionDefinitions,
     // makes a server call to update the post read status 
     updatePostReadStatus,
-    // makes a server call to update the post pub status 
-    updatePostPubStatus,
     // returns a post from the current articleList, by Id 
     getPostFromQueue,
     // changes the articleList sort order from ASC <=> DSC 
@@ -1443,8 +1371,6 @@ export function useQueues(props) {
     toggleReadPosts,
     // 
     toggleReadLaterPosts,
-    // 
-    toggleStarredPosts,
     // adds the given subscription/category to t he articleListFilter 
     updateFilter,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 
