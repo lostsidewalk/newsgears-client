@@ -38,7 +38,7 @@ const es = {
     "Se requieren nombre de usuario y contraseña.",
   passwordIsRequired: "Se requiere contraseña.",
   usernameIsRequired: "Se requiere nombre de usuario.",
-  signinWithGoogle: "Iniciar sesión con Google",
+signinWithGoogle: "Iniciar sesión con Google",
   pwResetRequestMessage:
     "Ingresa tu nombre de usuario y dirección de correo electrónico. Enviaremos un enlace para restablecer tu contraseña a tu dirección de correo electrónico verificada.",
   checkEmailForFurther:
@@ -221,7 +221,6 @@ const es = {
   httpStatusCode: "Código de estado HTTP",
   redirectHttpStatusCode: "Redirigir el código de estado HTTP",
   feedAlsoAvailableInHttps: "Este feed también está disponible en HTTPS.",
-  recommendedFeeds: "Fuentes RSS similares",
   // post feed filter help
   filtering: "Filtración",
   filteringProvides:
@@ -417,27 +416,6 @@ const es = {
   enableProductNotifications:
     "Habilite esta opción para recibir correos electrónicos ocasionales sobre notificaciones de producción y nuevas funciones.",
   enableSelectedNotifications: "Habilitar notificaciones seleccionadas",
-  yourSubscriptionWasCanceled:
-    "Su suscripción fue cancelada y no se renovará.",
-  currentPeriod: "PERÍODO ACTUAL",
-  endedAt: "TERMINÓ EN",
-  willEndAt: "TERMINARÁ EN",
-  statusColon: "ESTADO:",
-  amountDueColon: "IMPORTE DEBIDO:",
-  amountPaidColon: "CANTIDAD PAGADA:",
-  amountRemainingColon: "CANTIDAD RESTANTE:",
-  customerEmailAddressColon: "DIRECCIÓN DE CORREO ELECTRÓNICO DEL CLIENTE:",
-  customerNameColon: "NOMBRE DEL CLIENTE:",
-  invoiceUrlColon: "URL DE LA FACTURA:",
-  productColon: "PRODUCTO:",
-  mostRecentInvoice: "FACTURA MAS RECIENTE",
-  clickHere: "haga clic aquí",
-  cancelSubscription: "Cancelar suscripción",
-  resumeSubscription: "Reanudar suscripción",
-  supportFeedGears: "Soporte FeedGears RSS",
-  pleaseConsiderSubscribing:
-    "Considere suscribirse a FeedGears. Estamos respaldados al 100% por la comunidad de usuarios.",
-  checkout: "Verificar",
   settingsUpdated: "Ajustes actualizan",
   updateLightTheme:
     "Haga clic aquí para guardar sus cambios en el tema de la luz",
@@ -454,10 +432,6 @@ const es = {
   feedGearsDocumentation: "DOCUMENTACIÓN DE ENGRANAJES",
   // api
   feedGearsApi: "FEEDGEARS API",
-  // order confirmation
-  thankYouForYourOrder: "GRACIAS POR SU ORDEN",
-  yourOrderIsConfirmed: "Su pedido está confirmado.",
-  clickHereToReturnToTheApp: "Haga clic aquí para volver a la aplicación.",
   // verification callback
   thanksForVerifying:
     "¡Gracias por verificar! El estado de su cuenta ha sido actualizado.",
@@ -478,7 +452,7 @@ const es = {
   howDoWeProcess: "¿Cómo procesamos su información?",
   howDoWeProcessSummary:
     "Procesamos su información para proporcionar, mejorar y administrar FeedGears, comunicarnos con usted, para seguridad y prevención de fraude, y para cumplir con la ley. También podemos procesar su información para otros fines con su consentimiento.",
-  socialLogins: "Inicios de sesión sociales",
+socialLogins: "Inicios de sesión sociales",
   socialLoginsSummary:
     "FeedGears le ofrece la posibilidad de registrarse e iniciar sesión utilizando los detalles de su cuenta de redes sociales de terceros (como los inicios de sesión de Google o Github). Cuando elija hacer esto, recibiremos cierta información de su perfil de su proveedor de redes sociales. La información de perfil que recibimos puede variar según el proveedor de redes sociales en cuestión, pero a menudo incluirá su nombre, dirección de correo electrónico y foto de perfil, así como otra información que elija hacer pública en dicha plataforma de redes sociales.",
   socialLoginsDetails:

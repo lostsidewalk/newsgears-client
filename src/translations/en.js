@@ -37,7 +37,7 @@ const en = {
   usernameAndPasswordAreRequired: "Username and password are required.",
   passwordIsRequired: "Password is required.",
   usernameIsRequired: "Username is required.",
-  signinWithGoogle: "Sign in with Google",
+signinWithGoogle: "Sign in with Google",
   pwResetRequestMessage:
     "Enter your username and email address.  We'll send a password reset link to your verified email address.",
   checkEmailForFurther: "Check your email to further instructions.",
@@ -218,7 +218,6 @@ const en = {
   httpStatusCode: "HTTP status code",
   redirectHttpStatusCode: "Redirect HTTP status code",
   feedAlsoAvailableInHttps: "This feed is also available in HTTPS.",
-  recommendedFeeds: "Similar feeds",
   // post feed filter help
   filtering: "Filtering",
   filteringProvides:
@@ -419,27 +418,6 @@ const en = {
   enableProductNotifications:
     "Enable this option to receive occasional emails about production notifications and new features.",
   enableSelectedNotifications: "Enable Selected Notifications",
-  yourSubscriptionWasCanceled:
-    "Your subscription was canceled, and will not renew.",
-  currentPeriod: "CURRENT PERIOD",
-  endedAt: "ENDED AT",
-  willEndAt: "WILL END AT",
-  statusColon: "STATUS:",
-  amountDueColon: "AMOUNT DUE:",
-  amountPaidColon: "AMOUNT PAID:",
-  amountRemainingColon: "AMOUNT REMAINING:",
-  customerEmailAddressColon: "CUSTOMER EMAIL ADDRESS:",
-  customerNameColon: "CUSTOMER NAME:",
-  invoiceUrlColon: "INVOICE URL:",
-  productColon: "PRODUCT:",
-  mostRecentInvoice: "MOST RECENT INVOICE",
-  clickHere: "Click here",
-  cancelSubscription: "Cancel subscription",
-  resumeSubscription: "Resume subscription",
-  supportFeedGears: "Support FeedGears RSS",
-  pleaseConsiderSubscribing:
-    "Please consider subscribing to FeedGears.  We are supported 100% by the user community.",
-  checkout: "Checkout",
   settingsUpdated: "Settings updated",
   updateLightTheme: "Click here to save your changes to the light theme",
   updateDarkTheme: "Click here to save your changes to the dark theme",
@@ -454,10 +432,6 @@ const en = {
   feedGearsDocumentation: "FEEDGEARS DOCUMENTATION",
   // api
   feedGearsApi: "FEEDGEARS API",
-  // order confirmation
-  thankYouForYourOrder: "THANK YOU FOR YOUR ORDER",
-  yourOrderIsConfirmed: "Your order is confirmed.",
-  clickHereToReturnToTheApp: "Click here to return to the app.",
   // verification callback
   thanksForVerifying:
     "Thanks for verifying!  Your account status has been updated.",
@@ -477,7 +451,7 @@ const en = {
   howDoWeProcess: "How do we process your information?",
   howDoWeProcessSummary:
     "We process your information to provide, improve, and administer FeedGears, communicate with you, for security and fraud prevention, and to comply with law.  We may also process your information for other purposes with your consent.",
-  socialLogins: "Social logins",
+socialLogins: "Social logins",
   socialLoginsSummary:
     "FeedGears offers you the ability to register and login using your third-party social media account details (like Google or Github logins).  Where you choose to do this, we will receive certain profile information about you from your social media provider.  The profile information we receive may vary depending on the social media provider concerned, but will often include your name, email address, and profile picture, as well as other information you choose to make public on such a social media platform.",
   socialLoginsDetails:

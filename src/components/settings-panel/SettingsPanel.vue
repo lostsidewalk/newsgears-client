@@ -8,7 +8,6 @@
     </v-card-title>
     <v-divider />
     <v-card-text>
-      <!-- TODO: extract component -->
       <!-- profile -->
       <v-card
         elevation="6"
@@ -96,7 +95,6 @@
           />
         </v-card-actions>
       </v-card>
-      <!-- TODO: extract component -->
       <!-- email address (local) -->
       <v-card
         v-if="authProvider === 'LOCAL'"
@@ -131,7 +129,6 @@
           />
         </v-card-actions>
       </v-card>
-      <!-- TODO: extract component -->
       <!-- email notifications -->
       <v-card
         elevation="6"
@@ -170,118 +167,6 @@
           />
         </v-card-actions>
       </v-card>
-      <!-- TODO: extract component -->
-      <!-- subscription -->
-      <v-card
-        v-if="hasSubscription"
-        elevation="6"
-        class="mb-4 pa-1"
-      >
-        <v-card-item
-          title="CARD TITLE"
-          :subtitle="$t('subscriptionStatus', { 
-            status: subscriptionStatus, 
-            started: subscriptionStarted 
-          })"
-        />
-        <v-divider />
-        <v-card-text>
-          <p v-if="isCanceled">
-            {{ $t('yourSubscriptionWasCanceled') }}
-          </p>
-
-          <div v-if="isActive">
-            <v-label for="subscription-current-period">
-              {{ $t('currentPeriod') }}
-            </v-label>
-            <v-text-field
-              variant="solo-filled"
-              name="subscription-current-period"
-              type="text" 
-              :placeholder="subscriptionCurrentPeriod"
-            />
-          </div>
-
-          <div v-if="hasEnded">
-            <v-label for="subscription-ended-at">
-              {{ $t('endedAt') }}
-            </v-label>
-            <v-text-field
-              variant="solo-filled"
-              name="subscription-ended-at"
-              type="text" 
-              :placeholder="subscriptionEndedAt"
-            />
-          </div>
-
-          <div v-if="isCanceled">
-            <v-label for="subscription-ended-at">
-              {{ $t('willEndAt') }}
-            </v-label>
-            <v-text-field
-              variant="solo-filled"
-              name="subscription-ended-at"
-              type="text" 
-              :placeholder="subscriptionCurrentPeriodEnd"
-            />
-          </div>
-
-          <div v-if="hasLastInvoice">
-            <v-label>{{ $t('mostRecentInvoice') }} ({{ lastInvoiceCreated }})</v-label>
-            <v-label>{{ $t('statusColon') }} {{ lastInvoiceStatus }}</v-label> 
-            <v-label>{{ $t('amountDueColon') }} {{ amountDue }}</v-label>
-            <v-label>{{ $t('amountPaidColon') }} {{ amountPaid }}</v-label>
-            <v-label>{{ $t('amountRemainingColon') }} {{ amountRemaining }}</v-label>
-            <v-label>{{ $t('customerEmailAddressColon') }} {{ customerEmailAddress }}</v-label>
-            <v-label>{{ $t('customerNameColon') }} {{ customerName }}</v-label>
-            <v-label>
-              {{ $t('invoiceUrlColon') }} <a
-                :href="hostedInvoiceUrl"
-                target="_blank"
-              >{{ $t('clickHere') }}</a>
-            </v-label>
-            <v-label>{{ $t('productColon') }} {{ productDescription }}</v-label>
-          </div>
-        </v-card-text>
-        <v-divider />
-        <v-card-actions>
-          <v-btn
-            v-if="subscription && !isCanceled"
-            id="cancelSubscription"
-            :size="buttonSize" 
-            :text="$t('cancelSubscription')"
-            @click="$emit('cancelSubscription')"
-          />
-          <v-btn
-            v-if="subscription && isCanceled"
-            id="resumeSubscription"
-            :size="buttonSize" 
-            :text="$t('resumeSubscription')"
-            @click="$emit('resumeSubscription')"
-          />
-        </v-card-actions>
-      </v-card>
-      <!-- TODO: extract component -->
-      <!-- checkout -->
-      <v-card
-        v-if="!subscription"
-        elevation="6"
-        class="mb-4 pa-1"
-      >
-        <v-card-item
-          :title="$t('supportFeedGears')"
-          :subtitle="$t('pleaseConsiderSubscribing')"
-        />
-        <v-divider />
-        <v-card-actions>
-          <v-btn
-            id="checkout"
-            :size="buttonSize" 
-            :text="$t('checkout')"
-            @click="$emit('submitOrder')"
-          />
-        </v-card-actions>
-      </v-card>
     </v-card-text>
     <v-divider />
     <v-card-actions>
@@ -308,7 +193,6 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
     account: { type: Object, required: true },
-    subscription: { type: Object, default: null },
   },
   emits: [ 
     "exportOpml", 
@@ -317,9 +201,6 @@ export default {
     "updateAccount", 
     "updateNotificationPreferences", 
     "toggleNotifications", 
-    "cancelSubscription", 
-    "resumeSubscription", 
-    "submitOrder", 
     "dismiss" 
   ],
   setup() {
@@ -345,71 +226,6 @@ export default {
       enableProductNotifications: null,
       showDeactivateUser: false,
       showResetPassword: false,
-    }
-  },
-  computed: {
-    productDescription: function () {
-      return this.subscription.lastInvoice.productDescription;
-    },
-    hostedInvoiceUrl: function () {
-      return this.subscription.lastInvoice.hostedUrl;
-    },
-    customerEmailAddress: function () {
-      return this.subscription.lastInvoice.customerEmail;
-    },
-    customerName: function () {
-      return this.subscription.lastInvoice.customerName;
-    },
-    amountDue: function () {
-      return this.toLocalCurrency(this.subscription.lastInvoice.amountDue);
-    },
-    amountPaid: function () {
-      return this.toLocalCurrency(this.subscription.lastInvoice.amountPaid);
-    },
-    amountRemaining: function () {
-      return this.toLocalCurrency(this.subscription.lastInvoice.amountRemaining);
-    },
-    lastInvoiceCreated: function () {
-      return this.toLocalDate(this.subscription.lastInvoice.created);
-    },
-    lastInvoiceStatus: function () {
-      return this.subscription.lastInvoice.status;
-    },
-    subscriptionStarted: function () {
-      return this.toLocalDate(this.subscription.startDate);
-    },
-    subscriptionCurrentPeriod: function () {
-      if (!this.subscription) {
-        return null;
-      } else {
-        let startDate = this.toLocalDate(this.subscription.currentPeriodStart);
-        let endDate = this.toLocalDate(this.subscription.currentPeriodEnd);
-        return startDate + ' - ' + endDate;
-      }
-    },
-    subscriptionCurrentPeriodEnd: function () {
-      return this.toLocalDate(this.subscription.currentPeriodEnd);
-    },
-    subscriptionEndedAt: function () {
-      return this.toLocalDate(this.subscription.endedAt);
-    },
-    subscriptionStatus: function () {
-      return this.subscription.status;
-    },
-    isActive: function () {
-      return this.subscription.status === "active";
-    },
-    isCanceled: function () {
-      return this.subscription.cancelAtPeriodEnd === true;
-    },
-    hasEnded: function () {
-      return this.subscription.endedAt;
-    },
-    hasLastInvoice: function () {
-      return this.subscription.lastInvoice;
-    },
-    hasSubscription: function () {
-      return this.subscription ? this.subscription.status.length > 0 : false;
     }
   },
   mounted() {

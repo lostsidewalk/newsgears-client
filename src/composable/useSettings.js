@@ -14,7 +14,6 @@ export function useSettings(props) {
   const settingsIsLoading = ref(false);
   const showSettingsPanel = ref(false);
   const account = reactive({});
-  const subscription = reactive({});
 
   const { baseUrl } = props;
 
@@ -54,12 +53,6 @@ export function useSettings(props) {
             authProviderUsername: data.authProviderUsername,
             frameworkConfig: data.frameworkConfig, 
           })
-          if (data.subscription) {
-            Object.keys(subscription).forEach((key) => {
-              delete subscription[key];
-            });
-            Object.assign(subscription, data.subscription);
-          }
           showSettingsPanel.value = true;
         }).catch((error) => {
           handleServerError(error);
@@ -235,128 +228,6 @@ export function useSettings(props) {
       });
   }
 
-  function submitOrder() {
-    settingsIsLoading.value = true;
-    auth.getTokenSilently().then((token) => {
-      const controller = new AbortController();
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        credentials: 'include',
-        signal: controller.signal
-      };
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      fetch(baseUrl + "/order", requestOptions)
-        .then((response) => {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          if (response.status === 200) {
-            return isJson ? response.json() : {};
-          } else {
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).then((data) => {
-          window.location.href = data.sessionUrl;
-        }).catch((error) => {
-          handleServerError(error);
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-        });
-    }).catch((error) => {
-      handleServerError(error);
-      settingsIsLoading.value = false;
-    });
-  }
-
-  function cancelSubscription() {
-    settingsIsLoading.value = true;
-    auth.getTokenSilently().then((token) => {
-      const controller = new AbortController();
-      const requestOptions = {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        credentials: 'include',
-        method: 'PUT',
-        body: JSON.stringify({
-          subscriptionStatus: 'CANCELED'
-        }),
-        signal: controller.signal
-      };
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      fetch(baseUrl + "/subscriptions", requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            auth.unsubscribe();
-            subscription.cancelAtPeriodEnd = true;
-            setLastServerMessage(t('yourSubscriptionWasCanceledClickToResume'));
-          } else {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            return isJson ?
-              response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-              response.text().then(t => { throw new Error(t) });
-          }
-        }).catch((error) => {
-          handleServerError(error);
-        }).finally(() => {
-          clearTimeout(timeoutId);
-          settingsIsLoading.value = false;
-        });
-    }).catch((error) => {
-      handleServerError(error);
-      settingsIsLoading.value = false;
-    });
-  }
-
-  function resumeSubscription() {
-    settingsIsLoading.value = true;
-    auth.getTokenSilently().then((token) => {
-      const controller = new AbortController();
-      const requestOptions = {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        credentials: 'include',
-        method: 'PUT',
-        body: JSON.stringify({
-          subscriptionStatus: 'ACTIVE'
-        }),
-        signal: controller.signal
-      };
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      fetch(baseUrl + "/subscriptions", requestOptions).then((response) => {
-        if (response.status === 200) {
-          auth.subscribe();
-          subscription.cancelAtPeriodEnd = false;
-          setLastServerMessage(t('yourSubscriptionWasResumed'));
-        } else {
-          let contentType = response.headers.get("content-type");
-          let isJson = contentType && contentType.indexOf("application/json") !== -1;
-          return isJson ?
-            response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-            response.text().then(t => { throw new Error(t) });
-        }
-      }).catch((error) => {
-        handleServerError(error);
-      }).finally(() => {
-        clearTimeout(timeoutId);
-        settingsIsLoading.value = false;
-      });
-    }).catch((error) => {
-      handleServerError(error);
-      settingsIsLoading.value = false;
-    });
-  }
-
   function toggleNotifications(toggleNotificationsRequest) {
     let notificationsDisabled = toggleNotificationsRequest.notificationsDisabled;
     let enableAccountAlerts = toggleNotificationsRequest.enableAccountAlerts;
@@ -471,12 +342,10 @@ export function useSettings(props) {
   }
 
   const roAccount = readonly(account);
-  const roSubscription = readonly(subscription);
   const roSettingsIsLoading = readonly(settingsIsLoading);
 
   return {
     roAccount,
-    roSubscription, 
     roSettingsIsLoading, 
     // 
     showSettingsPanel, // rw
@@ -486,9 +355,6 @@ export function useSettings(props) {
     exportOpml,
     finalizeDeactivation,
     initPasswordReset,
-    submitOrder, 
-    cancelSubscription,
-    resumeSubscription,
     toggleNotifications,
     updateAccount, 
   }

@@ -5,7 +5,6 @@ import PasswordResetRequestView from "@/views/PasswordResetRequestView.vue";
 import PasswordResetCallbackView from "@/views/PasswordResetCallbackView.vue";
 import RegistrationRequestView from "@/views/RegistrationRequestView.vue";
 import VerificationCallbackView from "@/views/VerificationCallbackView.vue";
-import OrderConfirmedView from "@/views/OrderConfirmedView.vue";
 import DocsView from "@/views/DocsView.vue";
 import ApiView from "@/views/ApiView.vue";
 
@@ -61,14 +60,6 @@ const routes = [
     },
   },
   {
-    path: "/order-confirmed",
-    name: "OrderConfirmedView",
-    component: OrderConfirmedView,
-    props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
-    },
-  },
-  {
     path: "/docs",
     name: "DocsView",
     component: DocsView,
@@ -100,8 +91,7 @@ const titlesByRoute = {
   PasswordResetCallbackView: "FeedGears RSS Password Reset Continuation",
   RegistrationRequestView: "FeedGears RSS User Registration",
   VerificationCallbackView: "FeedGears RSS Email Verification Continuation",
-  SettingsView: "FeedGears RSS User Settings, Notifications, and Checkout",
-  OrderConfirmedView: "FeedGears RSS Order Confirmation",
+  SettingsView: "FeedGears RSS User Settings",
 };
 
 router.beforeEach((to, from, next) => {

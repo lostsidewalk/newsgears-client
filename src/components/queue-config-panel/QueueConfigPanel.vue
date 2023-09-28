@@ -520,7 +520,6 @@ export default {
               url: r.url,
               username: r.username,
               password: r.password,
-              includeRecommendations: false,
             }),
             signal: controller.signal
           };
@@ -558,7 +557,6 @@ export default {
               r.supportedTypes = data.supportedTypes;
               r.webMaster = data.webMaster;
               r.sampleEntries = data.sampleEntries;
-              r.feedRecommendationInfo = data.feedRecommendationInfo;
               r.httpStatusCode = data.httpStatusCode;
               r.httpStatusMessage = data.httpStatusMessage;
               r.redirectFeedUrl = data.redirectFeedUrl;
