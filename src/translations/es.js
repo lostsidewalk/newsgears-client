@@ -413,8 +413,6 @@ signinWithGoogle: "Iniciar sesión con Google",
   updateNotificationPreferences: "Actualizar preferencias de notificación",
   enableAccountAlertsNotifications:
     "Habilite esta opción para recibir alertas de cuenta y notificaciones de mantenimiento.",
-  enableProductNotifications:
-    "Habilite esta opción para recibir correos electrónicos ocasionales sobre notificaciones de producción y nuevas funciones.",
   enableSelectedNotifications: "Habilitar notificaciones seleccionadas",
   settingsUpdated: "Ajustes actualizan",
   updateLightTheme:

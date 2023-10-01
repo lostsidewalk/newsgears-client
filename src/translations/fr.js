@@ -417,8 +417,6 @@ signinWithGoogle: "Se connecter avec Google",
   updateNotificationPreferences: "Mettre à jour les préférences de notification",
   enableAccountAlertsNotifications:
     "Activez cette option pour recevoir des alertes de compte et des notifications de maintenance.",
-  enableProductNotifications:
-    "Activez cette option pour recevoir occasionnellement des e-mails concernant les notifications de production et les nouvelles fonctionnalités.",
   enableSelectedNotifications: "Activer les notifications sélectionnées",
   settingsUpdated: "Paramètres mis à jour",
   updateLightTheme: "Cliquez ici pour enregistrer vos modifications sur le thème clair",

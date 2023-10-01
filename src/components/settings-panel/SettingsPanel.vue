@@ -145,12 +145,6 @@
             name="enableAccountAlerts"
             :label="$t('enableAccountAlertsNotifications')" 
           />
-          <v-checkbox
-            id="enableProductNotifications" 
-            v-model="enableProductNotifications" 
-            name="enableProductNotifications"
-            :label="$t('enableProductNotifications')" 
-          />
         </v-card-actions>
         <v-divider />
         <v-card-actions>
@@ -161,8 +155,6 @@
             :text="$t('updateNotificationPreferences')"
             @click="$emit('updateNotificationPreferences', {
               enableAccountAlerts: enableAccountAlerts,
-              enableDailyFeedReport: enableDailyFeedReport, 
-              enableProductNotifications: enableProductNotifications
             })"
           />
         </v-card-actions>
@@ -222,8 +214,6 @@ export default {
       authProviderProfileImgUrl: null,
       authProviderUsername: null,
       enableAccountAlerts: null,
-      enableDailyFeedReport: null,
-      enableProductNotifications: null,
       showDeactivateUser: false,
       showResetPassword: false,
     }
@@ -240,8 +230,6 @@ export default {
       let notifications = frameworkConfig.notifications;
       if (notifications) {
         this.enableAccountAlerts = this.isTrue(notifications.accountAlerts);
-        this.enableDailyFeedReport = this.isTrue(notifications.dailyFeedReport);
-        this.enableProductNotifications = this.isTrue(notifications.productNotifications);
       }
     }
   },

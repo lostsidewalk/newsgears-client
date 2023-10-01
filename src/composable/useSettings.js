@@ -69,14 +69,10 @@ export function useSettings(props) {
   
   function updateNotificationPreferences(updateNotificationRequest) {
     let enableAccountAlerts = updateNotificationRequest.enableAccountAlerts;
-    let enableDailyFeedReport = updateNotificationRequest.enableDailyFeedReport;
-    let enableProductNotifications = updateNotificationRequest.enableProductNotifications;
     let newSettings = {
       frameworkConfig: {
         notifications: {
           accountAlerts: enableAccountAlerts,
-          dailyFeedReport: enableDailyFeedReport,
-          productNotifications: enableProductNotifications,
         }
       }
     };
@@ -231,15 +227,11 @@ export function useSettings(props) {
   function toggleNotifications(toggleNotificationsRequest) {
     let notificationsDisabled = toggleNotificationsRequest.notificationsDisabled;
     let enableAccountAlerts = toggleNotificationsRequest.enableAccountAlerts;
-    let enableDailyFeedReport = toggleNotificationsRequest.enableDailyFeedReport;
-    let enableProductNotifications = toggleNotificationsRequest.enableProductNotifications;
     let newSettings = {
       frameworkConfig: {
         notifications: {
           disabled: notificationsDisabled,
           accountAlerts: enableAccountAlerts,
-          dailyFeedReport: enableDailyFeedReport,
-          productNotifications: enableProductNotifications,
         }
       }
     };
