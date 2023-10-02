@@ -415,8 +415,6 @@ signinWithGoogle: "Sign in with Google",
   updateNotificationPreferences: "Update Notification Preferences",
   enableAccountAlertsNotifications:
     "Enable this option to receive account alerts and maintenance notifications.",
-  enableProductNotifications:
-    "Enable this option to receive occasional emails about production notifications and new features.",
   enableSelectedNotifications: "Enable Selected Notifications",
   settingsUpdated: "Settings updated",
   updateLightTheme: "Click here to save your changes to the light theme",
