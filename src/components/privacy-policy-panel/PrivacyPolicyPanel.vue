@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="pa-4">
-      {{ $t('feedGearsPrivacyPolicy') }}
+      {{ $t('newsgearsPrivacyPolicy') }}
     </v-card-title>
     <v-divider />
     <v-card-text>
@@ -130,7 +130,7 @@
               type="text"
               @click="sendSupportMail"
             >
-              support@feedgears.com
+              support@newsgears.com
             </v-btn>
           </v-card-actions>
         </v-card>

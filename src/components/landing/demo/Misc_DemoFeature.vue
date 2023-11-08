@@ -1,5 +1,5 @@
 <template>
-  <DemoFeature :title="$t('aboutFeedGears')">
+  <DemoFeature :title="$t('aboutNewsgears')">
     <template #body>
       <!-- accessibility / wcag -->
       <DemoFeature

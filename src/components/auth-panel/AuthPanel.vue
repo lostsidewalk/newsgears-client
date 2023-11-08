@@ -26,7 +26,7 @@
                 <v-card-text class="mt-12 mb-12">
                   <!-- banner (large) -->
                   <div class="text-h5 text-center mt-4 mb-4 logotext">
-                    {{ $t("loginToFeedGears") }}
+                    {{ $t("loginToNewsgears") }}
                   </div>
                   <!-- row -->
                   <v-row

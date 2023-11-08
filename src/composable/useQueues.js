@@ -45,7 +45,7 @@ export function useQueues(props) {
 
   const { baseUrl } = props;
 
-  const brokerUrl = process.env.VUE_APP_FEEDGEARS_BROKER_URL;
+  const brokerUrl = process.env.VUE_APP_NEWSGEARS_BROKER_URL;
 
   const filteredArticleList = computed(() => {
     let results = [];
@@ -216,7 +216,7 @@ export function useQueues(props) {
           from: 'me',
           to: 'me',
           destination: '/secured/room',
-          body: 'Hello FeedGears maintenance broker!',
+          body: 'Hello Newsgears maintenance broker!',
         });
       } catch (error) {
         console.debug("queues: broker client bugged out; the connection probably disappeared.");

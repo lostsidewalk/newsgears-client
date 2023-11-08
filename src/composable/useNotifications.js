@@ -26,7 +26,7 @@ export function useNotifications() {
     const permission = await vue3NativeNotifications.requestPermission();
     if (permission === "granted") {
       showNotificationWarning.value = false;
-      vue3NativeNotifications.show('FeedGears message', {
+      vue3NativeNotifications.show('Newsgears message', {
         body: message
       }, {
         onerror: () => {

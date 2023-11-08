@@ -25,7 +25,7 @@ export default {
   name: "GoogleAuthButton",
   methods: {
     googleOauth2() {
-      window.location=process.env.VUE_APP_FEEDGEARS_API_URL + '/oauth2/authorize/google?redirect_uri=' + process.env.VUE_APP_FEEDGEARS_ORIGIN_URL + '/app';
+      window.location=process.env.VUE_APP_NEWSGEARS_API_URL + '/oauth2/authorize/google?redirect_uri=' + process.env.VUE_APP_NEWSGEARS_ORIGIN_URL + '/app';
     },
   }
 }

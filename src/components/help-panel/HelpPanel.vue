@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="text-center pa-4">
-      {{ $t('feedGearsHelp') }}
+      {{ $t('newsgearsHelp') }}
     </v-card-title>
     <v-divider />
     <v-card-text>

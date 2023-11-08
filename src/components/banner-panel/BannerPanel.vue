@@ -1,13 +1,13 @@
 <template>
   <v-container>
     <v-row>
-      <!-- FeedGears RSS -->
+      <!-- Newsgears RSS -->
       <v-col
         cols="12"
         align="center"
       >
         <h1 class="logotext">
-          FeedGears RSS
+          Newsgears RSS
         </h1>
       </v-col>
       <!-- (logo) -->
@@ -23,7 +23,7 @@
         align="center"
       >
         <h2 class="logosubtext fancy">
-          {{ $t('whatIsFeedGears') }}
+          {{ $t('whatIsNewsgears') }}
         </h2>
       </v-col>
       <!-- (subtitle 2) -->
@@ -32,7 +32,7 @@
         align="center"
       >
         <h2 class="logosubduedtext fancy">
-          {{ $t('whyIsFeedGearsFree') }} 
+          {{ $t('whyIsNewsgearsFree') }} 
         </h2>
       </v-col>
     </v-row>

@@ -6,14 +6,14 @@
       :scroll-behavior="'elevate'"
     >
       <template #title>
-        <span class="feedgears-rss">
-          FeedGears RSS
+        <span class="newsgears-rss">
+          Newsgears RSS
         </span>
       </template>
       <template #prepend>
         <v-app-bar-nav-icon
           icon="fa-rss"
-          :aria-label="$t('feedGearsRssLogo')"
+          :aria-label="$t('newsgearsRssLogo')"
         />
       </template>
       <v-toolbar-items>
@@ -82,7 +82,7 @@ export default {
 </script>
 
 <style scoped>
-.feedgears-rss {
+.newsgears-rss {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;

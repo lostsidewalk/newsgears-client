@@ -18,7 +18,7 @@
           </p>
       
           <p class="mb-2 faq-detail">
-            {{ $t('feedGearsIs') }}
+            {{ $t('newsgearsIs') }}
           </p>
       
           <p class="mb-2 faq-detail">

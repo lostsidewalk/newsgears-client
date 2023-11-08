@@ -114,7 +114,7 @@ export default {
   },
   methods: {
     devBlog() {
-      window.open('https://www.lostsidewalk.com/feedgears/devblog', '_blank');
+      window.open('https://www.lostsidewalk.com/newsgears/devblog', '_blank');
     },
     sendSupportMail() {
       window.open('mailto:support@feedgears.com', '_blank');

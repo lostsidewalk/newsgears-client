@@ -13,7 +13,7 @@
       </v-label>
 
       <section class="pa-2">
-        {{ $t('feedGearsFilterSupports') }}
+        {{ $t('newsgearsFilterSupports') }}
       </section>
 
       <section class="mt-4 mb-4 pa-2">

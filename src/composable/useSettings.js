@@ -155,7 +155,7 @@ export function useSettings(props) {
         let url = window.URL.createObjectURL(blob);
         let anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = 'feedgears-opml-export.xml';
+        anchor.download = 'newsgears-opml-export.xml';
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();

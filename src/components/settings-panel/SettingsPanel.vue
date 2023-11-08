@@ -32,7 +32,7 @@
           />
           <v-img
             v-else
-            src="feedgears.png" 
+            src="newsgears.png" 
             referrerpolicy="no-referrer" 
             class="profile-img" 
             :alt="$t('defaultOAuth2ProfileImage')" 

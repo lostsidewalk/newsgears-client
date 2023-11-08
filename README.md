@@ -1,4 +1,4 @@
-# FeedGears
+# Newsgears
 
 ## Project setup
 ```

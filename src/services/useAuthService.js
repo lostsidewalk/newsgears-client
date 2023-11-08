@@ -21,12 +21,12 @@ function useAuthService() {
   const isAuthenticated = ref(false);
 
   // URLs
-  const currentUserUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/currentuser";
-  const authUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/authenticate";
-  const pwResetUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_reset";
-  const pwUpdateUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/pw_update";
-  const registrationUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/register";
-  const logoutUrl = process.env.VUE_APP_FEEDGEARS_API_URL + "/deauthenticate";
+  const currentUserUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/currentuser";
+  const authUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/authenticate";
+  const pwResetUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/pw_reset";
+  const pwUpdateUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/pw_update";
+  const registrationUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/register";
+  const logoutUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/deauthenticate";
 
   function log(msg) {
     console.log("auth-service: " + msg);

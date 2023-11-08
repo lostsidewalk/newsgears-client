@@ -14,17 +14,17 @@ const routes = [
     name: "LandingView",
     component: LandingView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
   {
     path: "/app",
     name: "HomeView",
-    title: "FeedGears RSS",
+    title: "Newsgears RSS",
     component: HomeView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
-      feedUrl: process.env.VUE_APP_FEEDGEARS_FEED_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      feedUrl: process.env.VUE_APP_NEWSGEARS_FEED_URL,
     },
   },
   {
@@ -32,7 +32,7 @@ const routes = [
     name: "PasswordResetRequestView",
     component: PasswordResetRequestView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
   {
@@ -40,7 +40,7 @@ const routes = [
     name: "PasswordResetCallbackView",
     component: PasswordResetCallbackView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
   {
@@ -48,7 +48,7 @@ const routes = [
     name: "RegistrationRequestView",
     component: RegistrationRequestView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
   {
@@ -56,7 +56,7 @@ const routes = [
     name: "VerificationCallbackView",
     component: VerificationCallbackView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
   {
@@ -64,7 +64,7 @@ const routes = [
     name: "DocsView",
     component: DocsView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
   {
@@ -72,7 +72,7 @@ const routes = [
     name: "ApiView",
     component: ApiView,
     props: {
-      baseUrl: process.env.VUE_APP_FEEDGEARS_API_URL,
+      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
 ];
@@ -82,16 +82,16 @@ const router = createRouter({
   routes,
 });
 
-const defaultRouteTitle = "FeedGears RSS";
+const defaultRouteTitle = "Newsgears RSS";
 
 const titlesByRoute = {
-  LandingView: "FeedGears RSS from LostSidewalk Software",
-  HomeView: "FeedGears RSS Feed Dashboard",
-  PasswordResetRequestView: "FeedGears RSS Password Reset Request",
-  PasswordResetCallbackView: "FeedGears RSS Password Reset Continuation",
-  RegistrationRequestView: "FeedGears RSS User Registration",
-  VerificationCallbackView: "FeedGears RSS Email Verification Continuation",
-  SettingsView: "FeedGears RSS User Settings",
+  LandingView: "Newsgears RSS from LostSidewalk Software",
+  HomeView: "Newsgears RSS Feed Dashboard",
+  PasswordResetRequestView: "Newsgears RSS Password Reset Request",
+  PasswordResetCallbackView: "Newsgears RSS Password Reset Continuation",
+  RegistrationRequestView: "Newsgears RSS User Registration",
+  VerificationCallbackView: "Newsgears RSS Email Verification Continuation",
+  SettingsView: "Newsgears RSS User Settings",
 };
 
 router.beforeEach((to, from, next) => {
