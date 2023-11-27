@@ -888,8 +888,7 @@ export default {
         .finally(() => {
           if (isAuthenticated.value) {
             console.log("home: authenticated on mount");
-            // connectBroker();
-            
+            connectBroker();
           } else {
             console.log("home: not authenticated on mount");
           }
