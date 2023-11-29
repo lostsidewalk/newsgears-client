@@ -10,61 +10,65 @@
         elevation="6"
         class="mb-4"
       >
-        <v-card-title>
-          {{ $t('globalShortcutKeys') }}
-        </v-card-title>
+        <v-card-title>{{ $t('globalShortcutKeys') }}</v-card-title>
         <v-divider />
-        <v-card-text class="d-flex flex-row flex-wrap">
-          <v-table class="overflow-auto flex-grow-1">
-            <thead style="text-align: left;white-space: nowrap;">
-              <th class="pa-1">
-                {{ $t('key') }}
-              </th>
-              <th class="pa-1">
-                {{ $t('action') }}
-              </th>
-            </thead>
-            <tbody>
-              <tr
-                v-for="desc in helpModel.fromAnywhere"
-                :key="desc"
-              >
-                <td class="pa-1">
-                  <v-btn
-                    :size="buttonSize" 
-                    variant="tonal" 
-                    :prepend-icon="desc.icon" 
-                    :text="desc.key"
-                  />
-                </td>
-                <td class="pa-1">
-                  {{ desc.label }}
-                </td>
-              </tr>
-              <tr
-                v-for="desc in helpModel.aQueueIsSelected"
-                :key="desc"
-              >
-                <td class="pa-1">
-                  <v-btn
-                    :size="buttonSize"   
-                    variant="tonal" 
-                    :prepend-icon="desc.icon" 
-                    :text="desc.key"
-                  />
-                </td>
-                <td class="pa-1">
-                  {{ desc.label }}
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
+        <v-card-text>
+          <v-container fluid>
+            <v-row>
+              <v-col cols="12">
+                <v-table class="overflow-auto flex-grow-1">
+                  <thead style="text-align: left;white-space: nowrap;">
+                    <th class="pa-1">
+                      {{ $t('key') }}
+                    </th>
+                    <th class="pa-1">
+                      {{ $t('action') }}
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="desc in helpModel.fromAnywhere"
+                      :key="desc"
+                    >
+                      <td class="pa-1">
+                        <v-btn
+                          :size="buttonSize" 
+                          variant="tonal" 
+                          :prepend-icon="desc.icon" 
+                          :text="desc.key"
+                        />
+                      </td>
+                      <td class="pa-1">
+                        {{ desc.label }}
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="desc in helpModel.aQueueIsSelected"
+                      :key="desc"
+                    >
+                      <td class="pa-1">
+                        <v-btn
+                          :size="buttonSize"   
+                          variant="tonal" 
+                          :prepend-icon="desc.icon" 
+                          :text="desc.key"
+                        />
+                      </td>
+                      <td class="pa-1">
+                        {{ desc.label }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
       </v-card>
     </v-card-text>
     <v-card-actions>
       <v-btn
-        :size="buttonSize" 
+        :size="buttonSize"
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />

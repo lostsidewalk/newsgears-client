@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="mt-10 mb-10"
+            class="my-10"
             v-bind="props"
             variant="flat"
           >
@@ -23,9 +23,9 @@
               <!-- col -->
               <v-col cols="12">
                 <!-- card-text -->
-                <v-card-text class="mt-12 mb-12">
+                <v-card-text class="my-12">
                   <!-- banner (large) -->
-                  <div class="text-h5 text-center mt-4 mb-4 logotext">
+                  <div class="text-h5 text-center my-4 logotext">
                     {{ $t("loginToNewsgears") }}
                   </div>
                   <!-- row -->
@@ -40,21 +40,16 @@
                     >
                       <!-- username -->
                       <AuthTextField
-                        class="mt-4 mb-4"
-                        :label="$t('username')"
-                        :placeholder="$t('username')"
+                        v-for="(field, label) in { username: $t('username'), password: $t('password') }"
+                        :key="label"
+                        class="my-4"
+                        :label="label"
+                        :placeholder="label"
                         :model-value="username"
+                        :type="field === $t('password') ? 'password' : undefined"
                         @update:modelValue="username = $event"
                       />
                       <!-- password -->
-                      <AuthTextField
-                        type="password"
-                        class="mt-4 mb-4"
-                        :label="$t('password')"
-                        :placeholder="$t('password')"
-                        :model-value="password"
-                        @update:modelValue="password = $event"
-                      />
                       <div class="d-flex flex-row flex-wrap">
                         <!-- submit button -->
                         <AuthButton
@@ -62,7 +57,7 @@
                           :label="$t('login')"
                           :tooltip="$t('login')"
                           :is-loading="isLoading"
-                          @clicked="$emit('login', { username: username, password: password })"
+                          @clicked="$emit('login', { username, password })"
                         />
                         <!-- google button -->
                         <GoogleAuthButton
@@ -81,7 +76,7 @@
                       <AuthServerResponse :server-message="serverMessage" />
                       <v-btn
                         variant="text"
-                        class="mt-4 mb-4 pa-2"
+                        class="my-4 pa-2"
                         block
                         :text="$t('privacyPolicy')"
                         @click="showPrivacyPolicy = !showPrivacyPolicy"
@@ -91,9 +86,7 @@
                         fullscreen
                         scrollable
                       >
-                        <PrivacyPolicyPanel
-                          @dismiss="showPrivacyPolicy = false"
-                        />
+                        <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
                       </v-dialog>
                     </v-col>
                   </v-row>

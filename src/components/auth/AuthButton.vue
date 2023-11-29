@@ -2,7 +2,7 @@
   <v-btn
     elevation="1"
     variant="tonal"
-    class="auth-button"
+    class="auth-button flex-grow-1"
     :loading="isLoading"
     @click="$emit('clicked')"
   >
@@ -35,6 +35,5 @@ export default {
 .auth-button {
   min-height: 3rem;
   font-weight: bold;
-  flex-grow: 1;
 }
 </style>
