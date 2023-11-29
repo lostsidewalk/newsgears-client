@@ -13,7 +13,7 @@
   "dependencies": {
     "@stomp/stompjs": "^7.0.0",
     "@vue-a11y/announcer": "^3.1.5",
-    "axios": "^0.27.2",
+    "axios": "^1.6.2",
     "core-js": "^3.8.3",
     "flag-icons": "^6.6.6",
     "font-awesome": "^4.7.0",
@@ -38,7 +38,7 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-pwa": "~5.0.0",
     "@vue/cli-plugin-unit-jest": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
+    "@vue/cli-service": "^5.0.8",
     "@vue/test-utils": "^2.0.0-0",
     "@vue/vue3-jest": "^27.0.0-alpha.1",
     "babel-eslint": "^10.1.0",
