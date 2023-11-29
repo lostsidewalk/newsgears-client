@@ -34,10 +34,8 @@
           :alt="$t('postMediaContentImage')"
         />
       </v-dialog>
-      <v-btn
-        variant="tonal"
-        :size="buttonSize"
-        :icon="mediaContentIcon"
+      <v-img
+        :src="mediaContent.reference.uri"
         @click="showContents = true"
       />
       <!-- TODO: extract component -->
