@@ -1,83 +1,100 @@
 <template>
-  <v-btn-group>
-    <v-btn
-      :size="buttonSize"
-      icon="fa-list"
-      :disabled="disableListLayout"
-      :title="$t('listLayout')"
-      @click="$emit('list')"
+  <v-container
+    class="queue-container d-flex flex-grow-1 flex-column rounded justify-space-between flex-wrap"
+  >
+    <v-label
+      v-if="queueStore.selectedQueueId"
+      class="ma-2 font-weight-bold"
+    >
+      {{ roSelectedQueueTitle }}
+    </v-label>
+    <v-divider v-if="queueStore.selectedQueueId" />
+    <QueueLayoutControls
+      :disable-list-layout="showListLayout"
+      :disable-card-layout="showCardLayout"
+      :disable-table-layout="showTableLayout"
+      :show-queue-refresh-indicator="showQueueRefreshIndicator"
+      :sort-order="roArticleListSortOrder"
+      @list="$emit('switchToListLayout')"
+      @card="$emit('switchToCardLayout')"
+      @table="$emit('switchToTableLayout')"
+      @toggleQueueFilterPills="$emit('toggleQueueFilterPills')"
+      @refreshQueues="$emit('refreshQueues')"
+      @markAsRead="$emit('markAsRead', $event)"
+      @toggleSortOrder="$emit('toggleArticleListSortOrder')"
     />
-    <v-btn
-      :size="buttonSize"
-      icon="fa-bars"
-      :disabled="disableCardLayout"
-      :title="$t('cardLayout')"
-      @click="$emit('card')"
+    <v-divider />
+    <!-- queue filter  -->
+    <QueueFilter
+      :filter="roArticleListFilter"
+      :queue-length="filteredArticleList.length"
+      :queue-name="roSelectedQueueTitle"
+      :queues="queueStore.queues"
+      @update:modelValue="$emit('updateArticleListFilter')"
     />
-    <v-btn
-      :size="buttonSize"
-      icon="fa-table"
-      :disabled="disableTableLayout"
-      :title="$t('tableLayout')"
-      @click="$emit('table')"
+    <QueueFilterPills
+      v-if="queueStore.selectedQueueId && roShowQueueFilterPills"
+      :show-unread="roShowUnreadPosts"
+      :show-read="roShowReadPosts"
+      :show-read-later="roShowReadLaterPosts"
+      @toggleUnread="$emit('toggleUnreadPosts')"
+      @toggleRead="$emit('toggleReadPosts')"
+      @toggleReadLater="$emit('toggleReadLaterPosts')"
     />
-    <!-- refresh queue button -->
-    <v-btn
-      :size="buttonSize" 
-      icon="fa-refresh"
-      :title="showQueueRefreshIndicator ? $t('refreshForLatest') : $t('refreshQueues')"
-      :aria-label="$t('refreshQueues')"
-      :color="showQueueRefreshIndicator ? 'red' : ''"
-      @click="$emit('refreshQueues')"
-    />
-    <!-- mark as read button -->
-    <v-btn
-      :size="buttonSize" 
-      icon="fa-check-square-o"
-      :title="$t('markQueueAsRead')"  
-      :aria-label="$t('markQueueAsRead')"
-      @click.stop="$emit('markAsRead')"
-    />
-    <!-- sort direction button -->
-    <v-btn
-      :size="buttonSize"  
-      :title="$t('toggleSortOrder')" 
-      :aria-label="$t('toggleSortOrder')" 
-      :icon="'fa-arrow-' + (sortOrder === 'ASC' ? 'up' : 'down')"
-      @click="$emit('toggleSortOrder')"
-    />
-    <!-- toggle filter pills button -->
-    <v-btn
-      :size="buttonSize" 
-      icon="fa-tag"
-      :title="$t('toggleFilterPills')" 
-      :aria-label="$t('toggleFilterPills')"
-      @click.stop="$emit('toggleQueueFilterPills')"
-    />
-  </v-btn-group>
+  </v-container>
 </template>
 
 <script>
-import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+// queue layout controls
+import QueueLayoutControls from "./QueueLayoutControls.vue";
+// queue filter
+import QueueFilter from "./QueueFilter.vue";
+import QueueFilterPills from "./QueueFilterPills.vue";
+
+import { useQueues } from "@/composable/useQueues";
 
 export default {
-  name: "QueueLayout",
-  mixins: [buttonSizeMixin],
-  props: {
-    disableListLayout: { type: Boolean, required: true },
-    disableCardLayout: { type: Boolean, required: true },
-    disableTableLayout: { type: Boolean, required: true },
-    showQueueRefreshIndicator: { type: Boolean, default: false },
-    sortOrder: { type: String, required: true },
+  components: {
+    QueueLayoutControls,
+    QueueFilter,
+    QueueFilterPills,
   },
-  emits: [
-    "list",
-    "card",
-    "table",
-    "toggleQueueFilterPills",
-    "refreshQueues",
-    "markAsRead",
-    "toggleSortOrder",
-  ]
-}
+  props: {
+    showListLayout: { type: Boolean, required: true },
+    showCardLayout: { type: Boolean, required: true },
+    showTableLayout: { type: Boolean, required: true },
+    showQueueRefreshIndicator: { type: Boolean, required: true },
+    filteredArticleList: { type: Array, required: true },
+  },
+  setup(props) {
+    const {
+      roSelectedQueueTitle,
+      roArticleListSortOrder,
+      roArticleListFilter,
+      roShowQueueFilterPills,
+      roShowUnreadPosts,
+      roShowReadPosts,
+      roShowReadLaterPosts,
+      queueStore
+    } = useQueues(props);
+
+    return {
+      roSelectedQueueTitle,
+      roArticleListSortOrder,
+      roArticleListFilter,
+      roShowQueueFilterPills, 
+      roShowUnreadPosts,
+      roShowReadPosts,
+      roShowReadLaterPosts,
+      queueStore,
+    }
+  }
+};
 </script>
+
+<style scoped>
+.queue-container {
+  background-color: transparent;
+  gap: 2rem;
+}
+</style>

@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import PostMediaCommunity from '@/components/post/PostMediaCommunity.vue';
+import PostMediaCommunity from './PostMediaCommunity.vue';
 
 export default {
   name: "PostMediaMetadata",
@@ -151,5 +151,9 @@ export default {
 .post-text-frame {
   overflow: auto;
   white-space-collapse: preserve-breaks;
+}
+
+.clickable:hover {
+  cursor: pointer;
 }
 </style>

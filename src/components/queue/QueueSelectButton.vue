@@ -75,7 +75,7 @@
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
-import QueueDetails from '@/components/queue/QueueDetails.vue';
+import QueueDetails from './QueueDetails.vue';
 
 export default {
   name: "QueueSelectButton",

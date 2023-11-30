@@ -365,8 +365,8 @@
 <script>
 import { inject } from 'vue';
 import { useNotifications } from '@/composable/useNotifications';
-import QueueConfigTextField from '@/components/queue-config-panel/QueueConfigTextField.vue';
-import SubscriptionInfo from '@/components/subscription-info/SubscriptionInfo.vue';
+import QueueConfigTextField from './QueueConfigTextField.vue';
+import SubscriptionInfo from './SubscriptionInfo.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {

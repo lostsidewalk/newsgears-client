@@ -1377,7 +1377,7 @@ export function useQueues(props) {
     deleteSelectedQueue,
     // completes the queue delete process by making a server call to delete the queue (given by queueIdToDelete) 
     performQueueDelete,
-    // cancels the queue delete prorcess (unsets queueIdToDelete and hides the confirmation modal) 
+    // cancels the queue delete prorcess (unsets queueIdToDelete and hides the confirmation dialog) 
     cancelQueueDelete,
     // initiates the queue MAR process (sets queueIdToMarkAsRead to the selectedQueueId and asks for confirmation) 
     markSelectedQueueAsRead,
@@ -1385,7 +1385,7 @@ export function useQueues(props) {
     markQueueAsRead,
     // completes the queue MAR process by making a server call to MAR the queue (given by queueIdToMarkAsRead) 
     performQueueMarkAsRead,
-    // cancels the queue MAR prorcess (unsets queueIdToMarkAsRead and hides the confirmation modal) 
+    // cancels the queue MAR prorcess (unsets queueIdToMarkAsRead and hides the confirmation dialog) 
     cancelQueueMarkAsRead,
     // sets the value of articleListFilter 
     updateArticleListFilter,

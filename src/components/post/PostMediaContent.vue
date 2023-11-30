@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import PostMediaMetadata from '@/components/post/PostMediaMetadata.vue';
+import PostMediaMetadata from './PostMediaMetadata.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {

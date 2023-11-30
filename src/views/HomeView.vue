@@ -44,39 +44,14 @@
         :indeterminate="isLoading"
         :aria-label="$t('loadingProgress')"
       />
-      <!-- TODO: extract component -->
       <!-- app bar (top-level)-->
-      <v-app-bar
-        app
-        :location="'top'"
-      >
-        <template #title>
-          <span class="newsgears-rss d-none d-sm-flex">
-            Newsgears RSS
-          </span>
-        </template>
-        <template #prepend>
-          <v-app-bar-nav-icon
-            icon="fa-rss"
-            :aria-label="$t('toggleDashboard')"
-            :title="$t('toggleDashboard')"
-            @click.stop="showQueueDashboard = !showQueueDashboard"
-          />
-        </template>
-        <template #append>
-          <ControlPanel
-            :base-url="baseUrl"
-            :show-settings-panel="showSettingsPanel"
-            :show-help-panel="showHelpPanel"
-            :show-notification-warning="roShowNotificationWarning"
-            :is-authenticated="isAuthenticated"
-            @showSettings="openSettings"
-            @showHelp="showHelpPanel = !showHelpPanel"
-            @logout="$event => { logout(); disconnectBroker(); }"
-          />
-        </template>
-      </v-app-bar>
-      <!-- TODO: extract component -->
+      <AppBar
+        :base-url="baseUrl"
+        :show-help-panel="showHelpPanel"
+        @showHelpPanel="showHelpPanel = !showHelpPanel"
+        @openSettings="openSettings"
+        @showQueueDashboard="showQueueDashboard = !showQueueDashboard"
+      />
       <!-- navigation drawer / left side -->
       <v-navigation-drawer
         v-model="showQueueDashboard"
@@ -86,202 +61,63 @@
         elevation="12"
         temporary
       >
-        <v-btn-group>
-          <!-- new queue button -->
-          <v-btn
-            :size="buttonSize"
-            accesskey="q"
-            :title="t('createNewQueue')"
-            prepend-icon="fa-plus"
-            :text="t('createNewQueue')"
-            @click.stop="newQueue"
-          />
-          <!-- upload OPML button -->
-          <v-btn
-            :size="buttonSize"
-            accesskey="m"
-            :title="t('uploadOPML')"
-            prepend-icon="fa-file"
-            :text="t('uploadOPML')"
-            @click.stop="uploadOpml"
-          />
-          <v-btn 
-            :size="buttonSize"
-            :title="t('cardLayout')"
-            prepend-icon="fa-bars"
-            @click.stop="showQueueCards = true"
-          />
-          <v-btn 
-            :size="buttonSize"
-            :title="t('listLayout')"
-            prepend-icon="fa-table"
-            @click.stop="showQueueCards = false"
-          />
-        </v-btn-group>
-        <v-sheet v-if="showQueueCards">
-          <v-alert
-            v-if="shouldShowAlert('thisIsYourQueueDashboard')"
-            closable
-            variant="outlined"
-            border="top"
-            icon="fa-question-circle"
-            :text="t('thisIsYourQueueDashboard')"
-            class="ma-4"
-            @click.close="dismissAlert('thisIsYourQueueDashboard')"
-          />
-          <v-hover
-            v-for="queue in queueStore.queues"
-            v-slot="{ isHovering, props }"
-            :key="queue.value"
-          >
-            <QueueSelectButton
-              variant="flat"
-              :elevation="isHovering ? 12 : 0"
-              :queue="queue"
-              :article-list="queueStore.articleListsByQueue[queue.id]"
-              :feed-url="feedUrl"
-              class="ma-4"
-              :class="queueStore.selectedQueueId === queue.id ? 'selected-queue' : ''"
-              :is-selected="queueStore.selectedQueueId === queue.id"
-              v-bind="props"
-              @click.stop="$event => { setSelectedQueueId(queue.id); $nextTick(() => showQueueDashboard = false); }"
-              @manageSubscriptions="openQueueConfigPanel(queue.id)"
-              @updateFilter="updateFilter"
-              @showSubscriptionMetrics="openSubscriptionMetrics"
-            />
-          </v-hover>
-        </v-sheet>
-        <v-sheet v-else>
-          <v-alert
-            v-if="shouldShowAlert('theseAreAllOfYourSubscriptions')"
-            closable
-            variant="outlined"
-            border="top"
-            icon="fa-question-circle"
-            :text="t('theseAreAllOfYourSubscriptions')"
-            class="ma-4"
-            @click.close="dismissAlert('theseAreAllOfYourSubscriptions')"
-          />
-          <v-table
-            class="ma-4 overflow-auto flex-grow-1"
-            fixed-header
-          >
-            <thead style="text-align: center;">
-              <th
-                class="pa-1 h-auto"
-                style="max-height: 70px;max-width: 70px;"
-              />
-              <th class="pa-1">
-                &nbsp;
-              </th>
-              <!-- unread count -->
-              <th class="pa-1">
-                <v-icon
-                  :title="$t('unreadCount', { n: 0 })"
-                  size="small"
-                  icon="fa-eye"
-                />
-              </th>
-              <!-- read count -->
-              <th class="pa-1">
-                <v-icon
-                  :title="$t('readCount', { n: 0 })"
-                  size="small"
-                  icon="fa-check-square-o"
-                />
-              </th>
-              <!-- total count -->
-              <th class="pa-1">
-                <v-icon
-                  :title="$t('totalCount', { n: 0 })"
-                  size="small"
-                  icon="fa-newspaper-o"
-                />
-              </th>
-            </thead>
-            <tbody style="text-align: left;">
-              <tr
-                v-for="subscription in queueStore.allSubscriptions"
-                :key="subscription"
-              >
-                <td
-                  style="text-align: center;"
-                  class="pa-1"
-                >
-                  <v-img
-                    v-if="subscription.icon"
-                    class="rounded h-auto"
-                    :src="subscription.icon.url"
-                    :title="subscription.icon.title"
-                    :alt="$t('feedLogoImage')"
-                    contain
-                    style="max-height: 70px;max-width: 70px;"
-                  />
-                  <v-img
-                    v-if="subscription.image && !subscription.icon"
-                    class="rounded h-auto"
-                    :src="subscription.image.url"
-                    :title="subscription.image.title"
-                    :alt="$t('feedLogoImage')"
-                    contain
-                    style="max-height: 70px;max-width: 70px;"
-                  />
-                  <v-img
-                    v-if="!subscription.image && !subscription.icon"
-                    class="rounded h-auto"
-                    src="rss_logo.svg"
-                    :alt="$t('rssLogo')"
-                    contain
-                    style="max-height: 70px;max-width: 70px;"
-                  />
-                </td>
-                <td>{{ subscription.title }}</td>
-                <!-- unread count-->
-                <td
-                  style="text-align: center;"
-                  class="clickable"
-                  @click="$event => {
-                    setSelectedQueueId(subscription.queueId);
-                    $nextTick(() => updateFilter({ name: 'subAndMode', queueId: subscription.queueId, subValue: subscription.title, modeValue: 'UNREAD' }));
-                  }"
-                >
-                  {{ articleListsBySubscription[subscription.id] ?
-                    articleListsBySubscription[subscription.id].filter((post) => !post.isRead).length :
-                    0
-                  }}
-                </td>
-                <!-- read count-->
-                <td
-                  style="text-align: center;"
-                  class="clickable"
-                  @click="$event => {
-                    setSelectedQueueId(subscription.queueId);
-                    $nextTick(() => updateFilter({ name: 'subAndMode', queueId: subscription.queueId, subValue: subscription.title, modeValue: 'READ' }));
-                  }"
-                >
-                  {{ articleListsBySubscription[subscription.id] ?
-                    articleListsBySubscription[subscription.id].filter((post) => post.isRead).length :
-                    0
-                  }}
-                </td>
-                <!-- total count-->
-                <td
-                  style="text-align: center;"
-                  class="clickable"
-                  @click="$event => {
-                    setSelectedQueueId(subscription.queueId);
-                    $nextTick(() => updateFilter({ name: 'subscription', queueId: subscription.queueId, value: subscription.title }));
-                  }"
-                >
-                  {{ articleListsBySubscription[subscription.id] ? articleListsBySubscription[subscription.id].length :
-                    0 }}
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-        </v-sheet>
+        <QueueOperations 
+          :base-url="baseUrl"
+          @showQueueCards="showQueueCards = true" 
+          @showListLayout="showQueueCards = false"
+          @newQueue="newQueue"
+          @uploadOpml="uploadOpml"
+        />
+        <QueueCardSheet
+          v-if="showQueueCards" 
+          :base-url="baseUrl"
+          :feed-url="feedUrl"
+          @selectQueue="$event => { setSelectedQueueId($event.queueId); $nextTick(() => showQueueDashboard = false); }"
+          @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
+          @updateFilter="updateFilter"
+          @openSubscriptionMetrics="openSubscriptionMetrics"
+        />
+        <QueueSubscriptionSheet
+          v-else 
+          :base-url="baseUrl"
+          @showUnread="($event) => {
+            let subscription = $event.subscription;
+            setSelectedQueueId(subscription.queueId);
+            $nextTick(() =>
+              updateFilter({
+                name: 'subAndMode',
+                queueId: subscription.queueId,
+                subValue: subscription.title,
+                modeValue: 'UNREAD',
+              })
+            );
+          }"
+          @showRead="($event) => {
+            let subscription = $event.subscription;
+            setSelectedQueueId(subscription.queueId);
+            $nextTick(() =>
+              updateFilter({
+                name: 'subAndMode',
+                queueId: subscription.queueId,
+                subValue: subscription.title,
+                modeValue: 'READ',
+              })
+            );
+          }"
+          @showAll="($event) => {
+            let subscription = $event.subscription;
+            setSelectedQueueId(subscription.queueId);
+            $nextTick(() =>
+              updateFilter({
+                name: 'subscription',
+                queueId: subscription.queueId,
+                value: subscription.title,
+              })
+            );
+          }"
+        />
       </v-navigation-drawer>
-      <!-- delete confirmation modal -->
+      <!-- delete confirmation dialog -->
       <v-dialog
         v-model="showQueueDeleteConfirmation"
         scrollable
@@ -293,7 +129,7 @@
           @cancel="$event => { cancelQueueDelete(); showQueueDeleteConfirmation = false; }"
         />
       </v-dialog>
-      <!-- mark as read confirmation modal -->
+      <!-- mark as read confirmation dialog -->
       <v-dialog
         v-model="showQueueMarkAsReadConfirmation"
         scrollable
@@ -305,7 +141,7 @@
           @cancel="$event => { cancelQueueMarkAsRead(); showQueueMarkAsReadConfirmation = false; }"
         />
       </v-dialog>
-      <!-- settings modal -->
+      <!-- settings dialog -->
       <v-dialog
         v-model="showSettingsPanel"
         fullscreen
@@ -328,7 +164,7 @@
           @dismiss="showSettingsPanel = false"
         />
       </v-dialog>
-      <!-- help modal -->
+      <!-- help dialog -->
       <v-dialog
         v-model="showHelpPanel"
         fullscreen
@@ -339,7 +175,7 @@
           @dismiss="showHelpPanel = false"
         />
       </v-dialog>
-      <!-- queue config modal -->
+      <!-- queue config dialog -->
       <v-dialog
         v-model="showQueueConfigPanel"
         fullscreen
@@ -356,7 +192,7 @@
           @dismiss="dismissQueueConfigPanel"
         />
       </v-dialog>
-      <!-- opml upload modal -->
+      <!-- opml upload dialog -->
       <v-dialog
         v-model="showOpmlUploadPanel"
         fullscreen
@@ -385,66 +221,39 @@
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
-      <!-- TODO: extract component -->
-      <!-- queue layout control -->
-      <v-container class="queue-container d-flex flex-grow-1 flex-column rounded justify-space-between flex-wrap">
-        <v-label
-          v-if="queueStore.selectedQueueId"
-          class="ma-2 font-weight-bold"
-        >
-          {{ roSelectedQueueTitle }}
-        </v-label>
-        <v-divider v-if="queueStore.selectedQueueId" />
-        <QueueLayout
-          :disable-list-layout="showListLayout"
-          :disable-card-layout="showCardLayout"
-          :disable-table-layout="showTableLayout"
-          :show-queue-refresh-indicator="showQueueRefreshIndicator"
-          :sort-order="roArticleListSortOrder"
-          @list="switchToListLayout"
-          @card="switchToCardLayout"
-          @table="switchToTableLayout"
-          @toggleQueueFilterPills="toggleQueueFilterPills"
-          @refreshQueues="refreshQueues(null, true)"
-          @markAsRead="$event => { markQueueAsRead(queueStore.selectedQueueId); showQueueMarkAsReadConfirmation = true; }"
-          @toggleSortOrder="toggleArticleListSortOrder"
-        />
-        <v-divider />
-        <!-- queue filter  -->
-        <QueueFilter
-          :filter="roArticleListFilter"
-          :queue-length="filteredArticleList.length"
-          :queue-name="roSelectedQueueTitle"
-          :queues="queueStore.queues"
-          @update:modelValue="updateArticleListFilter"
-        />
-        <QueueFilterPills
-          v-if="queueStore.selectedQueueId && roShowQueueFilterPills"
-          :show-unread="roShowUnreadPosts"
-          :show-read="roShowReadPosts"
-          :show-read-later="roShowReadLaterPosts"
-          @toggleUnread="toggleUnreadPosts"
-          @toggleRead="toggleReadPosts"
-          @toggleReadLater="toggleReadLaterPosts"
-        />
-      </v-container>
-      <!-- TODO: extract component -->
-      <!-- queue container (cards) -->
-      <div v-if="showCardLayout && filteredArticleList.length > 0">
-        <PostCard
-          v-for="post in filteredArticleList"
-          :id="'post_' + post.id"
-          :key="post.id"
-          :post="post"
-          :sharing-options="sharingOptions"
-          :collapsed="true"
-          class="ma-4"
-          @openPostUrl="openPostUrl(post.id)"
-          @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="updateFilter"
-          @share="$event => share($event.sharingOption, $event.post)"
-        />
-      </div>
+      <!-- queue layout -->
+      <QueueLayout 
+        :show-list-layout="showListLayout"
+        :show-card-layout="showCardLayout"
+        :show-table-layout="showTableLayout"
+        :show-queue-refresh-indicator="showQueueRefreshIndicator"
+        :filtered-article-list="filteredArticleList" 
+        @switchToListLayout="switchToListLayout" 
+        @switchToCardLayout="switchToCardLayout" 
+        @switchToTableLayout="switchToTableLayout" 
+        @toggleQueueFilterPills="toggleQueueFilterPills" 
+        @refreshQueues="$event => refreshQueues(null, true)"
+        @markAsRead="$event => {
+          markQueueAsRead(queueStore.selectedQueueId);
+          showQueueMarkAsReadConfirmation = true;
+        }"
+        @toggleArticleListSortOrder="toggleArticleListSortOrder"
+        @updateArticleListFilter="updateArticleListFilter"
+        @toggleUnread="toggleUnreadPosts" 
+        @toggleRead="toggleReadPosts"
+        @toggleReadLater="toggleReadLaterPosts"
+      />
+      <!-- card layout -->
+      <CardLayout
+        v-if="showCardLayout && filteredArticleList.length > 0" 
+        :sharing-options="sharingOptions"
+        :filtered-article-list="filteredArticleList"
+        @openPostUrl="$event => openPostUrl($event.postId)"
+        @updatePostReadStatus="updatePostReadStatus"
+        @updateFilter="updateFilter"
+        @share="$event = share($event.sharingOption, $event.post)"
+      />
+      <!-- post card dialog -->
       <v-dialog
         v-if="showListLayout || showTableLayout"
         v-model="showSelectedPost"
@@ -480,111 +289,41 @@
           </template>
         </PostCard>
       </v-dialog>
-      <!-- TODO: extract component -->
-      <v-list
+      <!-- list layout -->
+      <ListLayout 
         v-if="showListLayout && filteredArticleList.length > 0"
-        v-model="selectedItem"
-        class="rounded"
-      >
-        <PostListItem
-          v-for="post in filteredArticleList"
-          :id="'post_' + post.id"
-          :key="post"
-          :post="post"
-          :sharing-options="sharingOptions"
-          class="ma-4 rounded"
-          @openPost="openPost(post.id); showSelectedPost = true;"
-          @updatePostReadStatus="updatePostReadStatus"
-        />
-      </v-list>
-      <v-container
-        v-if="!filteredArticleList || filteredArticleList.length === 0"
-        class="queue-container d-flex flex-column rounded"
-      >
-        <v-alert
-          info
-        >
-          {{ t('noArticlesInThisQueue') }}
-        </v-alert>
-        <!-- add subscription -->
-        <v-card
-          elevation="1"
-          @click="openQueueConfigPanel(queueStore.selectedQueueId)"
-        >
-          <v-card-title>
-            <v-icon icon="fa-link" />
-            {{ $t('clickHereToAddANewSubscription') }}
-          </v-card-title>
-          <v-divider />
-          <v-card-text>
-            {{ $t('clickHereToAddANewSubscription_detail') }}
-          </v-card-text>
-        </v-card>
-        <!-- upload OPML -->
-        <v-card
-          elevation="1"
-          @click="uploadOpml"
-        >
-          <v-card-title>
-            <v-icon icon="fa-file" />
-            {{ $t('clickHereToUploadOPML') }}
-          </v-card-title>
-          <v-divider />
-          <v-card-text>
-            {{ $t('clickHereToUploadOPML_detail') }}
-          </v-card-text>
-          <v-card-text>
-            {{ $t('clickHereToUploadOPML_detail1') }}
-          </v-card-text>
-        </v-card>
-        <!-- browse catalog -->
-        <!-- <v-card
-          elevation="1"
-          @click="$emit('clicked')"
-        >
-          <v-card-title>
-            <v-icon icon="fa-book" />
-            {{ $t('clickHereToBrowseCatalog') }}
-          </v-card-title>
-          <v-divider />
-          <v-card-text>
-            {{ $t('clickHereToBrowseCatalog_detail') }}
-          </v-card-text>
-        </v-card> -->
-      </v-container>
-      <!-- TODO: extract component -->
-      <v-table
+        :filtered-article-list="filteredArticleList"
+        @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
+        @updatePostReadStatus="updatePostReadStatus"
+      />
+      <!-- table layout -->
+      <TableLayout 
         v-if="showTableLayout && filteredArticleList.length > 0"
-        class="ma-4"
-        fixed-header
-      >
-        <tbody style="text-align: left;">
-          <PostTableRow
-            v-for="post in filteredArticleList"
-            :id="'post_' + post.id"
-            :key="post"
-            :post="post"
-            :sharing-options="sharingOptions"
-            class="ma-4 rounded"
-            @openPost="openPost(post.id); showSelectedPost = true;"
-            @openPostUrl="openPostUrl(post.id)"
-            @updatePostReadStatus="updatePostReadStatus"
-          />
-        </tbody>
-      </v-table>
+        :filtered-article-list="filteredArticleList"
+        :sharing-options="sharingOptions"
+        @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
+        @openPostUrl="$event => openPostUrl($event.postId)"
+        @updatePostReadStatus="updatePostReadStatus"
+      />
+      <!-- no articles in queue -->
+      <QueueSetup 
+        v-if="!filteredArticleList || filteredArticleList.length === 0" 
+        :base-url="baseUrl"
+        @uploadOpml="uploadOpml" 
+        @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
+      />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import { inject, ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { inject, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 import { useAuth } from '@/composable/useAuth.js';
 import { useSettings } from '@/composable/useSettings.js';
-import { useNotifications } from '@/composable/useNotifications.js';
 import { useQueues } from '@/composable/useQueues.js';
 import { useLayout } from '@/composable/useLayout.js';
 import { useSharing } from '@/composable/useSharing.js';
@@ -592,32 +331,40 @@ import { useSharing } from '@/composable/useSharing.js';
 // import debounce from 'lodash.debounce';
 // components 
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
+import AppBar from '@/components/app-bar/AppBar.vue';
 import GoBack from "@/components/layout/GoBack.vue";
 import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
 import AuthPanel from "@/components/auth-panel/AuthPanel.vue";
-// confirmation modal dialog 
+// confirmation dialog 
 import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
 // queue configuration panel 
 import QueueConfigPanel from "@/components/queue-config-panel/QueueConfigPanel.vue";
 // OPML upload panel 
 import OpmlUploadPanel from "@/components/opml-upload-panel/OpmlUploadPanel.vue";
 // subscription metrics panel 
-import SubscriptionMetrics from '@/components/subscription-info/SubscriptionMetrics.vue';
+import SubscriptionMetrics from '@/components/queue-config-panel/SubscriptionMetrics.vue';
 // settings 
-import ControlPanel from "@/components/control-panel/ControlPanel.vue";
 import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
 import HelpPanel from '@/components/help-panel/HelpPanel.vue';
+// queue operations 
+import QueueOperations from '@/components/queue/QueueOperations.vue';
+// queue card sheet 
+import QueueCardSheet from '@/components/queue/QueueCardSheet.vue';
+// queue subscription sheet 
+import QueueSubscriptionSheet from '@/components/queue/QueueSubscriptionSheet.vue';
 // queue layout 
-import QueueLayout from "@/components/queue/QueueLayout.vue";
-// queue filter 
-import QueueFilter from "@/components/queue/QueueFilter.vue";
-import QueueFilterPills from "@/components/queue/QueueFilterPills.vue";
-// post 
+import QueueLayout from '@/components/queue/QueueLayout.vue';
+// card layout 
+import CardLayout from '@/components/post/CardLayout.vue';
+// list layout 
+import ListLayout from '@/components/post/ListLayout.vue';
+// table layout 
+import TableLayout from '@/components/post/TableLayout.vue';
+// post card
 import PostCard from "@/components/post/PostCard.vue";
-import PostListItem from "@/components/post/PostListItem.vue";
-import PostTableRow from "@/components/post/PostTableRow.vue";
-// queue dashboard 
-import QueueSelectButton from '@/components/queue/QueueSelectButton.vue';
+// queue setup 
+import QueueSetup from '@/components/queue/QueueSetup.vue';
+// footer panel 
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 // import QueueDetails from '@/components/queue/QueueDetails.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
@@ -627,29 +374,37 @@ export default {
   name: "HomeView",
   components: {
     BannerPanel,
+    AppBar,
     GoBack,
     DisplayModeButton,
     AuthPanel,
-    // modal 
+    // dialogs 
     ConfirmationDialog,
     QueueConfigPanel,
     OpmlUploadPanel,
     SubscriptionMetrics,
     // settings 
-    ControlPanel,
     SettingsPanel,
     HelpPanel,
+    // operations 
+    QueueOperations,
+    // card sheet 
+    QueueCardSheet, 
+    // subscription sheet 
+    QueueSubscriptionSheet,
     // layout 
-    QueueLayout,
-    // filter 
-    QueueFilter,
-    QueueFilterPills,
-    // item 
+    QueueLayout, 
+    // card layout 
+    CardLayout,
+    // list layout 
+    ListLayout, 
+    // table layout 
+    TableLayout,
+    // post card 
     PostCard,
-    PostListItem,
-    PostTableRow,
-    // dashboard 
-    QueueSelectButton,
+    // queue setup
+    QueueSetup,
+    // footer 
     FooterPanel
   },
   mixins: [buttonSizeMixin],
@@ -684,22 +439,9 @@ export default {
       toggleNotifications,
       updateAccount } = useSettings(props);
     const {
-      roShowNotificationWarning,
-      shouldShowAlert,
-      dismissAlert,
-    } = useNotifications();
-    const {
       queueStore,
-      roSelectedQueueTitle,
-      roPreviousQueueId,
-      roQueueIdToDelete,
-      roQueueIdToMarkAsRead,
       roSelectedPost,
-      roArticleList,
       roRefreshQueuesIsLoading,
-      roArticleListFilter,
-      roArticleListSortOrder,
-      roShowQueueFilterPills,
       roContinueIsLoading,
       roAtStep2,
       roQueueConfigRequests,
@@ -708,9 +450,6 @@ export default {
       roSubscriptionToShow,
       roQueueUnderConfig,
       roQueueConfigIsLoading,
-      roShowUnreadPosts,
-      roShowReadPosts,
-      roShowReadLaterPosts,
       // 
       showOpmlUploadPanel, //rw 
       showSubscriptionMetrics, // rw 
@@ -718,14 +457,12 @@ export default {
       // 
       filteredArticleList, // computed 
       showQueueRefreshIndicator, // computed 
-      selectedTab, // computed 
-      tabModel, // computed 
       // 
       connectBroker,
       disconnectBroker, 
       refreshQueues,
       updatePostReadStatus,
-      getPostFromQueue,
+      getPostFromQueue, // no 
       toggleArticleListSortOrder,
       toggleQueueFilterPills,
       toggleFilterMode,
@@ -783,7 +520,6 @@ export default {
     const showQueueCards = ref(true);
     const showHelpPanel = ref(false);
     const showSelectedPost = ref(false);
-    const selectedItem = reactive({}); // selected post list item (i.e., scrolling through the list in list view) 
     const showQueueDeleteConfirmation = ref(false);
     const showQueueMarkAsReadConfirmation = ref(false);
     // 
@@ -792,28 +528,6 @@ export default {
     });
     const isLoading = computed(() => {
       return roSettingsIsLoading.value || roQueueConfigIsLoading.value || roContinueIsLoading.value || roFinalizeIsLoading.value || roRefreshQueuesIsLoading.value || roSettingsIsLoading.value;
-    });
-    // 
-    const articleListsBySubscription = computed(() => {
-      const bySub = {};
-
-      for (let i = 0; i < queueStore.queues.length; i++) {
-        const q = queueStore.queues[i];
-        const a = queueStore.articleListsByQueue[q.id];
-
-        for (let j = 0; j < a.values.length; j++) {
-          const subId = a.values[j].subscriptionId;
-
-          if (bySub[subId.toString()] === undefined) {
-            bySub[subId.toString()] = [];
-          }
-
-          const l = bySub[subId.toString()];
-          l.push(a.values[j]);
-        }
-      }
-
-      return bySub;
     });
     // required 
     function keyHandler(event) {
@@ -961,7 +675,6 @@ export default {
       isModalShowing,
       sharingOptions,
       showQueueRefreshIndicator,
-      articleListsBySubscription,
       // auth module data 
       roAuthServerMessage,
       roLoginIsLoading,
@@ -978,26 +691,13 @@ export default {
       roSettingsIsLoading,
       showSettingsPanel,
       // queues module data 
-      roShowQueueFilterPills,
-      roQueueIdToDelete,
-      roQueueIdToMarkAsRead,
-      roSelectedPost, // selected post to show on the post card modal (while in list view) 
-      roSelectedQueueTitle, // currently selected queue title 
-      roPreviousQueueId, // previously selected queue Id 
-      roArticleList, // inbound queue for the currently selected queue  
-      roArticleListFilter, // user-supplied filter text (lunrjs query expression) 
-      roArticleListSortOrder,
+      roSelectedPost, // selected post to show on the post card modal (while in list or table view) 
       roRefreshQueuesIsLoading,
-      roShowUnreadPosts,
-      roShowReadPosts,
-      roShowReadLaterPosts,
       filteredArticleList,
       // queue config module data 
       showQueueConfigPanel,
       roQueueUnderConfig,
       roQueueConfigIsLoading,
-      selectedTab,
-      tabModel,
       // metrics module data 
       roSubscriptionToShow,
       showSubscriptionMetrics,
@@ -1006,8 +706,6 @@ export default {
       showCardLayout,
       showListLayout,
       showTableLayout,
-      // notifications module data 
-      roShowNotificationWarning,
       // other data 
       isLoading,
       showQueueDashboard,
@@ -1016,7 +714,6 @@ export default {
       showQueueDeleteConfirmation,
       showQueueMarkAsReadConfirmation,
       showSelectedPost,
-      selectedItem, // selected post list item (i.e., scrolling through the list in list view) 
       // auth module functions 
       logout,
       login,
@@ -1082,8 +779,6 @@ export default {
       // markSelectedQueueAsRead, 
       openQueueConfigPanel,
       dismissQueueConfigPanel,
-      shouldShowAlert,
-      dismissAlert,
       openPostUrl,
       share,
       keyHandler,
@@ -1103,15 +798,5 @@ export default {
 /** has references */
 .selected-queue {
   border: 1px solid !important;
-}
-
-.queue-container {
-  background-color: transparent;
-  gap: 2rem;
-}
-
-.clickable:hover {
-  cursor: pointer;
-  text-decoration: underline;
 }
 </style>

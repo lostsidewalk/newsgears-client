@@ -119,3 +119,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.clickable:hover {
+  cursor: pointer;
+}
+</style>

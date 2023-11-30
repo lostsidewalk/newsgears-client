@@ -297,9 +297,9 @@
 
 <script>
 import { useTimestamp } from '@/composable/useTimestamp.js';
-import PostEnclosure from "@/components/post/PostEnclosure.vue";
-import PostMedia from "@/components/post/PostMedia.vue";
-import PostITunes from "@/components/post/PostITunes.vue";
+import PostEnclosure from "./PostEnclosure.vue";
+import PostMedia from "./PostMedia.vue";
+import PostITunes from "./PostITunes.vue";
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
@@ -367,7 +367,7 @@ export default {
       this.updatePostReadStatus(newStatus, "togglePostReadLaterStatus");
     },
     updatePostReadStatus(newStatus, successSignal) {
-      this.$emit("updatePostReadStatus", {
+      this.$emit('updatePostReadStatus', {
         id: this.post.id,
         newStatus: newStatus,
         originator: successSignal,

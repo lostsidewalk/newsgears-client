@@ -76,7 +76,6 @@ export default {
   name: "PostListItem",
   props: {
     post: { type: Object, required: true },
-    sharingOptions: { type: Array, default: null },
   },
   emits: [
     "openPost",
@@ -88,12 +87,6 @@ export default {
     return {
       formatTimestamp
     }
-  },
-  data() {
-    return {
-      showPostCategories: false,
-      showPostSharing: false,
-    };
   },
   computed: {
     isHtmlTitle: function () {

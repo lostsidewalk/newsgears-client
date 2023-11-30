@@ -55,7 +55,6 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     post: { type: Object, required: true },
-    sharingOptions: { type: Array, default: null },
   },
   emits: [
     "openPost",
@@ -136,3 +135,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.clickable:hover {
+  cursor: pointer;
+}
+</style>
