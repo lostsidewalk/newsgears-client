@@ -4,7 +4,8 @@ const fr = {
   falseStr: "faux",
   somethingHorribleHappened:
     "Quelque chose d'horrible s'est produit et nous ne savons pas exactement quoi ! Veuillez réessayer dans quelques instants.",
-  requestTimedOut: "La requête a expiré, veuillez réessayer dans quelques instants.",
+  requestTimedOut:
+    "La requête a expiré, veuillez réessayer dans quelques instants.",
   privacyPolicy: "Politique de confidentialité",
   cancel: "Annuler",
   filter: "Filtrer",
@@ -33,15 +34,13 @@ const fr = {
   registerHere: "Newsgears est gratuit. Créez un compte ici.",
   unableToCompleteYourRequest:
     "Nous n'avons pas pu finaliser votre demande. Veuillez essayer de vous connecter avec une autre méthode.",
-  usernameAndPasswordAreRequired: 
-    "Le nom d'utilisateur et le mot de passe sont requis.",
+  usernameAndPasswordAreRequired: "Le nom d'utilisateur et le mot de passe sont requis.",
   passwordIsRequired: "Le mot de passe est requis.",
   usernameIsRequired: "Le nom d'utilisateur est requis.",
 signinWithGoogle: "Se connecter avec Google",
   pwResetRequestMessage:
     "Saisissez votre nom d'utilisateur et votre adresse e-mail. Nous vous enverrons un lien de réinitialisation de mot de passe à votre adresse e-mail vérifiée.",
-  checkEmailForFurther: 
-    "Vérifiez votre e-mail pour obtenir de plus amples instructions.",
+  checkEmailForFurther: "Vérifiez votre e-mail pour obtenir de plus amples instructions.",
   newPassword: "Nouveau mot de passe",
   confirmNewPassword: "Confirmez le nouveau mot de passe",
   enterAndConfirmNewPw: "Entrez et confirmez votre nouveau mot de passe.",
@@ -77,7 +76,7 @@ signinWithGoogle: "Se connecter avec Google",
   enhancedFiltering: "Filtrage amélioré et recherche avec LunrJS",
   enhancedFiltering_detail1: "Appliquez des filtres et effectuez des recherches dans une file d'attente d'articles pour vous concentrer sur vos options de lecture en fonction de vos préférences ou de sujets spécifiques qui vous intéressent.",
   enhancedFiltering_detail2: "Localisez facilement des articles en utilisant divers points de données, gagnant ainsi du temps et simplifiant votre expérience de lecture. Les capacités de recherche de Newsgears sont soutenues par LunrJS.",
-// demo (feed dashboard)
+  // demo (feed dashboard)
   feedDashboard: "Tableau de bord des flux",
   feedDashboard_detail1: "Le tableau de bord des flux affiche des informations résumées sur chaque file d'attente d'articles. Chaque carte du tableau de bord est configurable ; vous pouvez ajouter et supprimer des détails et des boutons d'action selon vos besoins.",
   feedDashboard_detail2: "Newsgears affiche le nombre d'éléments non lus et l'article le plus récemment publié ou mis à jour pour tous les abonnements dans une file d'attente. La carte du tableau de bord donne également un accès rapide pour gérer les abonnements et obtenir en un coup d'œil des détails sur chaque flux dans une file d'attente :",
@@ -324,7 +323,6 @@ signinWithGoogle: "Se connecter avec Google",
   // post feed
   toggleDashboard: "Afficher/masquer le tableau de bord",
   thisIsYourQueueDashboard: "Ceci est votre tableau de bord des files. Le tableau de bord affiche des statistiques récapitulatives sur chaque file, telles que le nombre d'articles non lus dans un groupe d'abonnements. Cliquez sur une carte de file pour afficher les articles de cette file. Utilisez les boutons de carte de file pour ajouter, gérer, s'abonner et se désabonner des flux. Appuyez sur Échap pour masquer ce menu.",
-  // layout
   refreshQueues: "Actualiser les files",
   refreshForLatest: "Actualiser cette file pour les nouveaux articles",
   markQueueAsRead: "Marquer cette file comme lue",
@@ -370,6 +368,13 @@ signinWithGoogle: "Se connecter avec Google",
   nQueuesCreated:
     " files créées. Nous classons vos nouveaux abonnements en arrière-plan. Ce processus peut prendre plusieurs minutes.",
   noArticlesInThisQueue: "Il n'y a rien ici ! Ajustez votre filtre, ajoutez plus d'abonnements ou attendez que d'autres articles soient importés.",
+  clickHereToAddANewSubscription: "YOU HAVE ONE OR MORE FEED URLs",
+  clickHereToAddANewSubscription_detail: "Click here to subscribe to a feed if you have the URL. Feed URLs are typically of the form 'https://' or 'rss://', though you can enter any URL and we will attempt to locate the feed.",
+  clickHereToUploadOPML: "YOU HAVE ONE OR MORE OPML FILES",
+  clickHereToUploadOPML_detail: "OPML files are used by many feed aggregators as a way of represent collections of feed subscriptions. Many aggregators will allow you to export your subscriptions in the form of an OPML file, so that you can take your subscriptions with you when you migrate to another service.",
+  clickHereToUploadOPML_detail1: "If you have an OPML file, click here to begin migrating your subscriptions to Newsgears using our OPML editor.",
+  // clickHereToBrowseCatalog: "BROWSE OUR FEED CATALOG",
+  // clickHereToBrowseCatalog_detail: "Click here to subscribe to a feed from our up-to-date, searchable catalog of interesting feeds.",
   unreadCount: '{n} articles non lus',
   readCount: '{n} articles lus',
   totalCount: '{n} articles',
@@ -451,7 +456,7 @@ signinWithGoogle: "Se connecter avec Google",
   howDoWeProcess: "Comment traitons-nous vos informations ?",
   howDoWeProcessSummary:
     "Nous traitons vos informations pour fournir, améliorer et administrer Newsgears, communiquer avec vous, assurer la sécurité et prévenir la fraude, et respecter la loi. Nous pouvons également traiter vos informations à d'autres fins avec votre consentement.",
-socialLogins: "Connexions sociales",
+  socialLogins: "Connexions sociales",
   socialLoginsSummary:
     "Newsgears vous offre la possibilité de vous inscrire et de vous connecter en utilisant les détails de votre compte social tiers (comme les connexions Google ou Github). Lorsque vous choisissez de le faire, nous recevrons certaines informations de profil vous concernant de votre fournisseur de médias sociaux. Les informations de profil que nous recevons peuvent varier en fonction du fournisseur de médias sociaux concerné, mais incluront souvent votre nom, votre adresse e-mail et votre photo de profil, ainsi que d'autres informations que vous choisissez de rendre publiques sur une telle plateforme de médias sociaux.",
   socialLoginDetails: 

@@ -34,15 +34,13 @@ const es = {
   registerHere: "Newsgears es gratis. Crea una cuenta aquí.",
   unableToCompleteYourRequest:
     "No pudimos completar tu solicitud. Por favor, intenta iniciar sesión usando otro método.",
-  usernameAndPasswordAreRequired:
-    "Se requieren nombre de usuario y contraseña.",
+  usernameAndPasswordAreRequired: "Se requieren nombre de usuario y contraseña.",
   passwordIsRequired: "Se requiere contraseña.",
   usernameIsRequired: "Se requiere nombre de usuario.",
-signinWithGoogle: "Iniciar sesión con Google",
+  signinWithGoogle: "Iniciar sesión con Google",
   pwResetRequestMessage:
     "Ingresa tu nombre de usuario y dirección de correo electrónico. Enviaremos un enlace para restablecer tu contraseña a tu dirección de correo electrónico verificada.",
-  checkEmailForFurther:
-    "Revisa tu correo electrónico para ver instrucciones adicionales.",
+  checkEmailForFurther: "Revisa tu correo electrónico para ver instrucciones adicionales.",
   newPassword: "Nueva contraseña",
   confirmNewPassword: "Confirmar nueva contraseña",
   enterAndConfirmNewPw: "Ingresa y confirma tu nueva contraseña.",
@@ -133,8 +131,7 @@ signinWithGoogle: "Iniciar sesión con Google",
     "RSS (Really Simple Syndication) es un formato de fuente web que se utiliza para publicar contenido actualizado con frecuencia, como entradas de blog, titulares de noticias, audio y video. Netscape lo introdujo por primera vez en 1999 como un formato basado en XML para distribuir contenido de sitios de noticias y blogs.",
   rssAllows:
     "RSS permite a los usuarios suscribirse a fuentes de contenido utilizando un lector o agregador de fuentes web, que puede recuperar y mostrar automáticamente contenido nuevo de múltiples fuentes en una sola ubicación. Esto hace que sea más fácil para los usuarios mantenerse actualizados sobre sus sitios web y creadores de contenido favoritos sin tener que verificar manualmente cada sitio en busca de actualizaciones.",
-  newsgearsIs:
-    "Newsgears es tanto un agregador de RSS como un lector de RSS.",
+  newsgearsIs: "Newsgears es tanto un agregador de RSS como un lector de RSS.",
   overTheYears:
     "A lo largo de los años, RSS ha evolucionado y se han lanzado varias versiones del protocolo, que incluyen:",
   eachVersionAdded:
@@ -266,6 +263,7 @@ signinWithGoogle: "Iniciar sesión con Google",
   inAdditionTo:
     "Además de las consultas básicas de campo:valor, Newsgears admite opciones de búsqueda más avanzadas, como búsquedas con comodines, búsquedas aproximadas y búsquedas de rango. Puede consultar la documentación de Newsgears para obtener más detalles sobre estas opciones de búsqueda avanzada.",
   // help panel
+  newsgearsHelp: "Newsgears Help",
   dismiss: "Despedir",
   globalShortcutKeys: "TECLAS DE ACCESO DIRECTO GLOBALES",
   key: "Tecla",
@@ -273,13 +271,18 @@ signinWithGoogle: "Iniciar sesión con Google",
   configureSelectedQueue: "Configurar la cola seleccionada",
   markSelectedQueueAsRead: "Marcar la cola seleccionada como leída",
   deleteSelectedQueue: "Eliminar la cola seleccionada",
-  addSubscriptionToSelectedQueue:
-    "Agregar una suscripción a la cola seleccionada",
+  addSubscriptionToSelectedQueue: "Agregar una suscripción a la cola seleccionada",
   showUnread: "Mostrar no leídos",
   showReadLater: "Mostrar leer más tarde",
   showRead: "Mostrar leído",
   search: "Buscar",
   // iTunes
+  iTunesTitle: "TITLE: {title}",
+  iTunesSubTitle: "SUBTITLE: {subTitle}",
+  iTunesAuthor: "AUTHOR: {author}",
+  iTunesEpisode: "EPISODE: {episode}",
+  iTunesEpisodeType: "EPISODE TYPE: {episodeType}",
+  iTunesDuration: "DURATION: {duration}",
   explicit: "EXPLÍCITO",
   closedCaptioned: "Subtitulado",
   episode: "Episodio {episode}",
@@ -308,11 +311,9 @@ signinWithGoogle: "Iniciar sesión con Google",
   addOneOrMoreFilesToUplod: "Agregue uno o más archivos para cargar",
   finalizeUpload: "Finalizar carga",
   continueToStep2: "Continúe con el paso 2",
-  clickHereWHenYourFilesAreStaged:
-    "Haga clic aquí cuando sus archivos estén preparados",
+  clickHereWHenYourFilesAreStaged: "Haga clic aquí cuando sus archivos estén preparados",
   opmlFiles: "Archivos OPML",
-  previewThisFile:
-    "Obtenga una vista previa de este archivo en una nueva ventana.",
+  previewThisFile: "Obtenga una vista previa de este archivo en una nueva ventana.",
   delete: "Borrar",
   selectAtLeastOneFile: "Seleccione al menos un archivo para continuar.",
   opmlFilesContainErrors:
@@ -322,7 +323,6 @@ signinWithGoogle: "Iniciar sesión con Google",
   // post feed
   toggleDashboard: "Mostrar/ocultar tablero",
   thisIsYourQueueDashboard: "Este es su tablero de colas. El panel muestra estadísticas de resumen sobre cada cola, como la cantidad de elementos no leídos en un grupo de suscripciones. Haga clic en una tarjeta de cola para ver los artículos en esa cola. Use los botones de la tarjeta de cola para agregar, administrar, suscribirse y cancelar la suscripción a las fuentes. Presione ESC para ocultar este menú.",
-  // layout
   refreshQueues: "Actualizar colas",
   refreshForLatest: "Actualizar esta cola para nuevos artículos",
   markQueueAsRead: "Marcar esta cola como leída",
@@ -351,8 +351,7 @@ signinWithGoogle: "Iniciar sesión con Google",
   httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
   redirectedTo:
     "Redirigido a {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
-  metricsNotYetAvailable:
-    "Las métricas aún no están disponibles para esta fuente RSS.",
+  metricsNotYetAvailable: "Las métricas aún no están disponibles para esta fuente RSS.",
   confirmDeleteQueue:
     "Confirme que desea eliminar esta cola. Esta acción es irreversible.",
   confirmMarkQueueAsRead:
@@ -362,10 +361,20 @@ signinWithGoogle: "Iniciar sesión con Google",
   opmlUpload: "CARGA OPML",
   refreshFailedDueTo: "Actualizar falló debido a",
   noMessage: "sin mensaje",
-  queueUpdated: "Cola actualizada",
-  queueCreated: "Cola creada",
-  nQueuesCreated: " colas creadas",
+  queueUpdated:
+    "Queue updated.  We're sorting out your subscriptions in the background.  This process may take several minutes.",
+  queueCreated:
+    "Queue created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
+  nQueuesCreated:
+    " queues created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
   noArticlesInThisQueue: "Ningún artículo en esta cola cumple con sus criterios. Ajuste su filtro, agregue más suscripciones o espere a que se importen más artículos.",
+  clickHereToAddANewSubscription: "YOU HAVE ONE OR MORE FEED URLs",
+  clickHereToAddANewSubscription_detail: "Click here to subscribe to a feed if you have the URL. Feed URLs are typically of the form 'https://' or 'rss://', though you can enter any URL and we will attempt to locate the feed.",
+  clickHereToUploadOPML: "YOU HAVE ONE OR MORE OPML FILES",
+  clickHereToUploadOPML_detail: "OPML files are used by many feed aggregators as a way of represent collections of feed subscriptions. Many aggregators will allow you to export your subscriptions in the form of an OPML file, so that you can take your subscriptions with you when you migrate to another service.",
+  clickHereToUploadOPML_detail1: "If you have an OPML file, click here to begin migrating your subscriptions to Newsgears using our OPML editor.",
+  // clickHereToBrowseCatalog: "BROWSE OUR FEED CATALOG",
+  // clickHereToBrowseCatalog_detail: "Click here to subscribe to a feed from our up-to-date, searchable catalog of interesting feeds.",
   unreadCount: '{n} artículos no leídos',
   readCount: '{n} leer artículos',
   totalCount: '{n} artículos',
@@ -390,6 +399,7 @@ signinWithGoogle: "Iniciar sesión con Google",
   unmarkPostAsReadLater: "Desmarcar como leído más tarde",
   openOriginalArticle: "Abrir artículo original",
   description: "DESCRIPCIÓN",
+  contentsNofM: "CONTENTS ({n}/{m})",
   links: "ENLACES",
   postComments: "COMENTARIOS",
   author: "AUTOR",
@@ -406,8 +416,7 @@ signinWithGoogle: "Iniciar sesión con Google",
   deactivateYourAccount: "Desactiva tu cuenta",
   downloadYourData: "Descarga tus datos",
   permanentlyDeleteYourAccount: "Eliminar permanentemente su cuenta",
-  sendPasswordResetEmail:
-    "Enviar correo electrónico de restablecimiento de contraseña",
+  sendPasswordResetEmail: "Enviar correo electrónico de restablecimiento de contraseña",
   resetPassword: "Restablecer la contraseña",
   emailNotifications: "Notificaciones por correo electrónico",
   updateNotificationPreferences: "Actualizar preferencias de notificación",
@@ -415,10 +424,8 @@ signinWithGoogle: "Iniciar sesión con Google",
     "Habilite esta opción para recibir alertas de cuenta y notificaciones de mantenimiento.",
   enableSelectedNotifications: "Habilitar notificaciones seleccionadas",
   settingsUpdated: "Ajustes actualizan",
-  updateLightTheme:
-    "Haga clic aquí para guardar sus cambios en el tema de la luz",
-  updateDarkTheme:
-    "Haga clic aquí para guardar sus cambios en el tema oscuro",
+  updateLightTheme: "Haga clic aquí para guardar sus cambios en el tema de la luz",
+  updateDarkTheme: "Haga clic aquí para guardar sus cambios en el tema oscuro",
   themeSettingsUpdated: "Configuración del tema actualizada",
   opmlExportDownloaded: "Exportación OPML descargada",
   yourSubscriptionWasCanceledClickToResume:
@@ -443,20 +450,18 @@ signinWithGoogle: "Iniciar sesión con Google",
   whatWeCollectImportantDetails: "No procesamos información sensible.",
   whatWeCollectFurtherDetails:
     "Toda la información personal que nos proporcione debe ser verdadera, completa y precisa, y debe notificarnos cualquier cambio en dicha información personal.",
-  someCollectionIsAutomatic:
-    "Parte de la información se recopila automáticamente",
+  someCollectionIsAutomatic: "Parte de la información se recopila automáticamente",
   automaticCollectionDetails:
     "Parte de la información, como su dirección de Protocolo de Internet (IP) y/o las características del navegador y del dispositivo, se recopila automáticamente cuando visita Newsgears. Esta información (sistema operativo, preferencias de idioma, URL de referencia, nombre del dispositivo, país, ubicación, información sobre cómo y cuándo usa Newsgears y otra información técnica) no revela su identidad específica (como su nombre o información de contacto), pero puede incluir Información del dispositivo y uso. Esta información se necesita principalmente para mantener la seguridad y el funcionamiento de Newsgears, y para nuestros fines de informes y análisis internos.",
   howDoWeProcess: "¿Cómo procesamos su información?",
   howDoWeProcessSummary:
     "Procesamos su información para proporcionar, mejorar y administrar Newsgears, comunicarnos con usted, para seguridad y prevención de fraude, y para cumplir con la ley. También podemos procesar su información para otros fines con su consentimiento.",
-socialLogins: "Inicios de sesión sociales",
+  socialLogins: "Inicios de sesión sociales",
   socialLoginsSummary:
     "Newsgears le ofrece la posibilidad de registrarse e iniciar sesión utilizando los detalles de su cuenta de redes sociales de terceros (como los inicios de sesión de Google o Github). Cuando elija hacer esto, recibiremos cierta información de su perfil de su proveedor de redes sociales. La información de perfil que recibimos puede variar según el proveedor de redes sociales en cuestión, pero a menudo incluirá su nombre, dirección de correo electrónico y foto de perfil, así como otra información que elija hacer pública en dicha plataforma de redes sociales.",
   socialLoginsDetails:
     "Usaremos la información que recibimos solo para los fines que se describen en este aviso de privacidad o que se le aclaran de otro modo en Newsgears. Tenga en cuenta que no controlamos y no somos responsables de otros usos de su información personal por parte de su proveedor de redes sociales externo. Le recomendamos que revise su aviso de privacidad para comprender cómo recopilan, usan y comparten su información personal, y cómo puede configurar sus preferencias de privacidad en sus sitios y aplicaciones.",
-  internationalInformationTransfers:
-    "Transferencias internacionales de información",
+  internationalInformationTransfers: "Transferencias internacionales de información",
   internationalInformationTransfersSummary:
     "Podemos transferir, almacenar y procesar su información en países distintos al suyo.",
   internationalInformationTransfersDetails:
@@ -474,8 +479,7 @@ socialLogins: "Inicios de sesión sociales",
   doWeMakeUpdates: "¿Hacemos actualizaciones a este aviso?",
   doWeMakeUpdatesSummary:
     "Sí, actualizaremos este aviso según sea necesario para cumplir con las leyes pertinentes.",
-  howCanYouContactUs:
-    "¿Cómo puede ponerse en contacto con nosotros acerca de este aviso?",
+  howCanYouContactUs: "¿Cómo puede ponerse en contacto con nosotros acerca de este aviso?",
   // aria labels
   switchModeAriaLabel: "Cambiar a tema claro u oscuro",
   goToSettingsAriaLabel: "Ir a la configuración de la cuenta",
@@ -485,8 +489,7 @@ socialLogins: "Inicios de sesión sociales",
   shareWith_linkedIn_ariaLabel: "Compartir con LinkedIn",
   shareWith_blogger_ariaLabel: "Compartir con Blogger",
   // image alts
-  queuePageScreenshot:
-    "Captura de pantalla de la página de cola de Newsgears",
+  queuePageScreenshot: "Captura de pantalla de la página de cola de Newsgears",
   queueLogoImage: "Imagen del logotipo de la cola",
   feedLogoImage: "Imagen del logotipo de fuente RSS",
   rssLogo: "logotipo RSS",

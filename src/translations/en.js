@@ -37,7 +37,7 @@ const en = {
   usernameAndPasswordAreRequired: "Username and password are required.",
   passwordIsRequired: "Password is required.",
   usernameIsRequired: "Username is required.",
-signinWithGoogle: "Sign in with Google",
+  signinWithGoogle: "Sign in with Google",
   pwResetRequestMessage:
     "Enter your username and email address.  We'll send a password reset link to your verified email address.",
   checkEmailForFurther: "Check your email to further instructions.",
@@ -368,6 +368,13 @@ signinWithGoogle: "Sign in with Google",
   nQueuesCreated:
     " queues created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
   noArticlesInThisQueue: "There's nothing here!  Adjust your filter, add more subscriptions, or wait for more articles to be imported.",
+  clickHereToAddANewSubscription: "YOU HAVE ONE OR MORE FEED URLs",
+  clickHereToAddANewSubscription_detail: "Click here to subscribe to a feed if you have the URL. Feed URLs are typically of the form 'https://' or 'rss://', though you can enter any URL and we will attempt to locate the feed.",
+  clickHereToUploadOPML: "YOU HAVE ONE OR MORE OPML FILES",
+  clickHereToUploadOPML_detail: "OPML files are used by many feed aggregators as a way of represent collections of feed subscriptions. Many aggregators will allow you to export your subscriptions in the form of an OPML file, so that you can take your subscriptions with you when you migrate to another service.",
+  clickHereToUploadOPML_detail1: "If you have an OPML file, click here to begin migrating your subscriptions to Newsgears using our OPML editor.",
+  // clickHereToBrowseCatalog: "BROWSE OUR FEED CATALOG",
+  // clickHereToBrowseCatalog_detail: "Click here to subscribe to a feed from our up-to-date, searchable catalog of interesting feeds.",
   unreadCount: '{n} unread articles',
   readCount: '{n} read articles',
   totalCount: '{n} articles',
@@ -449,7 +456,7 @@ signinWithGoogle: "Sign in with Google",
   howDoWeProcess: "How do we process your information?",
   howDoWeProcessSummary:
     "We process your information to provide, improve, and administer Newsgears, communicate with you, for security and fraud prevention, and to comply with law.  We may also process your information for other purposes with your consent.",
-socialLogins: "Social logins",
+  socialLogins: "Social logins",
   socialLoginsSummary:
     "Newsgears offers you the ability to register and login using your third-party social media account details (like Google or Github logins).  Where you choose to do this, we will receive certain profile information about you from your social media provider.  The profile information we receive may vary depending on the social media provider concerned, but will often include your name, email address, and profile picture, as well as other information you choose to make public on such a social media platform.",
   socialLoginsDetails:

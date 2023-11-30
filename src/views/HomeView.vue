@@ -499,11 +499,58 @@
       </v-list>
       <v-container
         v-if="!filteredArticleList || filteredArticleList.length === 0"
-        class="queue-container d-flex flex-column flex-grow-1 rounded"
+        class="queue-container d-flex flex-column rounded"
       >
-        <v-alert info>
+        <v-alert
+          info
+        >
           {{ t('noArticlesInThisQueue') }}
         </v-alert>
+        <!-- add subscription -->
+        <v-card
+          elevation="1"
+          @click="openQueueConfigPanel(queueStore.selectedQueueId)"
+        >
+          <v-card-title>
+            <v-icon icon="fa-link" />
+            {{ $t('clickHereToAddANewSubscription') }}
+          </v-card-title>
+          <v-divider />
+          <v-card-text>
+            {{ $t('clickHereToAddANewSubscription_detail') }}
+          </v-card-text>
+        </v-card>
+        <!-- upload OPML -->
+        <v-card
+          elevation="1"
+          @click="uploadOpml"
+        >
+          <v-card-title>
+            <v-icon icon="fa-file" />
+            {{ $t('clickHereToUploadOPML') }}
+          </v-card-title>
+          <v-divider />
+          <v-card-text>
+            {{ $t('clickHereToUploadOPML_detail') }}
+          </v-card-text>
+          <v-card-text>
+            {{ $t('clickHereToUploadOPML_detail1') }}
+          </v-card-text>
+        </v-card>
+        <!-- browse catalog -->
+        <!-- <v-card
+          elevation="1"
+          @click="$emit('clicked')"
+        >
+          <v-card-title>
+            <v-icon icon="fa-book" />
+            {{ $t('clickHereToBrowseCatalog') }}
+          </v-card-title>
+          <v-divider />
+          <v-card-text>
+            {{ $t('clickHereToBrowseCatalog_detail') }}
+          </v-card-text>
+        </v-card> -->
       </v-container>
       <!-- TODO: extract component -->
       <v-table
@@ -1060,6 +1107,7 @@ export default {
 
 .queue-container {
   background-color: transparent;
+  gap: 2rem;
 }
 
 .clickable:hover {
