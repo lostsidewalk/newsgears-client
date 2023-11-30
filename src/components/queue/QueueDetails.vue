@@ -1,6 +1,6 @@
 <template>
   <v-sheet>
-    <!-- TODO: extract compoennt -->
+    <!-- TODO: extract recent article list compoennt -->
     <!-- article list -->
     <v-card
       v-if="recentArticleList"
@@ -22,7 +22,7 @@
         </v-list>
       </v-card-text>
     </v-card>
-    <!-- TODO: extract compoennt -->
+    <!-- TODO: extract queue subscription details component -->
     <!-- subscriptions -->
     <v-card class="ma-4">
       <v-card-title>

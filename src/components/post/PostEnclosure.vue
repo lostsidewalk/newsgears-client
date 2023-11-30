@@ -8,7 +8,7 @@
       tabindex="0" 
       :alt="$t('postEnclosureImage')"
     />
-    <!-- TODO: extract component -->
+    <!-- TODO: extract audio player component -->
     <!-- audio -->
     <div
       v-if="isAudio"
@@ -23,7 +23,7 @@
         />
       </vue-plyr>
     </div>
-    <!-- TODO: extract component -->
+    <!-- TODO: extract video player component -->
     <!-- video -->
     <vue-plyr
       v-if="isVideo"

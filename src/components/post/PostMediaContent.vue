@@ -16,7 +16,7 @@
         fullscreen
         scrollable
       >
-        <!-- TODO: extract component -->
+        <!-- TODO: extract video player component -->
         <vue-plyr v-if="isVideo">
           <div class="plyr__video-embed">
             <iframe
@@ -38,7 +38,7 @@
         :src="mediaContent.reference.uri"
         @click="showContents = true"
       />
-      <!-- TODO: extract component -->
+      <!-- TODO: extract media properties component -->
       <v-chip-group v-if="hasUseableProperties">
         <v-chip
           v-if="mediaContent.audioChannels"

@@ -34,7 +34,7 @@
           </v-card-title>
           <v-divider class="mb-1 mt-1" />
           <v-card-text>
-            <!-- TODO: extract this -->
+            <!-- TODO: extract OPML file list component -->
             <!-- OPML file list -- shows a list of files waiting to upload (step 1) -->
             <v-list
               v-if="!atStep2 && files.length > 0"
@@ -72,7 +72,7 @@
                 {{ $t('selectAtLeastOneFile') }}
               </v-list-item>
             </v-list>
-            <!-- TODO: extract this -->
+            <!-- TODO: extract OPML parse errors component -->
             <!-- OPML parse errors (if any, shown at step 2) -->
             <v-card class="mb-4">
               <v-card-item
@@ -91,7 +91,7 @@
                 />
               </v-card-text>
             </v-card>
-            <!-- TODO: extract this -->
+            <!-- TODO: extract OPML parse results component -->
             <!-- OPML parse results (if any, shown at step 2)-->
             <v-card
               v-if="atStep2 && queueConfigRequests.length > 0"

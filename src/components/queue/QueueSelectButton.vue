@@ -14,7 +14,7 @@
       {{ $t('nTotalArticlesInQueue', { n: totalCount }) }}
     </v-card-subtitle>
     <v-card-text>
-      <!-- TODO: extract component -->
+      <!-- TODO: extract lesser queue properties component -->
       <v-chip-group>
         <!-- unread count -->
         <v-chip
