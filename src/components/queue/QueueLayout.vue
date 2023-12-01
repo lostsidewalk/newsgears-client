@@ -26,11 +26,10 @@
     <v-divider />
     <!-- queue filter  -->
     <QueueFilter
-      :filter="roArticleListFilter"
       :queue-length="filteredArticleList.length"
       :queue-name="roSelectedQueueTitle"
       :queues="queueStore.queues"
-      @update:modelValue="$emit('updateArticleListFilter')"
+      @updateArticleListFilter="$emit('updateArticleListFilter', $event)"
     />
     <QueueFilterPills
       v-if="queueStore.selectedQueueId && roShowQueueFilterPills"
@@ -70,7 +69,6 @@ export default {
     const {
       roSelectedQueueTitle,
       roArticleListSortOrder,
-      roArticleListFilter,
       roShowQueueFilterPills,
       roShowUnreadPosts,
       roShowReadPosts,
@@ -81,7 +79,6 @@ export default {
     return {
       roSelectedQueueTitle,
       roArticleListSortOrder,
-      roArticleListFilter,
       roShowQueueFilterPills, 
       roShowUnreadPosts,
       roShowReadPosts,

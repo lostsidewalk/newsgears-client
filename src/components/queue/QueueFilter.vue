@@ -5,10 +5,9 @@
       id="queue-filter"
       :placeholder="$t('filter')"
       :aria-label="$t('filter')"
-      :value="filter" 
       variant="underlined"
       bg-color="transparent"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="$emit('updateArticleListFilter', $event.target.value)"
       @click:append="showFilterHelp = !showFilterHelp"
     >
       <template #append>
@@ -44,11 +43,8 @@ export default {
     QueueFilterHelp,
   },
   mixins: [buttonSizeMixin],
-  props: {
-    filter: { type: String, required: true },
-  },
   emits: [
-    "update:modelValue",
+    "updateArticleListFilter",
   ],
   data() {
     return {
