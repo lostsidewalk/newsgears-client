@@ -7,7 +7,7 @@
       :post="post"
       :sharing-options="sharingOptions"
       :collapsed="true"
-      class="ma-4"
+      class="my-4"
       @openPostUrl="$emit('openPostUrl', { postId: post.id })"
       @updatePostReadStatus="$emit('updatePostReadStatus', $event)"
       @updateFilter="$emit('updateFilter', $event)"

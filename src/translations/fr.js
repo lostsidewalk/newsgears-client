@@ -24,6 +24,10 @@ const fr = {
   cardLayout: "Passer à la disposition en cartes",
   listLayout: "Passer à la disposition en liste",
   tableLayout: "Passer à la disposition en tableau",
+  postTitle: "Title",
+  feedTitle: "Feed",
+  postTimestamp: "Timestamp",
+  actions: "Actions",
   // auth
   loginToNewsgears: "Connexion à Newsgears",
   accountRecovery: "Récupération de compte",

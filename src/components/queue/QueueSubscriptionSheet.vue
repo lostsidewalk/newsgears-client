@@ -10,123 +10,11 @@
       class="ma-4"
       @click.close="dismissAlert('theseAreAllOfYourSubscriptions')"
     />
-    <v-table
-      class="ma-4 overflow-auto flex-grow-1"
-      fixed-header
-    >
-      <thead style="text-align: center">
-        <th
-          class="pa-1 h-auto"
-          style="max-height: 70px; max-width: 70px"
-        />
-        <th class="pa-1">
-&nbsp;
-        </th>
-        <!-- unread count -->
-        <th class="pa-1">
-          <v-icon
-            :title="t('unreadCount', { n: 0 })"
-            size="small"
-            icon="fa-eye"
-          />
-        </th>
-        <!-- read count -->
-        <th class="pa-1">
-          <v-icon
-            :title="t('readCount', { n: 0 })"
-            size="small"
-            icon="fa-check-square-o"
-          />
-        </th>
-        <!-- total count -->
-        <th class="pa-1">
-          <v-icon
-            :title="t('totalCount', { n: 0 })"
-            size="small"
-            icon="fa-newspaper-o"
-          />
-        </th>
-      </thead>
-      <tbody style="text-align: left">
-        <tr
-          v-for="subscription in queueStore.allSubscriptions"
-          :key="subscription"
-        >
-          <td
-            style="text-align: center"
-            class="pa-1"
-          >
-            <v-img
-              v-if="subscription.icon"
-              class="rounded h-auto"
-              :src="subscription.icon.url"
-              :title="subscription.icon.title"
-              :alt="t('feedLogoImage')"
-              contain
-              style="max-height: 70px; max-width: 70px"
-            />
-            <v-img
-              v-if="subscription.image && !subscription.icon"
-              class="rounded h-auto"
-              :src="subscription.image.url"
-              :title="subscription.image.title"
-              :alt="t('feedLogoImage')"
-              contain
-              style="max-height: 70px; max-width: 70px"
-            />
-            <v-img
-              v-if="!subscription.image && !subscription.icon"
-              class="rounded h-auto"
-              src="rss_logo.svg"
-              :alt="t('rssLogo')"
-              contain
-              style="max-height: 70px; max-width: 70px"
-            />
-          </td>
-          <td>{{ subscription.title }}</td>
-          <!-- unread count-->
-          <td
-            style="text-align: center"
-            class="clickable"
-            @click="$emit('showUnread', { subscription })"
-          >
-            {{
-              articleListsBySubscription[subscription.id]
-                ? articleListsBySubscription[subscription.id].filter(
-                  (post) => !post.isRead
-                ).length
-                : 0
-            }}
-          </td>
-          <!-- read count-->
-          <td
-            style="text-align: center"
-            class="clickable"
-            @click="$emit('showRead', { subscription })"
-          >
-            {{
-              articleListsBySubscription[subscription.id]
-                ? articleListsBySubscription[subscription.id].filter(
-                  (post) => post.isRead
-                ).length
-                : 0
-            }}
-          </td>
-          <!-- total count-->
-          <td
-            style="text-align: center"
-            class="clickable"
-            @click="$emit('showAll', { subscription })"
-          >
-            {{
-              articleListsBySubscription[subscription.id]
-                ? articleListsBySubscription[subscription.id].length
-                : 0
-            }}
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+    <v-data-table
+      class="overflow-auto flex-grow-1"
+      :headers="headers"
+      :items="dataTableItems"
+    />
   </v-sheet>
 </template>
 
@@ -168,12 +56,45 @@ export default {
       return bySub;
     });
 
+    const headers = computed(() => {
+      return [
+        { title: t('feedTitle'), value: 'feedTitle' },
+        { title: t('unreadCount'), value: 'unreadCount' },
+        { title: t('readCount'), value: 'readCount' },
+        { title: t('totalCount'), value: 'totalCount' },
+      ];
+    });
+
+    const dataTableItems = computed(() => {
+      let dataTableItems = [];
+      for (let i = 0; i < queueStore.allSubscriptions.length; i++) {
+        let subscription = queueStore.allSubscriptions[i];
+
+        let unreadCount = articleListsBySubscription.value[subscription.id] ?
+          articleListsBySubscription.value[subscription.id].filter((post) => !post.isRead).length : 0;
+        let readCount = articleListsBySubscription.value[subscription.id] ?
+          articleListsBySubscription.value[subscription.id].filter((post) => post.isRead).length : 0;
+        let totalCount = articleListsBySubscription.value[subscription.id] ?
+          articleListsBySubscription.value[subscription.id].length : 0;
+
+        dataTableItems.push({
+          feedTitle: subscription.title,
+          unreadCount: unreadCount,
+          readCount: readCount,
+          totalCount: totalCount,
+        });
+      }
+      return dataTableItems;
+    });
+
     return {
       t,
       shouldShowAlert,
       dismissAlert,
       queueStore,
       articleListsBySubscription,
+      headers,
+      dataTableItems,
     };
   },
 };

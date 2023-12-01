@@ -1,7 +1,7 @@
 <template>
   <v-list
     v-model="selectedItem"
-    class="rounded"
+    class="rounded my-4"
   >
     <PostListItem
       v-for="post in filteredArticleList"

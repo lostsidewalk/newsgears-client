@@ -221,38 +221,63 @@
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
-      <!-- queue layout -->
-      <QueueLayout 
-        :show-list-layout="showListLayout"
-        :show-card-layout="showCardLayout"
-        :show-table-layout="showTableLayout"
-        :show-queue-refresh-indicator="showQueueRefreshIndicator"
-        :filtered-article-list="filteredArticleList" 
-        @switchToListLayout="switchToListLayout" 
-        @switchToCardLayout="switchToCardLayout" 
-        @switchToTableLayout="switchToTableLayout" 
-        @toggleQueueFilterPills="toggleQueueFilterPills" 
-        @refreshQueues="$event => refreshQueues(null, true)"
-        @markAsRead="$event => {
-          markQueueAsRead(queueStore.selectedQueueId);
-          showQueueMarkAsReadConfirmation = true;
-        }"
-        @toggleArticleListSortOrder="toggleArticleListSortOrder"
-        @updateArticleListFilter="updateArticleListFilter"
-        @toggleUnread="toggleUnreadPosts" 
-        @toggleRead="toggleReadPosts"
-        @toggleReadLater="toggleReadLaterPosts"
-      />
-      <!-- card layout -->
-      <CardLayout
-        v-if="showCardLayout && filteredArticleList.length > 0" 
-        :sharing-options="sharingOptions"
-        :filtered-article-list="filteredArticleList"
-        @openPostUrl="$event => openPostUrl($event.postId)"
-        @updatePostReadStatus="updatePostReadStatus"
-        @updateFilter="updateFilter"
-        @share="$event = share($event.sharingOption, $event.post)"
-      />
+      <v-container>
+        <!-- queue layout -->
+        <QueueLayout 
+          :show-list-layout="showListLayout"
+          :show-card-layout="showCardLayout"
+          :show-table-layout="showTableLayout"
+          :show-queue-refresh-indicator="showQueueRefreshIndicator"
+          :filtered-article-list="filteredArticleList" 
+          @switchToListLayout="switchToListLayout" 
+          @switchToCardLayout="switchToCardLayout" 
+          @switchToTableLayout="switchToTableLayout" 
+          @toggleQueueFilterPills="toggleQueueFilterPills" 
+          @refreshQueues="$event => refreshQueues(null, true)"
+          @markAsRead="$event => {
+            markQueueAsRead(queueStore.selectedQueueId);
+            showQueueMarkAsReadConfirmation = true;
+          }"
+          @toggleArticleListSortOrder="toggleArticleListSortOrder"
+          @updateArticleListFilter="updateArticleListFilter"
+          @toggleUnread="toggleUnreadPosts" 
+          @toggleRead="toggleReadPosts"
+          @toggleReadLater="toggleReadLaterPosts"
+        />
+        <!-- card layout -->
+        <CardLayout
+          v-if="showCardLayout && filteredArticleList.length > 0" 
+          :sharing-options="sharingOptions"
+          :filtered-article-list="filteredArticleList"
+          @openPostUrl="$event => openPostUrl($event.postId)"
+          @updatePostReadStatus="updatePostReadStatus"
+          @updateFilter="updateFilter"
+          @share="$event = share($event.sharingOption, $event.post)"
+        />
+        <!-- list layout -->
+        <ListLayout 
+          v-if="showListLayout && filteredArticleList.length > 0"
+          :filtered-article-list="filteredArticleList"
+          @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
+          @updatePostReadStatus="updatePostReadStatus"
+        />
+        <!-- table layout -->
+        <TableLayout 
+          v-if="showTableLayout && filteredArticleList.length > 0"
+          :filtered-article-list="filteredArticleList"
+          :sharing-options="sharingOptions"
+          @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
+          @openPostUrl="$event => openPostUrl($event.postId)"
+          @updatePostReadStatus="updatePostReadStatus"
+        />
+        <!-- no articles in queue -->
+        <QueueSetup 
+          v-if="!filteredArticleList || filteredArticleList.length === 0" 
+          :base-url="baseUrl"
+          @uploadOpml="uploadOpml" 
+          @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
+        />
+      </v-container>
       <!-- post card dialog -->
       <v-dialog
         v-if="showListLayout || showTableLayout"
@@ -289,29 +314,6 @@
           </template>
         </PostCard>
       </v-dialog>
-      <!-- list layout -->
-      <ListLayout 
-        v-if="showListLayout && filteredArticleList.length > 0"
-        :filtered-article-list="filteredArticleList"
-        @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
-        @updatePostReadStatus="updatePostReadStatus"
-      />
-      <!-- table layout -->
-      <TableLayout 
-        v-if="showTableLayout && filteredArticleList.length > 0"
-        :filtered-article-list="filteredArticleList"
-        :sharing-options="sharingOptions"
-        @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
-        @openPostUrl="$event => openPostUrl($event.postId)"
-        @updatePostReadStatus="updatePostReadStatus"
-      />
-      <!-- no articles in queue -->
-      <QueueSetup 
-        v-if="!filteredArticleList || filteredArticleList.length === 0" 
-        :base-url="baseUrl"
-        @uploadOpml="uploadOpml" 
-        @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
-      />
     </v-main>
   </v-app>
 </template>

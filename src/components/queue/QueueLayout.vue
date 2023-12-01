@@ -1,5 +1,5 @@
 <template>
-  <v-container
+  <div
     class="queue-container d-flex flex-grow-1 flex-column rounded justify-space-between flex-wrap"
   >
     <v-label
@@ -41,7 +41,7 @@
       @toggleRead="$emit('toggleReadPosts')"
       @toggleReadLater="$emit('toggleReadLaterPosts')"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>

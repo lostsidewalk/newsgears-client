@@ -1,113 +1,22 @@
 <template>
   <v-card>
     <v-card-title class="pa-4 text-center">
-      {{ $t('subscriptionMetrics') }}
+      {{ $t("subscriptionMetrics") }}
     </v-card-title>
     <v-card-subtitle>
       {{ title }}
     </v-card-subtitle>
     <v-card-text>
-      <v-table
-        class="ma-4 overflow-auto flex-grow-1" 
-        style="white-space: nowrap;"
-        fixed-header
-      >
-        <thead style="text-align: left;white-space: nowrap;">
-          <th class="pa-1">
-            {{ $t('timestamp') }}
-          </th>
-          <th class="pa-1">
-            {{ $t('message') }}
-          </th>
-          <th class="pa-1">
-            {{ $t('httpStatusLabel') }}
-          </th>
-          <th class="pa-1">
-            {{ $t('httpRedirect') }}
-          </th>
-          <th class="pa-1">
-            {{ $t('error') }}
-          </th>
-        </thead>
-        <tbody style="text-align: left;white-space: nowrap;">
-          <tr
-            v-for="subscriptionMetric in subscriptionMetrics"
-            :key="subscriptionMetric"
-          >
-            <td class="pa-1">
-              {{ formatTimestamp(subscriptionMetric.importTimestamp) }}
-            </td>
-            <!-- imported/persisted/archived -->
-            <td
-              v-if="subscriptionMetric.importCt > 0 && subscriptionMetric.persisCt > 0 && subscriptionMetric.archiveCt > 0"
-              class="pa-1"
-            >
-              {{ $t('importedPersistedAndArchived', { 
-                importCt: subscriptionMetric.importCt, 
-                persistCt: subscriptionMetric.persistCt,
-                archiveCt: subscriptionMetric.archiveCt, 
-              }) }}
-            </td>
-            <!-- imported/persisted -->
-            <td
-              v-else-if="subscriptionMetric.importCt > 0 && subscriptionMetric.persisCt > 0"
-              class="pa-1"
-            >
-              {{ $t('importedPersisted', { 
-                importCt: subscriptionMetric.importCt, 
-                persistCt: subscriptionMetric.persistCt,
-              }) }}
-            </td>
-            <!-- imported/persisted -->
-            <td
-              v-else-if="subscriptionMetric.importCt > 0 && subscriptionMetric.archiveCt > 0"
-              class="pa-1"
-            >
-              {{ $t('importedAndArchived', { 
-                importCt: subscriptionMetric.importCt, 
-                archiveCt: subscriptionMetric.archiveCt,  
-              }) }}
-            </td>
-            <!-- imported/persisted -->
-            <td
-              v-else-if="subscriptionMetric.importCt > 0"
-              class="pa-1"
-            >
-              {{ $t('importedNArticles', { 
-                n: subscriptionMetric.importCt, 
-              }) }}
-            </td>
-            <!-- HTTP status -->
-            <td class="pa-1">
-              {{ $t('httpStatus', { 
-                httpStatusCode: subscriptionMetric.httpStatusCode, 
-                httpStatusMessage: subscriptionMetric.httpStatusMessage 
-              }) }}
-            </td>
-            <!-- HTTP redirect status -->
-            <td class="pa-1">
-              {{ subscriptionMetric.redirectFeedUrl ? 
-                $t('redirectedTo', { 
-                  redirectFeedUrl: subscriptionMetric.redirectFeedUrl, 
-                  redirectHttpStatusCode: subscriptionMetric.redirectHttpStatusCode, 
-                  redirectHttpStatusMessage: subscriptionMetric.redirectHttpStatusMessage
-                }) : $t('NONE') }}
-            </td>
-            <!-- error -->
-            <td
-              class="pa-1"
-              :class="{ 'error': subscriptionMetric.queryExceptionTypeMessage }"
-            >
-              {{ subscriptionMetric.queryExceptionTypeMessage ? 
-                subscriptionMetric.queryExceptionTypeMessage : $t('NONE') }}
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
+      <v-data-table
+        class="ma-4 overflow-auto flex-grow-1"
+        style="white-space: nowrap"
+        :headers="headers"
+        :items="dataTableItems"
+      />
     </v-card-text>
     <v-card-actions>
       <v-btn
-        :size="buttonSize" 
+        :size="buttonSize"
         :text="$t('dismiss')"
         @click="$emit('dismiss')"
       />
@@ -116,8 +25,10 @@
 </template>
 
 <script>
-import { useTimestamp } from '@/composable/useTimestamp.js';
-import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useTimestamp } from "@/composable/useTimestamp.js";
+import buttonSizeMixin from "@/mixins/buttonSizeMixin";
 
 export default {
   name: "SubscriptionMetrics",
@@ -127,12 +38,82 @@ export default {
     subscriptionMetrics: { type: Array, required: true },
   },
   emits: ["dismiss"],
-  setup() {
+  setup(props) {
     const { formatTimestamp } = useTimestamp();
 
+    const { t } = useI18n();
+
+    const headers = computed(() => {
+      return [
+        { title: t("timestamp"), value: "timestamp" },
+        { title: t("message"), value: "message" },
+        { title: t("httpStatusLabel"), value: "httpStatusLabel" },
+        { title: t("httpRedirect"), value: "httpRedirect" },
+        { title: t("error"), value: "error" },
+      ];
+    });
+
+    const dataTableItems = computed(() => {
+      let dataTableItems = [];
+      for (let i = 0; i < props.subscriptionMetrics.length; i++) {
+        let subscriptionMetric = props.subscriptionMetrics[i];
+
+        let message = "";
+        if (
+          subscriptionMetric.importCt > 0 &&
+          subscriptionMetric.persisCt > 0 &&
+          subscriptionMetric.archiveCt > 0
+        ) {
+          message = t("importedPersistedAndArchived", {
+            importCt: subscriptionMetric.importCt,
+            persistCt: subscriptionMetric.persistCt,
+            archiveCt: subscriptionMetric.archiveCt,
+          });
+        } else if (subscriptionMetric.importCt > 0 && subscriptionMetric.persisCt > 0) {
+          message = t("importedPersisted", {
+            importCt: subscriptionMetric.importCt,
+            persistCt: subscriptionMetric.persistCt,
+          });
+        } else if (subscriptionMetric.importCt > 0 && subscriptionMetric.archiveCt > 0) {
+          message = t("importedAndArchived", {
+            importCt: subscriptionMetric.importCt,
+            archiveCt: subscriptionMetric.archiveCt,
+          });
+        } else if (subscriptionMetric.importCt > 0) {
+          message = t("importedNArticles", {
+            n: subscriptionMetric.importCt,
+          });
+        }
+
+        dataTableItems.push({
+          timestamp: formatTimestamp(subscriptionMetric.importTimestamp),
+          message: message,
+          httpStatusLabel: t("httpStatus", {
+            httpStatusCode: subscriptionMetric.httpStatusCode,
+            httpStatusMessage: subscriptionMetric.httpStatusMessage,
+          }),
+          httpRedirect: subscriptionMetric.redirectFeedUrl
+            ? t("redirectedTo", {
+                redirectFeedUrl: subscriptionMetric.redirectFeedUrl,
+                redirectHttpStatusCode:
+                  subscriptionMetric.redirectHttpStatusCode,
+                redirectHttpStatusMessage:
+                  subscriptionMetric.redirectHttpStatusMessage,
+              })
+            : t("NONE"),
+          error: subscriptionMetric.queryExceptionTypeMessage
+            ? subscriptionMetric.queryExceptionTypeMessage
+            : t("NONE"),
+        });
+      }
+      return dataTableItems;
+    });
+
     return {
-      formatTimestamp 
-    }
-  }
-}
+      formatTimestamp,
+      headers,
+      dataTableItems,
+    };
+  },
+};
 </script>

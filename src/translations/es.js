@@ -24,6 +24,10 @@ const es = {
   cardLayout: "Cambiar a diseño de tarjeta",
   listLayout: "Cambiar a diseño de lista",
   tableLayout: "Cambiar al diseño de la tabla",
+  postTitle: "Title",
+  feedTitle: "Feed",
+  postTimestamp: "Timestamp",
+  actions: "Actions",
   // auth
   loginToNewsgears: "Iniciar sesión en Newsgears",
   accountRecovery: "Recuperación de cuenta",

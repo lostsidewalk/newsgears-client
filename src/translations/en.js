@@ -24,6 +24,10 @@ const en = {
   cardLayout: "Switch to card layout",
   listLayout: "Switch to list layout",
   tableLayout: "Switch to table layout",
+  postTitle: "Title",
+  feedTitle: "Feed",
+  postTimestamp: "Timestamp",
+  actions: "Actions",
   // auth
   loginToNewsgears: "Login to Newsgears",
   accountRecovery: "Account Recovery",
