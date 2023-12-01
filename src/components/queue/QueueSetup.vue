@@ -1,5 +1,5 @@
 <template>
-  <v-container
+  <v-sheet
     class="queue-container d-flex flex-column rounded"
   >
     <v-alert
@@ -52,7 +52,7 @@
             {{ $t('clickHereToBrowseCatalog_detail') }}
           </v-card-text>
         </v-card> -->
-  </v-container>
+  </v-sheet>
 </template>
 
 <script>
@@ -78,6 +78,6 @@ export default {
 <style scoped>
 .queue-container {
   background-color: transparent;
-  gap: 2rem;
+  gap: 1rem;
 }
 </style>

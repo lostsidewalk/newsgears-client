@@ -277,6 +277,11 @@
           @uploadOpml="uploadOpml" 
           @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
         />
+        <!-- help panel -->
+        <GlobalShortcutKeys
+          v-if="!filteredArticleList || filteredArticleList.length === 0"
+          class="my-4"
+        />
       </v-container>
       <!-- post card dialog -->
       <v-dialog
@@ -348,6 +353,7 @@ import SubscriptionMetrics from '@/components/queue-config-panel/SubscriptionMet
 // settings 
 import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
 import HelpPanel from '@/components/help-panel/HelpPanel.vue';
+import GlobalShortcutKeys from '@/components/help-panel/GlobalShortcutKeys.vue';
 // queue operations 
 import QueueOperations from '@/components/queue/QueueOperations.vue';
 // queue card sheet 
@@ -388,6 +394,7 @@ export default {
     // settings 
     SettingsPanel,
     HelpPanel,
+    GlobalShortcutKeys,
     // operations 
     QueueOperations,
     // card sheet 
