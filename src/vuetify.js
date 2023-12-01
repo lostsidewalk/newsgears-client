@@ -2,6 +2,7 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import { aliases, fa } from "vuetify/iconsets/fa4";
 import colors from 'vuetify/lib/util/colors';
+import { md2 } from 'vuetify/blueprints';
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
@@ -10,6 +11,7 @@ const defaultTheme = 'dark';
 let preferredTheme = localStorage.getItem('theme');
 
 const vuetify = createVuetify({
+  blueprint: md2,
   theme: {
     defaultTheme: preferredTheme ? preferredTheme : defaultTheme,
     themes: {
