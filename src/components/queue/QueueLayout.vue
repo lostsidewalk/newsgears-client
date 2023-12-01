@@ -18,27 +18,27 @@
       @list="$emit('switchToListLayout')"
       @card="$emit('switchToCardLayout')"
       @table="$emit('switchToTableLayout')"
-      @toggleQueueFilterPills="$emit('toggleQueueFilterPills')"
+      @toggleQueueFilterPills="toggleQueueFilterPills"
       @refreshQueues="$emit('refreshQueues')"
       @markAsRead="$emit('markAsRead', $event)"
       @toggleSortOrder="$emit('toggleArticleListSortOrder')"
     />
     <v-divider />
     <!-- queue filter  -->
-    <QueueFilter
-      :queue-length="filteredArticleList.length"
-      :queue-name="roSelectedQueueTitle"
-      :queues="queueStore.queues"
-      @updateArticleListFilter="$emit('updateArticleListFilter', $event)"
-    />
     <QueueFilterPills
       v-if="queueStore.selectedQueueId && roShowQueueFilterPills"
       :show-unread="roShowUnreadPosts"
       :show-read="roShowReadPosts"
       :show-read-later="roShowReadLaterPosts"
-      @toggleUnread="$emit('toggleUnreadPosts')"
-      @toggleRead="$emit('toggleReadPosts')"
-      @toggleReadLater="$emit('toggleReadLaterPosts')"
+      @toggleUnreadPosts="$emit('toggleUnreadPosts')"
+      @toggleReadPosts="$emit('toggleReadPosts')"
+      @toggleReadLaterPosts="$emit('toggleReadLaterPosts')"
+    />
+    <QueueFilter
+      :queue-length="filteredArticleList.length"
+      :queue-name="roSelectedQueueTitle"
+      :queues="queueStore.queues"
+      @updateArticleListFilter="$emit('updateArticleListFilter', $event)"
     />
   </div>
 </template>
@@ -73,6 +73,7 @@ export default {
       roShowUnreadPosts,
       roShowReadPosts,
       roShowReadLaterPosts,
+      toggleQueueFilterPills,
       queueStore
     } = useQueues(props);
 
@@ -83,6 +84,7 @@ export default {
       roShowUnreadPosts,
       roShowReadPosts,
       roShowReadLaterPosts,
+      toggleQueueFilterPills,
       queueStore,
     }
   }

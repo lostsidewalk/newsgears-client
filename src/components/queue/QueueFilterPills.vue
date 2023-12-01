@@ -1,48 +1,30 @@
 <template>
-  <v-row stye="font-size: x-small !important;">
-    <!-- unread -->
-    <v-col
-      cols="12"
-      sm="3"
-      md="3"
-    >
-      <v-checkbox 
-        density="compact"
-        :title="$t('toggleUnread')"
-        :model-value="showUnread"
-        :label="$t('unread')"
-        @click="$emit('toggleUnread')"
-      />
-    </v-col>
-    <!-- read -->
-    <v-col
-      cols="12"
-      sm="3"
-      md="3"
-    >
-      <v-checkbox 
-        density="compact"
-        :title="$t('toggleRead')"
-        :model-value="showRead"
-        :label="$t('read')"
-        @click="$emit('toggleRead')"
-      />
-    </v-col>
-    <!-- read-later -->
-    <v-col
-      cols="12"
-      sm="3"
-      md="3"
-    >
-      <v-checkbox
-        density="compact"
-        :title="$t('toggleReadLater')"
-        :model-value="showReadLater"
-        :label="$t('readLater')"
-        @click="$emit('toggleReadLater')"
-      />
-    </v-col>
-  </v-row>
+  <div class="d-flex flex-row flex-wrap">
+    <v-checkbox 
+      density="compact"
+      :title="$t('toggleUnread')"
+      :model-value="showUnread"
+      :label="$t('unread')"
+      :messages="$t('unreadDetails')"
+      @click="$emit('toggleUnreadPosts')"
+    />
+    <v-checkbox 
+      density="compact"
+      :title="$t('toggleRead')"
+      :model-value="showRead"
+      :label="$t('read')"
+      :messages="$t('readDetails')"
+      @click="$emit('toggleReadPosts')"
+    />
+    <v-checkbox
+      density="compact"
+      :title="$t('toggleReadLater')"
+      :model-value="showReadLater"
+      :label="$t('readLater')"
+      :messages="$t('readLaterDetails')"
+      @click="$emit('toggleReadLaterPosts')"
+    />
+  </div>
 </template>
 
 <script>
@@ -56,9 +38,9 @@ export default {
     showReadLater: { type: Boolean, default: false },
   }, 
   emits: [
-    "toggleUnread",
-    "toggleRead",
-    "toggleReadLater",
+    "toggleUnreadPosts",
+    "toggleReadPosts",
+    "toggleReadLaterPosts",
   ],
 }
 </script>

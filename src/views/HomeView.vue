@@ -232,7 +232,6 @@
           @switchToListLayout="switchToListLayout" 
           @switchToCardLayout="switchToCardLayout" 
           @switchToTableLayout="switchToTableLayout" 
-          @toggleQueueFilterPills="toggleQueueFilterPills" 
           @refreshQueues="$event => refreshQueues(null, true)"
           @markAsRead="$event => {
             markQueueAsRead(queueStore.selectedQueueId);
@@ -240,9 +239,9 @@
           }"
           @toggleArticleListSortOrder="toggleArticleListSortOrder"
           @updateArticleListFilter="updateArticleListFilter"
-          @toggleUnread="toggleUnreadPosts" 
-          @toggleRead="toggleReadPosts"
-          @toggleReadLater="toggleReadLaterPosts"
+          @toggleUnreadPosts="toggleUnreadPosts" 
+          @toggleReadPosts="toggleReadPosts"
+          @toggleReadLaterPosts="toggleReadLaterPosts"
         />
         <!-- card layout -->
         <CardLayout
