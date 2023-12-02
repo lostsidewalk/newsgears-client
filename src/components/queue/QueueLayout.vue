@@ -6,7 +6,7 @@
       v-if="queueStore.selectedQueueId"
       class="ma-2 font-weight-bold"
     >
-      {{ roSelectedQueueTitle }}
+      {{ queueStore.selectedQueueTitle }}
     </v-label>
     <v-divider v-if="queueStore.selectedQueueId" />
     <QueueLayoutControls
@@ -36,7 +36,7 @@
     />
     <QueueFilter
       :queue-length="filteredArticleList.length"
-      :queue-name="roSelectedQueueTitle"
+      :queue-name="queueStore.selectedQueueTitle"
       :queues="queueStore.queues"
       @updateArticleListFilter="$emit('updateArticleListFilter', $event)"
     />
@@ -67,7 +67,6 @@ export default {
   },
   setup(props) {
     const {
-      roSelectedQueueTitle,
       roArticleListSortOrder,
       roShowQueueFilterPills,
       roShowUnreadPosts,
@@ -78,7 +77,6 @@ export default {
     } = useQueues(props);
 
     return {
-      roSelectedQueueTitle,
       roArticleListSortOrder,
       roShowQueueFilterPills, 
       roShowUnreadPosts,

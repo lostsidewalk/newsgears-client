@@ -65,8 +65,33 @@
           :base-url="baseUrl"
           @showQueueCards="showQueueCards = true" 
           @showListLayout="showQueueCards = false"
-          @newQueue="newQueue"
-          @uploadOpml="uploadOpml"
+          @newQueue="$event => { newQueue(); showOpmlUploadPanel = false; }"
+          @uploadOpml="$event => { uploadOpml(); showQueueConfigPanel = false; }"
+        />
+        <!-- queue config dialog -->
+        <QueueConfigPanel
+          v-if="showQueueConfigPanel"
+          :base-url="baseUrl"
+          :queue-under-config="roQueueUnderConfig"
+          @save="createQueue"
+          @update="updateQueue"
+          @addSubscription="addSubscription"
+          @deleteSubscription="deleteSubscription"
+          @updateSubscriptionAuth="updateSubscriptionAuth"
+          @dismiss="dismissQueueConfigPanel"
+        />
+        <!-- opml upload dialog -->
+        <OpmlUploadPanel
+          v-show="showOpmlUploadPanel"
+          class="my-4"
+          :is-loading="roFinalizeIsLoading || roContinueIsLoading"
+          :at-step2="roAtStep2"
+          :errors="roOpmlErrors"
+          :queue-config-requests="roQueueConfigRequests"
+          @continueUpload="continueOpmlUpload"
+          @finalizeUpload="$event => finalizeOpmlUpload().then(() => showQueueDashboard = true)"
+          @returnToStep1="returnToStep1"
+          @cancel="cancelOpmlUpload"
         />
         <QueueCardSheet
           v-if="showQueueCards" 
@@ -141,13 +166,34 @@
           @cancel="$event => { cancelQueueMarkAsRead(); showQueueMarkAsReadConfirmation = false; }"
         />
       </v-dialog>
-      <!-- settings dialog -->
+      <!-- help dialog -->
       <v-dialog
-        v-model="showSettingsPanel"
+        v-model="showHelpPanel"
         fullscreen
         scrollable
       >
+        <HelpPanel
+          class="overflow-auto rounded"
+          @dismiss="showHelpPanel = false"
+        />
+      </v-dialog>
+      <!-- subscription metrics dialog -->
+      <v-dialog
+        v-model="showSubscriptionMetrics"
+        fullscreen
+        scrollable
+      >
+        <SubscriptionMetrics
+          :title="roSubscriptionToShow.title"
+          :subscription-metrics="roSubscriptionToShow.subscriptionMetrics"
+          @dismiss="showSubscriptionMetrics = false"
+        />
+      </v-dialog>
+      <!-- main container -->
+      <v-container>
+        <!-- settings -->
         <SettingsPanel
+          v-show="showSettingsPanel"
           class="rounded"
           :base-url="baseUrl"
           :account="roAccount"
@@ -163,65 +209,6 @@
           @submitOrder="submitOrder"
           @dismiss="showSettingsPanel = false"
         />
-      </v-dialog>
-      <!-- help dialog -->
-      <v-dialog
-        v-model="showHelpPanel"
-        fullscreen
-        scrollable
-      >
-        <HelpPanel
-          class="overflow-auto rounded"
-          @dismiss="showHelpPanel = false"
-        />
-      </v-dialog>
-      <!-- queue config dialog -->
-      <v-dialog
-        v-model="showQueueConfigPanel"
-        fullscreen
-        scrollable
-      >
-        <QueueConfigPanel
-          :base-url="baseUrl"
-          :queue-under-config="roQueueUnderConfig"
-          @save="createQueue"
-          @update="updateQueue"
-          @addSubscription="addSubscription"
-          @deleteSubscription="deleteSubscription"
-          @updateSubscriptionAuth="updateSubscriptionAuth"
-          @dismiss="dismissQueueConfigPanel"
-        />
-      </v-dialog>
-      <!-- opml upload dialog -->
-      <v-dialog
-        v-model="showOpmlUploadPanel"
-        fullscreen
-        scrollable
-      >
-        <OpmlUploadPanel
-          :is-loading="roFinalizeIsLoading || roContinueIsLoading"
-          :at-step2="roAtStep2"
-          :errors="roOpmlErrors"
-          :queue-config-requests="roQueueConfigRequests"
-          @continueUpload="continueOpmlUpload"
-          @finalizeUpload="$event => finalizeOpmlUpload().then(() => showQueueDashboard = true)"
-          @returnToStep1="returnToStep1"
-          @cancel="cancelOpmlUpload"
-        />
-      </v-dialog>
-      <!-- subscription metrics dialog -->
-      <v-dialog
-        v-model="showSubscriptionMetrics"
-        fullscreen
-        scrollable
-      >
-        <SubscriptionMetrics
-          :title="roSubscriptionToShow.title"
-          :subscription-metrics="roSubscriptionToShow.subscriptionMetrics"
-          @dismiss="showSubscriptionMetrics = false"
-        />
-      </v-dialog>
-      <v-container>
         <!-- queue layout -->
         <QueueLayout 
           :show-list-layout="showListLayout"
@@ -273,8 +260,8 @@
         <QueueSetup 
           v-if="!filteredArticleList || filteredArticleList.length === 0" 
           :base-url="baseUrl"
-          @uploadOpml="uploadOpml" 
-          @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
+          @uploadOpml="$event => { uploadOpml(); showQueueDashboard = true; showQueueConfigPanel = false; }" 
+          @openQueueConfigPanel="$event => { openQueueConfigPanel($event.queueId); showQueueDashboard = true; showOpmlUploadPanel = false; }"
         />
         <!-- help panel -->
         <GlobalShortcutKeys
@@ -569,11 +556,30 @@ export default {
         // 
         if (event.key === 'E' && event.shiftKey === true) {
           openQueueConfigPanel(queueStore.selectedQueueId);
+          showQueueDashboard.value = true;
           event.stopPropagation();
           event.preventDefault();
-          // 
-          // SLASH KEY (SEARCH SELECTED QUEUE)
-          // 
+        // 
+        // SHIFT + M KEY (UPLOAD OPML) 
+        //
+        } else if (event.key === 'M' && event.shiftKey === true) {
+          uploadOpml();
+          showQueueDashboard.value = true;
+          showQueueConfigPanel.value = false;
+          event.stopPropagation();
+          event.preventDefault();
+        // 
+        // SHIFT + Q KEY (NEW QUEUE) 
+        // 
+        } else if (event.key === 'Q' && event.shiftKey === true) {
+          openQueueConfigPanel();
+          showQueueDashboard.value = true;
+          showOpmlUploadPanel.value = false;
+          event.stopPropagation();
+          event.preventDefault();
+        // 
+        // SLASH KEY (SEARCH SELECTED QUEUE)
+        // 
         } else if (event.key === '/') {
           nextTick(() => {
             let filterElem = document.getElementById('queue-filter');

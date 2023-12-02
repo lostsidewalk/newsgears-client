@@ -83,11 +83,11 @@ export default {
           },
           {
             label: this.$t('uploadOPML'),
-            key: "ALT + M", // global accel 
+            key: "SHIFT + M", // global accel 
           },
           {
             label: this.$t('createNewQueue'),
-            key: "ALT + Q" // key handler from anywhere 
+            key: "SHIFT + Q" // key handler from anywhere 
           },
           {
             label: this.$t('refreshQueues'),

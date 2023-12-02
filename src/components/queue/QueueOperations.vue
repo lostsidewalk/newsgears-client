@@ -3,7 +3,6 @@
     <!-- new queue button -->
     <v-btn
       :size="buttonSize"
-      accesskey="q"
       :title="t('createNewQueue')"
       prepend-icon="fa-plus"
       :text="t('createNewQueue')"
@@ -12,7 +11,6 @@
     <!-- upload OPML button -->
     <v-btn
       :size="buttonSize"
-      accesskey="m"
       :title="t('uploadOPML')"
       prepend-icon="fa-file"
       :text="t('uploadOPML')"

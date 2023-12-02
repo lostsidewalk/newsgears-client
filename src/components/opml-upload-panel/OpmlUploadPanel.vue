@@ -209,7 +209,10 @@ export default {
     },
     removeFile(file) {
         const index = this.files.indexOf(file)
-        if (index > -1) this.files.splice(index, 1)
+      if (index > -1) {
+        this.files.splice(index, 1);
+        this.$emit('returnToStep1');
+      }
     },
   },
 }

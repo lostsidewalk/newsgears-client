@@ -17,7 +17,6 @@ export function useQueues(props) {
     const queueStore = useQueueStore();
   const client = ref(null);
   const sessionId = ref(null);
-  const selectedQueueTitle = ref(null); // currently selected queue title 
   const previousQueueId = ref(null); // previously selected queue Id 
   const queueIdToDelete = ref(null);
   const queueIdToMarkAsRead = ref(null);
@@ -693,10 +692,6 @@ export function useQueues(props) {
     console.log("queues: setting selectedQueueId=" + queueId);
     previousQueueId.value = queueStore.selectedQueueId;
     queueStore.setSelectedQueueId(queueId);
-    let selectedQueue = getSelectedQueue();
-    if (selectedQueue) {
-      selectedQueueTitle.value = selectedQueue.title;
-    }
     if (queueId) {
       Object.keys(articleList).forEach((key) => {
         delete articleList[key];
@@ -904,6 +899,7 @@ export function useQueues(props) {
 
   function returnToStep1() {
     atStep2.value = false
+    queueConfigRequests.splice(0);
   }
 
   function cancelOpmlUpload() {
@@ -1287,7 +1283,6 @@ export function useQueues(props) {
     showReadLaterPosts.value = !showReadLaterPosts.value;
   }
 
-  const roSelectedQueueTitle = readonly(selectedQueueTitle);
   const roPreviousQueueId = readonly(previousQueueId);
   const roQueueIdToDelete = readonly(queueIdToDelete);
   const roQueueIdToMarkAsRead = readonly(queueIdToMarkAsRead);
@@ -1312,7 +1307,6 @@ export function useQueues(props) {
 
   return {
     queueStore,
-    roSelectedQueueTitle,
     roPreviousQueueId,
     roQueueIdToDelete,
     roQueueIdToMarkAsRead,

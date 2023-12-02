@@ -43,6 +43,9 @@ export default {
     QueueFilterHelp,
   },
   mixins: [buttonSizeMixin],
+  props: {
+    "queueName": { type: String, default: '' },
+  },
   emits: [
     "updateArticleListFilter",
   ],

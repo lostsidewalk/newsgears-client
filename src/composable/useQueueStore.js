@@ -5,6 +5,7 @@ import { defineStore } from 'pinia';
 export const useQueueStore = defineStore('queueStore', {
   state: () => ({
     selectedQueueId: '',
+    selectedQueueTitle: '',
     queues: [],
     articleListsByQueue: {},
   }),
@@ -27,6 +28,13 @@ export const useQueueStore = defineStore('queueStore', {
       let iq = this.articleListsByQueue[queueId];
       if (!iq.index) {
         this.rebuildLunrIndexes([queueId]);
+      }
+      // 
+      for (let i = 0; i < this.queues.length; i++) {
+        if (this.queues[i].id === queueId) {
+          this.selectedQueueTitle = this.queues[i].title;
+          break;
+        }
       }
     },
     setQueues(queues) {
