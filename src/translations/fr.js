@@ -322,6 +322,7 @@ signinWithGoogle: "Se connecter avec Google",
   selectAtLeastOneFile: "Sélectionnez au moins un fichier pour continuer.",
   opmlFilesContainErrors:
     "Vos fichiers contiennent les problèmes suivants. Veuillez résoudre ces problèmes et réessayer votre téléchargement.",
+  newSubscriptions: "New subscriptions",
   weWillCreateTheFollowingSubscriptions:
     "Nous créerons les files suivantes à partir de vos fichiers OPML :",
   // post feed

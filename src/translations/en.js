@@ -322,6 +322,7 @@ const en = {
   selectAtLeastOneFile: "Select at least one file to continue.",
   opmlFilesContainErrors:
     "Your files contain the following problems.  Please resolve these issues and re-attempt your upload.",
+  newSubscriptions: "New subscriptions",
   weWillCreateTheFollowingSubscriptions:
     "We will create the following queues from your OPML file(s):",
   // post feed

@@ -63,6 +63,7 @@
       >
         <QueueOperations 
           :base-url="baseUrl"
+          :show-layout-buttons="!showQueueConfigPanel && !showOpmlUploadPanel"
           @showQueueCards="showQueueCards = true" 
           @showListLayout="showQueueCards = false"
           @newQueue="$event => { newQueue(); showOpmlUploadPanel = false; }"
@@ -94,7 +95,7 @@
           @cancel="cancelOpmlUpload"
         />
         <QueueCardSheet
-          v-if="showQueueCards" 
+          v-if="showQueueCards && !showQueueConfigPanel && !showOpmlUploadPanel" 
           :base-url="baseUrl"
           :feed-url="feedUrl"
           @selectQueue="$event => { setSelectedQueueId($event.queueId); $nextTick(() => showQueueDashboard = false); }"
@@ -103,7 +104,7 @@
           @openSubscriptionMetrics="openSubscriptionMetrics"
         />
         <QueueSubscriptionSheet
-          v-else 
+          v-else-if="!showQueueConfigPanel && !showOpmlUploadPanel"
           :base-url="baseUrl"
           @showUnread="($event) => {
             let subscription = $event.subscription;

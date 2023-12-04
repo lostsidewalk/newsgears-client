@@ -17,12 +17,14 @@
       @click.stop="$emit('uploadOpml')"
     />
     <v-btn 
+      v-if="showLayoutButtons"
       :size="buttonSize"
       :title="t('cardLayout')"
       prepend-icon="fa-bars"
       @click.stop="$emit('showQueueCards')"
     />
     <v-btn 
+      v-if="showLayoutButtons"
       :size="buttonSize"
       :title="t('listLayout')"
       prepend-icon="fa-table"
@@ -37,7 +39,10 @@ import { useI18n } from 'vue-i18n';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
-    mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin],
+  props: {
+      showLayoutButtons: { type: Boolean, default: true },
+    },
     setup() {
         const { t } = useI18n();
 

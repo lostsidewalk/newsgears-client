@@ -6,7 +6,6 @@
         {{ $t('opmlUpload') }}
       </h3>
     </v-card-title>
-    <v-divider />
     <v-card-text>
       <!-- file input -->
       <input
@@ -97,22 +96,26 @@
               v-if="atStep2 && queueConfigRequests.length > 0"
               class="mb-4"
             >
-              <v-list
-                v-for="f in queueConfigRequests"
-                :key="f.ident"
+              <v-data-table
+                :expanded="expanded"
+                class="my-4"
+                :headers="headers"
+                :items="dataTableItems"
+                item-value="description"
+                :expand-on-click="true"
+                show-expand
               >
-                <v-list-subheader>
-                  {{ f.title + (f.description ? (' (' + f.description + ')'): '') }}
-                </v-list-subheader>
-                <v-divider />
-                <v-list-item
-                  v-for="r in f.subscriptions"
-                  :key="r"
-                  class="opml-upload-summary-message-url"
-                >
-                  {{ r.url }}
-                </v-list-item>
-              </v-list>
+                <template #expanded-row="{ columns, item }">
+                  <tr
+                    v-for="subscription in item.subscriptions"
+                    :key="subscription.url"
+                  >
+                    <td :colspan="columns.length">
+                      {{ subscription.url }}
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
             </v-card>
             <v-btn
               v-if="!atStep2"
@@ -141,7 +144,6 @@
         </v-card>
       </v-sheet>
     </v-card-text>
-    <v-divider />
     <v-card-actions>
       <v-btn
         v-if="atStep2"
@@ -184,7 +186,34 @@ export default {
     return {
       // 
       files: [], // TODO: extract this and associated methods to a composable 
+      expanded: [], 
     }
+  },
+  computed: {
+    headers: function () {
+      return [
+        { title: this.$t('queueTitle'), value: 'title' },
+        { title: this.$t('queueDescription'), value: 'description' },
+        { title: this.$t('newSubscriptions'), value: 'subscriptionCt' },
+        // { title: this.$t('queueActions'), value: 'actions' },
+      ];
+    },
+    dataTableItems: function () {
+      let dataTableItems = [];
+      for (let i = 0; i < this.queueConfigRequests.length; i++) {
+        let q = this.queueConfigRequests[i];
+        if (!q.title) {
+          console.error("queue with no title: " + JSON.stringify(q)); 
+        }
+        dataTableItems.push({
+          title: q.title,
+          description: q.description,
+          subscriptionCt: q.subscriptions.length,
+          subscriptions: q.subscriptions,
+        });
+      }
+      return dataTableItems;
+    },
   },
   methods: {
     eventHandler(event) {

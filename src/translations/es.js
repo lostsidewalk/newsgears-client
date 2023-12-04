@@ -322,6 +322,7 @@ const es = {
   selectAtLeastOneFile: "Seleccione al menos un archivo para continuar.",
   opmlFilesContainErrors:
     "Sus archivos contienen los siguientes problemas. Resuelva estos problemas y vuelva a intentar la carga.",
+  newSubscriptions: "New subscriptions",
   weWillCreateTheFollowingSubscriptions:
     "Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:",
   // post feed
