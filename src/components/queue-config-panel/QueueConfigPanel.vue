@@ -499,7 +499,7 @@ export default {
     updateSubscriptionAuth(source) {
       this.$emit('updateSubscriptionAuth', source);
     },
-    // internal 
+    // TODO: relocate to useDiscovery 
     doDiscovery(r) {
       if (r.url) {
         r.error = null;

@@ -12,6 +12,9 @@
         style="white-space: nowrap"
         :headers="headers"
         :items="dataTableItems"
+        items-per-page="-1"
+        density="compact"
+        hover
       />
     </v-card-text>
     <v-card-actions>

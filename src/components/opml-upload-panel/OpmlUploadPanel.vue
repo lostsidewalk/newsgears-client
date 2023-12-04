@@ -104,6 +104,9 @@
                 item-value="description"
                 :expand-on-click="true"
                 show-expand
+                items-per-page="-1"
+                density="compact"
+                hover
               >
                 <template #expanded-row="{ columns, item }">
                   <tr

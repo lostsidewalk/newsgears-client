@@ -14,6 +14,9 @@
       class="overflow-auto flex-grow-1"
       :headers="headers"
       :items="dataTableItems"
+      items-per-page="-1"
+      density="compact"
+      hover
     />
   </v-sheet>
 </template>
