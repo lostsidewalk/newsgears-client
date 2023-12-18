@@ -1,9 +1,9 @@
 <template>
   <v-card>
-    <v-card-title class="pa-4">
+    <v-card-title :class="pa4r">
       {{ $t('filtering') }}
     </v-card-title>
-    <v-card-subtitle class="mt-2 mb-2">
+    <v-card-subtitle class="my-2">
       {{ $t('filteringProvides') }}
     </v-card-subtitle>
     <v-divider />
@@ -16,7 +16,10 @@
         {{ $t('newsgearsFilterSupports') }}
       </section>
 
-      <section class="mt-4 mb-4 pa-2">
+      <section
+        class="pa-2"
+        :class="my4r"
+      >
         <code>{{ $t('fieldColonValue') }}</code>
       </section>
     
@@ -150,10 +153,11 @@
 
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "FilterHelp",
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   emits: ["dismiss"],
 }
 </script>

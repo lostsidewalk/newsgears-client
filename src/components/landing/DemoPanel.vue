@@ -36,10 +36,6 @@
           <v-carousel-item>
             <Misc_DemoFeature />
           </v-carousel-item>
-          <!-- api access -->
-          <v-carousel-item>
-            <ApiAccess_DemoFeature /> 
-          </v-carousel-item>
         </v-carousel>
       </v-card>
     </v-sheet>
@@ -48,13 +44,12 @@
 
 <script>
 import SimplifiedOrganization_DemoFeature from './demo/SimplifiedOrganization_DemoFeature.vue';
-import FeedDashboard_DemoFeature from './demo/FeeeDashboard_DemoFeature.vue';
+import FeedDashboard_DemoFeature from './demo/FeedDashboard_DemoFeature.vue';
 import EnahcedFiltering_DemoFeature from './demo/EnhancedFiltering_DemoFeature.vue';
 import LayoutOptions_DemoFeature from './demo/LayoutOptions_DemoFeature.vue';
 import ReadingExperience_DemoFeature from './demo/ReadingExperience_DemoFeature.vue';
 import OPML_DemoFeature from './demo/OPML_DemoFeature.vue';
 import Misc_DemoFeature from './demo/Misc_DemoFeature.vue';
-import ApiAccess_DemoFeature from './demo/ApiAccess_DemoFeature.vue';
 
 export default {
   name: "DemoPanel",
@@ -66,7 +61,6 @@ export default {
     ReadingExperience_DemoFeature,
     OPML_DemoFeature,
     Misc_DemoFeature,
-    ApiAccess_DemoFeature,
   },
   computed: {
     isDark: function () {

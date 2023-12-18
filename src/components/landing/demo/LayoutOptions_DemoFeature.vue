@@ -59,6 +59,7 @@
 import DemoFeature from './DemoFeature.vue';
 
 export default {
+  name: "LayoutOptionsDemoFeature",
   components: {
     DemoFeature, 
   },

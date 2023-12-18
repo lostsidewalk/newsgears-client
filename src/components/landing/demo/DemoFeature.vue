@@ -3,7 +3,10 @@
     class="h-100"
     style="overflow-y: auto;"
   >
-    <v-card-title class="text-center pa-4">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       <h3 class="demo-verbiage">
         {{ title }}
       </h3>
@@ -12,7 +15,7 @@
       <p
         v-for="detail in details"
         :key="detail"
-        class="demo-detail pt-2 pb-2"
+        class="demo-detail py-2"
       >
         {{ detail }}
       </p>
@@ -26,8 +29,11 @@
 </template>
 
 <script>
+import spacingMixin from '@/mixins/spacingMixin';
+
 export default {
   name: "DemoFeature", 
+  mixins: [spacingMixin],
   props: {
     title: { type: String, required: true },
     details: { type: Array, default: null },

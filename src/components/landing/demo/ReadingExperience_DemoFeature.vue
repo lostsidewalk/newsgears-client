@@ -15,7 +15,7 @@
         >
           <v-card
             elevation="12"
-            class="mt-4"
+            :class="mt4r"
           >
             <v-card-title>
               {{ $t('textArticleScreenshot') }}
@@ -34,7 +34,7 @@
         >
           <v-card
             elevation="12"
-            class="mt-4"
+            :class="mt4r"
           >
             <v-card-title>
               {{ $t('podcastAudioScreenshot') }}
@@ -50,7 +50,7 @@
       </v-row>
       <v-row
         cols="12"
-        class="mb-16"
+        :class="mb16r"
       >
         <v-col
           md="6"
@@ -58,7 +58,7 @@
         >
           <v-card
             elevation="12"
-            class="mt-4"
+            :class="mt4r"
           >
             <v-card-title>
               {{ $t('youtubeVideoScreenshot') }}
@@ -77,7 +77,7 @@
         >
           <v-card
             elevation="12"
-            class="mt-4"
+            :class="mt4r"
           >
             <v-card-title>
               {{ $t('imageArticleScreenshot') }}
@@ -97,11 +97,14 @@
 
 <script>
 import DemoFeature from './DemoFeature.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
+  name: "ReadingExperienceDemoFeature",
   components: {
     DemoFeature, 
   },
+  mixins: [spacingMixin],
   props: {
     isDark: { type: Boolean, default: false },
   }

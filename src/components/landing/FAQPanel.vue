@@ -2,7 +2,10 @@
   <v-container>
     <v-sheet>
       <v-card elevation="1">
-        <v-card-title class="question-verbiage text-center pa-4">
+        <v-card-title
+          class="question-verbiage text-center"
+          :class="pa4r"
+        >
           {{ $t('whatIsRSS') }}
         </v-card-title>
         <v-divider />
@@ -188,8 +191,11 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import VideoPanel from '@/components/landing/VideoPanel.vue';
 import ImagePanel from '@/components/landing/ImagePanel.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "FAQPanel",
@@ -197,12 +203,16 @@ export default {
     VideoPanel,
     ImagePanel,
   },
-  data() {
+  mixins: [spacingMixin],
+  setup() {
+    const showVideo = ref(false);
+    const showImage = ref(false);
+
     return {
-      showVideo: false,
-      showImage: false,
+      showVideo,
+      showImage,
     }
-  }
+  },
 }
 </script>
 

@@ -12,23 +12,20 @@ export function useQueues(props) {
   const { t } = useI18n();
   const {
     handleServerError,
-    setLastServerMessage
+    setLastServerMessage,
+    consoleLog,
+    consoleError,
   } = useNotifications();
-    const queueStore = useQueueStore();
+  const queueStore = useQueueStore();
+  // 
   const client = ref(null);
   const sessionId = ref(null);
-  const previousQueueId = ref(null); // previously selected queue Id 
+  // 
   const queueIdToDelete = ref(null);
   const queueIdToMarkAsRead = ref(null);
-  const selectedPost = reactive({}); // selected post to show on the post card modal (while in list view) 
-  const articleList = reactive({}); // inbound queue for the currently selected queue  
+  const selectedPost = reactive({}); 
+  const articleList = reactive({}); // article list for the currently selected queue  
   const refreshQueuesIsLoading = ref(false);
-  const articleListFilter = ref(''); // user-supplied filter text (lunrjs query expression) 
-  const articleListSortOrder = ref('DSC');
-  const showQueueFilterPills = ref(false);
-  const showUnreadPosts = ref(true);
-  const showReadPosts = ref(true);
-  const showReadLaterPosts = ref(false);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
   const atStep2 = ref(false);
@@ -39,7 +36,6 @@ export function useQueues(props) {
   const showSubscriptionMetrics = ref(false);
   const subscriptionToShow = reactive({});
   const showQueueConfigPanel = ref(false);
-  const queueUnderConfig = reactive({});
   const queueConfigIsLoading = ref(false);
 
   const { baseUrl } = props;
@@ -51,8 +47,8 @@ export function useQueues(props) {
     if (articleList) {
       // if a lunr query expression is specified .. 
       // then retrieve the preliminary results from lunrjs 
-      if (articleListFilter.value) {
-        let lunrLambda = () => articleList.index.search(articleListFilter.value);
+      if (queueStore.articleListFilter) {
+        let lunrLambda = () => articleList.index.search(queueStore.articleListFilter);
         try {
           let lunrResults = lunrLambda.apply();
           if (lunrResults) {
@@ -65,7 +61,7 @@ export function useQueues(props) {
           if (error instanceof lunr.QueryParseError) {
             // console.debug("lunrjs search query exception due to: " + JSON.stringify(error));
           } else {
-            console.error(error);
+            consoleError(error);
             throw error;
           }
         }
@@ -78,18 +74,18 @@ export function useQueues(props) {
       // 
       if (results) {
         results = results.filter((r) => {
-          if (!showUnreadPosts.value && !r.isRead && !r.isReadLater) {
+          if (!queueStore.showUnreadPosts && !r.isRead && !r.isReadLater) {
             return false;
           }
-          if (!showReadPosts.value && r.isRead) {
+          if (!queueStore.showReadPosts && r.isRead) {
             return false;
           }
-          if (!showReadLaterPosts.value && r.isReadLater) {
+          if (!queueStore.showReadLaterPosts && r.isReadLater) {
             return false;
           }
           return true;
         });
-        sortQueue(results, articleListSortOrder.value);
+        sortQueue(results, queueStore.articleListSortOrder);
       } else {
         results = [];
       }
@@ -144,33 +140,11 @@ export function useQueues(props) {
     return result;
   });
 
-  const tabModel = computed(() => {
-    let arr = [];
-    if (queueUnderConfig.id) {
-      arr.push({
-        name: "ADD_SUBSCRIPTIONS",
-        description: t('rssFeedDiscovery'),
-        icon: "feed",
-      });
-      arr.push({
-        name: "MANAGE_SUBSCRIPTIONS",
-        description: t('manageSubscriptions', { ct: queueUnderConfig.subscriptions.length }),
-        icon: "feed",
-      })
-      arr.push({
-        name: "QUEUE_PROPERTIES",
-        description: t('queueProperties'),
-        icon: "list",
-      });
-    }
-    return arr;
-  });
-
   async function connectBroker() {
-    console.log("queues: connecting to broker...");
+    consoleLog("queues: connecting to broker...");
     const token = await auth.getTokenSilently();
     client.value = new Client({
-      // debug: console.log,
+      // debug: consoleLog,
       brokerURL: brokerUrl,
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -181,22 +155,23 @@ export function useQueues(props) {
       disconnectHeaders: {
         "Authorization": [`${token}`]
       },
+      splitLargeFrames: true, 
       webSocketFactory: () => new SockJS(brokerUrl),
-      onUnhandledMessage: message => console.log("queues: broker unhandled message: " + JSON.stringify(message)),
-      onUnhandledReceipt: receipt => console.log("queues: broker unhandled receipt: " + JSON.stringify(receipt)),
-      onUnhandledFrame: frame => console.log("queues: broker unhandled frame: " + JSON.stringify(frame)),
-      onDisconnect: () => console.log("queues: broker disconnected"),
-      onWebSocketError: (e) => console.error("queues: broker socket error due to: " + JSON.stringify(e)),
-      onStompError: (e) => console.error("queues: broker STOMP error due to: " + JSON.stringify(e)),
+      onUnhandledMessage: message => consoleLog("queues: broker unhandled message: " + JSON.stringify(message)),
+      onUnhandledReceipt: receipt => consoleLog("queues: broker unhandled receipt: " + JSON.stringify(receipt)),
+      onUnhandledFrame: frame => consoleLog("queues: broker unhandled frame: " + JSON.stringify(frame)),
+      onDisconnect: () => consoleLog("queues: broker disconnected"),
+      onWebSocketError: (e) => consoleError("queues: broker socket error due to: " + JSON.stringify(e)),
+      onStompError: (e) => consoleError("queues: broker STOMP error due to: " + JSON.stringify(e)),
     });
 
     client.value.onStompError = function (frame) {
-        console.error("queues: broker reported error: " + frame.headers["message"]);
-        console.error("queues: broker error additional details: " + frame.body);
+        consoleError("queues: broker reported error: " + frame.headers["message"]);
+        consoleError("queues: broker error additional details: " + frame.body);
     };
 
     client.value.onConnect = function () {
-      console.log("queues: broker connected");
+      consoleLog("queues: broker connected");
       // store the STOMP sessionId 
       let url = client.value.webSocket._transport.url;
       let urlPieces = url.split('/');
@@ -205,17 +180,75 @@ export function useQueues(props) {
       }
       // subscribe to this user's message feed 
       let finalUrl = "/secured/user/queue/specific-user" + "-user" + sessionId.value;
-      console.log("queues: subscribing to: " + finalUrl);
+      consoleLog("queues: subscribing to: " + finalUrl);
       try {
         client.value.subscribe(finalUrl, function (message) {
-          console.log("queues: message received in secured chat: " + message.body);
+
+          let apiResponse = JSON.parse(message.body);
+          /**
+           * apiResponse must have a responseType property of: 
+           *   CREATED_QUEUE_DEFINITIONS 
+           *   CREATED_SUBSCRIPTION_DEFINITIONS 
+           *   MESSAGE 
+           */
+          let responseType = apiResponse.responseType;
+          if (responseType === 'CREATED_QUEUE_DEFINITIONS') {
+            let createdQueues = apiResponse.message;
+            for (let i = 0; i < createdQueues.length; i++) {
+              let wrapper = createdQueues[i];
+              let qd = wrapper.queueDefinition;
+              queueStore.addQueue(qd);
+              queueStore.initializeArticleList(qd.id);
+              let sd = wrapper.subscriptionDefinitions;
+              decorateQueueWithSubscriptionDefinitions(qd, sd, []); // empty subscription metrics 
+            }
+            let createdQueueIds = createdQueues.map(q => q.queueDefinition.id);
+            queueStore.rebuildLunrIndexes(createdQueueIds);
+            refreshQueues(createdQueueIds, false); // this will do no work if there are no SDs in the response 
+            setLastServerMessage(t('nQueuesCreated', { n: createdQueues.length }));
+          } else if (responseType === 'CREATED_SUBSCRIPTION_DEFINITIONS') {
+            let subscriptionDefinitions = apiResponse.message; 
+            if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
+              let sd = subscriptionDefinitions[0];
+              let r = {
+                id: sd.id,
+                url: sd.url,
+                queueId: sd.queueId,
+                title: sd.title
+              }
+              // auth 
+              let queryConfig = sd.queryConfig ? JSON.parse(sd.queryConfig) : sd.queryConfig;
+              if (queryConfig) {
+                r.username = queryConfig.username;
+                r.password = queryConfig.password;
+              }
+              // image 
+              // let sourceImgUrl = source.imgUrl;
+              // if (sourceImgUrl) {
+              //   r.image = {
+              //     title: null,
+              //     url: sourceImgUrl,
+              //   }
+              // }
+              queueStore.addSubscriptionToQueue(r);
+              refreshQueues([r.queueId], false); // TODO: only refresh this subscription 
+            }
+            } else if (responseType === 'MESSAGE') {
+            consoleLog("queues: message received in secured channel: " + apiResponse.message);
+          } else {
+            // unsupported response type 
+            consoleError('queues: ignoring unsupported response type: ' + responseType);
+          }
         });
-        // publish hello broker 
+        // publish HELLO_WORLD to the broker 
         client.value.publish({
           from: 'me',
           to: 'me',
           destination: '/secured/room',
-          body: 'Hello Newsgears maintenance broker!',
+          body: JSON.stringify({
+            requestType: 'HELLO_WORLD',
+            payload: 'Hello Newsgears maintenance broker!'
+          }),
         });
       } catch (error) {
         console.debug("queues: broker client bugged out; the connection probably disappeared.");
@@ -227,20 +260,22 @@ export function useQueues(props) {
     try {
       client.value.activate();
     } catch (error) {
-      console.error("queues: WebSocket failed to activate, please re-authenticate");
+      consoleError("queues: WebSocket failed to activate, please re-authenticate");
       console.debug("queues: WebSocket client error=" + JSON.stringify(error));
     }
   }
 
   function disconnectBroker() {
-    console.log("disconnect from broker");
+    consoleLog("queues: disconnect from broker");
     if (client.value) {
       client.value.deactivate();
     }
   }
 
   async function refreshQueues(queueIdsToRetrieve, retrieveQueueDefinitions) {
-    console.log("queues: refreshing queues");
+    consoleLog("queues: refreshing queues, "
+      + " queueIds=" + (queueIdsToRetrieve ? queueIdsToRetrieve : "all")
+      + ", retrieveQueueDefinitions=" + retrieveQueueDefinitions);
     let rawPosts = [];
     refreshQueuesIsLoading.value = true;
 
@@ -284,7 +319,7 @@ export function useQueues(props) {
                 rawPosts.push(p);
                 ct++;
               }
-              console.log("queues: staging post refresh complete, ct=" + ct);
+              consoleLog("queues: staging post refresh complete, ct=" + ct);
             }
           })
       ];
@@ -324,6 +359,7 @@ export function useQueues(props) {
                   const qd = queueDefinitionData[i];
                   const sd = subscriptionDefinitions[qd.id];
                   decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics);
+                  // TODO: see if this is still necessary 
                   qd.exportConfig = qd.exportConfig ? JSON.parse(qd.exportConfig) : qd.exportConfig;
                   queueStore.addQueue(qd);
                 }
@@ -342,7 +378,7 @@ export function useQueues(props) {
 
       if (queueStore.queues.length > 0) {
         if (!queueStore.selectedQueueId) {
-          setSelectedQueueId(queueStore.queues[0].id);
+          restoreSelectedQueueId();
         }
       }
     } catch (error) {
@@ -390,7 +426,7 @@ export function useQueues(props) {
   }
 
   function updatePostReadStatus(result) {
-    console.log("queues: updating post status");
+    consoleLog("queues: updating post status");
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -430,8 +466,8 @@ export function useQueues(props) {
             if (p.isReadLater) {
               p.isRead = false;
             }
-            Object.assign(selectedPost, p);
           }
+          Object.assign(selectedPost, p);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -481,35 +517,23 @@ export function useQueues(props) {
     });
   }
 
-  function toggleArticleListSortOrder() {
-    articleListSortOrder.value = (articleListSortOrder.value === 'DSC' ? 'ASC' : 'DSC');
-  }
-
   function toggleFilterMode(filterMode) {
     if (filterMode === 'UNREAD') {
-      showUnreadPosts.value = !showUnreadPosts.value;
+      queueStore.toggleShowUnreadPosts();
     } else if (filterMode === 'READ') {
-      showReadPosts.value = !showReadPosts.value;
+      queueStore.toggleShowReadPosts();
     } else if (filterMode === 'READ_LATER') {
-      showReadLaterPosts.value = !showReadLaterPosts.value;
+      queueStore.toggleShowReadLaterPosts();
     }
-  }
-
-  function toggleQueueFilterPills() {
-    showQueueFilterPills.value = !showQueueFilterPills.value;
   }
 
   function updateFilter(f) {
     if (f.name === "subscription") {
       if (f.queueId !== queueStore.selectedQueueId) {
         setSelectedQueueId(f.queueId);
-        articleListFilter.value = '';
-        nextTick(() => {
-          addSubscriptionToFilter(f.value);
-        });
-      } else {
-        addSubscriptionToFilter(f.value);
+        queueStore.clearArticleListFilter();
       }
+      queueStore.addSubscriptionToFilter(f.value);
     } else if (f.name === "category") {
       addCategoryToFilter(f.value);
     } else if (f.name === "mode") {
@@ -526,53 +550,35 @@ export function useQueues(props) {
     }
   }
 
-  function addSubscriptionToFilter(subscription) {
-    articleListFilter.value = '+feed:' + toLunrToken(subscription);
-  }
-
   function addCategoryToFilter(category) {
-    if (articleListFilter.value) {
-      let expr = '+category:' + toLunrToken(category);
-      if (articleListFilter.value.indexOf(expr) < 0) {
-        articleListFilter.value = articleListFilter.value + ' +category:' + category;
-      }
+    if (queueStore.articleListFilter) {
+      queueStore.addCategoryToFilter(category);
     } else {
-      articleListFilter.value = ' +category:' + category;
+      queueStore.setArticleListFilter(' +category:' + category);
     }
   }
 
   function setFilterToSubAndMode(subValue, modeValue) {
-    let newSubStatus = "+feed:" + toLunrToken(subValue);
-    articleListFilter.value = newSubStatus;
+    let newSubStatus = '';
+    let tokens = subValue.split(/(\s+)/).filter(e => e.trim().length > 0);
+    for (let i = 0; i < tokens.length; i++) {
+      newSubStatus += ' +feed:' + tokens[i];
+    }
+    queueStore.setArticleListFilter(newSubStatus);
     setFilterToMode(modeValue);
   }
 
   function setFilterToMode(filterMode) {
-    showUnreadPosts.value = false;
-    showReadPosts.value = false;
-    showReadLaterPosts.value = false;
+    queueStore.setShowUnreadPosts(false);
+    queueStore.setShowReadPosts(false);
+    queueStore.setShowReadLaterPosts(false);
     if (filterMode === 'UNREAD') {
-      showUnreadPosts.value = true;
+      queueStore.setShowUnreadPosts(true);
     } else if (filterMode === 'READ') {
-      showReadPosts.value = true;
+      queueStore.setShowReadPosts(true);
     } else if (filterMode === 'READ_LATER') {
-      showReadLaterPosts.value = true;
+      queueStore.setShowReadLaterPosts(true);
     }
-  }
-
-  function toLunrToken(inputString) {
-    let token = '';
-    for (let i = 0; i < inputString.length; i++) {
-      const currentChar = inputString[i];
-      // Break the loop if a symbol or whitespace is encountered
-      if (currentChar === ' ' || currentChar === ':') {
-        break;
-      }
-
-      token += currentChar;
-    }
-
-    return token;
   }
 
   function deleteSelectedQueue() {
@@ -581,7 +587,7 @@ export function useQueues(props) {
   }
 
   function performQueueDelete() {
-    console.log("queues: deleting queue id=" + queueIdToDelete.value);
+    consoleLog("queues: deleting queue id=" + queueIdToDelete.value);
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -605,7 +611,7 @@ export function useQueues(props) {
             response.text().then(t => { throw new Error(t) });
         }
       }).then((data) => {
-        console.log("queues: deleted queueId=" + queueIdToDelete.value);
+        consoleLog("queues: deleted queueId=" + queueIdToDelete.value);
         queueStore.deleteQueueById(queueIdToDelete.value);
         setLastServerMessage(data.message);
         queueStore.rebuildLunrIndexes([queueIdToDelete.value]);
@@ -638,7 +644,7 @@ export function useQueues(props) {
   }
 
   function performQueueMarkAsRead() {
-    console.log("queues: updating queue status, id=" + queueIdToMarkAsRead.value);
+    consoleLog("queues: updating queue status, id=" + queueIdToMarkAsRead.value);
     refreshQueuesIsLoading.value = true;
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
@@ -685,12 +691,37 @@ export function useQueues(props) {
   }
 
   function updateArticleListFilter(value) {
-    articleListFilter.value = value;
+    queueStore.setArticleListFilter(value);
+  }
+
+  function restoreSelectedQueueId() {
+    let queueId = null;
+    // 1: check local storage for queueId 
+    let storedSelectedQueueId = localStorage.getItem('selectedQueueId');
+    if (storedSelectedQueueId) {
+      let parsedSelectedQueueId = parseInt(storedSelectedQueueId);
+      // 2: is queueId still valid? 
+      for (let i = 0; i < queueStore.queues.length; i++) {
+        if (queueStore.queues[i].id === parsedSelectedQueueId) {
+          queueId = parsedSelectedQueueId;
+          break;
+        }
+      }
+      // 3: warn if the queue is no long valid (was probably removed between sessions) 
+      if (!queueId) {
+        consoleLog('queues: unable to located stored selected queueId=' + parsedSelectedQueueId); 
+      }
+    } else {
+      consoleLog('queues: no stored selected queueId; selecting first available queue');
+    }
+    // 4: set the selected queueId value to either the valid/restored value from LS, 
+    // or to the Id of the first available queue 
+    setSelectedQueueId(queueId ? queueId : queueStore.queues[0].id);
   }
 
   function setSelectedQueueId(queueId) {
-    console.log("queues: setting selectedQueueId=" + queueId);
-    previousQueueId.value = queueStore.selectedQueueId;
+    consoleLog("queues: setting selected queueId=" + queueId);
+    localStorage.setItem('selectedQueueId', queueId);
     queueStore.setSelectedQueueId(queueId);
     if (queueId) {
       Object.keys(articleList).forEach((key) => {
@@ -698,10 +729,6 @@ export function useQueues(props) {
       });
       Object.assign(articleList, queueStore.articleListsByQueue[queueId]);
     }
-  }
-
-  function restorePreviousQueueId() {
-    setSelectedQueueId(previousQueueId.value);
   }
 
   function getSelectedQueue() {
@@ -715,22 +742,9 @@ export function useQueues(props) {
         }
       }
     } catch (error) {
-      console.error("selectedQueueId is not a number");
+      console.debug("selectedQueueId is not a number, ignoring...");
     }
     return {};
-  }
-
-  function getQueueById(queueId) {
-    try {
-      let q = parseInt(queueId);
-      for (let i = 0; i < queueStore.queues.length; i++) {
-        if (queueStore.queues[i].id === q) {
-          return queueStore.queues[i];
-        }
-      }
-    } catch (error) {
-      console.error("queueId is not a number");
-    }
   }
 
   function openPost(postId) {
@@ -823,7 +837,7 @@ export function useQueues(props) {
             atStep2.value = true;
           }
         }).catch((error) => {
-          console.error(error);
+          consoleError(error);
           handleServerError(error);
         }).finally(() => {
           continueIsLoading.value = false;
@@ -837,72 +851,45 @@ export function useQueues(props) {
 
   function finalizeOpmlUpload() {
     return new Promise((resolve, reject) => {
-      let method = 'POST';
       finalizeIsLoading.value = true;
-      console.log("queues: pushing queues to remote, ct=" + queueConfigRequests.length);
-      auth.getTokenSilently().then((token) => {
-        const controller = new AbortController();
-        const requestOptions = {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(queueConfigRequests),
-          signal: controller.signal
-        };
-        const timeoutId = setTimeout(() => controller.abort(), 45000);
-        fetch(baseUrl + "/queues/", requestOptions)
-          .then((response) => {
-            let contentType = response.headers.get("content-type");
-            let isJson = contentType && contentType.indexOf("application/json") !== -1;
-            if (response.status === 200) {
-              return isJson ? response.json() : [];
-            } else {
-              return isJson ?
-                response.json().then(j => { throw new Error(j.message + (j.details ? (': ' + j.details) : '')) }) :
-                response.text().then(t => { throw new Error(t) });
-            }
-          })
-          .then((data) => {
-            let queueIds = [];
-            for (let i = 0; i < data.length; i++) {
-              let queue = data[i].queueDefinition;
-              let subscriptionDefinitions = data[i].subscriptionDefinitions;
-              let subscriptionMetrics = data[i].subscriptionMetrics;
-              decorateQueueWithSubscriptionDefinitions(queue, subscriptionDefinitions, subscriptionMetrics);
-              queueStore.addQueue(queue);
-              queueIds.push(queue.id);
-            }
-            setLastServerMessage(queueConfigRequests.length + " " + t('nQueuesCreated'));
-            showOpmlUploadPanel.value = false;
-            refreshQueues(queueIds, false);
-            if (resolve) {
-              resolve();
-            }
-          })
-          .catch((error) => {
-            handleServerError(error);
-            if (reject) {
-              reject(error);
-            }
-          }).finally(() => {
-            finalizeIsLoading.value = false;
-            clearTimeout(timeoutId);
+      consoleLog("queues: pushing queues to remote, ct=" + queueConfigRequests.length);
+      try {
+        for (let i = 0; i < queueConfigRequests.length; i++) {
+          consoleLog("queues: pushing queue " + (i + 1) + "/" + queueConfigRequests.length + " to remote...");
+          let payload = queueConfigRequests[i];
+          client.value.publish({
+            from: 'me',
+            to: 'api',
+            destination: '/secured/room',
+            body: JSON.stringify({
+              requestType: 'OPML_UPLOAD',
+              payload: [payload]
+            }),
           });
-      }).catch((error) => {
+        }
+        finalizeIsLoading.value = false;
+        queueConfigRequests.splice(0);
+        returnToStep1();
+        if (resolve) {
+          resolve();
+        }
+      } catch (error) {
         handleServerError(error);
         finalizeIsLoading.value = false;
-      });
+        if (reject) {
+          reject(error);
+        }
+      }
     });
   }
 
   function returnToStep1() {
     atStep2.value = false
-    queueConfigRequests.splice(0);
   }
 
-  function cancelOpmlUpload() {
+  function dismissOpmlUpload() {
+    queueConfigRequests.splice(0);
+    returnToStep1();
     showOpmlUploadPanel.value = false;
   }
 
@@ -951,37 +938,24 @@ export function useQueues(props) {
     showSubscriptionMetrics.value = true;
   }
 
-  function removePropertyValues(data) {
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        data[key] = null;
-      }
-    }
-  }
-
   function newQueue() {
-    console.log("queues: creating queue");
+    consoleLog("queues: creating queue");
     document.activeElement.blur();
-    removePropertyValues(queueUnderConfig);
+    queueStore.initializeQueueConfig(); 
     showQueueConfigPanel.value = true;
   }
 
   function openQueueConfigPanel(queueId) {
-    console.log("queues: configuring queueId=" + queueId);
+    consoleLog("queues: configuring queueId=" + queueId);
     document.activeElement.blur();
-    const q = getQueueById(queueId);
-    removePropertyValues(queueUnderConfig);
-    Object.keys(queueUnderConfig).forEach((key) => {
-      delete queueUnderConfig[key];
-    });
-    Object.assign(queueUnderConfig, q);
+    queueStore.initializeQueueConfig(queueId); 
     showQueueConfigPanel.value = true;
   }
 
   function createQueue(newQueue) {
     let method = 'POST';
     queueConfigIsLoading.value = true;
-    console.log("queues: pushing new queue to remote..");
+    consoleLog("queues: pushing new queue to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -990,7 +964,7 @@ export function useQueues(props) {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify([newQueue]),
+        body: JSON.stringify(newQueue),
         signal: controller.signal
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
@@ -1028,10 +1002,10 @@ export function useQueues(props) {
     });
   }
 
-  function updateQueue() {
+  function updateQueue(queueToUpdate) {
     let method = 'PUT';
     queueConfigIsLoading.value = true;
-    console.log("queues: pushing updated queue to remote..");
+    consoleLog("queues: pushing updated queue to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1040,11 +1014,11 @@ export function useQueues(props) {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(queueUnderConfig),
+        body: JSON.stringify(queueToUpdate),
         signal: controller.signal
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
-      fetch(baseUrl + "/queues/" + queueUnderConfig.id, requestOptions)
+      fetch(baseUrl + "/queues/" + queueToUpdate.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1060,20 +1034,9 @@ export function useQueues(props) {
         })
         .then((data) => {
           let updated = data.queueDefinition;
-          let current = getQueueById(updated.id);
-          current.ident = updated.ident;
-          current.title = updated.title;
-          current.description = updated.description;
-          current.generator = updated.generator;
-          current.copyright = updated.copyright;
-          current.language = updated.language;
-          current.categoryTerm = updated.categoryTerm;
-          current.categoryLabel = updated.categoryLabel;
-          current.categoryScheme = updated.categoryScheme;
-          current.categoryValue = updated.categoryValue;
-          current.categoryDomain = updated.categoryDomain;
-          setLastServerMessage(t('queueUpdated') + ' (' + queueUnderConfig.ident + ')');
-          refreshQueues([current.id], false);
+          queueStore.updateQueue(updated);
+          setLastServerMessage(t('queueUpdated') + ' (' + queueToUpdate.ident + ')');
+          refreshQueues([updated.id], false);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -1088,14 +1051,11 @@ export function useQueues(props) {
 
   function dismissQueueConfigPanel() {
     showQueueConfigPanel.value = false;
-    if (!queueStore.selectedQueueId) {
-      restorePreviousQueueId();
-    }
   }
 
   function addSubscription(newSubscription) {
     queueConfigIsLoading.value = true;
-    console.log("queues: pushing new subscription to remote..");
+    consoleLog("queues: pushing new subscription to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1108,7 +1068,7 @@ export function useQueues(props) {
         signal: controller.signal
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
-      fetch(baseUrl + "/queues/" + queueUnderConfig.id + '/subscriptions/', requestOptions)
+      fetch(baseUrl + "/queues/" + queueStore.queueUnderConfig.id + '/subscriptions/', requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1123,15 +1083,15 @@ export function useQueues(props) {
           let subscriptionDefinitions = data.subscriptionDefinitions;
           if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
             let source = subscriptionDefinitions[0];
-            let qd = source.subscriptionDefinition;
+            let sd = source.subscriptionDefinition;
             let r = {
-              id: qd.id,
-              url: qd.url,
-              queueId: qd.queueId,
-              title: qd.title
+              id: sd.id,
+              url: sd.url,
+              queueId: sd.queueId,
+              title: sd.title
             }
             // auth 
-            let queryConfig = qd.queryConfig ? JSON.parse(qd.queryConfig) : qd.queryConfig;
+            let queryConfig = sd.queryConfig ? JSON.parse(sd.queryConfig) : sd.queryConfig;
             if (queryConfig) {
               r.username = queryConfig.username;
               r.password = queryConfig.password;
@@ -1144,9 +1104,9 @@ export function useQueues(props) {
                 url: sourceImgUrl,
               }
             }
-            queueUnderConfig.subscriptions.unshift(r);
+            queueStore.addSubscriptionToQueue(r); 
             setLastServerMessage(t('subscriptionAdded'));
-            refreshQueues([queueUnderConfig.id], false);
+            refreshQueues([r.queueId], false);
           }
         }).catch((error) => {
           handleServerError(error);
@@ -1162,7 +1122,7 @@ export function useQueues(props) {
 
   function deleteSubscription(id) {
     queueConfigIsLoading.value = true;
-    console.log("queues: deleteing subscription..");
+    consoleLog("queues: deleteing subscription..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1174,7 +1134,7 @@ export function useQueues(props) {
         signal: controller.signal
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
-      fetch(baseUrl + "/queues/" + queueUnderConfig.id + '/subscriptions/' + id, requestOptions)
+      fetch(baseUrl + "/queues/" + queueStore.queueUnderConfig.id + '/subscriptions/' + id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1186,16 +1146,7 @@ export function useQueues(props) {
               response.text().then(t => { throw new Error(t, { cause: {} }) });
           }
         }).then(() => {
-          let deleteIdx = -1;
-          for (let i = 0; i < queueUnderConfig.subscriptions.length; i++) {
-            if (queueUnderConfig.subscriptions[i].id === id) {
-              deleteIdx = i;
-              break;
-            }
-          }
-          if (deleteIdx > -1) {
-            queueUnderConfig.subscriptions.splice(deleteIdx, 1);
-          }
+          queueStore.deleteSubscriptionById(queueStore.queueUnderConfig.id, id);
           setLastServerMessage(t('subscriptionDeleted'));
         }).catch((error) => {
           handleServerError(error);
@@ -1211,7 +1162,7 @@ export function useQueues(props) {
 
   function updateSubscriptionAuth(source) {
     queueConfigIsLoading.value = true;
-    console.log("queues: pushing updated subscription to remote..");
+    consoleLog("queues: pushing updated subscription to remote..");
     auth.getTokenSilently().then((token) => {
       const controller = new AbortController();
       const requestOptions = {
@@ -1224,7 +1175,7 @@ export function useQueues(props) {
         signal: controller.signal
       };
       const timeoutId = setTimeout(() => controller.abort(), 45000);
-      fetch(baseUrl + "/queues/" + queueUnderConfig.id + '/subscriptions/' + source.id, requestOptions)
+      fetch(baseUrl + "/queues/" + queueStore.queueUnderConfig.id + '/subscriptions/' + source.id, requestOptions)
         .then((response) => {
           let contentType = response.headers.get("content-type");
           let isJson = contentType && contentType.indexOf("application/json") !== -1;
@@ -1238,25 +1189,8 @@ export function useQueues(props) {
         }).then((data) => {
           let subscriptionDefinitions = data.subscriptionDefinitions;
           if (subscriptionDefinitions && subscriptionDefinitions.length > 0) {
-            let qd = subscriptionDefinitions[0];
-            let updateIdx = -1;
-            for (let i = 0; i < queueUnderConfig.subscriptions.length; i++) {
-              if (queueUnderConfig.subscriptions[i].id === qd.id) {
-                updateIdx = i;
-                break;
-              }
-            }
-            if (updateIdx > -1) {
-              let queryConfigStr = qd.queryConfig;
-              if (queryConfigStr) {
-                let queryConfig = JSON.parse(queryConfigStr);
-                queueUnderConfig.subscriptions[updateIdx].username = queryConfig.username;
-                queueUnderConfig.subscriptions[updateIdx].password = queryConfig.password;
-              } else {
-                queueUnderConfig.subscriptions[updateIdx].username = null;
-                queueUnderConfig.subscriptions[updateIdx].password = null;
-              }
-            }
+            let sd = subscriptionDefinitions[0];
+            queueStore.updateSubscriptionById(queueStore.queueUnderConfig.id, sd);
             setLastServerMessage(t('subscriptionUpdated'));
           }
         }).catch((error) => {
@@ -1271,27 +1205,11 @@ export function useQueues(props) {
     });
   }
 
-  function toggleReadPosts() {
-    showReadPosts.value = !showReadPosts.value;
-  }
-
-  function toggleUnreadPosts() {
-    showUnreadPosts.value = !showUnreadPosts.value;
-  }
-
-  function toggleReadLaterPosts() {
-    showReadLaterPosts.value = !showReadLaterPosts.value;
-  }
-
-  const roPreviousQueueId = readonly(previousQueueId);
   const roQueueIdToDelete = readonly(queueIdToDelete);
   const roQueueIdToMarkAsRead = readonly(queueIdToMarkAsRead);
   const roSelectedPost = readonly(selectedPost);
   const roArticleList = readonly(articleList);
   const roRefreshQueuesIsLoading = readonly(refreshQueuesIsLoading);
-  const roArticleListFilter = readonly(articleListFilter);
-  const roArticleListSortOrder = readonly(articleListSortOrder);
-  const roShowQueueFilterPills = readonly(showQueueFilterPills);
   const roContinueIsLoading = readonly(continueIsLoading);
   const roAtStep2 = readonly(atStep2);
   const roQueueConfigRequests = readonly(queueConfigRequests);
@@ -1299,23 +1217,15 @@ export function useQueues(props) {
   const roOpmlErrors = readonly(opmlErrors);
   const roLatestSubscriptionMetricsByQueue = readonly(latestSubscriptionMetricsByQueue);
   const roSubscriptionToShow = readonly(subscriptionToShow);
-  const roQueueUnderConfig = readonly(queueUnderConfig);
   const roQueueConfigIsLoading = readonly(queueConfigIsLoading);
-  const roShowUnreadPosts = readonly(showUnreadPosts);
-  const roShowReadPosts = readonly(showReadPosts);
-  const roShowReadLaterPosts = readonly(showReadLaterPosts);
 
   return {
     queueStore,
-    roPreviousQueueId,
     roQueueIdToDelete,
     roQueueIdToMarkAsRead,
     roSelectedPost,
     roArticleList,
     roRefreshQueuesIsLoading,
-    roArticleListFilter,
-    roArticleListSortOrder,
-    roShowQueueFilterPills,
     roContinueIsLoading,
     roAtStep2,
     roQueueConfigRequests,
@@ -1323,22 +1233,14 @@ export function useQueues(props) {
     roOpmlErrors,
     roLatestSubscriptionMetricsByQueue,
     roSubscriptionToShow,
-    roQueueUnderConfig,
     roQueueConfigIsLoading,
-    roShowUnreadPosts,
-    roShowReadPosts,
-    roShowReadLaterPosts,
     // 
     showOpmlUploadPanel, // rw 
     showSubscriptionMetrics, // rw
     showQueueConfigPanel, // rw
     // 
     filteredArticleList,
-    showUnreadPosts,
-    showReadPosts,
-    showReadLaterPosts,
     showQueueRefreshIndicator,
-    tabModel,
     // 
     connectBroker,
     disconnectBroker,
@@ -1353,18 +1255,8 @@ export function useQueues(props) {
     updatePostReadStatus,
     // returns a post from the current articleList, by Id 
     getPostFromQueue,
-    // changes the articleList sort order from ASC <=> DSC 
-    toggleArticleListSortOrder,
     // adds a 'status:' field to the articleListFilter 
     toggleFilterMode,
-    // show/hide the queue filter pills 
-    toggleQueueFilterPills,
-    // 
-    toggleUnreadPosts,
-    // 
-    toggleReadPosts,
-    // 
-    toggleReadLaterPosts,
     // adds the given subscription/category to t he articleListFilter 
     updateFilter,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 
@@ -1384,11 +1276,8 @@ export function useQueues(props) {
     // sets the value of articleListFilter 
     updateArticleListFilter,
     // sets the value of selectedQueueId; 
-    // memoizes the value of previousQueueId; 
     // sets up the articleList for the selected queue 
     setSelectedQueueId,
-    // invokes setSelectedQueueId to restore the previous queue Id 
-    restorePreviousQueueId,
     // return the selected queue 
     getSelectedQueue,
     // 
@@ -1408,24 +1297,22 @@ export function useQueues(props) {
     // 
     returnToStep1,
     // 
-    cancelOpmlUpload,
+    dismissOpmlUpload,
     // 
     checkForNewSubscriptionMetrics,
     // 
     openSubscriptionMetrics,
     // 
     // called by HomeView to initiate the queue creation process ('new queue' button); 
-    // clears the contents of queueUnderconfig; 
     // shows the queue config panel 
     newQueue,
     // 
     // called by HomeView to initiate the queue update process; 
-    // sets the contents of queueUnderConfig to the queue given by queueId; 
     // shows the queue config panel 
     openQueueConfigPanel,
     // 
     // invoked by HomeView to continue the queue save when the hits 'save' on a new queue; 
-    // makes a server call to create the queue (from queueUnderConfig); 
+    // makes a server call to create the queue; 
     createQueue,
     // 
     // invoked by HomeView to continue the queue save when the user hits 'update' on queue properties; 

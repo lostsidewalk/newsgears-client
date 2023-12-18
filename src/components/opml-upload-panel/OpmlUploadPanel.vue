@@ -1,11 +1,21 @@
 <template>
   <v-card>
-    <v-card-title class="text-center pa-4">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       <h3 class="opml-upload">
         <v-icon icon="fa-file" />
         {{ $t('opmlUpload') }}
       </h3>
     </v-card-title>
+    <v-card-subtitle
+      class="text-center"
+      :class="pa4r"
+    >
+      {{ $t('uploadOpmlHere') }}
+    </v-card-subtitle>
+    <v-divider />
     <v-card-text>
       <!-- file input -->
       <input
@@ -15,29 +25,23 @@
         style="display: none;"
         @change="eventHandler"
       >
-      <!-- help text -->
-      <v-alert
-        v-if="shouldShowAlert('uploadOpmlHere')"
-        closable
-        variant="outlined"
-        border="top"
-        icon="fa-question-circle"
-        :text="$t('uploadOpmlHere')"
-        class="ma-4"
-        @click.close="dismissAlert('uploadOpmlHere')"
-      />
-      <v-sheet>
-        <v-card variant="flat">
-          <v-card-title class="pa-4">
+      <v-sheet
+        align="left"
+        justify="center"
+        class="d-flex flex-column"
+        style="gap: 1rem;"
+      >
+        <v-card elevation="1">
+          <v-card-title :class="pa4r">
             {{ atStep2 ? $t('weWillCreateTheFollowingSubscriptions') : $t('createQueuesFromOPML') }}
           </v-card-title>
-          <v-divider class="mb-1 mt-1" />
+          <v-divider />
           <v-card-text>
             <!-- TODO: extract OPML file list component -->
             <!-- OPML file list -- shows a list of files waiting to upload (step 1) -->
             <v-list
               v-if="!atStep2 && files.length > 0"
-              class="mb-4"
+              :class="mb4r"
             >
               <v-list-subheader>{{ $t('opmlFiles') }}</v-list-subheader>
               <v-list-item
@@ -73,7 +77,7 @@
             </v-list>
             <!-- TODO: extract OPML parse errors component -->
             <!-- OPML parse errors (if any, shown at step 2) -->
-            <v-card class="mb-4">
+            <v-card :class="mb4r">
               <v-card-item
                 v-if="errors.length > 0"
                 :subtitle="$t('opmlFilesContainErrors')"
@@ -94,11 +98,11 @@
             <!-- OPML parse results (if any, shown at step 2)-->
             <v-card
               v-if="atStep2 && queueConfigRequests.length > 0"
-              class="mb-4"
+              :class="mb4r"
             >
               <v-data-table
                 :expanded="expanded"
-                class="my-4"
+                :class="my4r"
                 :headers="headers"
                 :items="dataTableItems"
                 item-value="description"
@@ -122,7 +126,7 @@
             </v-card>
             <v-btn
               v-if="!atStep2"
-              class="mb-4"
+              :class="mb4r"
               :size="buttonSize"
               autofocus
               :disabled="atStep2"
@@ -131,7 +135,7 @@
               @click="$refs.fileInput.click()"
             />
           </v-card-text>
-          <v-divider class="mb-1 mt-1" />
+          <v-divider class="my-1" />
           <v-card-actions>
             <!-- continue to step 2 / finalize button (for step 2) -->
             <v-btn
@@ -139,14 +143,15 @@
               autofocus 
               :disabled="!files.length"
               :loading="isLoading" 
-              :title="queueConfigRequests.length > 0 ? $t('finalizeUpload') : (files.length ? $t('continueToStep2') : null)"
-              :text="queueConfigRequests.length > 0 ? $t('finalizeUpload') : $t('continueToStep2')"
-              @click="queueConfigRequests.length > 0 ? $emit('finalizeUpload') : $emit('continueUpload', files)"
+              :title="submitTitle"
+              :text="submitText"
+              @click="submit"
             />
           </v-card-actions>
         </v-card>
       </v-sheet>
     </v-card-text>
+    <v-divider />
     <v-card-actions>
       <v-btn
         v-if="atStep2"
@@ -156,57 +161,57 @@
       />
       <v-btn
         :size="buttonSize"
-        :text="$t('cancel')" 
-        @click="$emit('cancel')"
+        :text="$t('dismiss')" 
+        @click="$emit('dismiss')"
       />
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import { useNotifications } from '@/composable/useNotifications';
+import { ref, reactive, computed, nextTick } from 'vue';
+
+import { useI18n } from 'vue-i18n';
+
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "OpmlUploadPanel",
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   props: { 
     isLoading: { type: Boolean, default: false },
     atStep2: { type: Boolean, required: true },
     errors: { type: Array, default: null },
     queueConfigRequests: { type: Array, required: true },
   },
-  emits: [ "continueUpload", "finalizeUpload", "returnToStep1", "cancel" ],
-  setup() {
-    const { shouldShowAlert, dismissAlert } = useNotifications();
+  emits: [
+    "returnToStep1",
+    "dismiss",
+    "continueUpload",
+    "finalizeUpload",
+  ],
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-    return {
-      shouldShowAlert,
-      dismissAlert,
-    }
-  },
-  data() {
-    return {
-      // 
-      files: [], // TODO: extract this and associated methods to a composable 
-      expanded: [], 
-    }
-  },
-  computed: {
-    headers: function () {
+    const files = ref([]);
+    const expanded = reactive([]);
+
+    const headers = computed(() => {
       return [
-        { title: this.$t('queueTitle'), value: 'title' },
-        { title: this.$t('queueDescription'), value: 'description' },
-        { title: this.$t('newSubscriptions'), value: 'subscriptionCt' },
-        // { title: this.$t('queueActions'), value: 'actions' },
+        { title: t('queueTitle'), value: 'title' },
+        { title: t('queueDescription'), value: 'description' },
+        { title: t('newSubscriptions'), value: 'subscriptionCt' },
+        // { title: t('queueActions'), value: 'actions' },
       ];
-    },
-    dataTableItems: function () {
+    });
+
+    const dataTableItems = computed(() => {
       let dataTableItems = [];
-      for (let i = 0; i < this.queueConfigRequests.length; i++) {
-        let q = this.queueConfigRequests[i];
+      for (let i = 0; i < props.queueConfigRequests.length; i++) {
+        let q = props.queueConfigRequests[i];
         if (!q.title) {
-          console.error("queue with no title: " + JSON.stringify(q)); 
+          console.error("queue with no title: " + JSON.stringify(q));
         }
         dataTableItems.push({
           title: q.title,
@@ -216,14 +221,26 @@ export default {
         });
       }
       return dataTableItems;
-    },
-  },
-  methods: {
-    eventHandler(event) {
-      this.addFiles(event.target.files)
+    });
+
+    const submitText = computed(() => {
+      return props.atStep2 ?
+        t('finalizeUpload') :
+        t('continueToStep2');
+    });
+
+    const submitTitle = computed(() => {
+      return props.atStep2 ?
+        t('finalizeUpload') :
+        t('continueToStep2');
+    });
+
+    function eventHandler(event) {
+      addFiles(event.target.files)
       event.target.value = null
-    },
-    addFiles(newFiles) {
+    }
+
+    function addFiles(newFiles) {
         let newUploadableFiles = [...newFiles]
             .map((file) => {
               return {
@@ -233,19 +250,47 @@ export default {
                 status: null
               }
             })
-            .filter((file) => !this.fileExists(file.id))
-        this.files = this.files.concat(newUploadableFiles)
-    },
-    fileExists(otherId) {
-        return this.files.some(({ id }) => id === otherId)
-    },
-    removeFile(file) {
-        const index = this.files.indexOf(file)
+            .filter((file) => !fileExists(file.id))
+        files.value = files.value.concat(newUploadableFiles)
+    }
+
+    function fileExists(otherId) {
+        return files.value.some(({ id }) => id === otherId)
+    }
+
+    function removeFile(file) {
+        const index = files.value.indexOf(file)
       if (index > -1) {
-        this.files.splice(index, 1);
-        this.$emit('returnToStep1');
+        files.value.splice(index, 1);
+        emit('returnToStep1');
       }
-    },
+    }
+
+    function submit() {
+      if (props.atStep2 && props.queueConfigRequests.length > 0) {
+        emit('finalizeUpload')
+        nextTick(() => files.value.splice(0));
+      } else {
+        emit('continueUpload', files.value);
+      }  
+    }
+
+    return {
+      files,
+      expanded, 
+      // 
+      headers,
+      dataTableItems,
+      submitText,
+      submitTitle,
+      // 
+      eventHandler,
+      addFiles,
+      fileExists,
+      removeFile,
+      submit,
+    }
+
   },
 }
 </script>

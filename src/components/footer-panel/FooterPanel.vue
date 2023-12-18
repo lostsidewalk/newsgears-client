@@ -37,13 +37,6 @@
         <v-btn
           :size="buttonSize" 
           variant="text" 
-          prepend-icon="fa-plug"
-          :text="$t('api')"
-          @click.prevent="$router.push('/api');"
-        />
-        <v-btn
-          :size="buttonSize" 
-          variant="text" 
           prepend-icon="fa-envelope"
           :text="$t('email')"
           @click.prevent="sendSupportMail"
@@ -80,7 +73,8 @@
       <v-row>
         <v-col
           cols="12"
-          class="text-center mt-4"
+          class="text-center"
+          :class="mt4r"
         >
           <div class="copyright">
             {{ $t('copyright') }} <v-icon icon="fa-copyright" /> 2023 <a
@@ -98,44 +92,59 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import PrivacyPolicyPanel from '@/components/privacy-policy-panel/PrivacyPolicyPanel.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "FooterPanel",
   components: {
     PrivacyPolicyPanel,
   },
-  mixins: [buttonSizeMixin], 
-  data() {
-    return {
-      showPrivacyPolicy: false,
-    }
-  },
-  methods: {
-    devBlog() {
+  mixins: [buttonSizeMixin, spacingMixin], 
+  setup() {
+    const showPrivacyPolicy = ref(false);
+
+    function devBlog() {
       window.open('https://www.lostsidewalk.com/newsgears/devblog', '_blank');
-    },
-    sendSupportMail() {
+    }
+
+    function sendSupportMail() {
       window.open('mailto:support@feedgears.com', '_blank');
-    },
-    twitter() {
+    }
+
+    function twitter() {
       window.open('https://twitter.com/lostsidewalkllc', '_blank');
-    },
-    github() {
+    }
+
+    function github() {
       window.open('https://github.com/lostsidewalk', '_blank');
-    },
-    twitch() {
+    }
+    
+    function twitch() {
       window.open('https://twitch.tv/elderscrollsjesus', '_blank');
-    },
-    discord() {
+    }
+
+    function discord() {
       window.open('https://discord.gg/7nyY89UrNw', '_blank');
     }
-  }
+
+    return {
+      showPrivacyPolicy,
+      devBlog,
+      sendSupportMail,
+      twitter,
+      github,
+      twitch,
+      discord,
+    }
+  },
 }
 </script>
 
-<style>
+<style scoped>
 .copyright {
   font-size: small;
 }

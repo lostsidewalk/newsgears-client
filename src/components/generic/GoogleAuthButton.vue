@@ -4,7 +4,7 @@
     class="login-with-google-btn flex-grow-1"
     variant="outlined" 
     prepend-icon="fa-google"
-    @click="googleOauth2()"
+    @click="googleOauth2"
   >
     <span style="white-space: normal;letter-spacing: normal;text-transform: none;">
       {{ $t('signinWithGoogle') }}
@@ -23,11 +23,15 @@
 <script>
 export default {
   name: "GoogleAuthButton",
-  methods: {
-    googleOauth2() {
-      window.location=process.env.VUE_APP_NEWSGEARS_API_URL + '/oauth2/authorize/google?redirect_uri=' + process.env.VUE_APP_NEWSGEARS_ORIGIN_URL + '/app';
-    },
-  }
+  setup() {
+    function googleOauth2() {
+      window.location=process.env.VUE_APP_NEWSGEARS_API_URL + '/oauth2/authorize/google?redirect_uri=' + process.env.VUE_APP_NEWSGEARS_ORIGIN_URL + '/';
+    }
+
+    return {
+      googleOauth2,
+    }
+  },
 }
 </script>
 

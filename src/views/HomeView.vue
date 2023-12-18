@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!-- pre-auth app bar -->
+    <!-- app bar -->
     <v-app-bar
       v-if="!isAuthenticated"
       app
@@ -21,20 +21,23 @@
       <v-toolbar-items>
         <GoBack />
         <DisplayModeButton />
+        <LoginButton />
       </v-toolbar-items>
     </v-app-bar>
 
     <!-- pre-auth main -->
     <v-main v-show="!isAuthenticated">
-      <BannerPanel :show-auth="false" />
+      <BannerPanel :is-authenticated="isAuthenticated" />
 
-      <AuthPanel
-        v-show="!isAuthenticated"
-        :server-message="roAuthServerMessage"
-        :is-loading="roLoginIsLoading"
-        @login="login"
-      />
-      <FooterPanel app />
+      <DemoPanel :class="mb4r" /> 
+
+      <v-divider /> 
+
+      <FAQPanel :class="mt4r" />
+
+      <v-divider /> 
+      
+      <FooterPanel :class="mt4r" />
     </v-main>
 
     <!-- post-auth main -->
@@ -52,28 +55,46 @@
         @openSettings="openSettings"
         @showQueueDashboard="showQueueDashboard = !showQueueDashboard"
       />
-      <!-- navigation drawer / left side -->
-      <v-navigation-drawer
-        v-model="showQueueDashboard"
-        app
-        :location="'start'"
-        :class="xs ? 'w-100' : 'w-50'"
-        elevation="12"
-        temporary
+      <!-- console log -->
+      <v-bottom-sheet
+        v-model="showConsoleLog"
+        scrollable
+        fullscreen
+        inset
       >
-        <QueueOperations 
-          :base-url="baseUrl"
-          :show-layout-buttons="!showQueueConfigPanel && !showOpmlUploadPanel"
-          @showQueueCards="showQueueCards = true" 
-          @showListLayout="showQueueCards = false"
-          @newQueue="$event => { newQueue(); showOpmlUploadPanel = false; }"
-          @uploadOpml="$event => { uploadOpml(); showQueueConfigPanel = false; }"
-        />
-        <!-- queue config dialog -->
+        <v-card>
+          <v-card-title>
+            {{ $t('consoleLog') }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ $t('consoleLogDetails') }}
+          </v-card-subtitle>
+          <v-list
+            class="h-100"
+            role="list"
+            :aria-label="$t('listOfLinksToRSSSpecs')"
+          >
+            <v-list-item
+              v-for="(message,idx) in notificationStore.messages"
+              :key="message"
+              role="listitem"
+              :aria-posinset="idx + 1"
+              :aria-setsize="notificationStore.messages.length"
+            >
+              {{ message }}
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-bottom-sheet>
+      <!-- queue config dialog -->
+      <v-bottom-sheet
+        v-model="showQueueConfigPanel"
+        scrollable
+        fullscreen
+        inset
+      >
         <QueueConfigPanel
-          v-if="showQueueConfigPanel"
           :base-url="baseUrl"
-          :queue-under-config="roQueueUnderConfig"
           @save="createQueue"
           @update="updateQueue"
           @addSubscription="addSubscription"
@@ -81,31 +102,57 @@
           @updateSubscriptionAuth="updateSubscriptionAuth"
           @dismiss="dismissQueueConfigPanel"
         />
-        <!-- opml upload dialog -->
+      </v-bottom-sheet>
+      <!-- opml upload dialog -->
+      <v-bottom-sheet
+        v-model="showOpmlUploadPanel"
+        scrollable
+        fullscreen
+        inset
+      >
         <OpmlUploadPanel
-          v-show="showOpmlUploadPanel"
-          class="my-4"
           :is-loading="roFinalizeIsLoading || roContinueIsLoading"
           :at-step2="roAtStep2"
           :errors="roOpmlErrors"
           :queue-config-requests="roQueueConfigRequests"
           @continueUpload="continueOpmlUpload"
-          @finalizeUpload="$event => finalizeOpmlUpload().then(() => showQueueDashboard = true)"
+          @finalizeUpload="$event => finalizeOpmlUpload().then(() => { showQueueDashboard = true; showOpmlUploadPanel = false; })"
           @returnToStep1="returnToStep1"
-          @cancel="cancelOpmlUpload"
+          @dismiss="dismissOpmlUpload"
+        />
+      </v-bottom-sheet>
+      <!-- navigation drawer / left side -->
+      <v-bottom-sheet
+        v-model="showQueueDashboard"
+        scrollable
+        fullscreen
+        inset
+      >
+        <!-- no currently selected queue -->
+        <QueueInitialSetup 
+          v-if="!queueStore.queues || queueStore.queues.length === 0" 
+          :base-url="baseUrl"
+          @uploadOpml="$event => { uploadOpml(); showQueueDashboard = true; showQueueConfigPanel = false; }" 
+          @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
+          @dismiss="showQueueDashboard = false"
         />
         <QueueCardSheet
-          v-if="showQueueCards && !showQueueConfigPanel && !showOpmlUploadPanel" 
+          v-show="!showQueueConfigPanel && !showOpmlUploadPanel" 
           :base-url="baseUrl"
           :feed-url="feedUrl"
-          @selectQueue="$event => { setSelectedQueueId($event.queueId); $nextTick(() => showQueueDashboard = false); }"
+          @selectQueue="$event => { setSelectedQueueId($event.queueId); showQueueDashboard = false; }"
           @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
-          @updateFilter="updateFilter"
+          @updateFilter="$event => { 
+            updateFilter($event); 
+            setSelectedQueueId($event.queueId); 
+            showQueueDashboard = false;
+          }"
           @openSubscriptionMetrics="openSubscriptionMetrics"
         />
-        <QueueSubscriptionSheet
-          v-else-if="!showQueueConfigPanel && !showOpmlUploadPanel"
+        <!-- <QueueSubscriptionSheet
+          v-show="!showQueueCards && !showQueueConfigPanel && !showOpmlUploadPanel"
           :base-url="baseUrl"
+          @updateFilter="$event => { updateFilter($event); $nextTick(() => showQueueDashboard = false); }"
           @showUnread="($event) => {
             let subscription = $event.subscription;
             setSelectedQueueId(subscription.queueId);
@@ -141,8 +188,8 @@
               })
             );
           }"
-        />
-      </v-navigation-drawer>
+        /> -->
+      </v-bottom-sheet>
       <!-- delete confirmation dialog -->
       <v-dialog
         v-model="showQueueDeleteConfirmation"
@@ -168,16 +215,17 @@
         />
       </v-dialog>
       <!-- help dialog -->
-      <v-dialog
+      <v-bottom-sheet
         v-model="showHelpPanel"
         fullscreen
         scrollable
+        inset
       >
         <HelpPanel
           class="overflow-auto rounded"
           @dismiss="showHelpPanel = false"
         />
-      </v-dialog>
+      </v-bottom-sheet>
       <!-- subscription metrics dialog -->
       <v-dialog
         v-model="showSubscriptionMetrics"
@@ -190,11 +238,14 @@
           @dismiss="showSubscriptionMetrics = false"
         />
       </v-dialog>
-      <!-- main container -->
-      <v-container>
-        <!-- settings -->
+      <!-- settings -->
+      <v-bottom-sheet
+        v-model="showSettingsPanel"
+        fullscreen
+        scrollable
+        inset
+      >
         <SettingsPanel
-          v-show="showSettingsPanel"
           class="rounded"
           :base-url="baseUrl"
           :account="roAccount"
@@ -210,81 +261,120 @@
           @submitOrder="submitOrder"
           @dismiss="showSettingsPanel = false"
         />
-        <!-- queue layout -->
-        <QueueLayout 
-          :show-list-layout="showListLayout"
-          :show-card-layout="showCardLayout"
-          :show-table-layout="showTableLayout"
-          :show-queue-refresh-indicator="showQueueRefreshIndicator"
-          :filtered-article-list="filteredArticleList" 
-          @switchToListLayout="switchToListLayout" 
-          @switchToCardLayout="switchToCardLayout" 
-          @switchToTableLayout="switchToTableLayout" 
-          @refreshQueues="$event => refreshQueues(null, true)"
-          @markAsRead="$event => {
-            markQueueAsRead(queueStore.selectedQueueId);
-            showQueueMarkAsReadConfirmation = true;
-          }"
-          @toggleArticleListSortOrder="toggleArticleListSortOrder"
-          @updateArticleListFilter="updateArticleListFilter"
-          @toggleUnreadPosts="toggleUnreadPosts" 
-          @toggleReadPosts="toggleReadPosts"
-          @toggleReadLaterPosts="toggleReadLaterPosts"
-        />
-        <!-- card layout -->
+      </v-bottom-sheet>
+      <!-- main container -->
+      <div
+        class="d-flex flex-column rounded"
+        :class="ma4r"
+      >
+        <!-- queue material -->
+        <div
+          v-if="queueStore.selectedQueueId"
+          class="d-flex flex-row"
+        >
+          <!-- queue layout -->
+          <QueueController 
+            class="w-100"
+            :base-url="baseUrl"
+            :collapsed="showCollapsedLayout"
+            :show-list-layout="showListLayout"
+            :show-card-layout="showCardLayout"
+            :show-table-layout="showTableLayout"
+            :show-queue-refresh-indicator="showQueueRefreshIndicator"
+            :filtered-article-list="filteredArticleList" 
+            @newQueue="$event => { newQueue(); showOpmlUploadPanel = false; }"
+            @uploadOpml="$event => { uploadOpml(); showQueueConfigPanel = false; }"
+            @switchToListLayout="switchToListLayout" 
+            @switchToCardLayout="switchToCardLayout" 
+            @switchToTableLayout="switchToTableLayout" 
+            @refreshQueues="$event => refreshQueues(null, true)"
+            @markAsRead="$event => {
+              markQueueAsRead(queueStore.selectedQueueId);
+              showQueueMarkAsReadConfirmation = true;
+            }"
+            @toggleArticleListSortOrder="queueStore.toggleArticleListSortOrder"
+            @updateArticleListFilter="updateArticleListFilter"
+            @toggleUnreadPosts="queueStore.toggleShowUnreadPosts" 
+            @toggleReadPosts="queueStore.toggleShowReadPosts"
+            @toggleReadLaterPosts="queueStore.toggleShowReadLaterPosts"
+            @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
+            @collapse="showCollapsedLayout = true"
+            @expand="showCollapsedLayout = false"
+          />
+          <!-- TODO: extract video player component -->
+          <v-bottom-sheet
+            v-model="showVideoPlayerPanel"
+          >
+            <vue-plyr ref="videoPlayer">
+              <div class="plyr__video-embed">
+                <iframe
+                  allowfullscreen 
+                  allowtransparency
+                  :src="currentlyPlayingUrl"
+                />
+              </div>
+            </vue-plyr>
+          </v-bottom-sheet>
+        </div>
+        <!-- post material (card layout) -->
         <CardLayout
-          v-if="showCardLayout && filteredArticleList.length > 0" 
+          v-if="showCardLayout && filteredArticleList.length > 0"
+          style="margin-top: 1rem;"
+          :layout-height="showCollapsedLayout ? 'fill-available' : 'fill-available'"
           :sharing-options="sharingOptions"
           :filtered-article-list="filteredArticleList"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
           @updateFilter="updateFilter"
           @share="$event = share($event.sharingOption, $event.post)"
+          @playEnclosure="playEnclosure"
         />
-        <!-- list layout -->
+        <!-- post material (list layout) -->
         <ListLayout 
           v-if="showListLayout && filteredArticleList.length > 0"
+          style="margin-top: 1rem;"
+          :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
           :filtered-article-list="filteredArticleList"
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @updatePostReadStatus="updatePostReadStatus"
         />
-        <!-- table layout -->
+        <!-- post material (table layout) -->
         <TableLayout 
           v-if="showTableLayout && filteredArticleList.length > 0"
+          style="margin-top: 1rem;"
+          :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
           :filtered-article-list="filteredArticleList"
           :sharing-options="sharingOptions"
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
-        />
-        <!-- no articles in queue -->
-        <QueueSetup 
-          v-if="!filteredArticleList || filteredArticleList.length === 0" 
-          :base-url="baseUrl"
-          @uploadOpml="$event => { uploadOpml(); showQueueDashboard = true; showQueueConfigPanel = false; }" 
-          @openQueueConfigPanel="$event => { openQueueConfigPanel($event.queueId); showQueueDashboard = true; showOpmlUploadPanel = false; }"
+          @updateFilter="updateFilter"
         />
         <!-- help panel -->
         <GlobalShortcutKeys
           v-if="!filteredArticleList || filteredArticleList.length === 0"
-          class="my-4"
+          :class="my4r"
         />
-      </v-container>
+        <!-- TODO: separate queue shortcut keys from global shortcut keys -->
+      </div>
       <!-- post card dialog -->
-      <v-dialog
+      <v-bottom-sheet
         v-if="showListLayout || showTableLayout"
         v-model="showSelectedPost"
         scrollable
         fullscreen
+        inset
       >
         <PostCard
           :id="'post_' + roSelectedPost.id"
           :post="roSelectedPost"
           :sharing-options="sharingOptions"
+          :collapsible="false"
           @openPostUrl="openPostUrl(roSelectedPost.id);"
           @updatePostReadStatus="updatePostReadStatus"
           @updateFilter="updateFilter"
           @share="$event => share($event.sharingOption, $event.post)"
+          @playEnclosure="playEnclosure"
         >
           <template #additional>
             <v-btn
@@ -305,7 +395,7 @@
             />
           </template>
         </PostCard>
-      </v-dialog>
+      </v-bottom-sheet>
     </v-main>
   </v-app>
 </template>
@@ -317,6 +407,7 @@ import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 import { useAuth } from '@/composable/useAuth.js';
+import { useNotifications } from '@/composable/useNotifications.js';
 import { useSettings } from '@/composable/useSettings.js';
 import { useQueues } from '@/composable/useQueues.js';
 import { useLayout } from '@/composable/useLayout.js';
@@ -325,12 +416,14 @@ import { useSharing } from '@/composable/useSharing.js';
 // import debounce from 'lodash.debounce';
 // components 
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
-import AppBar from '@/components/app-bar/AppBar.vue';
-import GoBack from "@/components/layout/GoBack.vue";
-import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
-import AuthPanel from "@/components/auth-panel/AuthPanel.vue";
+import DemoPanel from "@/components/landing/DemoPanel.vue";
+import FAQPanel from '@/components/landing/FAQPanel.vue';
+import AppBar from '@/components/generic/AppBar.vue';
+import GoBack from "@/components/generic/GoBack.vue";
+import DisplayModeButton from "@/components/generic/DisplayModeButton.vue";
+import LoginButton from '@/components/generic/LoginButton.vue';
 // confirmation dialog 
-import ConfirmationDialog from '@/components/layout/ConfirmationDialog.vue';
+import ConfirmationDialog from '@/components/generic/ConfirmationDialog.vue';
 // queue configuration panel 
 import QueueConfigPanel from "@/components/queue-config-panel/QueueConfigPanel.vue";
 // OPML upload panel 
@@ -341,38 +434,39 @@ import SubscriptionMetrics from '@/components/queue-config-panel/SubscriptionMet
 import SettingsPanel from '@/components/settings-panel/SettingsPanel.vue';
 import HelpPanel from '@/components/help-panel/HelpPanel.vue';
 import GlobalShortcutKeys from '@/components/help-panel/GlobalShortcutKeys.vue';
-// queue operations 
-import QueueOperations from '@/components/queue/QueueOperations.vue';
 // queue card sheet 
-import QueueCardSheet from '@/components/queue/QueueCardSheet.vue';
+import QueueCardSheet from '@/components/layout/QueueCardSheet.vue';
 // queue subscription sheet 
-import QueueSubscriptionSheet from '@/components/queue/QueueSubscriptionSheet.vue';
-// queue layout 
-import QueueLayout from '@/components/queue/QueueLayout.vue';
+// import QueueSubscriptionSheet from '@/components/queue/QueueSubscriptionSheet.vue';
+// queue controller (filter and operations)
+import QueueController from '@/components/queue-controller/QueueController.vue';
 // card layout 
-import CardLayout from '@/components/post/CardLayout.vue';
+import CardLayout from '@/components/layout/CardLayout.vue';
 // list layout 
-import ListLayout from '@/components/post/ListLayout.vue';
+import ListLayout from '@/components/layout/ListLayout.vue';
 // table layout 
-import TableLayout from '@/components/post/TableLayout.vue';
+import TableLayout from '@/components/layout/TableLayout.vue';
 // post card
 import PostCard from "@/components/post/PostCard.vue";
-// queue setup 
-import QueueSetup from '@/components/queue/QueueSetup.vue';
+// queue initial setup 
+import QueueInitialSetup from '@/components/queue/QueueInitialSetup.vue';
 // footer panel 
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 // import QueueDetails from '@/components/queue/QueueDetails.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 
 export default {
   name: "HomeView",
   components: {
     BannerPanel,
+    DemoPanel,
+    FAQPanel,
     AppBar,
     GoBack,
     DisplayModeButton,
-    AuthPanel,
+    LoginButton,
     // dialogs 
     ConfirmationDialog,
     QueueConfigPanel,
@@ -382,14 +476,10 @@ export default {
     SettingsPanel,
     HelpPanel,
     GlobalShortcutKeys,
-    // operations 
-    QueueOperations,
     // card sheet 
     QueueCardSheet, 
-    // subscription sheet 
-    QueueSubscriptionSheet,
-    // layout 
-    QueueLayout, 
+    // queue controller 
+    QueueController, 
     // card layout 
     CardLayout,
     // list layout 
@@ -398,12 +488,12 @@ export default {
     TableLayout,
     // post card 
     PostCard,
-    // queue setup
-    QueueSetup,
+    // queue initial setup
+    QueueInitialSetup,
     // footer 
     FooterPanel
   },
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   props: {
     baseUrl: { type: String, required: true },
     feedUrl: { type: String, required: true },
@@ -419,6 +509,9 @@ export default {
       roLoginIsLoading,
       login,
       logout } = useAuth();
+    const {
+      notificationStore,
+    } = useNotifications();
     const {
       showSettingsPanel, // rw 
       roAccount,
@@ -444,7 +537,6 @@ export default {
       roFinalizeIsLoading,
       roOpmlErrors,
       roSubscriptionToShow,
-      roQueueUnderConfig,
       roQueueConfigIsLoading,
       // 
       showOpmlUploadPanel, //rw 
@@ -459,8 +551,6 @@ export default {
       refreshQueues,
       updatePostReadStatus,
       getPostFromQueue, // no 
-      toggleArticleListSortOrder,
-      toggleQueueFilterPills,
       toggleFilterMode,
       updateFilter,
       deleteSelectedQueue,
@@ -472,7 +562,6 @@ export default {
       cancelQueueMarkAsRead,
       updateArticleListFilter,
       setSelectedQueueId,
-      restorePreviousQueueId,
       getSelectedQueue,
       openPost,
       openPostUrl,
@@ -482,7 +571,7 @@ export default {
       continueOpmlUpload,
       finalizeOpmlUpload,
       returnToStep1,
-      cancelOpmlUpload,
+      dismissOpmlUpload,
       checkForNewSubscriptionMetrics,
       openSubscriptionMetrics,
       newQueue,
@@ -493,9 +582,6 @@ export default {
       addSubscription,
       deleteSubscription,
       updateSubscriptionAuth,
-      toggleUnreadPosts,
-      toggleReadPosts,
-      toggleReadLaterPosts,
     } = useQueues(props);
     const {
       roLayout,
@@ -513,11 +599,13 @@ export default {
 
     const refreshIntervalId = ref(null);
     const showQueueDashboard = ref(false);
-    const showQueueCards = ref(true);
     const showHelpPanel = ref(false);
+    const showVideoPlayerPanel = ref(false);
     const showSelectedPost = ref(false);
     const showQueueDeleteConfirmation = ref(false);
     const showQueueMarkAsReadConfirmation = ref(false);
+    const showConsoleLog = ref(false);
+    const showCollapsedLayout = ref(false);
     // 
     const isModalShowing = computed(() => {
       return showSettingsPanel.value || showHelpPanel.value || showQueueConfigPanel.value || showOpmlUploadPanel.value || showSubscriptionMetrics.value;
@@ -525,6 +613,18 @@ export default {
     const isLoading = computed(() => {
       return roSettingsIsLoading.value || roQueueConfigIsLoading.value || roContinueIsLoading.value || roFinalizeIsLoading.value || roRefreshQueuesIsLoading.value || roSettingsIsLoading.value;
     });
+    const navbarWidth = computed(() => {
+      if (display.xs.value) {
+        return 'w-100'
+      } else if (display.sm.value) {
+        return 'w-75'
+      }
+      return 'w-50';
+    });
+
+    const currentlyPlayingUrl = ref(null);
+    const videoPlayer = ref(null);
+
     // required 
     function keyHandler(event) {
       if (!event.key) {
@@ -557,7 +657,6 @@ export default {
         // 
         if (event.key === 'E' && event.shiftKey === true) {
           openQueueConfigPanel(queueStore.selectedQueueId);
-          showQueueDashboard.value = true;
           event.stopPropagation();
           event.preventDefault();
         // 
@@ -565,8 +664,6 @@ export default {
         //
         } else if (event.key === 'M' && event.shiftKey === true) {
           uploadOpml();
-          showQueueDashboard.value = true;
-          showQueueConfigPanel.value = false;
           event.stopPropagation();
           event.preventDefault();
         // 
@@ -574,8 +671,6 @@ export default {
         // 
         } else if (event.key === 'Q' && event.shiftKey === true) {
           openQueueConfigPanel();
-          showQueueDashboard.value = true;
-          showOpmlUploadPanel.value = false;
           event.stopPropagation();
           event.preventDefault();
         // 
@@ -637,6 +732,31 @@ export default {
         event.stopPropagation();
         event.preventDefault();
       }
+      // 
+      // SHIFT + G KEY (CONSOLE LOG)
+      // 
+      if (event.key === 'G' && event.shiftKey === true) {
+        showConsoleLog.value = !showConsoleLog.value;
+      }
+    }
+
+    function playEnclosure(enclosureUrl) {
+      currentlyPlayingUrl.value = enclosureUrl;
+      showVideoPlayerPanel.value = true;
+      nextTick(() => {
+        videoPlayer.value.player.on("ready", () => {
+          videoPlayer.value.player.play();
+        });
+        videoPlayer.value.player.source = {
+          type: 'video',
+          sources: [
+            {
+              src: enclosureUrl,
+              type: 'video/mp4',
+            }
+          ]
+        }
+      })
     }
     // 
     // 
@@ -664,17 +784,16 @@ export default {
         .finally(() => {
           if (isAuthenticated.value) {
             console.log("home: authenticated on mount");
-            connectBroker();
           } else {
             console.log("home: not authenticated on mount");
           }
         });
-      window.addEventListener("keydown", keyHandler);
+      window.addEventListener("keypress", keyHandler);
     });
 
     onBeforeUnmount(() => {
       disconnectBroker();
-      window.removeEventListener("keydown", keyHandler);
+      window.removeEventListener("keypress", keyHandler);
     });
     // 
     // 
@@ -683,9 +802,12 @@ export default {
       // 
       auth,
       isAuthenticated,
+      notificationStore,
       router,
       t,
       xs: display.xs,
+      sm: display.sm,
+      md: display.md,
       // computed 
       isModalShowing,
       sharingOptions,
@@ -711,7 +833,6 @@ export default {
       filteredArticleList,
       // queue config module data 
       showQueueConfigPanel,
-      roQueueUnderConfig,
       roQueueConfigIsLoading,
       // metrics module data 
       roSubscriptionToShow,
@@ -723,12 +844,17 @@ export default {
       showTableLayout,
       // other data 
       isLoading,
+      navbarWidth,
       showQueueDashboard,
-      showQueueCards,
       showHelpPanel,
+      showVideoPlayerPanel,
       showQueueDeleteConfirmation,
       showQueueMarkAsReadConfirmation,
       showSelectedPost,
+      showConsoleLog,
+      showCollapsedLayout,
+      videoPlayer,
+      currentlyPlayingUrl,
       // auth module functions 
       logout,
       login,
@@ -752,8 +878,6 @@ export default {
       openPost,
       selectNextPost,
       selectPreviousPost,
-      toggleArticleListSortOrder,
-      toggleQueueFilterPills,
       toggleFilterMode,
       updateFilter,
       updatePostReadStatus,
@@ -767,12 +891,8 @@ export default {
       cancelQueueMarkAsRead,
       updateArticleListFilter,
       setSelectedQueueId,
-      restorePreviousQueueId,
       getSelectedQueue,
       getPostFromQueue,
-      toggleUnreadPosts,
-      toggleReadPosts,
-      toggleReadLaterPosts,
       // queue config module functions 
       addSubscription,
       deleteSubscription,
@@ -788,7 +908,7 @@ export default {
       uploadOpml,
       finalizeOpmlUpload,
       returnToStep1,
-      cancelOpmlUpload,
+      dismissOpmlUpload,
       newQueue,
       // deleteQueue,
       // markSelectedQueueAsRead, 
@@ -798,6 +918,7 @@ export default {
       share,
       keyHandler,
       openSettings,
+      playEnclosure,
     }
   },
 };
@@ -809,9 +930,34 @@ export default {
   font-weight: bold;
   font-size: larger;
 }
+</style>
 
-/** has references */
-.selected-queue {
-  border: 1px solid !important;
+<style>
+.clickable {
+  user-select: none;
+  cursor: pointer;
+}
+
+.clickable:hover, .clickable:focus-visible, 
+.clickable:hover *, .clickable:focus-visible * {
+  cursor: pointer;
+}
+
+.clickable:hover span, .clickable:focus-visible span {
+  text-decoration: underline;
+}
+
+.post-html-frame {
+  overflow: auto;
+  white-space-collapse: preserve-breaks;
+}
+
+.post-text-frame {
+  overflow: auto;
+  white-space-collapse: preserve-breaks;
+}
+
+.gap-1 {
+  gap: 1rem;
 }
 </style>

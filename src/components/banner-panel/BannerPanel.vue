@@ -39,13 +39,13 @@
 
     <v-divider
       v-if="!isAuthenticated && showAuth"
-      class="mt-8"
+      :class="mt8r"
     />
 
     <v-row
       v-if="!isAuthenticated && showAuth"
       justify="center"
-      class="mt-8"
+      :class="mt8r"
     >
       <v-col
         cols="12"
@@ -69,8 +69,9 @@
 </template>
 
 <script>
-import SignUpButton from '@/components/layout/SignUpButton.vue';
-import GoogleAuthButton from '@/components/layout/GoogleAuthButton.vue';
+import SignUpButton from '@/components/generic/SignUpButton.vue';
+import GoogleAuthButton from '@/components/generic/GoogleAuthButton.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "BannerPanel",
@@ -78,6 +79,7 @@ export default {
     SignUpButton, 
     GoogleAuthButton,
   },
+  mixins: [spacingMixin],
   props: {
     isAuthenticated: { type: Boolean, default: false },
     showAuth: { type: Boolean, default: true },

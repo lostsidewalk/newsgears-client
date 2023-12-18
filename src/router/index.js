@@ -1,24 +1,25 @@
 import { createWebHistory, createRouter } from "vue-router";
-import LandingView from "@/views/LandingView.vue";
+import LoginView from "@/views/LoginView.vue";
 import HomeView from "@/views/HomeView.vue";
 import PasswordResetRequestView from "@/views/PasswordResetRequestView.vue";
 import PasswordResetCallbackView from "@/views/PasswordResetCallbackView.vue";
 import RegistrationRequestView from "@/views/RegistrationRequestView.vue";
 import VerificationCallbackView from "@/views/VerificationCallbackView.vue";
 import DocsView from "@/views/DocsView.vue";
-import ApiView from "@/views/ApiView.vue";
 
 const routes = [
+  // login route 
   {
-    path: "/",
-    name: "LandingView",
-    component: LandingView,
+    path: "/login",
+    name: "LoginView",
+    component: LoginView,
     props: {
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
+  // application route 
   {
-    path: "/app",
+    path: "/",
     name: "HomeView",
     title: "Newsgears RSS",
     component: HomeView,
@@ -26,6 +27,11 @@ const routes = [
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
       feedUrl: process.env.VUE_APP_NEWSGEARS_FEED_URL,
     },
+  },
+  // catch-all route (back to application) 
+  {
+    path: "/:catchAll(.*)",
+    redirect: "/",
   },
   {
     path: "/pw_reset",
@@ -35,6 +41,7 @@ const routes = [
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
+  // password reset continuation 
   {
     path: "/pw_reset/continue",
     name: "PasswordResetCallbackView",
@@ -43,6 +50,7 @@ const routes = [
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
+  // registration initialization 
   {
     path: "/register",
     name: "RegistrationRequestView",
@@ -51,6 +59,7 @@ const routes = [
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
+  // verification continuation 
   {
     path: "/verify/continue",
     name: "VerificationCallbackView",
@@ -59,18 +68,11 @@ const routes = [
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
   },
+  // documentation 
   {
     path: "/docs",
     name: "DocsView",
     component: DocsView,
-    props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
-    },
-  },
-  {
-    path: "/api",
-    name: "ApiView",
-    component: ApiView,
     props: {
       baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
     },
@@ -85,7 +87,7 @@ const router = createRouter({
 const defaultRouteTitle = "Newsgears RSS";
 
 const titlesByRoute = {
-  LandingView: "Newsgears RSS from LostSidewalk Software",
+  LoginView: "Newsgears RSS from LostSidewalk Software",
   HomeView: "Newsgears RSS Feed Dashboard",
   PasswordResetRequestView: "Newsgears RSS Password Reset Request",
   PasswordResetCallbackView: "Newsgears RSS Password Reset Continuation",

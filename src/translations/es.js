@@ -1,7 +1,10 @@
 const es = {
+  // console log 
+  consoleLog: "CONSOLE LOG",
+  consoleLogDetails: "Further details are available in your browser console.",
   // generic 
-  true: "verdadero",
-  false: "falso",
+  trueStr: "verdadero",
+  falseStr: "falso",
   somethingHorribleHappened:
     "¡Algo horrible ocurrió y no estamos seguros de qué! Por favor, inténtalo de nuevo en unos momentos.",
   requestTimedOut:
@@ -14,6 +17,7 @@ const es = {
   next: "Siguiente",
   last: "Último",
   username: "Nombre de usuario",
+  emailAddress: "Correo electrónico",
   password: "Contraseña",
   submit: "Enviar",
   subscribe: "Suscribirse",
@@ -28,6 +32,23 @@ const es = {
   feedTitle: "Feed",
   postTimestamp: "Timestamp",
   actions: "Actions",
+  httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
+  redirectedTo:
+    "Redirected to {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
+  unreadCount: '{n} unread articles',
+  readCount: '{n} read articles',
+  totalCount: '{n} articles',
+  unread: "UNREAD",
+  read: "READ",
+  readLater: "LATER",
+  htmlNotShownHere: '(HTML not shown here)',
+  noPostTitle: '(This post is untitled)',
+  noPublishTimestamp: '(No timestamp)',
+  noPostDescription: '(No post description)',
+  hasPostContents: 'CONTENTS ({ct})',
+  hasPostMedia: 'MEDIA',
+  hasPostITunes: 'ITUNES',
+  hasEnclosures: 'ENCLOSURES ({ct})',
   // auth
   loginToNewsgears: "Iniciar sesión en Newsgears",
   accountRecovery: "Recuperación de cuenta",
@@ -58,7 +79,6 @@ const es = {
   whyIsNewsgearsFree: "Gratis para siempre porque amamos RSS.",
   devBlog: "Blog de desarrollo",
   docs: "Documentación",
-  api: "API",
   email: "Correo electrónico",
   twitter: "Twitter",
   github: "Github",
@@ -74,8 +94,6 @@ const es = {
   tableLayoutsScreenshot: 'Captura de pantalla del diseño de la tabla',
   opmlUploadScreenshot: 'Captura de pantalla de carga OPML',
   comingSoon: '¡Próximamente!',
-  // demo (api access) 
-  apiAccess: 'Acceso a la API', 
   // demo (enhanced filtering) 
   enhancedFiltering: 'Filtrado y búsqueda mejorados utilizando LunrJS',
   enhancedFiltering_detail1: 'Aplica filtros y busca dentro de una cola de artículos para enfocar tus opciones de lectura según tus preferencias o temas específicos de interés.',
@@ -164,13 +182,15 @@ const es = {
   createNewQueue: "Crear cola",
   uploadOPML: "Subir OPML",
   pleaseEnableNotifications: "Habilite las notificaciones para recibir mensajes de Newsgears.",
+  showFilterHelp: "Show filter help",
   // buttons
   update: "Actualizar",
   save: "Guardar",
+  dismiss: "Dismiss",
   // queue config panel
-  queueProperties: "Propiedades de la cola",
-  rssFeedDiscovery: "Descubrimiento de fuentes RSS",
-  configuringQueue: "Configurando cola: {name}",
+  configuringQueue: "Configuring queue: {name}",
+  manageSubscriptions: "Manage subscriptions ({ct})",
+  queueProperties: "Queue Properties",
   // queue properties
   createANewQueue: "Crear una nueva cola",
   createANewQueueHere: "Crea una nueva cola aquí. Las colas se utilizan para agrupar y organizar artículos de suscripciones a feeds relacionados. Los artículos de la misma cola se leen, indexan y filtran juntos. Utilice este panel para crear una nueva cola y definir sus propiedades básicas. Una vez creada una cola, puede agregar suscripciones para importar artículos.",
@@ -182,12 +202,6 @@ const es = {
   queueTitleHint: "Un nombre descriptivo opcional para esta cola. Este valor se muestra en la interfaz de usuario de Newsgears para referirse a esta cola.",
   queueDescription: "Descripción de la cola",
   queueDescriptionHint: "Una descripción detallada opcional para esta cola, mostrada en el panel de control de la cola.",
-  queueFeedGenerator: "Generador del feed",
-  queueFeedGeneratorHint: "En los artefactos publicados de esta cola, este valor aparece como el valor 'generador de feed'.",
-  queueFeedCopyright: "Derechos de autor",
-  queueFeedCopyrightHint: "En los artefactos publicados de esta cola, este valor aparece como el valor 'derechos de autor del feed'.",
-  queueFeedLanguage: "Idioma",
-  queueFeedLanguageHint: "En los artefactos publicados de esta cola, este valor aparece como el valor 'idioma del feed'.",
   // subscription config
   yourSubscriptions: "SUS SUSCRIPCIONES",
   manageYourSubscriptionsHere: "Gestiona tus suscripciones aquí. Vea el historial completo de nuestra interacción con esto al ver las métricas de fuentes RSS. También puede usar este panel para configurar la autenticación y darse de baja de una fuente. Tenga en cuenta que los artículos se eliminan según sea necesario, independientemente del estado de la suscripción. Es posible que aún vea artículos en su cola incluso después de darse de baja de un feed aquí.",
@@ -195,7 +209,7 @@ const es = {
   addANewSubscriptionHere: "Agregue una nueva suscripción aquí. Ingrese una URL válida. Intentaremos resolver la ubicación del artefacto RSS/ATOM en la ubicación que especifique.",
   feedUrl: "URL de fuente RSS",
   credentialsUseMessage:
-    "* Se proporcionarán las siguientes credenciales si esta fuente RSS solicita autenticación.",
+    "Se proporcionarán las siguientes credenciales si esta fuente RSS solicita autenticación.",
   discovery: "Descubrimiento",
   auth: "Autorización",
   unsubscribe: "Darse de baja",
@@ -208,11 +222,12 @@ const es = {
   importedAndArchived: "Artículos {importCt} importados. Artículos {archiveCt} archivados debido a su antigüedad.",
   importedNArticles: "{n} artículos importados (nada nuevo).",
   timestamp: "Marca de tiempo",
+  postStatus: "Status",
   message: "Mensaje",
   httpStatusLabel: "Estado HTTP",
   httpRedirect: "Estado de redirección HTTP",
   error: "Error",
-  updateAuth: "Actualizar credenciales",
+  updateAuth: "Update credentials for subscription: {subscriptionName}",
   lastImportedAt: "Última importación en: {timestamp}",
   // rss feed info
   authorColon: "Autor:",
@@ -268,19 +283,24 @@ const es = {
     "Además de las consultas básicas de campo:valor, Newsgears admite opciones de búsqueda más avanzadas, como búsquedas con comodines, búsquedas aproximadas y búsquedas de rango. Puede consultar la documentación de Newsgears para obtener más detalles sobre estas opciones de búsqueda avanzada.",
   // help panel
   newsgearsHelp: "Newsgears Help",
-  dismiss: "Despedir",
-  globalShortcutKeys: "TECLAS DE ACCESO DIRECTO GLOBALES",
-  key: "Tecla",
-  action: "Acción",
-  configureSelectedQueue: "Configurar la cola seleccionada",
-  markSelectedQueueAsRead: "Marcar la cola seleccionada como leída",
-  deleteSelectedQueue: "Eliminar la cola seleccionada",
-  addSubscriptionToSelectedQueue: "Agregar una suscripción a la cola seleccionada",
-  showUnread: "Mostrar no leídos",
-  showReadLater: "Mostrar leer más tarde",
-  showRead: "Mostrar leído",
-  search: "Buscar",
-  // iTunes
+  globalShortcutKeys: "GLOBAL SHORTCUT KEYS",
+  key: "Key",
+  action: "Action",
+  configureSelectedQueue: "Configure the selected queue",
+  markSelectedQueueAsRead: "Mark the selected queue as read",
+  markRead: "Mark as read",
+  markUnread: "Mark as unread",
+  markReadLater: "Mark as read-later",
+  deleteSelectedQueue: "Delete the selected queue",
+  addSubscriptionToSelectedQueue: "Add a subscription to selected queue",
+  showUnread: "Show unread",
+  hideUnread: "Hide unread",
+  showReadLater: "Show read-later",
+  hideReadLater: "Hide read-later",
+  showRead: "Show read",
+  hideRead: "Hide read",
+  search: "Search",
+  // post iTunes
   iTunesTitle: "TITLE: {title}",
   iTunesSubTitle: "SUBTITLE: {subTitle}",
   iTunesAuthor: "AUTHOR: {author}",
@@ -293,10 +313,11 @@ const es = {
   episodeType: "Episodio {episodeType}",
   // post media
   media: "MEDIOS DE COMUNICACIÓN",
-  // community
+  // post community
   nViews: "PUNTOS DE VISTA",
   tags: "ETIQUETAS",
   // post media content
+  medium: "Medium: {type} ({index}/{total})",
   audioChannelsColon: "CANALES DE AUDIO:",
   bitRateColon: "TASA DE BITS:",
   durationColon: "DURACIÓN:",
@@ -308,6 +329,7 @@ const es = {
   languageColon: "IDIOMA:",
   samplingRateColon: "TASA DE MUESTREO:",
   // opml
+  opmlUPlod: "OPML UPLOAD",
   uploadOpmlHere: 'Utilice esta pantalla para cargar un archivo OPML que contenga información sobre sus suscripciones a feeds desde otra plataforma.',
   createQueuesFromOPML: "Cargue OPML para crear colas",
   selectAnOpmlFile: "Seleccione un archivo OPML",
@@ -325,48 +347,36 @@ const es = {
   newSubscriptions: "New subscriptions",
   weWillCreateTheFollowingSubscriptions:
     "Crearemos las siguientes colas a partir de su(s) archivo(s) OPML:",
-  // post feed
+  //  app bar 
   toggleDashboard: "Mostrar/ocultar tablero",
+  // queue card sheet 
+  queueDashboard: "QUEUE DASHBOARD",
   thisIsYourQueueDashboard: "Este es su tablero de colas. El panel muestra estadísticas de resumen sobre cada cola, como la cantidad de elementos no leídos en un grupo de suscripciones. Haga clic en una tarjeta de cola para ver los artículos en esa cola. Use los botones de la tarjeta de cola para agregar, administrar, suscribirse y cancelar la suscripción a las fuentes. Presione ESC para ocultar este menú.",
+  // queue layout 
   refreshQueues: "Actualizar colas",
+  // queue operations 
   refreshForLatest: "Actualizar esta cola para nuevos artículos",
   markQueueAsRead: "Marcar esta cola como leída",
   toggleSortOrder: "Alternar dirección de clasificación",
-  toggleFilterPills: "Alternar píldoras de filtro",
-  allSubscriptions: "todas las suscripciones",
-  all: "todos",
-  unread: "NO LEÍDO",
-  unreadDetails: "Show currently unread posts",
-  readLater: "LEER MÁS TARDE",
-  readLaterDetails: "Show posts marked as read-later",
-  read: "LEÍDO",
-  readDetails: "Show already read posts",
-  clear: "CLARA",
-  toggleUnread: 'Mostrar/ocultar artículos no leídos',
-  toggleRead: 'Mostrar/ocultar artículos leídos',
-  toggleReadLater: 'Mostrar/ocultar artículos para leer más tarde',
   // queue select button
   showMoreInfo: "Mostrar suscripciones",
   hideMoreInfo: "Ocultar suscripciones",
+  selectQueue: 'Select queue',
   addSubscriptions: "Agregar suscripciones",
-  manageSubscriptions: "Administrar suscripciones ({ct})",
+  // queue details 
   subscriptions: "SUSCRIPCIONES",
   recentArticles: "ARTÍCULOS RECIENTES",
-  zeroSubscriptions: "0 suscripciones",
+  subscriptionName: "Feed Name",
   importerRanAt: "Importadora corrió a las {importTimestamp}",
   nNewArticlesSaved: "{n} nuevos artículos guardados",
   nArticlesArchived: "{n} artículos archivados",
-  httpStatus: "HTTP {httpStatusCode} ({httpStatusMessage})",
-  redirectedTo:
-    "Redirigido a {redirectFeedUrl} HTTP {redirectHttpStatusCode} ({redirectHttpStatusMessage})",
   metricsNotYetAvailable: "Las métricas aún no están disponibles para esta fuente RSS.",
+  // home 
   confirmDeleteQueue:
     "Confirme que desea eliminar esta cola. Esta acción es irreversible.",
   confirmMarkQueueAsRead:
     "Confirme que desea marcar todos los elementos de esta cola como leídos.",
-  queueDashboard: "PANEL DE RSS",
-  queueSettings: "AJUSTES DE COLA",
-  opmlUpload: "CARGA OPML",
+  // useQueues 
   refreshFailedDueTo: "Actualizar falló debido a",
   noMessage: "sin mensaje",
   queueUpdated:
@@ -374,21 +384,18 @@ const es = {
   queueCreated:
     "Queue created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
   nQueuesCreated:
-    " queues created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
-  noArticlesInThisQueue: "Ningún artículo en esta cola cumple con sus criterios. Ajuste su filtro, agregue más suscripciones o espere a que se importen más artículos.",
-  clickHereToAddANewSubscription: "YOU HAVE ONE OR MORE FEED URLs",
+    "{n} queues created.  We're sorting out your new subscriptions in the background.  This process may take several minutes.",
+  // queue setup 
+  queueInitialSetup: "QUEUE INITIAL SETUP",
+  queueInitialSetup_details: "Use this screen to add upstream news sources to your queue.",
+  clickHereToAddANewSubscription: "CLICK HERE IF YOU HAVE ONE OR MORE FEED URLs",
   clickHereToAddANewSubscription_detail: "Click here to subscribe to a feed if you have the URL. Feed URLs are typically of the form 'https://' or 'rss://', though you can enter any URL and we will attempt to locate the feed.",
-  clickHereToUploadOPML: "YOU HAVE ONE OR MORE OPML FILES",
+  clickHereToUploadOPML: "CLICK HERE IF YOU HAVE ONE OR MORE OPML FILES",
   clickHereToUploadOPML_detail: "OPML files are used by many feed aggregators as a way of represent collections of feed subscriptions. Many aggregators will allow you to export your subscriptions in the form of an OPML file, so that you can take your subscriptions with you when you migrate to another service.",
   clickHereToUploadOPML_detail1: "If you have an OPML file, click here to begin migrating your subscriptions to Newsgears using our OPML editor.",
-  // clickHereToBrowseCatalog: "BROWSE OUR FEED CATALOG",
-  // clickHereToBrowseCatalog_detail: "Click here to subscribe to a feed from our up-to-date, searchable catalog of interesting feeds.",
-  unreadCount: '{n} artículos no leídos',
-  readCount: '{n} leer artículos',
-  totalCount: '{n} artículos',
+  // queue select button 
   nTotalArticlesInQueue: '{n} Total de artículos en esta cola',
-  // post item
-  showPostDetails: "Mostrar detalles de la publicación",
+  // post card 
   showPostCategories: "Mostrar categorías de publicaciones",
   addCategoryToFilter: "Añadir esta categoría ({postCategory}) al filtro",
   showPostSharing: "Mostrar publicación compartida",
@@ -397,10 +404,10 @@ const es = {
   shareWith_telegram: "Compartir con Telegram",
   shareWith_linkedIn: "Compartir con LinkedIn",
   shareWith_blogger: "Compartir con Blogger",
+  // home 
   goToNextPost: "Ir a la siguiente publicación",
   goToPreviousPost: "Ir a la publicación anterior",
-  goToFirstPost: "Ir a la primera publicación",
-  goToLastPost: "Ir a la última publicación",
+  // post card 
   markPostAsUnread: "Marcar como no leído",
   markPostAsRead: "Marcar como leído",
   markPostAsReadLater: "Marcar como leído más tarde",
@@ -415,10 +422,10 @@ const es = {
   updatedColon: "ACTUALIZADO:",
   publishedColon: "PUBLICADO:",
   contributors: "CONTRIBUYENTES",
+  // post enclsoure 
+  enclosureOfType: 'ENCLOSURE ({type})',
   // settings
   accountSettings: "CONFIGURACIONES DE LA CUENTA",
-  usernameColon: "NOMBRE DE USUARIO:",
-  emailAddress: "Dirección de Correo Electrónico",
   emailAddressColon: "DIRECCIÓN DE CORREO ELECTRÓNICO:",
   applyChanges: "Aplicar cambios",
   deactivateYourAccount: "Desactiva tu cuenta",
@@ -430,21 +437,8 @@ const es = {
   updateNotificationPreferences: "Actualizar preferencias de notificación",
   enableAccountAlertsNotifications:
     "Habilite esta opción para recibir alertas de cuenta y notificaciones de mantenimiento.",
-  enableSelectedNotifications: "Habilitar notificaciones seleccionadas",
   settingsUpdated: "Ajustes actualizan",
-  updateLightTheme: "Haga clic aquí para guardar sus cambios en el tema de la luz",
-  updateDarkTheme: "Haga clic aquí para guardar sus cambios en el tema oscuro",
-  themeSettingsUpdated: "Configuración del tema actualizada",
   opmlExportDownloaded: "Exportación OPML descargada",
-  yourSubscriptionWasCanceledClickToResume:
-    "Su suscripción fue cancelada. Para reanudar, haga clic en 'Reanudar suscripción' en esta página.",
-  yourSubscriptionWasResumed: "Tu suscripción fue reanudada",
-  subscriptionStatus:
-    "Su suscripción está actualmente {status}.  Comenzó el {started}.",
-  // docs
-  newsgearsDocumentation: "DOCUMENTACIÓN DE ENGRANAJES",
-  // api
-  newsgearsApi: "NEWSGEARS API",
   // verification callback
   thanksForVerifying:
     "¡Gracias por verificar! El estado de su cuenta ha sido actualizado.",
@@ -490,7 +484,6 @@ const es = {
   howCanYouContactUs: "¿Cómo puede ponerse en contacto con nosotros acerca de este aviso?",
   // aria labels
   switchModeAriaLabel: "Cambiar a tema claro u oscuro",
-  goToSettingsAriaLabel: "Ir a la configuración de la cuenta",
   shareWith_twitter_ariaLabel: "Compartir con Twitter",
   shareWith_facebook_ariaLabel: "Compartir con Facebook",
   shareWith_telegram_ariaLabel: "Compartir con Telegram",

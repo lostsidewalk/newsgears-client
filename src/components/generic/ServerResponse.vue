@@ -1,7 +1,8 @@
 <template>
   <v-alert
     v-if="serverMessage"
-    class="ma-4 text-align-cener"
+    class="text-align-cener"
+    :class="ma4r"
     type="error"
     theme="dark"
   >
@@ -10,8 +11,11 @@
 </template>
 
 <script>
+import spacingMixin from '@/mixins/spacingMixin';
+
 export default {
-  name: "AuthServerResponse",
+  name: "ServerResponse",
+  mixins: [spacingMixin],
   props: {
     serverMessage: { type: String, default: "" },
   },

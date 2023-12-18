@@ -9,7 +9,7 @@
     <template #body>
       <v-row
         cols="12"
-        class="mb-16"
+        :class="mb16r"
       >
         <v-col
           md="6"
@@ -52,11 +52,14 @@
 
 <script>
 import DemoFeature from './DemoFeature.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
+  name: "FeedDashboardDemoFeature",
   components: {
     DemoFeature, 
   },
+  mixins: [spacingMixin],
   props: {
     isDark: { type: Boolean, default: false },
   }

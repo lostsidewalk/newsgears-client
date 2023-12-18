@@ -17,7 +17,7 @@
       </v-card>
       <v-card
         variant="text"
-        class="mt-4 mb-16"
+        :class="mt4r + ',' + mb16r"
       >
         <v-card-text>
           <section>
@@ -66,11 +66,14 @@
 
 <script>
 import DemoFeature from './DemoFeature.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
+  name: "EnhancledFilteringDemoFeature",
   components: {
     DemoFeature, 
   },
+  mixins: [spacingMixin],
   props: {
     isDark: { type: Boolean, default: false },
   }

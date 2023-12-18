@@ -25,9 +25,6 @@
 <script>
 export default {
   name: "PostMediaCommunity",
-  components: {
-
-  },
   props: {
     community: { type: Object, required: true },
   },

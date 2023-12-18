@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="mt-10 mb-10"
+            :class="my10r"
             v-bind="props"
             variant="flat"
           >
@@ -23,14 +23,20 @@
               <!-- col -->
               <v-col cols="12">
                 <!-- card-text -->
-                <v-card-text class="mt-12 mb-12">
+                <v-card-text :class="my12r">
                   <!-- banner (large) -->
-                  <div class="text-h5 text-center mt-4 mb-4 logotext">
+                  <div
+                    class="text-h5 text-center logotext"
+                    :class="my4r"
+                  >
                     {{ $t("accountRecovery") }}
                   </div>
                   <!-- banner (small) -->
-                  <div class="text-center mb-4">
-                    {{ $t('pwResetRequestMessage') }}
+                  <div
+                    class="text-center"
+                    :class="mb4r"
+                  >
+                    {{ $t("pwResetRequestMessage") }}
                   </div>
                   <!-- row -->
                   <v-row
@@ -43,47 +49,54 @@
                       sm="8"
                     >
                       <!-- username -->
-                      <AuthTextField
-                        class="mt-4 mb-4"
-                        :label="$t('username')" 
-                        :placeholder="$t('username')" 
-                        :model-value="username" 
-                        @update:modelValue="username = $event"
+                      <v-text-field
+                        v-model="username"
+                        :class="my4r"
+                        :label="$t('username')"
+                        :placeholder="$t('username')"
+                        outlined
+                        dense
+                        variant="solo-filled"
+                        autocomplete="false"
+                        :aria-label="$t('username')"
                       />
                       <!-- email address -->
-                      <AuthTextField
-                        class="mt-4 mb-4"
-                        :label="$t('emailAddress')" 
-                        :placeholder="$t('emailAddress')" 
-                        :model-value="email" 
-                        @update:modelValue="email = $event"
+                      <v-text-field
+                        v-model="email"
+                        :class="my4r"
+                        :label="$t('emailAddress')"
+                        :placeholder="$t('emailAddress')"
+                        outlined
+                        dense
+                        variant="solo-filled"
+                        autocomplete="false"
+                        :aria-label="$t('emailAddress')"
                       />
                       <div class="d-flex flex-row flex-wrap">
                         <!-- submit button -->
-                        <AuthButton
-                          class="ma-4"
+                        <PanelButton
+                          :class="ma4r"
                           :label="$t('submit')"
                           :is-loading="isLoading"
-                          @clicked="$emit('submitPwReset', { email: email, username: username })"
+                          @clicked="submitPwReset"
                         />
                       </div>
-                      <AuthPanelLink
-                        :to="'/app'"
+                      <PanelLink
+                        :to="'/login'"
                         :message="$t('alreadyHaveAnAccount')"
                       />
-                      <AuthPanelLink
+                      <PanelLink
                         :to="'/register'"
                         :message="$t('registerHere')"
                       />
-                      <AuthServerResponse
-                        :server-message="serverMessage"
-                      />
+                      <ServerResponse :server-message="serverMessage" />
                       <v-btn
                         :size="buttonSize"
                         variant="text"
-                        class="mt-4 mb-4 pa-2"
-                        block 
-                        :text="$t('privacyPolicy')" 
+                        class="pa-2"
+                        :class="my4r"
+                        block
+                        :text="$t('privacyPolicy')"
                         @click="showPrivacyPolicy = !showPrivacyPolicy"
                       />
                       <v-dialog
@@ -91,10 +104,12 @@
                         fullscreen
                         scrollable
                       >
-                        <PrivacyPolicyPanel @dismiss="showPrivacyPolicy = false" />
+                        <PrivacyPolicyPanel
+                          @dismiss="showPrivacyPolicy = false"
+                        />
                       </v-dialog>
                     </v-col>
-                  </v-row>  
+                  </v-row>
                 </v-card-text>
               </v-col>
             </v-row>
@@ -106,40 +121,53 @@
 </template>
 
 <script>
-import AuthTextField from '@/components/auth/AuthTextField.vue';
-import AuthButton from '@/components/auth/AuthButton.vue'
-import AuthPanelLink from '@/components/auth/AuthPanelLink.vue';
-import AuthServerResponse from '@/components/auth/AuthServerResponse.vue';
-import PrivacyPolicyPanel from '@/components/privacy-policy-panel/PrivacyPolicyPanel.vue';
-import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import { ref } from "vue";
 
+import PanelButton from "@/components/generic/PanelButton.vue";
+import PanelLink from "@/components/generic/PanelLink.vue";
+import ServerResponse from "@/components/generic/ServerResponse.vue";
+import PrivacyPolicyPanel from "@/components/privacy-policy-panel/PrivacyPolicyPanel.vue";
+import buttonSizeMixin from "@/mixins/buttonSizeMixin";
+import spacingMixin from "@/mixins/spacingMixin";
 
 export default {
+  name: "PasswordResetRequestPanel",
   components: {
-    AuthTextField,
-    AuthButton,
-    AuthPanelLink,
-    AuthServerResponse,
+    PanelButton,
+    PanelLink,
+    ServerResponse,
     PrivacyPolicyPanel,
   },
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   props: {
     serverMessage: { type: String, default: null },
     isLoading: { type: Boolean, default: false },
   },
   emits: ["submitPwReset"],
-  data() {
-    return {
-      username: '',
-      email: '',
-      showPrivacyPolicy: false,
+  setup({ emit }) {
+    const username = ref(null);
+    const email = ref(null);
+    const showPrivacyPolicy = ref(false);
+
+    function submitPwReset() {
+      emit('submitPwReset', {
+        email: this.email,
+        username: this.username,
+      });
     }
+
+    return {
+      username,
+      email,
+      showPrivacyPolicy,
+      submitPwReset,
+    };
   },
-}
+};
 </script>
 
 <style scoped>
 .logotext {
-  font-family: 'Russo One' !important;
+  font-family: "Russo One" !important;
 }
 </style>

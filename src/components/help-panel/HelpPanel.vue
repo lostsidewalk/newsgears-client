@@ -1,6 +1,9 @@
 <template>
   <v-card>
-    <v-card-title class="text-center pa-4">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       {{ $t('newsgearsHelp') }}
     </v-card-title>
     <v-divider />
@@ -20,6 +23,7 @@
 
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 import GlobalShortcutKeys from './GlobalShortcutKeys.vue';
 
@@ -28,7 +32,7 @@ export default {
   components: {
     GlobalShortcutKeys,
   },
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   emits: ["dismiss"], 
 }
 </script>

@@ -1,6 +1,9 @@
 <template>
   <v-card elevation="6">
-    <v-card-title class="question-verbiage text-center pa-4">
+    <v-card-title
+      class="question-verbiage text-center"
+      :class="pa4r"
+    >
       {{ $t('rssMadeEasy') }}
     </v-card-title>
     <v-divider />
@@ -30,10 +33,11 @@
 
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "VideoPanel",
-  mixins: [buttonSizeMixin], 
+  mixins: [buttonSizeMixin, spacingMixin], 
   emits: ["dismiss"],
 }
 </script>

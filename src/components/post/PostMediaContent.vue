@@ -1,31 +1,44 @@
 <template>
   <v-card
-    variant="flat"
+    variant="elevated"
     align="left"
     justify="left"
   >
     <!-- metadata -->
     <PostMediaMetadata
-      v-if="mediaContent.metadata"
+      v-if="hasMetadata"
       :metadata="mediaContent.metadata"
     />
+    <v-card-title
+      :class="{ 'clickable' : isAudio || isVideo }"
+      @click="$event => { 
+        if (isAudio || isVideo) { 
+          $emit('playEnclosure', mediaContent.reference.uri) 
+        }
+      }"
+    >
+      <v-label>
+        <v-icon
+          icon="fa-image"
+          class="mr-2"
+        />
+        {{ $t('medium', { type: mediaContent.type, index, total }) }}
+      </v-label>
+    </v-card-title>
     <!-- reference -->
     <v-card-text>
       <v-dialog
         v-model="showContents"
-        fullscreen
         scrollable
       >
-        <!-- TODO: extract video player component -->
-        <vue-plyr v-if="isVideo">
-          <div class="plyr__video-embed">
-            <iframe
-              allowfullscreen 
-              allowtransparency
-              :src="mediaContent.reference.uri"
-            />
-          </div>
-        </vue-plyr>
+        <!-- icon (audio/video) -->
+        <v-icon
+          v-if="isAudio || isVideo"
+          :icon="isAudio ? 'fa-headphones' : 'fa-camera'"
+          :title="mediaContent.reference.uri"
+          @click="$emit('playEnclosure', mediaContent.reference.uri)"
+        />
+        <!-- icon (image) -->
         <v-img
           v-else
           :src="mediaContent.reference.uri"
@@ -36,6 +49,7 @@
       </v-dialog>
       <v-img
         :src="mediaContent.reference.uri"
+        class="clickable"
         @click="showContents = true"
       />
       <!-- TODO: extract media properties component -->
@@ -106,6 +120,8 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import PostMediaMetadata from './PostMediaMetadata.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
@@ -116,49 +132,68 @@ export default {
   },
   mixins: [buttonSizeMixin],
   props: {
+    index: { type: Number, required: true },
+    total: { type: Number, required: true },
     mediaContent: { type: Object, required: true },
   },
-  data() {
-    return {
-      showContents: false,
-    }
-  },
-  computed: {
-    hasUseableProperties: function () {
+  emits: ["playEnclosure"],
+  setup(props) { 
+    const showContents = ref(false);
+
+    const hasMetadata = computed(() => {
+      return Object.keys(props.mediaContent.metadata).length > 0;
+    });
+    const hasUseableProperties = computed(() => {
       let p = false;
-      if (this.mediaContent.audioChannels || 
-        this.mediaContent.bitRate || 
-        this.mediaContent.duration ||
-        this.mediaContent.expression || 
-        this.mediaContent.fileSize || 
-        this.mediaContent.frameRate || 
-        this.mediaContent.height || 
-        this.mediaContent.width || 
-        this.mediaContent.language || 
-        this.mediaContent.samplingRate) {
+      if (props.mediaContent.audioChannels || 
+        props.mediaContent.bitRate || 
+        props.mediaContent.duration ||
+        props.mediaContent.expression || 
+        props.mediaContent.fileSize || 
+        props.mediaContent.frameRate || 
+        props.mediaContent.height || 
+        props.mediaContent.width || 
+        props.mediaContent.language || 
+        props.mediaContent.samplingRate) {
           p = true;
         }
       return p;
-    },
-    isVideo: function () {
-      return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("video") >= 0);
-    },
-    isAudio: function () {
-      return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("audio") >= 0);
-    },
-    isImage: function () {
-      return this.mediaContent.type && (this.mediaContent.type.indexOf("shockwave-flash") >= 0 || this.mediaContent.type.indexOf("image") >= 0);
-    },
-    mediaContentIcon: function() {
-      if (this.isVideo) {
+    });
+
+    const isVideo = computed(() => {
+      return props.mediaContent.type && props.mediaContent.type.indexOf("shockwave-flash") >= 0 || props.mediaContent.type.indexOf("video") >= 0;
+    });
+
+    const isAudio = computed(() => {
+      return props.mediaContent.type && props.mediaContent.type.indexOf("audio") >= 0;
+    });
+
+    const isImage = computed(() => {
+      return props.mediaContent.type && props.mediaContent.type.indexOf("image") >= 0;
+    });
+
+    const mediaContentIcon = computed(() => {
+      if (isVideo) {
         return 'fa-file-video-o';
-      } else if (this.isAudio) {
+      } else if (isAudio) {
         return 'fa-headphones';
-      } else if (this.isImage) {
+      } else if (isImage) {
         return 'fa-file-image-o';
       }
 
       return 'fa-file-o';
+    });
+
+
+    return {
+      showContents,
+      // 
+      mediaContentIcon,
+      isImage,
+      isAudio,
+      isVideo,
+      hasUseableProperties,
+      hasMetadata
     }
   },
 }

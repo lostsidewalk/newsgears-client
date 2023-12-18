@@ -46,13 +46,13 @@ const vuetify = createVuetify({
   directives,
   defaults: {
     VCardTitle: {
-      style: 'font-family: "Russo One", system-ui, sans-serif;white-space: normal;',
+      style: 'font-family: "Russo One", system-ui, sans-serif;white-space: normal;font-size:medium;',
     },
     VCardSubtitle: {
       style: "white-space: normal;",
     },
     VCardActions: {
-      style: "overflow: auto;flex-wrap: wrap;justify-content: space-evenly;",
+      style: "overflow: auto;flex-wrap: wrap;align-items: baseline;",
     },
     //
     VCard: {

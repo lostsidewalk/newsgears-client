@@ -9,12 +9,6 @@
   />
 </template>
 
-<script>
-export default {
-  name: "SignUpButton",
-}
-</script>
-
 <style scoped>
 .signup-button {
   min-height: 3rem;

@@ -202,7 +202,7 @@ export function useSettings(props) {
         clearTimeout(timeoutId);
         settingsIsLoading.value = false;
         auth.tearDownLoggedInSession();
-        router.value.push("/app");
+        router.value.push("/login");
       });
     }).catch((error) => {
       handleServerError(error);

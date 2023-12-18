@@ -42,8 +42,8 @@
 import { inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
-import GoBack from "@/components/layout/GoBack.vue";
-import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
+import GoBack from "@/components/generic/GoBack.vue";
+import DisplayModeButton from "@/components/generic/DisplayModeButton.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 
 export default {

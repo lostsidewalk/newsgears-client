@@ -1,7 +1,7 @@
 <template>
   <v-card
     elevation="6"
-    class="mb-4"
+    :class="mb4r"
   >
     <v-card-title>{{ $t('globalShortcutKeys') }}</v-card-title>
     <v-divider />
@@ -61,66 +61,78 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from 'vue-i18n';
+
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
-  mixins: [buttonSizeMixin],
-  data() {
-    return {
-      helpModel: {
+  name: "GlobalShortcutKeys",
+  mixins: [buttonSizeMixin, spacingMixin],
+  setup() {
+    const { t } = useI18n();
+
+    const helpModel = computed(() => {
+      return {
         fromAnywhere: [
           {
-            label: this.$t('switchMode'),
+            label: t('switchMode'),
             key: "ALT + L", // global accel 
           },
           {
-            label: this.$t('logout'),
+            label: t('logout'),
             key: "ALT + O", // global accel 
           },
           {
-            label: this.$t('settings'),
+            label: t('settings'),
             key: "ALT + T", // global accel 
           },
           {
-            label: this.$t('uploadOPML'),
+            label: t('uploadOPML'),
             key: "SHIFT + M", // global accel 
           },
           {
-            label: this.$t('createNewQueue'),
+            label: t('createNewQueue'),
             key: "SHIFT + Q" // key handler from anywhere 
           },
           {
-            label: this.$t('refreshQueues'),
+            label: t('refreshQueues'),
             key: "SHIFT + R" // key handler from anywhere 
           },
         ],
         aQueueIsSelected: [
           {
-            label: this.$t('configureSelectedQueue'),
+            label: t('configureSelectedQueue'),
             key: "SHIFT + E", // key handler when queue is selected 
           },
           {
-            label: this.$t('markSelectedQueueAsRead'),
+            label: t('markSelectedQueueAsRead'),
             key: "SHIFT + A", // key handler when queue is selected 
           },
           {
-            label: this.$t('deleteSelectedQueue'),
+            label: t('deleteSelectedQueue'),
             key: "SHIFT + D", // key handler when queue is selected 
           },
           {
-            label: this.$t('showReadLater'),
+            label: t('showReadLater'),
             key: "SHIFT + L", // key handler when queue is selected 
           },
           {
-            label: this.$t('showRead'),
+            label: t('showRead'),
             key: "SHIFT + H", // key handler when queue is selected 
           },
           {
-            label: this.$t('search'),
+            label: t('search'),
             key: "/", // key handler when queue is selected 
           },
         ],
       }
+    });
+
+    return {
+      helpModel,
     }
   }
 }

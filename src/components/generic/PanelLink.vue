@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "AuthPanelLink",
+  name: "PanelLink",
   props: {
     to: { type: String, required: true },
     message: { type: String, required: true },

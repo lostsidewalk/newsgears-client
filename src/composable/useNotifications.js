@@ -1,6 +1,7 @@
 import { ref, inject, readonly } from 'vue';
 import { useAnnouncer } from '@vue-a11y/announcer';
 import { useI18n } from 'vue-i18n';
+import { useNotificationStore } from '@/composable/useNotificationStore.js';
 
 
 export function useNotifications() {
@@ -8,6 +9,7 @@ export function useNotifications() {
   const vue3NativeNotifications = inject('vue3NativeNotifications');
   const { polite } = useAnnouncer();
   const showNotificationWarning = ref(false);
+  const notificationStore= useNotificationStore();
   // 
   // handleserver error 
   // 
@@ -49,12 +51,26 @@ export function useNotifications() {
 
   const roShowNotificationWarning = readonly(showNotificationWarning);
 
+  function consoleLog(message) {
+    console.log(message);
+    notificationStore.addMessage(message);
+  }
+
+  function consoleError(message) {
+    console.error(message);
+    notificationStore.addError(message);
+  }
+
   return {
+    notificationStore,
+    // 
     roShowNotificationWarning, 
     // 
     handleServerError, 
     setLastServerMessage,
     shouldShowAlert, 
     dismissAlert, 
+    consoleLog,
+    consoleError,
   }
 }

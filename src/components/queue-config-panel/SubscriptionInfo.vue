@@ -1,9 +1,7 @@
 <template>
   <v-card>
     <!-- title -->
-    <v-card-title
-      class="clickable"
-    >
+    <v-card-title>
       {{ info.title ? info.title : info.url }}
     </v-card-title>
     <v-divider />
@@ -13,7 +11,8 @@
         <v-col cols="2">
           <v-img
             v-if="info.icon"
-            class="mt-4 mb-4 rounded h-auto" 
+            class="rounded h-auto" 
+            :class="my4r"
             :src="info.icon.url" 
             :title="info.icon.title" 
             :alt="$t('feedLogoImage')" 
@@ -22,7 +21,8 @@
           />
           <v-img
             v-if="info.image && !info.icon"
-            class="mt-4 mb-4 rounded h-auto" 
+            class="rounded h-auto" 
+            :class="my4r"
             :src="info.image.url" 
             :title="info.image.title" 
             :alt="$t('feedLogoImage')" 
@@ -31,7 +31,8 @@
           />
           <v-img
             v-if="!info || (!info.image && !info.icon)"
-            class="mt-4 mb-4 rounded h-auto" 
+            class="rounded h-auto" 
+            :class="my4r"
             src="rss_logo.svg"
             :alt="$t('rssLogo')"
             contain
@@ -99,7 +100,7 @@
           </v-list>
           <v-label
             v-else
-            class="mt-4 mb-4"
+            :class="my4r"
           >
             {{ $t('metricsNotYetAvailable') }}
           </v-label>
@@ -222,99 +223,101 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import { useTimestamp } from '@/composable/useTimestamp.js';
 import SubscriptionMetrics from './SubscriptionMetrics.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "SubscriptionInfo",
   components: {
     SubscriptionMetrics
   },
-  mixins: [buttonSizeMixin], 
+  mixins: [buttonSizeMixin, spacingMixin], 
   props: {
     info: { type: Object, required: true }
   },
-  setup() {
+  setup(props) {
     const { formatTimestamp } = useTimestamp();
 
-    return {
-      formatTimestamp
-    }
-  },
-  data() {
-    return {
-      showSubscriptionMetrics: false,
-      cardMode: null,
-    }
-  },
-  computed: {
-    httpStatusCode: function () {
-      let m = this.mostRecentSubscriptionMetric;
+    const showSubscriptionMetrics = ref(false);
+    const cardMode = ref(null);
+
+    const httpStatusCode = computed(() => {
+      let m = mostRecentSubscriptionMetric;
       if (m) {
         return m.httpStatusCode;
       }
       return null;
-    },
-    httpStatusMessage: function () {
-      let m = this.mostRecentSubscriptionMetric;
+    });
+    
+    const httpStatusMessage = computed(() => {
+      let m = mostRecentSubscriptionMetric;
       if (m) {
         return m.httpStatusMessage;
       }
       return null;
-    },
-    redirectFeedUrl: function() {
-      let m = this.mostRecentSubscriptionMetric;
+    });
+
+    const redirectFeedUrl = computed(() => {
+      let m = mostRecentSubscriptionMetric;
       if (m) {
         return m.redirectFeedUrl;
       }
       return null;
-    },
-    redirectHttpStatusCode: function() {
-      let m = this.mostRecentSubscriptionMetric;
+    });
+
+    const redirectHttpStatusCode = computed(() => {
+      let m = mostRecentSubscriptionMetric;
       if (m) {
         return m.redirectHttpStatusCode;
       }
       return null;
-    },
-    redirectHttpStatusMessage: function() {
-      let m = this.mostRecentSubscriptionMetric;
+    });
+
+    const redirectHttpStatusMessage = computed(() => {
+      let m = mostRecentSubscriptionMetric;
       if (m) {
         return m.redirectHttpStatusMessage;
       }
       return null;
-    },
-    mostRecentSubscriptionMetric: function () {
-      let len = this.info.subscriptionMetrics ? this.info.subscriptionMetrics.length : 0;
+    });
+
+    const mostRecentSubscriptionMetric = computed(() => {
+      let len = props.info.subscriptionMetrics ? props.info.subscriptionMetrics.length : 0;
       if (len > 0) {
-        return this.info.subscriptionMetrics[len - 1];
+        return props.info.subscriptionMetrics[len - 1];
       }
       return null;
-    },
-    hasChips: function () {
-      return this.info.author || 
-        this.info.copyright ||
-        this.info.publishedDate || 
-        this.info.categories || 
-        this.info.docs || 
-        this.info.encoding || 
-        this.info.managingEditor || 
-        this.info.webMaster;
-    },
+    });
+
+    const hasChips = computed(() => {
+      return props.info.author ||
+        props.info.copyright ||
+        props.info.publishedDate ||
+        props.info.categories ||
+        props.info.docs ||
+        props.info.encoding ||
+        props.info.managingEditor ||
+        props.info.webMaster;
+    });
+
+    return {
+      formatTimestamp,
+      // 
+      showSubscriptionMetrics,
+      cardMode,
+      // 
+      httpStatusCode,
+      httpStatusMessage,
+      redirectFeedUrl,
+      redirectHttpStatusCode,
+      redirectHttpStatusMessage,
+      mostRecentSubscriptionMetric,
+      hasChips,
+    }
   },
 }
 </script>
-
-<style scoped>
-.clickable:hover {
-  cursor: pointer;
-}
-
-.text-container {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  word-break: break-word;
-}
-</style>

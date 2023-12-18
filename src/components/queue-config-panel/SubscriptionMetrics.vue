@@ -1,6 +1,9 @@
 <template>
   <v-card>
-    <v-card-title class="pa-4 text-center">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       {{ $t("subscriptionMetrics") }}
     </v-card-title>
     <v-card-subtitle>
@@ -8,7 +11,8 @@
     </v-card-subtitle>
     <v-card-text>
       <v-data-table
-        class="ma-4 overflow-auto flex-grow-1"
+        class="overflow-auto flex-grow-1"
+        :class="ma4r"
         style="white-space: nowrap"
         :headers="headers"
         :items="dataTableItems"
@@ -32,10 +36,11 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTimestamp } from "@/composable/useTimestamp.js";
 import buttonSizeMixin from "@/mixins/buttonSizeMixin";
+import spacingMixin from "@/mixins/spacingMixin";
 
 export default {
   name: "SubscriptionMetrics",
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   props: {
     title: { type: String, required: true },
     subscriptionMetrics: { type: Array, required: true },

@@ -41,8 +41,8 @@ import { inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import BannerPanel from "@/components/banner-panel/BannerPanel.vue";
-import GoBack from "@/components/layout/GoBack.vue";
-import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
+import GoBack from "@/components/generic/GoBack.vue";
+import DisplayModeButton from "@/components/generic/DisplayModeButton.vue";
 import RegistrationRequestPanel from "@/components/registration-panel/RegistrationRequestPanel.vue";
 import FooterPanel from "@/components/footer-panel/FooterPanel.vue";
 
@@ -79,7 +79,7 @@ export default {
         .then((response) => {
           auth.loginWithSupplied(response.username, response.password, false)
           .then(() => {
-            router.value.push("/app");
+            router.value.push("/");
           })
           .catch((error) => {
             serverMessage.value = error;

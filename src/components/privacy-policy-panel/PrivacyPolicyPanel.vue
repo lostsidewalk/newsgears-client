@@ -1,18 +1,17 @@
 <template>
   <v-card>
-    <v-card-title class="pa-4">
+    <v-card-title :class="pa4r">
       {{ $t('newsgearsPrivacyPolicy') }}
     </v-card-title>
     <v-divider />
     <v-card-text>
-      <!-- TODO: refactor -->
       <!-- section -->
       <v-sheet>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('whatInformationDoWeCollect') }}
           </v-card-title>
           <v-card-subtitle>
@@ -24,9 +23,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('whatWeCollectImportantDetails') }}
           </v-card-title>
           <v-card-subtitle>
@@ -38,9 +37,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('howDoWeProcess') }}
           </v-card-title>
           <v-card-subtitle>
@@ -50,9 +49,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('socialLogins') }}
           </v-card-title>
           <v-card-subtitle>
@@ -64,9 +63,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('internationalInformationTransfers') }}
           </v-card-title>
           <v-card-subtitle>
@@ -78,9 +77,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('whatAreYourPrivacyRights') }}
           </v-card-title>
           <v-card-subtitle>
@@ -92,9 +91,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('yourConsent') }}
           </v-card-title>
           <v-card-subtitle>
@@ -104,9 +103,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('doWeMakeUpdates') }}
           </v-card-title>
           <v-card-subtitle>
@@ -116,9 +115,9 @@
         </v-card>
         <v-card
           elevation="6"
-          class="ma-4"
+          :class="ma4r"
         >
-          <v-card-title class="pa-4">
+          <v-card-title :class="pa4r">
             {{ $t('howCanYouContactUs') }}
           </v-card-title>
           <v-card-subtitle>
@@ -148,17 +147,20 @@
   
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "PrivacyPolicyPanel",
-  components: {
-  },
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   emits: ["dismiss"],
-  methods: {
-    sendSupportMail() {
+  setup() {
+    function sendSupportMail() {
       window.open('mailto:support@feedgears.com', '_blank');
-    },
-  },
+    }
+
+    return {
+      sendSupportMail,
+    }
+  }
 };
 </script>

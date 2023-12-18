@@ -5,7 +5,7 @@
     :title="$t('login')"
     append-icon="fa-sign-in"
     :text="$t('login')"
-    @click="$router.push('/app')"
+    @click="$router.push('/login')"
   />
 </template>
 

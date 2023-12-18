@@ -1,13 +1,20 @@
 <template>
   <v-card>
-    <v-card-title class="text-center pa-4">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       <h3 class="queue-settings">
         <v-icon icon="fa-rss" />
-        {{ queueId ? $t('queueSettings') : $t('createANewQueue') }}
+        {{ queueId ? queueTitle : $t('createANewQueue') }}
       </h3>
     </v-card-title>
-    <v-card-subtitle class="text-center pa-4">
-      {{ $t('configuringQueue' , { name: queueUnderConfig.ident }) }}
+    <v-card-subtitle
+      v-if="queueId"
+      class="text-center"
+      :class="pa4r"
+    >
+      {{ queueDescription }}
     </v-card-subtitle>
     <v-divider />
     <v-card-text>
@@ -44,11 +51,12 @@
           >
             <!-- add subscription from URL -->
             <v-card
-              class="ma-4"
+              :class="ma4r"
               elevation="0"
             >
               <v-card-title
-                class="pa-4 clickable"
+                class="clickable"
+                :class="pa4r"
                 @click.stop="showAddSubscription = !showAddSubscription"
               >
                 <v-btn
@@ -61,63 +69,49 @@
                 {{ $t('addANewSubscription') }}
               </v-card-title>
               <v-divider />
-              <v-alert
-                v-if="shouldShowAlert('addANewSubscriptionHere')"
-                v-show="showAddSubscription"
-                closable
-                variant="outlined"
+              <v-card-text
+                v-show="showSubscriptions"
                 border="top"
                 icon="fa-question-circle"
-                :text="$t('addANewSubscriptionHere')"
-                class="ma-4"
-                @click.close="dismissAlert('addANewSubscriptionHere')"
-              />
+              >
+                {{ $t('addANewSubscriptionHere') }}
+              </v-card-text>
               <v-card-text v-show="showAddSubscription">
                 <!-- text field -->
                 <v-text-field
                   v-model="newSubscription.url"
+                  style="min-width: 128px;"
                   variant="solo-filled"
                   type="text"
                   autofocus
                   :label="$t('feedUrl')"
                   :placeholder="$t('feedUrl')"
-                >
-                  <template #append>
-                    <v-btn-group>
-                      <v-btn
-                        variant="tonal"
-                        :size="buttonSize" 
-                        prepend-icon="fa-refresh"
-                        :loading="discoveryIsLoading"
-                        :disabled="!newSubscription.url"
-                        :title="$t('discovery')"
-                        :text="$t('discovery')"
-                        @click="doDiscovery(newSubscription)"
-                      />
-                      <v-btn
-                        variant="tonal"
-                        :size="buttonSize" 
-                        prepend-icon="fa-lock"
-                        :title="$t('auth')"
-                        :text="$t('auth')"
-                        @click="showNewSubscriptionAuthConfig = !showNewSubscriptionAuthConfig"
-                      />
-                    </v-btn-group>
-                  </template>
-                </v-text-field>
-                <v-alert
-                  v-if="showNewSubscriptionAuthConfig"
-                  type="info"
-                  :closable="false"
-                  :variant="newSubscription.url ? 'tonal' : 'outlined'"
-                  class="mb-4"
-                >
-                  {{ $t("credentialsUseMessage") }}
-                </v-alert>
+                />
+                <v-btn-group class="my-2 d-flex flex-wrap">
+                  <v-btn
+                    variant="tonal"
+                    :size="buttonSize" 
+                    prepend-icon="fa-refresh"
+                    :loading="discoveryIsLoading"
+                    :disabled="!newSubscription.url"
+                    :title="$t('discovery')"
+                    :text="$t('discovery')"
+                    @click="doDiscovery(newSubscription)"
+                  />
+                  <v-btn
+                    variant="tonal"
+                    :size="buttonSize" 
+                    prepend-icon="fa-lock"
+                    :title="$t('auth')"
+                    :text="$t('auth')"
+                    @click="showNewSubscriptionAuthConfig = !showNewSubscriptionAuthConfig"
+                  />
+                </v-btn-group>
                 <!-- username text field -->
                 <v-text-field
                   v-if="showNewSubscriptionAuthConfig"
                   v-model="newSubscription.username"
+                  class="my-2"
                   variant="solo-filled"
                   type="text"
                   :label="$t('username')"
@@ -129,6 +123,7 @@
                   v-if="showNewSubscriptionAuthConfig"
                   v-model="newSubscription.password"
                   variant="solo-filled"
+                  class="my-2"
                   type="password"
                   :label="$t('password')"
                   :placeholder="$t('password')"
@@ -170,11 +165,12 @@
             <!-- manage existing RSS/ATOM feed subscriptions -->
             <v-card
               v-if="subscriptions && subscriptions.length > 0"
-              class="ma-4"
+              :class="ma4r"
               elevation="0"
             >
               <v-card-title
-                class="pa-4 clickable"
+                class="clickable"
+                :class="pa4r"
                 @click="showSubscriptions = !showSubscriptions"
               >
                 <v-btn
@@ -187,17 +183,13 @@
                 {{ $t('yourSubscriptions') }}
               </v-card-title>
               <v-divider />
-              <v-alert
-                v-if="shouldShowAlert('manageYourSubscriptionsHere')"
+              <v-card-text
                 v-show="showSubscriptions"
-                closable
-                variant="outlined"
                 border="top"
                 icon="fa-question-circle"
-                :text="$t('manageYourSubscriptionsHere')"
-                class="ma-4"
-                @click.close="dismissAlert('manageYourSubscriptionsHere')"
-              />
+              >
+                {{ $t('manageYourSubscriptionsHere') }}
+              </v-card-text>
               <v-card-text
                 v-for="(subscription, idx) in subscriptions"
                 v-show="showSubscriptions"
@@ -230,23 +222,18 @@
             <!-- auth config dialog (existing subscriptions) -->
             <v-dialog
               v-model="showAuthConfig"
-              fullscreen
-              scrollable
             >
               <v-card>
-                <v-card-title class="pa-4">
-                  {{ $t('updateAuth') }}
+                <v-card-title :class="pa4r">
+                  {{ $t('updateAuth', { subscriptionName: subscriptionToUpdate.title }) }}
                 </v-card-title>
                 <v-divider />
                 <v-card-text>
-                  <v-alert
-                    type="info"
-                    :closable="false"
-                    variant="outlined"
-                    class="mb-4"
+                  <div 
+                    :class="mb4r"
                   >
                     {{ $t("credentialsUseMessage") }}
-                  </v-alert>
+                  </div>
                   <v-text-field
                     v-model="subscriptionToUpdate.username"
                     variant="solo-filled"
@@ -286,61 +273,69 @@
         >
           <v-sheet>
             <v-card variant="flat">
-              <v-card-title class="pa-4">
+              <v-card-title :class="pa4r">
                 {{ queueId ? $t('updateQueueSettings') : $t('createANewQueue') }}
               </v-card-title>
               <v-card-subtitle v-if="queueTitle">
                 {{ queueTitle }}
               </v-card-subtitle>
-              <v-divider class="mb-1 mt-1" />
-              <v-alert
-                v-if="shouldShowAlert('updateQueueSettingsHere')"
+              <v-divider class="my-1" />
+              <v-card-text
                 closable
-                variant="outlined"
                 border="top"
                 icon="fa-question-circle"
-                :text="queueId ? $t('updateQueueSettingsHere') : $t('createANewQueueHere')"
-                class="ma-4"
-                @click.close="dismissAlert('updateQueueSettingsHere')"
-              />
+                :class="ma4r"
+              >
+                {{ queueId ? $t('updateQueueSettingsHere') : $t('createANewQueueHere') }}
+              </v-card-text>
               <v-card-text>
                 <!-- queue ident -->
-                <QueueConfigTextField
-                  class="mb-4"
+                <v-text-field
+                  v-model="queueIdent"
+                  :class="mb4r"
                   :label="$t('queueIdentifier')"
                   :hint="$t('queueIdentifierHint')"
-                  :required="true"
-                  :placeholder="$t('queueIdentifier')" 
-                  :model-value="queueIdent" 
-                  @update:modelValue="queueIdent = $event"
+                  :required="true" 
+                  :placeholder="$t('queueIdentifier')"
+                  persistent-placeholder
+                  variant="solo-filled"
                 />
                 <!-- queue title -->
-                <QueueConfigTextField 
-                  class="mb-4"
+                <v-text-field
+                  v-model="queueTitle"
+                  :class="mb4r"
                   :label="$t('queueTitle')"
                   :hint="$t('queueTitleHint')"
                   :required="false"
                   :placeholder="$t('queueTitle')" 
-                  :model-value="queueTitle" 
-                  @update:modelValue="queueTitle = $event"
+                  persistent-placeholder
+                  variant="solo-filled"
                 />
                 <!-- queue description -->
-                <QueueConfigTextField 
-                  class="mb-4"
+                <v-text-field
+                  v-model="queueDescription"
+                  :class="mb4r"
                   :label="$t('queueDescription')"
                   :hint="$t('queueDescriptionHint')"
                   :required="false"
                   :placeholder="$t('queueDescription')"
-                  :model-value="queueDescription" 
-                  @update:modelValue="queueDescription = $event"
+                  persistent-placeholder
+                  variant="solo-filled"
                 />
               </v-card-text>
-              <v-divider v-if="!queueId" />
-              <v-card-actions v-if="!queueId">
+              <v-divider />
+              <v-card-actions>
                 <v-btn
+                  v-if="!queueId"
                   :size="buttonSize" 
                   :text="$t('save')"
                   @click="save"
+                />
+                <v-btn
+                  v-if="queueId"
+                  :size="buttonSize" 
+                  :text="$t('update')"
+                  @click="update"
                 />
               </v-card-actions>
             </v-card>
@@ -360,32 +355,37 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, computed, ref, reactive, onMounted } from 'vue';
+
+import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composable/useNotifications';
-import QueueConfigTextField from './QueueConfigTextField.vue';
+import { useQueues } from '@/composable/useQueues';
+
 import SubscriptionInfo from './SubscriptionInfo.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
   name: "QueueConfigPanel", 
   components: {
-    QueueConfigTextField,
     SubscriptionInfo,
   },
-  mixins: [buttonSizeMixin],
+  mixins: [
+    spacingMixin,
+    buttonSizeMixin
+  ],
   props: {
     baseUrl: { type: String, required: true },
-    queueUnderConfig: { type: Object, required: true },
   },
   emits: [ 
+    "dismiss", 
     "save", 
     "update", 
     "addSubscription", 
     "deleteSubscription", 
     "updateSubscriptionAuth", 
-    "dismiss" 
   ],
-  setup() {
+  setup(props, { emit }) {
     const auth = inject('auth');
     const { 
       shouldShowAlert,
@@ -393,61 +393,57 @@ export default {
       handleServerError, 
       setLastServerMessage 
     } = useNotifications();
+    const {
+      queueStore
+    } = useQueues(props);
 
-    return {
-      auth,
-      shouldShowAlert,
-      dismissAlert, 
-      handleServerError,
-      setLastServerMessage,
-    }
-  },
-  data() {
-    return {
-      // add/manage subscriptions
-      showAddSubscription: true,
-      showSubscriptions: true,
-      newSubscription: {},
-      discoveryIsLoading: false,
-      subscriptionToUpdate: null,
-      showNewSubscriptionAuthConfig: false,
-      showAuthConfig: false,
-      // queue properties 
-      queueId: this.queueUnderConfig.id,
-      queueIdent: this.queueUnderConfig.ident,
-      queueTitle: this.queueUnderConfig.title,
-      queueDescription: this.queueUnderConfig.description,
-      subscriptions: this.queueUnderConfig.subscriptions,
-      selectedTab: null,
-    };
-  },
-  computed: {
-    tabModel: function () {
+    const { t } = useI18n();
+
+    const tabModel = computed(() => {
       let arr = [];
-      if (this.queueId) {
+      if (queueId.value) {
         arr.push({
           name: "MANAGE_SUBSCRIPTIONS",
-          description: this.$t('manageSubscriptions', { ct: this.subscriptions.length }),
+          description: t('manageSubscriptions', { ct: subscriptions.length }),
           icon: "feed",
         })
         arr.push({
           name: "QUEUE_PROPERTIES",
-          description: this.$t('queueProperties'),
+          description: t('queueProperties'),
           icon: "list",
         });
       }
       return arr;
-    },
-  },
-  mounted() {
-    this.selectedTab = this.queueId ? 'MANAGE_SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
-  },
-  methods: {
-    alreadySubscribed(url) {
-      if (url && this.subscriptions) {
+    });
+
+    const queueId = ref(queueStore.queueUnderConfig.id);
+    const queueIdent = ref(queueStore.queueUnderConfig.ident);
+    const queueTitle = ref(queueStore.queueUnderConfig.title);
+    const queueDescription = ref(queueStore.queueUnderConfig.description);
+    const queueGenerator = ref(queueStore.queueUnderConfig.generator);
+    const queueCopyright = ref(queueStore.queueUnderConfig.copyright);
+    const queueLanguage = ref(queueStore.queueUnderConfig.language);
+    const subscriptions = reactive(queueStore.queueUnderConfig.subscriptions);
+    // add/manage subscriptions
+    const showAddSubscription = ref(true);
+    const showSubscriptions = ref(true);
+    const newSubscription = ref({});
+    const discoveryIsLoading = ref(false);
+    const subscriptionToUpdate = ref(null);
+    const showNewSubscriptionAuthConfig = ref(false);
+    const showAuthConfig = ref(false);
+    // queue properties 
+    const selectedTab = ref(null);
+
+    onMounted(() => {
+      selectedTab.value = queueId.value ? 'MANAGE_SUBSCRIPTIONS' : 'QUEUE_PROPERTIES';
+    });
+
+    function alreadySubscribed(url) {
+      if (url && subscriptions) {
         let u = new String(url).trim().toLowerCase();
-        for (let i = 0; i < this.subscriptions.length; i++) {
-          let existingUrl = this.subscriptions[i].url;
+        for (let i = 0; i < subscriptions.length; i++) {
+          let existingUrl = subscriptions[i].url;
           if (!existingUrl) {
             continue;
           }
@@ -458,53 +454,61 @@ export default {
       } else {
         return false;
       }
-    },
+    }
+
     // emit save 
-    save() {
+    function save() {
       let saveObj = {
-        ident: this.queueIdent,
-        title: this.queueTitle,
-        description: this.queueDescription,
-        generator: this.queueGenerator,
-        copyright: this.queueCopyright,
-        language: this.queueLanguage,
+        ident: queueIdent.value,
+        title: queueTitle.value,
+        description: queueDescription.value,
+        // 
+        generator: queueGenerator.value,
+        copyright: queueCopyright.value,
+        language: queueLanguage.value,
+        //
       };
       // invokes HomeQuues->createQueue
-      this.$emit('save', saveObj);
-    },
+      emit('save', saveObj);
+    }
+    
     // emit update 
-    update() {
+    function update() {
       let saveObj = {
-        id: this.queueId, 
-        ident: this.queuedIdent,
-        title: this.queueTitle,
-        description: this.queueDescription,
-        generator: this.queueGenerator,
-        copyright: this.queueCopyright,
-        language: this.queueLanguage,
+        id: queueId.value, 
+        ident: queueIdent.value,
+        title: queueTitle.value,
+        description: queueDescription.value,
+        generator: queueGenerator.value,
+        copyright: queueCopyright.value,
+        language: queueLanguage.value,
       };
       // invokes HomeQuues->updateQueue
-      this.$emit('update', saveObj);
-    },
+      emit('update', saveObj);
+    }
+
     // emit addSubscription 
-    addSubscription() {
-      this.newSubscription.discoveryUrl = null;
-      this.$emit('addSubscription', this.newSubscription);
-    },
+    function addSubscription() {
+      newSubscription.value.discoveryUrl = null;
+      emit('addSubscription', newSubscription.value);
+    }
+
     // emit deleteSubscription 
-    deleteSubscription(id) {
-      this.$emit('deleteSubscription', id);
-    },
+    function deleteSubscription(id) {
+      emit('deleteSubscription', id);
+    }
+
     // emit updateSubscriptionAuth 
-    updateSubscriptionAuth(source) {
-      this.$emit('updateSubscriptionAuth', source);
-    },
+    function updateSubscriptionAuth(source) {
+      emit('updateSubscriptionAuth', source);
+    }
+
     // TODO: relocate to useDiscovery 
-    doDiscovery(r) {
+    function doDiscovery(r) {
       if (r.url) {
         r.error = null;
-        this.discoveryIsLoading = true;
-        this.auth.getTokenSilently().then((token) => {
+        discoveryIsLoading.value = true;
+        auth.getTokenSilently().then((token) => {
           const controller = new AbortController();
           const requestOptions = {
             method: 'POST', 
@@ -521,7 +525,7 @@ export default {
             signal: controller.signal
           };
           const timeoutId = setTimeout(() => controller.abort(), 45000);
-          fetch(this.baseUrl + "/discovery", requestOptions).then((response) => {
+          fetch(props.baseUrl + "/discovery", requestOptions).then((response) => {
             let contentType = response.headers.get("content-type");
             let isJson = contentType && contentType.indexOf("application/json") !== -1;
             if (response.status === 200) {
@@ -562,9 +566,9 @@ export default {
             }
           }).catch((error) => {
             if (error.name === 'TypeError') {
-              r.error = this.$t('somethingHorribleHappened');
+              r.error = t('somethingHorribleHappened');
             } else if (error.name === 'AbortError') {
-              r.error = this.$t('requestTimedOut');
+              r.error = t('requestTimedOut');
             } else {
               let cause = error.cause;
               if (cause) {
@@ -580,21 +584,57 @@ export default {
             }
           })
           .finally(() => {
-            this.discoveryIsLoading = false;
+            discoveryIsLoading.value = false;
             clearTimeout(timeoutId);
           });
         }).catch((error) => {
-          this.handleServerError(error);
-          this.discoveryIsLoading = false;
+          handleServerError(error);
+          discoveryIsLoading.value = false;
         });
       }
-    },
+    }
+
     // internal
-    configAuth(subscription) {
-      this.subscriptionToUpdate = { ...subscription };
-      this.showAuthConfig = true;
-    },
-  }
+    function configAuth(subscription) {
+      subscriptionToUpdate.value = { ...subscription };
+      showAuthConfig.value = true;
+    }
+
+    return {
+      auth,
+      shouldShowAlert,
+      dismissAlert, 
+      handleServerError,
+      setLastServerMessage,
+      // 
+      tabModel,
+      queueId,
+      queueIdent,
+      queueTitle,
+      queueDescription,
+      queueGenerator,
+      queueCopyright,
+      queueLanguage,
+      subscriptions, 
+      showAddSubscription,
+      showSubscriptions,
+      newSubscription,
+      discoveryIsLoading,
+      subscriptionToUpdate,
+      showNewSubscriptionAuthConfig,
+      showAuthConfig,
+      selectedTab,
+      // 
+      configAuth, 
+      doDiscovery,
+      updateSubscriptionAuth,
+      deleteSubscription,
+      addSubscription,
+      update,
+      save,
+      alreadySubscribed,
+    }
+  },
 }
 </script>
 
@@ -603,10 +643,5 @@ export default {
   font-family: "Russo One", system-ui, sans-serif;
   font-weight: bold;
   font-size: larger;
-}
-
-.clickable {
-  user-select: none;
-  cursor: pointer;
 }
 </style>

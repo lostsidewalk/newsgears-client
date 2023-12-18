@@ -4,12 +4,12 @@
       class="overflow-auto flex-row-reverse"
       style="justify-content: space-around;align-content: space-around;"
     >
-      <!-- logout button, don't disable -->
+      <!-- logout button -->
       <LogoutButton
         v-if="isAuthenticated"
         @logout="$emit('logout')"
       />
-      <!-- settings button -->
+      <!-- notifications warning -->
       <v-btn
         v-if="isAuthenticated"
         v-show="showNotificationWarning"
@@ -17,25 +17,23 @@
         icon="fa-bell"
         :size="buttonSize"
       />
+      <!-- settings button -->
       <SettingsButton
         v-if="isAuthenticated"
-        :expanded="showSettingsPanel"
         @showSettings="$emit('showSettings')"
       />
-      
-      <!-- help button, don't disable -->
+      <!-- help button -->
       <HelpButton
-        :expanded="showHelpPanel"
         @showHelp="$emit('showHelp')"
       />
-      <!-- display mode switch, don't disable -->
+      <!-- display mode switch -->
       <DisplayModeButton />
     </v-toolbar-items>
   </v-toolbar>
 </template>
 
 <script>
-import DisplayModeButton from "@/components/layout/DisplayModeButton.vue";
+import DisplayModeButton from "@/components/generic/DisplayModeButton.vue";
 import LogoutButton from "@/components/control-panel/LogoutButton.vue";
 import SettingsButton from "@/components/control-panel/SettingsButton.vue";
 import HelpButton from "@/components/control-panel/HelpButton.vue";
@@ -57,12 +55,9 @@ export default {
     isAuthenticated: { type: Boolean, default: false },
   },
   emits: [
+    "logout", 
     "showSettings",
     "showHelp",
-    "logout", 
-  ],
-  data() {
-    return {};
-  },
+  ]
 };
 </script>

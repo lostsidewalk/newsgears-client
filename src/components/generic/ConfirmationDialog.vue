@@ -1,6 +1,9 @@
 <template>
-  <v-card class="ma-4">
-    <v-card-title class="text-center pa-4">
+  <v-card :class="ma4r">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       {{ $t('pleaseConfirm') }}
     </v-card-title>
     <v-card-text class="text-center">
@@ -26,10 +29,11 @@
 
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "ConfirmationDialog",
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   props: {
     prompt: { type: String, required: true },
   },

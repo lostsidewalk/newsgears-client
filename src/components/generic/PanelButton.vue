@@ -21,13 +21,14 @@
 
 <script>
 export default {
-  name: "AuthButton",
+  name: "PanelButton",
   props: {
     label: { type: String, required: true },
     subLabel: { type: String, default: null },
     tooltip: { type: String, default: null },
     isLoading: { type: Boolean, default: false },
   },
+  emits: ["clicked"],
 };
 </script>
 

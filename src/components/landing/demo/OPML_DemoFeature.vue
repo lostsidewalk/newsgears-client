@@ -9,7 +9,7 @@
     <template #body>
       <v-card
         elevation="12"
-        class="mb-16"
+        :class="mb16r"
       >
         <v-card-text>
           <v-img
@@ -24,11 +24,14 @@
 
 <script>
 import DemoFeature from './DemoFeature.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
+  name: "OPMLDemoFeature",
   components: {
     DemoFeature, 
   },
+  mixins: [spacingMixin],
   props: {
     isDark: { type: Boolean, default: false },
   }

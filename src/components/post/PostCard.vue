@@ -5,9 +5,14 @@
   >
     <!-- title + thumbnail -->
     <v-card-title
-      class="d-flex flex-row flex-auto pa-4 flex-wrap align-start overflow-auto clickable"
+      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto"
+      :class="[pa4r, collapsible ? 'clickable' :'']"
       style="gap: 1rem; white-space: normal"
-      @click="showFullPost = !showFullPost"
+      @click="$event => {
+        if (collapsible) {
+          showFullPost = !showFullPost;
+        }
+      }"
     >
       <v-img
         v-if="post.postImgSrc"
@@ -31,184 +36,183 @@
         >
           {{ post.postTitle.value }}
         </div>
-        <v-divider class="mb-1 mt-0" />
-        <div
-          v-if="
-            post.lastUpdatedTimestamp &&
-              post.lastUpdatedTimestamp !== post.publishTimestamp
-          "
-          class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
-          style="font-weight: bold"
-        >
-          {{ $t("updatedColon") }}
-          {{ formatTimestamp(post.lastUpdatedTimestamp) }}
-        </div>
-        <div
-          class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
-        >
-          {{ $t("publishedColon") }}
-          {{ formatTimestamp(post.publishTimestamp) }}
-        </div>
-        <div
-          class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
-        >
-          {{ post.importerDesc }}
+        <v-divider class="my-1" />
+        <div class="d-flex flex-row flex-wrap justify-space-between">
+          <div>
+            <div
+              v-if="
+                post.lastUpdatedTimestamp &&
+                  post.lastUpdatedTimestamp !== post.publishTimestamp
+              "
+              class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
+              style="font-weight: bold"
+            >
+              {{ $t("updatedColon") }}
+              {{ formatTimestamp(post.lastUpdatedTimestamp) }}
+            </div>
+            <div
+              class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
+            >
+              {{ $t("publishedColon") }}
+              {{ formatTimestamp(post.publishTimestamp) }}
+            </div>
+            <div
+              class="d-flex flex-grow-1 justify-start align-center text-subtitle-2"
+            >
+              {{ post.importerDesc }}
+            </div>
+          </div>
+          <v-chip-group>
+            <v-chip :size="buttonSize">
+              {{ formatStatus(post.postReadStatus) }}
+            </v-chip>
+          </v-chip-group>
         </div>
       </div>
     </v-card-title>
     <!-- divider -->
     <v-divider v-if="showFullPost" />
-    <!-- -->
+    <!-- body -->
     <v-card-text
       v-if="showFullPost"
     >
-      <v-card>
-        <!-- description -->
-        <v-card-text
-          v-if="post.postDesc"
-          class="overflow-auto"
+      <!-- description -->
+      <div
+        v-if="post.postDesc"
+        class="overflow-auto"
+      >
+        <!-- post description (hidden w/no detials) -->
+        <v-label>
+          {{ $t("description") }} ({{ post.postDesc.type }})
+        </v-label>
+        <v-divider class="my-1" />
+        <div
+          v-if="isHtmlContent(post.postDesc)"
+          v-dompurify-html="post.postDesc.value"
+          class="post-html-frame"
+          frameborder="0"
+        />
+        <div
+          v-else
+          class="post-text-frame"
         >
-          <!-- post description (hidden w/no detials) -->
+          {{ post.postDesc.value }}
+        </div>
+      </div>
+      <!-- contents -->
+      <div
+        v-if="post.postContents"
+        class="overflow-auto"
+      >
+        <div
+          v-for="(c,idx) in post.postContents"
+          :key="c"
+        >
+          <!-- post contents (hidden w/no detials) -->
           <v-label>
-            {{ $t("description") }} ({{ post.postDesc.type }})
+            {{ $t("contentsNofM", { n: idx + 1, m: post.postContents.length }) }} ({{ c.type }})
           </v-label>
-          <v-divider class="pt-1 pb-1" />
+          <v-divider class="my-1" />
           <div
-            v-if="isHtmlContent(post.postDesc)"
-            v-dompurify-html="post.postDesc.value"
+            v-if="isHtmlContent(c)"
+            v-dompurify-html="c.value"
             class="post-html-frame"
-            frameborder="0"
           />
           <div
             v-else
             class="post-text-frame"
           >
-            {{ post.postDesc.value }}
+            {{ c.value }}
           </div>
-        </v-card-text>
-        <!-- divider -->
-        <v-divider v-if="post.postContents" />
-        <!-- contents -->
-        <v-card-text
-          v-if="post.postContents"
-          class="overflow-auto"
+        </div>
+      </div>
+      <!-- divider -->
+      <v-divider v-if="post.postMedia" />
+      <!-- post media -->
+      <PostMedia
+        v-if="post.postMedia"
+        ref="postMedia"
+        class="ma-2"
+        :media="post.postMedia"
+        @playEnclosure="$emit('playEnclosure', $event)"
+      />
+      <!-- divider -->
+      <v-divider v-if="post.postITunes" />
+      <!-- post itunes -->
+      <PostITunes
+        v-if="post.postITunes"
+        class="ma-2"
+        :i-tunes="post.postITunes"
+      />
+      <!-- post enclosures -->
+      <v-sheet v-if="post.enclosures">
+        <PostEnclosure
+          v-for="enclosure in post.enclosures"
+          :key="enclosure"
+          class="ma-2"
+          :enclosure="enclosure"
+          @playEnclosure="$emit('playEnclosure', $event)"
+        />
+      </v-sheet>
+      <!-- post urls, i.e., 'other links' (hidden w/no details) -->
+      <div v-if="post.postUrls">
+        <v-label>{{ $t("links") }}</v-label>
+        <div
+          v-for="postUrl of post.postUrls"
+          :key="postUrl"
+          class="post-other-link"
         >
-          <div
-            v-for="(c,idx) in post.postContents"
-            :key="c"
+          <a
+            :class="post.isRead ? 'subdued-link' : 'link'"
+            :href="postUrl.href"
+            target="_blank"
           >
-            <!-- post contents (hidden w/no detials) -->
-            <v-label>
-              {{ $t("contentsNofM", { n: idx + 1, m: post.postContents.length }) }} ({{ c.type }})
-            </v-label>
-            <v-divider class="pt-1 pb-1" />
-            <div
-              v-if="isHtmlContent(c)"
-              v-dompurify-html="c.value"
-              class="post-html-frame"
-            />
-            <div
-              v-else
-              class="post-text-frame"
-            >
-              {{ c.value }}
-            </div>
-          </div>
-        </v-card-text>
-        <!-- divider -->
-        <v-divider v-if="post.postMedia" />
-        <!-- post media -->
-        <PostMedia
-          v-if="post.postMedia"
-          ref="postMedia"
-          class="ma-2"
-          :media="post.postMedia"
-        />
-        <!-- divider -->
-        <v-divider v-if="post.postITunes" />
-        <!-- post itunes -->
-        <PostITunes
-          v-if="post.postITunes"
-          class="ma-2"
-          :i-tunes="post.postITunes"
-          @playFirstEnclosure="showFirstEnclosure = true"
-        />
-        <!-- post enclosures -->
-        <v-sheet v-if="post.enclosures">
-          <!-- first enclosure on a dialog -->
-          <v-dialog v-model="showFirstEnclosure">
-            <PostEnclosure :enclosure="post.enclosures[0]" />
-          </v-dialog>
-          <PostEnclosure
-            v-for="enclosure in post.enclosure"
-            :key="enclosure"
-            :enclosure="enclosure"
-          />
-        </v-sheet>
-        <!-- divider -->
-        <v-divider v-if="post.postUrls" />
-        <!-- post urls, i.e., 'other links' (hidden w/no details) -->
-        <v-card-text v-if="post.postUrls">
-          <v-label>{{ $t("links") }}</v-label>
-          <div
-            v-for="postUrl of post.postUrls"
-            :key="postUrl"
-            class="post-other-link"
-          >
-            <a
-              :class="post.isRead ? 'subdued-link' : 'link'"
-              :href="postUrl.href"
-              target="_blank"
-            >
-              <v-icon icon="fa-link" />
-            </a>
-            {{
-              (postUrl.title ? postUrl.title : postUrl.type) +
-                (postUrl.rel ? " (" + postUrl.rel + ")" : "") +
-                (postUrl.hreflang ? " (" + postUrl.hreflang + ")" : "")
-            }}
-          </div>
-        </v-card-text>
-        <!-- divider (no further dividers at this level) -->
-        <v-divider v-if="post.postComment" />
-        <!-- post comment (hidden w/no details) -->
-        <v-card-text v-if="post.postComment">
-          <v-label>{{ $t("postComments") }}</v-label>
-          <div>{{ post.postComment }}</div>
-        </v-card-text>
-        <!-- post authors -->
-        <v-card-text v-if="post.authors">
-          <v-label v-if="post.authors">
-            {{ post.authors.length > 1 ? $t("authors") : $t("author") }}
-          </v-label>
-          <div
-            v-for="author of post.authors"
-            :key="author"
-          >
-            {{
-              (author.name ? author.name : author.email) +
-                (author.email ? " (" + author.email + ")" : "")
-            }}
-          </div>
-        </v-card-text>
-        <!-- post contributors -->
-        <v-card-text v-if="post.contributors">
-          <v-label>{{ $t("contributors") }}</v-label>
-          <div
-            v-for="contributor of post.contributors"
-            :key="contributor"
-          >
-            {{
-              (contributor.name ? contributor.name : contributor.email) +
-                (contributor.name ? " (" + contributor.email + ")" : "")
-            }}
-          </div>
-        </v-card-text>
-        <!-- post rights (hidden w/no details) -->
-        <v-card-text v-if="post.postRights">
-          <div>{{ post.postRights }}</div>
-        </v-card-text>
-      </v-card>
+            <v-icon icon="fa-link" />
+          </a>
+          {{
+            (postUrl.title ? postUrl.title : postUrl.type) +
+              (postUrl.rel ? " (" + postUrl.rel + ")" : "") +
+              (postUrl.hreflang ? " (" + postUrl.hreflang + ")" : "")
+          }}
+        </div>
+      </div>
+      <!-- post comment (hidden w/no details) -->
+      <div v-if="post.postComment">
+        <v-label>{{ $t("postComments") }}</v-label>
+        <div>{{ post.postComment }}</div>
+      </div>
+      <!-- post authors -->
+      <div v-if="post.authors">
+        <v-label v-if="post.authors">
+          {{ post.authors.length > 1 ? $t("authors") : $t("author") }}
+        </v-label>
+        <div
+          v-for="author of post.authors"
+          :key="author"
+        >
+          {{
+            (author.name ? author.name : author.email) +
+              (author.email ? " (" + author.email + ")" : "")
+          }}
+        </div>
+      </div>
+      <!-- post contributors -->
+      <div v-if="post.contributors">
+        <v-label>{{ $t("contributors") }}</v-label>
+        <div
+          v-for="contributor of post.contributors"
+          :key="contributor"
+        >
+          {{
+            (contributor.name ? contributor.name : contributor.email) +
+              (contributor.name ? " (" + contributor.email + ")" : "")
+          }}
+        </div>
+      </div>
+      <!-- post rights (hidden w/no details) -->
+      <div v-if="post.postRights">
+        <div>{{ post.postRights }}</div>
+      </div>
     </v-card-text>
     <!-- divider -->
     <v-divider />
@@ -223,7 +227,7 @@
         :size="buttonSize"
         :title="post.isRead ? $t('markPostAsUnread') : $t('markPostAsRead')"
         :aria-label="$t('markPostAsUnread')"
-        :icon="post.isRead ? 'fa-check-square-o' : 'fa-eye'"
+        :prepend-icon="post.isRead ? 'fa-eye' : 'fa-check-square-o'"
         @click.stop="togglePostReadStatus"
       />
       <!-- toggle read-later status button -->
@@ -235,7 +239,7 @@
             : $t('markPostAsReadLater')
         "
         :aria-label="$t('markPostAsReadLater')"
-        :icon="post.isReadLater ? 'fa-bullseye' : 'fa-circle-o'"
+        :prepend-icon="post.isReadLater ? 'fa-circle-o' : 'fa-bullseye'"
         @click.stop="togglePostReadLaterStatus"
       />
       <!-- link button -->
@@ -243,7 +247,7 @@
         :size="buttonSize"
         :title="$t('openOriginalArticle')"
         :aria-label="$t('openOriginalArticle')"
-        icon="fa-link"
+        :prepend-icon="'fa-link'"
         @click.stop="$emit('openPostUrl')"
       />
       <!-- toggle post categories button -->
@@ -252,7 +256,7 @@
         :size="buttonSize"
         :title="$t('showPostCategories')"
         :aria-label="$t('showPostCategories')"
-        :icon="showPostCategories ? 'fa-compress' : 'fa-tags'"
+        :prepend-icon="showPostCategories ? 'fa-compress' : 'fa-tags'"
         @click.stop="showPostCategories = !showPostCategories"
       />
       <!-- post category buttons (the actual categories) -->
@@ -262,11 +266,14 @@
         :key="postCategory"
         :size="buttonSize"
         :title="$t('addCategoryToFilter', { postCategory: postCategory })"
+        :aria-label="$t('addCategoryToFilter', { postCategory: postCategory })"
+        :prepend-icon="'fa-tags'"
         :text="postCategory"
         @click.stop="
           $emit('updateFilter', {
             name: 'category',
             value: postCategory,
+            queueId: post.queueId,
           })
         "
       />
@@ -275,7 +282,7 @@
         :size="buttonSize"
         :title="$t('showPostSharing')"
         :aria-label="$t('showPostSharing')"
-        :icon="showPostSharing ? 'fa-compress' : 'fa-share-alt'"
+        :prepend-icon="showPostSharing ? 'fa-compress' : 'fa-share-alt'"
         @click.stop="showPostSharing = !showPostSharing"
       />
       <!-- post sharing buttons (the actual sharing options) -->
@@ -286,7 +293,7 @@
         :size="buttonSize"
         :title="$t('shareWith_' + sharingOption.name)"
         :aria-label="$t('shareWith_' + sharingOption.name + '_ariaLabel')"
-        :icon="'fa-' + sharingOption.icon"
+        :prepend-icon="'fa-' + sharingOption.icon"
         @click.stop="
           $emit('share', { sharingOption: sharingOption, post: post })
         "
@@ -296,11 +303,16 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { useTimestamp } from '@/composable/useTimestamp.js';
+import { usePosts } from '@/composable/usePosts.js';
+
 import PostEnclosure from "./PostEnclosure.vue";
 import PostMedia from "./PostMedia.vue";
 import PostITunes from "./PostITunes.vue";
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "PostCard",
@@ -309,70 +321,78 @@ export default {
     PostMedia,
     PostITunes,
   },
-  mixins: [buttonSizeMixin], 
+  mixins: [buttonSizeMixin, spacingMixin], 
   props: {
     post: { type: Object, required: true },
     sharingOptions: { type: Array, default: null },
+    collapsible: { type: Boolean, default: true },
     collapsed: { type: Boolean, default: false },
   },
   emits: [
-    "updatePostReadStatus",
-    "updateFilter",
+    "playEnclosure",
     "openPostUrl",
+    "updateFilter",
     "share",
+    "updatePostReadStatus",
   ],
-  setup() {
+  setup(props, { emit }) {
     const { formatTimestamp } = useTimestamp();
+    const { formatStatus } = usePosts();
 
-    return {
-      formatTimestamp
-    }
-  },
-  data() {
-    return {
-      showPostCategories: false,
-      showPostSharing: false,
-      showFullPost: !this.collapsed,
-      showFirstEnclosure: false,
-    };
-  },
-  methods: {
-    isHtmlContent(contentObj) {
+    const showPostCategories = ref(false);
+    const showPostSharing = ref(false);
+    const showFullPost = ref(!props.collapsed);
+    const showFirstEnclosure = ref(false);
+
+    function isHtmlContent(contentObj) {
       return (
         contentObj != null &&
         contentObj.type != null &&
         contentObj.type.toLowerCase().indexOf("html") >= 0
       );
-    },
-    togglePostReadStatus() {
+    }
+
+    function togglePostReadStatus() {
       let newStatus;
-      if (!this.post.isRead) {
-        console.log("post: marking post id=" + this.post.id + " as read");
+      if (!props.post.isRead) {
         newStatus = "READ";
       } else {
-        console.log("post: unmarking post id=" + this.post.id + " as read");
         newStatus = "UNREAD";
       }
-      this.updatePostReadStatus(newStatus, "togglePostReadStatus");
-    },
-    togglePostReadLaterStatus() {
+      updatePostReadStatus(newStatus, "togglePostReadStatus");
+    }
+
+    function togglePostReadLaterStatus() {
       let newStatus;
-      if (!this.post.isReadLater) {
-        console.log("post: marking post id=" + this.post.id + " as read-later");
+      if (!props.post.isReadLater) {
         newStatus = "READ_LATER";
       } else {
-        console.log("post: unmarking post id=" + this.post.id + " as read-later");
         newStatus = "UNREAD";
       }
-      this.updatePostReadStatus(newStatus, "togglePostReadLaterStatus");
-    },
-    updatePostReadStatus(newStatus, successSignal) {
-      this.$emit('updatePostReadStatus', {
-        id: this.post.id,
+      updatePostReadStatus(newStatus, "togglePostReadLaterStatus");
+    }
+
+    function updatePostReadStatus(newStatus, successSignal) {
+      emit('updatePostReadStatus', {
+        id: props.post.id,
         newStatus: newStatus,
         originator: successSignal,
       });
-    },
+    }
+
+    return {
+      formatTimestamp,
+      formatStatus,
+      // 
+      showPostCategories,
+      showPostSharing,
+      showFullPost,
+      showFirstEnclosure,
+      // 
+      isHtmlContent,
+      togglePostReadStatus,
+      togglePostReadLaterStatus,
+    }
   },
 };
 </script>
@@ -382,21 +402,7 @@ export default {
   background-color: transparent;
 }
 
-.post-html-frame {
-  overflow: auto;
-  white-space-collapse: preserve-breaks;
-}
-
-.post-text-frame {
-  overflow: auto;
-  white-space-collapse: preserve-breaks;
-}
-
 .post-read {
   mix-blend-mode: luminosity;
-}
-
-.clickable:hover {
-  cursor: pointer;
 }
 </style>

@@ -14,7 +14,7 @@
           <!-- card -->
           <v-card
             :elevation="isHovering ? 7 : 6"
-            class="my-10"
+            :class="my10r"
             v-bind="props"
             variant="flat"
           >
@@ -23,9 +23,12 @@
               <!-- col -->
               <v-col cols="12">
                 <!-- card-text -->
-                <v-card-text class="my-12">
+                <v-card-text :class="my12r">
                   <!-- banner (large) -->
-                  <div class="text-h5 text-center my-4 logotext">
+                  <div
+                    class="text-h5 text-centerlogotext"
+                    :class="my4r"
+                  >
                     {{ $t("loginToNewsgears") }}
                   </div>
                   <!-- row -->
@@ -39,21 +42,33 @@
                       sm="8"
                     >
                       <!-- username -->
-                      <AuthTextField
-                        v-for="(field, label) in { username: $t('username'), password: $t('password') }"
-                        :key="label"
-                        class="my-4"
-                        :label="label"
-                        :placeholder="label"
-                        :model-value="username"
-                        :type="field === $t('password') ? 'password' : undefined"
-                        @update:modelValue="username = $event"
+                      <v-text-field
+                        v-model="username"
+                        :class="my4r"
+                        :label="$t('username')"
+                        :placeholder="$t('username')"
+                        outlined
+                        dense
+                        variant="solo-filled"
+                        autocomplete="false"
+                        :aria-label="$t('username')"
                       />
                       <!-- password -->
+                      <v-text-field
+                        v-model="password"
+                        :class="my4r"
+                        :label="$t('password')"
+                        :placeholder="$t('password')"
+                        outlined
+                        dense
+                        variant="solo-filled"
+                        autocomplete="false"
+                        :aria-label="$t('password')"
+                      />
                       <div class="d-flex flex-row flex-wrap">
                         <!-- submit button -->
-                        <AuthButton
-                          class="ma-4"
+                        <PanelButton
+                          :class="ma4r"
                           :label="$t('login')"
                           :tooltip="$t('login')"
                           :is-loading="isLoading"
@@ -61,22 +76,23 @@
                         />
                         <!-- google button -->
                         <GoogleAuthButton
-                          class="ma-4"
+                          :class="ma4r"
                           :tooltip="$t('login')"
                         />
                       </div>
-                      <AuthPanelLink
+                      <PanelLink
                         :to="'/pw_reset'"
                         :message="$t('accountRecoveryHere')"
                       />
-                      <AuthPanelLink
+                      <PanelLink
                         :to="'/register'"
                         :message="$t('registerHere')"
                       />
-                      <AuthServerResponse :server-message="serverMessage" />
+                      <ServerResponse :server-message="serverMessage" />
                       <v-btn
                         variant="text"
-                        class="my-4 pa-2"
+                        class="pa-2"
+                        :class="my4r"
                         block
                         :text="$t('privacyPolicy')"
                         @click="showPrivacyPolicy = !showPrivacyPolicy"
@@ -101,35 +117,42 @@
 </template>
 
 <script>
-import AuthTextField from "@/components/auth/AuthTextField.vue";
-import AuthButton from "@/components/auth/AuthButton.vue";
-import GoogleAuthButton from "@/components/layout/GoogleAuthButton.vue";
-import AuthPanelLink from "@/components/auth/AuthPanelLink.vue";
-import AuthServerResponse from "@/components/auth/AuthServerResponse.vue";
+import { ref } from 'vue';
+
+import PanelButton from "@/components/generic/PanelButton.vue";
+import PanelLink from "@/components/generic/PanelLink.vue";
+import ServerResponse from "@/components/generic/ServerResponse.vue";
+import GoogleAuthButton from "@/components/generic/GoogleAuthButton.vue";
 import PrivacyPolicyPanel from "@/components/privacy-policy-panel/PrivacyPolicyPanel.vue";
+import spacingMixin from "@/mixins/spacingMixin";
 
 export default {
   name: "AuthPanel",
   components: {
-    AuthTextField,
-    AuthButton,
+    PanelButton,
+    PanelLink,
+    ServerResponse,
     GoogleAuthButton,
-    AuthPanelLink,
-    AuthServerResponse,
     PrivacyPolicyPanel,
   },
+  mixins: [spacingMixin],
   props: {
     serverMessage: { type: String, default: null },
     isLoading: { type: Boolean, default: false },
   },
   emits: ["login"],
-  data() {
+  setup() {
+    const username = ref(null);
+    const password = ref(null);
+    const step = ref(null);
+    const showPrivacyPolicy = ref(false);
+
     return {
-      step: null,
-      username: "",
-      password: "",
-      showPrivacyPolicy: false,
-    };
+      username,
+      password,
+      step,
+      showPrivacyPolicy,
+    }
   },
 };
 </script>

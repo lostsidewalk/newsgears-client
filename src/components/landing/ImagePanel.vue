@@ -1,11 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="pa-4 text-center">
+    <v-card-title
+      class="text-center"
+      :class="pa4r"
+    >
       The Power Of RSS
     </v-card-title>
     <v-card-text>
       <v-img
-        class="mb-4"
+        :class="mb4r"
         src="the_power_of_rss.gif"
         max-height="512"
       />
@@ -22,10 +25,11 @@
 
 <script>
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "ImagePanel",
-  mixins: [buttonSizeMixin],
+  mixins: [buttonSizeMixin, spacingMixin],
   emits: ["dismiss"], 
 }
 </script>

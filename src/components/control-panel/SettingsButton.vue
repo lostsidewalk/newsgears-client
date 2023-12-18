@@ -3,8 +3,8 @@
     :size="buttonSize"
     accesskey="t"
     :title="$t('settings')" 
-    :aria-label="$t('goToSettingsAriaLabel')"
-    :append-icon="expanded ? 'fa-compress' : 'fa-expand'"
+    :aria-label="$t('settings')" 
+    append-icon="fa-gears"
     :text="$t('settings')"
     @click="$emit('showSettings')"
   />
@@ -16,9 +16,6 @@ import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 export default {
   name: "SettingsButton",
   mixins: [buttonSizeMixin], 
-  props: { 
-    expanded: { type: Boolean, default: false }
-  },
   emits: [ "showSettings" ],
 }
 </script>

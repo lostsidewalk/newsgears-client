@@ -3,6 +3,7 @@
     <!-- queue filter input -->
     <v-text-field
       id="queue-filter"
+      v-model="queueStore.articleListFilter"
       :placeholder="$t('filter')"
       :aria-label="$t('filter')"
       variant="underlined"
@@ -14,9 +15,9 @@
         <!-- help buton -->
         <v-btn
           :size="buttonSize"
-          :title="$t('toggleSortOrder')"
-          :aria-label="$t('toggleSortOrder')"
-          :icon="showFilterHelp ? 'fa-compress' : 'fa-question-circle'"
+          :title="$t('showFilterHelp')"
+          :aria-label="$t('showFilterHelp')"
+          icon="fa-question-circle"
           variant="plain"
           @click="showFilterHelp = !showFilterHelp"
         />
@@ -34,6 +35,10 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
+import { useQueues } from '@/composable/useQueues';
+
 import QueueFilterHelp from './QueueFilterHelp.vue';
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
@@ -44,15 +49,21 @@ export default {
   },
   mixins: [buttonSizeMixin],
   props: {
-    "queueName": { type: String, default: '' },
+    queueName: { type: String, default: '' },
+    baseUrl: { type: String, required: true },
   },
   emits: [
     "updateArticleListFilter",
   ],
-  data() {
+  setup(props) {
+    const { queueStore } = useQueues(props);
+
+    const showFilterHelp = ref(false);
+
     return {
-      showFilterHelp: false,
+      queueStore,
+      showFilterHelp,
     }
-  }
+  },
 }
 </script>

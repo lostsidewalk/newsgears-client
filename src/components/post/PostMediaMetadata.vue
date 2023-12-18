@@ -6,7 +6,8 @@
     justify="left"
   >
     <v-card-title
-      class="d-flex flex-row flex-auto pa-4 flex-wrap align-start overflow-auto clickable"
+      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto"
+      :class="pa4r"
       style="gap: 1rem; white-space: normal"
     >
       <v-img
@@ -104,12 +105,14 @@
 
 <script>
 import PostMediaCommunity from './PostMediaCommunity.vue';
+import spacingMixin from '@/mixins/spacingMixin';
 
 export default {
   name: "PostMediaMetadata",
   components: {
     PostMediaCommunity,
   },
+  mixins: [spacingMixin],
   props: {
     metadata: { type: Object, required: true },
   },
@@ -141,19 +144,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.post-html-frame {
-  overflow: auto;
-  white-space-collapse: preserve-breaks;
-}
-
-.post-text-frame {
-  overflow: auto;
-  white-space-collapse: preserve-breaks;
-}
-
-.clickable:hover {
-  cursor: pointer;
-}
-</style>

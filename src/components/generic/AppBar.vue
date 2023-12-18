@@ -2,11 +2,10 @@
   <v-app-bar
     app
     :location="'top'"
+    :scroll-behavior="'elevate'"
   >
     <template #title>
-      <span class="newsgears-rss d-none d-sm-flex">
-        Newsgears RSS
-      </span>
+      <span class="newsgears-rss d-none d-sm-flex"> Newsgears RSS </span>
     </template>
     <template #prepend>
       <v-app-bar-nav-icon
@@ -25,7 +24,12 @@
         :is-authenticated="isAuthenticated"
         @showSettings="$emit('openSettings')"
         @showHelp="$emit('showHelpPanel')"
-        @logout="$event => { logout(); disconnectBroker(); }"
+        @logout="
+          ($event) => {
+            logout();
+            disconnectBroker();
+          }
+        "
       />
     </template>
   </v-app-bar>
@@ -40,37 +44,31 @@ import { useNotifications } from "@/composable/useNotifications";
 import { inject } from "vue";
 
 export default {
-    components: {
-        ControlPanel,
-    },
-    props: {
-        baseUrl: { type: String, required: true },
-        showHelpPanel: { type: Boolean, required: true },
-    },
-    setup(props) {
-        const {
-            logout,
-        } = useAuth();
-        const {
-            disconnectBroker
-        } = useQueues(props);
-        const {
-            showSettingsPanel
-        } = useSettings(props);
-        const {
-            roShowNotificationWarning
-        } = useNotifications();
-        const isAuthenticated = inject('isAuthenticated');
+  name: "AppBar",
+  components: {
+    ControlPanel,
+  },
+  props: {
+    baseUrl: { type: String, required: true },
+    showHelpPanel: { type: Boolean, required: true },
+  },
+  emits: ["showQueueDashboard", "openSettings", "showHelpPanel"],
+  setup(props) {
+    const { logout } = useAuth();
+    const { disconnectBroker } = useQueues(props);
+    const { showSettingsPanel } = useSettings(props);
+    const { roShowNotificationWarning } = useNotifications();
+    const isAuthenticated = inject("isAuthenticated");
 
-        return {
-            logout,
-            disconnectBroker,
-            showSettingsPanel, 
-            roShowNotificationWarning,
-            isAuthenticated
-        };
-    }
-}
+    return {
+      logout,
+      disconnectBroker,
+      showSettingsPanel,
+      roShowNotificationWarning,
+      isAuthenticated,
+    };
+  },
+};
 </script>
 
 <style scoped>
