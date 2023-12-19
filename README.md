@@ -1,4 +1,9 @@
-# Newsgears
+
+# newsgears-client 
+
+newsgears is a multi-user, self-hosted all-in-one RSS reader/aggregator platform.
+
+This repository contains the client application, which is a browser application used to read and share syndicated web feed content served by the Newsgears API server.  
 
 ## Project setup
 ```
