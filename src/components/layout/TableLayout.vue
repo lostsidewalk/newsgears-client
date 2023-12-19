@@ -31,6 +31,9 @@
             })"
           >{{ item.importerDesc }}</a>
         </template>
+        <template #item.postTimestamp="{ item }">
+          <span style="white-space: nowrap;">{{ item.postTimestamp }}</span>
+        </template>
         <template #expanded-row="{ columns, item }">
           <tr>
             <td

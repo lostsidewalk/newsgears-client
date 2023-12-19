@@ -53,7 +53,7 @@
         >
           {{ $t("iTunesDuration", { duration: formattedDuration }) }}
         </div>
-        <v-chip-group v-if="iTunes.keywords.length > 0">
+        <v-chip-group v-if="iTunes.keywords && iTunes.keywords.length > 0">
           <v-chip
             v-for="keyword of iTunes.keywords"
             :key="keyword"

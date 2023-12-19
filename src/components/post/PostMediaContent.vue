@@ -161,15 +161,18 @@ export default {
     });
 
     const isVideo = computed(() => {
-      return props.mediaContent.type && props.mediaContent.type.indexOf("shockwave-flash") >= 0 || props.mediaContent.type.indexOf("video") >= 0;
+      return props.mediaContent.type &&
+        (props.mediaContent.type.indexOf("shockwave-flash") >= 0 || props.mediaContent.type.indexOf("video") >= 0);
     });
 
     const isAudio = computed(() => {
-      return props.mediaContent.type && props.mediaContent.type.indexOf("audio") >= 0;
+      return props.mediaContent.type &&
+        props.mediaContent.type.indexOf("audio") >= 0;
     });
 
     const isImage = computed(() => {
-      return props.mediaContent.type && props.mediaContent.type.indexOf("image") >= 0;
+      return props.mediaContent.type &&
+        props.mediaContent.type.indexOf("image") >= 0;
     });
 
     const mediaContentIcon = computed(() => {
