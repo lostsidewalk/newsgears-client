@@ -102,6 +102,9 @@ export const useQueueStore = defineStore('queueStore', {
       this.articleListsByQueue = articleLists;
     },
     addQueue(queue) {
+      if (!queue.subscriptions) {
+        queue.subscriptions = [];
+      }
       let existingQueueIndex = this.queues.findIndex(q => q.id === queue.id);
       if (existingQueueIndex !== -1) {
         this.queues[existingQueueIndex] = queue;
