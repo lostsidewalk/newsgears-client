@@ -28,7 +28,7 @@
           key="MANAGE_SUBSCRIPTIONS"
           value="MANAGE_SUBSCRIPTIONS"
         >
-          {{ $t('manageSubscriptions', { ct: subscriptions.length }) }}
+          {{ $t('manageSubscriptions', { ct: (subscriptions ? subscriptions.length : 0) }) }}
         </v-tab>
         <!-- tab 3: queue properties -->
         <v-tab
@@ -404,7 +404,7 @@ export default {
       if (queueId.value) {
         arr.push({
           name: "MANAGE_SUBSCRIPTIONS",
-          description: t('manageSubscriptions', { ct: subscriptions.length }),
+          description: t('manageSubscriptions', { ct: (subscriptions ? subscriptions.length : 0) }),
           icon: "feed",
         })
         arr.push({
