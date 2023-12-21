@@ -337,7 +337,7 @@
         <CardLayout
           v-if="showCardLayout && filteredArticleList.length > 0"
           style="margin-top: 1rem;"
-          :layout-height="showCollapsedLayout ? 'fill-available' : 'fill-available'"
+          :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
           :sharing-options="sharingOptions"
           :filtered-article-list="filteredArticleList"
           @openPostUrl="$event => openPostUrl($event.postId)"
