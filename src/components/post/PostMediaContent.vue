@@ -13,7 +13,7 @@
       :class="{ 'clickable' : isAudio || isVideo }"
       @click="$event => { 
         if (isAudio || isVideo) { 
-          $emit('playEnclosure', mediaContent.reference.uri) 
+          $emit('playEnclosure', { url: mediaContent.reference.uri, type: mediaContent.type }) 
         }
       }"
     >
@@ -36,7 +36,7 @@
           v-if="isAudio || isVideo"
           :icon="isAudio ? 'fa-headphones' : 'fa-camera'"
           :title="mediaContent.reference.uri"
-          @click="$emit('playEnclosure', mediaContent.reference.uri)"
+          @click="$emit('playEnclosure', { url: mediaContent.reference.uri, type: mediaContent.type })"
         />
         <!-- icon (image) -->
         <v-img

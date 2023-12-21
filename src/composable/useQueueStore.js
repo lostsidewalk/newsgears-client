@@ -149,9 +149,9 @@ export const useQueueStore = defineStore('queueStore', {
         // TODO: we need to (first) sort rawPosts in some way, 
         //  then push the posts beyond #256 to some form of archive with easy retrieval; 
         //  for now, take no more than 256 random posts 
-        if (v.length < 256) {
+        // if (v.length < 256) {
           v.push(post);
-        }
+        // }
       }
     },
     rebuildLunrIndexes(queueIdsToIndex) {

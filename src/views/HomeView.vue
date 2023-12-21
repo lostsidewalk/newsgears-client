@@ -305,12 +305,29 @@
           <v-bottom-sheet
             v-model="showVideoPlayerPanel"
           >
-            <vue-plyr ref="videoPlayer">
-              <div class="plyr__video-embed">
-                <iframe
-                  allowfullscreen 
-                  allowtransparency
+            <vue-plyr
+              
+              ref="videoPlayer"
+            >
+              <video
+                v-if="currentlyPlayingUrlType === 'video/mp4'"
+                controls
+                crossorigin
+              >
+                <source
                   :src="currentlyPlayingUrl"
+                  type="video/mp4"
+                >
+              </video>
+              <div
+                v-else
+                class="plyr__video-embed"
+              >
+                <iframe
+                  :src="currentlyPlayingUrl"
+                  allowfullscreen
+                  allowtransparency
+                  allow="autoplay"
                 />
               </div>
             </vue-plyr>
@@ -510,6 +527,7 @@ export default {
       login,
       logout } = useAuth();
     const {
+      handleServerError,
       notificationStore,
     } = useNotifications();
     const {
@@ -623,6 +641,7 @@ export default {
     });
 
     const currentlyPlayingUrl = ref(null);
+    const currentlyPlayingUrlType = ref(null);
     const videoPlayer = ref(null);
 
     // required 
@@ -740,12 +759,25 @@ export default {
       }
     }
 
-    function playEnclosure(enclosureUrl) {
+    function playEnclosure(enclosure) {
+      console.log('playing enclosure: ' + JSON.stringify(enclosure));
+      let enclosureUrl = enclosure.url;
+      let enclosureType = enclosure.type;
       currentlyPlayingUrl.value = enclosureUrl;
+      currentlyPlayingUrlType.value = enclosureType;
       showVideoPlayerPanel.value = true;
       nextTick(() => {
-        videoPlayer.value.player.on("ready", () => {
-          videoPlayer.value.player.play();
+        videoPlayer.value.player.on("ready", () => { 
+          let promise = videoPlayer.value.player.play();
+          if (promise) {
+            promise.catch((error) => {
+              handleServerError({
+                name: 'Unable to play enclosure',
+                message: 'Unable to play this enclosure, probably due to a CORS error.',
+              });
+              console.log('unable to play enclosure due to: ' + JSON.stringify(error));
+            })
+          }
         });
         videoPlayer.value.player.source = {
           type: 'video',
@@ -855,9 +887,12 @@ export default {
       showCollapsedLayout,
       videoPlayer,
       currentlyPlayingUrl,
+      currentlyPlayingUrlType,
       // auth module functions 
       logout,
       login,
+      // notifications module functions 
+      handleServerError,
       // opml module functions 
       continueOpmlUpload,
       // settings module functions 

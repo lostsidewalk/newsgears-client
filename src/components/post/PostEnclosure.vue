@@ -16,14 +16,14 @@
       v-if="isAudio"
       icon="fa-headphones"
       :title="enclosure.url"
-      @click="$emit('playEnclosure', enclosure.url)"
+      @click="$emit('playEnclosure', { url: enclosure.url, type: enclosure.type })"
     />
     <!-- icon (video) -->
     <v-icon
       v-if="isVideo"
       icon="fa-camera"
       :title="enclosure.url"
-      @click="$emit('playEnclosure', enclosure.url)"
+      @click="$emit('playEnclosure', { url: enclosure.url, type: enclosure.type })"
     />
     <!-- label -->
     <v-label
