@@ -8,7 +8,7 @@
       :aria-label="$t('filter')"
       variant="underlined"
       bg-color="transparent"
-      @input="$emit('updateArticleListFilter', $event.target.value)"
+      @input="$event => queueStore.setArticleListFilter($event.target.value)"
       @click:append="showFilterHelp = !showFilterHelp"
     >
       <template #append>
@@ -51,9 +51,6 @@ export default {
   props: {
     baseUrl: { type: String, required: true },
   },
-  emits: [
-    "updateArticleListFilter",
-  ],
   setup(props) {
     const { queueStore } = useQueues(props);
 

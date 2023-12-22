@@ -291,11 +291,6 @@
               markQueueAsRead(queueStore.selectedQueueId);
               showQueueMarkAsReadConfirmation = true;
             }"
-            @toggleArticleListSortOrder="queueStore.toggleArticleListSortOrder"
-            @updateArticleListFilter="queueStore.setArticleListFilter"
-            @toggleUnreadPosts="queueStore.toggleShowUnreadPosts" 
-            @toggleReadPosts="queueStore.toggleShowReadPosts"
-            @toggleReadLaterPosts="queueStore.toggleShowReadLaterPosts"
             @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
             @collapse="showCollapsedLayout = true"
             @expand="showCollapsedLayout = false"
@@ -336,12 +331,11 @@
         <CardLayout
           v-if="showCardLayout && queueStore.filteredArticleList.length > 0"
           style="margin-top: 1rem;"
+          :base-url="baseUrl"
           :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
           :sharing-options="sharingOptions"
-          :filtered-article-list="queueStore.filteredArticleList"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="queueStore.updateFilter"
           @share="$event = share($event.sharingOption, $event.post)"
           @playEnclosure="playEnclosure"
         />
@@ -349,8 +343,8 @@
         <ListLayout 
           v-if="showListLayout && queueStore.filteredArticleList.length > 0"
           style="margin-top: 1rem;"
+          :base-url="baseUrl"
           :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
-          :filtered-article-list="queueStore.filteredArticleList"
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @updatePostReadStatus="updatePostReadStatus"
         />
@@ -358,13 +352,12 @@
         <TableLayout 
           v-if="showTableLayout && queueStore.filteredArticleList.length > 0"
           style="margin-top: 1rem;"
+          :base-url="baseUrl"
           :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
-          :filtered-article-list="queueStore.filteredArticleList"
           :sharing-options="sharingOptions"
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="queueStore.updateFilter"
         />
         <!-- help panel -->
         <GlobalShortcutKeys
@@ -383,12 +376,12 @@
       >
         <PostCard
           :id="'post_' + queueStore.selectedPost.id"
+          :base-url="baseUrl"
           :post="queueStore.selectedPost"
           :sharing-options="sharingOptions"
           :collapsible="false"
           @openPostUrl="openPostUrl(queueStore.selectedPost.id);"
           @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="queueStore.updateFilter"
           @share="$event => share($event.sharingOption, $event.post)"
           @playEnclosure="playEnclosure"
         >

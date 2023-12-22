@@ -24,7 +24,7 @@
         <template #item.importerDesc="{ item }">
           <a
             href="#"
-            @click.stop.prevent="$emit('updateFilter', {
+            @click.stop.prevent="queueStore.updateFilter({
               name: 'subscription',
               value: item.importerDesc,
               queueId: item.queueId,
@@ -163,6 +163,7 @@ import { reactive, computed } from 'vue';
 
 import { useTimestamp } from '@/composable/useTimestamp';
 import { useI18n } from 'vue-i18n';
+import { useQueues } from '@/composable/useQueues';
 
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 import spacingMixin from '@/mixins/spacingMixin';
@@ -170,18 +171,18 @@ import spacingMixin from '@/mixins/spacingMixin';
 export default {
   mixins: [buttonSizeMixin, spacingMixin],
   props: {
+    baseUrl: { type: String, required: true },
     layoutHeight: { type: String, default: "75vh" },
-    filteredArticleList: { type: Array, required: true },
   },
   emits: [
     "openPost",
-    "updateFilter",
     "updatePostReadStatus",
     "openPostUrl",
   ],
   setup(props) {
     const { formatTimestamp } = useTimestamp();
     const { t } = useI18n();
+    const { queueStore } = useQueues(props);
 
     const expanded = reactive([]);
 
@@ -197,9 +198,9 @@ export default {
 
     const dataTableItems = computed(() => {
       let dataTableItems = [];
-      for (let i = 0; i < props.filteredArticleList.length; i++) {
+      for (let i = 0; i < queueStore.filteredArticleList.length; i++) {
         // fetch the article 
-        let a = props.filteredArticleList[i];
+        let a = queueStore.filteredArticleList[i];
         // t/f if the article has a non-empty title property 
         let hasTitle = a.postTitle != null && a.postTitle.value && a.postTitle.value.length > 0;
         // t/f if the article has a non-empty HTML title 
@@ -238,8 +239,9 @@ export default {
 
     return {
       formatTimestamp,
-      expanded,
+      queueStore,
       // 
+      expanded,
       headers,
       dataTableItems,
     }

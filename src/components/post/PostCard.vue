@@ -269,13 +269,11 @@
         :aria-label="$t('addCategoryToFilter', { postCategory: postCategory })"
         :prepend-icon="'fa-tags'"
         :text="postCategory"
-        @click.stop="
-          $emit('updateFilter', {
-            name: 'category',
-            value: postCategory,
-            queueId: post.queueId,
-          })
-        "
+        @click.stop="queueStore.updateFilter({
+          name: 'category',
+          value: postCategory,
+          queueId: post.queueId,
+        })"
       />
       <!-- toggle sharing options button -->
       <v-btn
@@ -307,6 +305,7 @@ import { ref } from 'vue';
 
 import { useTimestamp } from '@/composable/useTimestamp.js';
 import { usePosts } from '@/composable/usePosts.js';
+import { useQueues } from '@/composable/useQueues.js';
 
 import PostEnclosure from "./PostEnclosure.vue";
 import PostMedia from "./PostMedia.vue";
@@ -323,6 +322,7 @@ export default {
   },
   mixins: [buttonSizeMixin, spacingMixin], 
   props: {
+    baseUrl: { type: String, required: true },
     post: { type: Object, required: true },
     sharingOptions: { type: Array, default: null },
     collapsible: { type: Boolean, default: true },
@@ -331,13 +331,13 @@ export default {
   emits: [
     "playEnclosure",
     "openPostUrl",
-    "updateFilter",
     "share",
     "updatePostReadStatus",
   ],
   setup(props, { emit }) {
     const { formatTimestamp } = useTimestamp();
     const { formatStatus } = usePosts();
+    const { queueStore } = useQueues(props);
 
     const showPostCategories = ref(false);
     const showPostSharing = ref(false);
@@ -383,6 +383,7 @@ export default {
     return {
       formatTimestamp,
       formatStatus,
+      queueStore,
       // 
       showPostCategories,
       showPostSharing,

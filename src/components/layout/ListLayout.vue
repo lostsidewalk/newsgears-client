@@ -8,7 +8,7 @@
         :height="layoutHeight"
       >
         <PostListItem
-          v-for="post in filteredArticleList"
+          v-for="post in queueStore.filteredArticleList"
           :id="'post_' + post.id"
           :key="post"
           :post="post"
@@ -24,6 +24,7 @@
 
 <script>
 import { reactive } from "vue";
+import { useQueues } from "@/composable/useQueues";
 
 import PostListItem from "./PostListItem.vue";
 import spacingMixin from "@/mixins/spacingMixin";
@@ -35,14 +36,16 @@ export default {
   },
   mixins: [spacingMixin],
   props: {
+    baseUrl: { type: String, required: true },
     layoutHeight: { type: String, default: "75vh" },
-    filteredArticleList: { type: Array, required: true },
   },
   emits: ["openPost", "updatePostReadStatus"],
-  setup() {
+  setup(props) {
+    const { queueStore } = useQueues(props);
     const selectedItem = reactive({}); // selected post list item (i.e., scrolling through the list in list view)
 
     return {
+      queueStore,
       selectedItem,
     };
   },

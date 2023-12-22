@@ -32,7 +32,6 @@
       <QueueFilter
         class="w-100"
         :base-url="baseUrl"
-        @updateArticleListFilter="$emit('updateArticleListFilter', $event)"
       />
       <!-- queue operations -->
       <QueueOperations
@@ -48,10 +47,10 @@
         @table="$emit('switchToTableLayout')"
         @refreshQueues="$emit('refreshQueues')"
         @markAsRead="$emit('markAsRead', $event)"
-        @toggleSortOrder="$emit('toggleArticleListSortOrder')"
-        @toggleUnreadPosts="$emit('toggleUnreadPosts')"
-        @toggleReadPosts="$emit('toggleReadPosts')"
-        @toggleReadLaterPosts="$emit('toggleReadLaterPosts')"
+        @toggleSortOrder="queueStore.toggleArticleListSortOrder"
+        @toggleUnreadPosts="queueStore.toggleShowUnreadPosts"
+        @toggleReadPosts="queueStore.toggleShowReadPosts"
+        @toggleReadLaterPosts="queueStore.toggleShowReadLaterPosts"
         @manageSubscriptions="$emit('openQueueConfigPanel', { queueId: queueStore.selectedQueueId })"
       />
     </v-card-actions>
@@ -83,7 +82,6 @@ export default {
     collapsed: { type: Boolean, default: false },
   },
   emits: [
-    "updateArticleListFilter", 
     "newQueue",
     "uploadOpml",
     "switchToListLayout",
@@ -91,11 +89,9 @@ export default {
     "switchToTableLayout", 
     "refreshQueues", 
     "markAsRead",
-    "toggleArticleListSortOrder", 
-    "toggleUnreadPosts", 
-    "toggleReadPosts", 
-    "toggleReadLaterPosts", 
     "openQueueConfigPanel", 
+    "collapse",
+    "expand",
   ],
   setup(props) {
     const { queueStore } = useQueues(props);
