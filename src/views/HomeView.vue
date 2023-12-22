@@ -539,6 +539,8 @@ export default {
       updateAccount } = useSettings(props);
     const {
       queueStore,
+      disconnectBroker, 
+      // 
       roRefreshQueuesIsLoading,
       roContinueIsLoading,
       roAtStep2,
@@ -547,15 +549,11 @@ export default {
       roOpmlErrors,
       roSubscriptionToShow,
       roQueueConfigIsLoading,
-      // 
       showOpmlUploadPanel, //rw 
       showSubscriptionMetrics, // rw 
       showQueueConfigPanel, // rw 
-      // 
       showQueueRefreshIndicator, // computed 
-      // 
       connectBroker,
-      disconnectBroker, 
       refreshQueues,
       updatePostReadStatus,
       getPostFromQueue, // no 
@@ -609,7 +607,11 @@ export default {
     const showCollapsedLayout = ref(false);
     // 
     const isModalShowing = computed(() => {
-      return showSettingsPanel.value || showHelpPanel.value || showQueueConfigPanel.value || showOpmlUploadPanel.value || showSubscriptionMetrics.value;
+      return showSettingsPanel.value ||
+        showHelpPanel.value ||
+        showQueueConfigPanel.value ||
+        showOpmlUploadPanel.value ||
+        showSubscriptionMetrics.value;
     });
     const isLoading = computed(() => {
       return roSettingsIsLoading.value || roQueueConfigIsLoading.value || roContinueIsLoading.value || roFinalizeIsLoading.value || roRefreshQueuesIsLoading.value || roSettingsIsLoading.value;
@@ -632,15 +634,19 @@ export default {
       if (!event.key) {
         return;
       }
+      // bail if a modal is showing
+      if (isModalShowing.value) {
+        return;
+      }
+      // bail if this an event on the queue filter 
+      if (event.target.id === 'queue-filter') {
+        return;
+      }
       // 
       // ESC key handling 
       // 
       if (event.key === 'Escape') {
-        // bail if a modal is showing
-        if (isModalShowing.value) {
-          return;
-        }
-        // otherwise hide the queue dashboard if it's showing 
+        // hide the queue dashboard if it's showing 
         if (showQueueDashboard.value) {
           showQueueDashboard.value = false;
         }
