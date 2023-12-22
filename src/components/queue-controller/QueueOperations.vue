@@ -66,34 +66,34 @@
       :size="buttonSize"  
       :title="$t('toggleSortOrder')" 
       :aria-label="$t('toggleSortOrder')" 
-      :icon="'fa-arrow-' + (sortOrder === 'ASC' ? 'up' : 'down')"
+      :icon="'fa-arrow-' + (queueStore.articleListSortOrder === 'ASC' ? 'up' : 'down')"
       @click="$emit('toggleSortOrder')"
     />
     <!-- show unread -->
     <v-btn 
       :size="buttonSize" 
       icon="fa-eye"
-      :title="showUnread ? $t('hideUnread') : $t('showUnread')"
-      :aria-label="showUnread ? $t('hideUnread') : $t('showUnread')"
-      :class="{ 'plus-lighter' : showUnread }"
+      :title="queueStore.showUnreadPosts ? $t('hideUnread') : $t('showUnread')"
+      :aria-label="queueStore.showUnreadPosts ? $t('hideUnread') : $t('showUnread')"
+      :style="queueStore.showUnreadPosts ? 'mix-blend-mode: ' + ($vuetify.theme.name === 'dark' ? 'color-dodge' : 'multiply') : ''"
       @click="$emit('toggleUnreadPosts')"
     />
     <!-- show read -->
     <v-btn
       :size="buttonSize" 
       icon="fa-check-square-o"
-      :title="showRead ? $t('hideRead') : $t('showRead')"
-      :aria-label="showRead ? $t('hideRead') : $t('showRead')"
-      :class="{ 'plus-lighter' : showRead }"
+      :title="queueStore.showReadPosts ? $t('hideRead') : $t('showRead')"
+      :aria-label="queueStore.showReadPosts ? $t('hideRead') : $t('showRead')"
+      :style="queueStore.showReadPosts ? 'mix-blend-mode: ' + ($vuetify.theme.name === 'dark' ? 'color-dodge' : 'multiply') : ''"
       @click="$emit('toggleReadPosts')"
     />
     <!-- show read-later -->
     <v-btn
       :size="buttonSize" 
       icon="fa-circle-o"
-      :title="showReadLater ? $t('hideReadLater') : $t('showReadLater')"
-      :aria-label="showReadLater ? $t('hideReadLater') : $t('showReadLater')"
-      :class="{ 'plus-lighter' : showReadLater }"
+      :title="queueStore.showReadLaterPosts ? $t('hideReadLater') : $t('showReadLater')"
+      :aria-label="queueStore.showReadLaterPosts ? $t('hideReadLater') : $t('showReadLater')"
+      :style="queueStore.showReadLaterPosts ? 'mix-blend-mode: ' + ($vuetify.theme.name === 'dark' ? 'color-dodge' : 'multiply') : ''"
       @click="$emit('toggleReadLaterPosts')"
     />
     <!-- divider -->
@@ -122,6 +122,8 @@
 </template>
 
 <script>
+import { useQueues } from '@/composable/useQueues';
+
 import buttonSizeMixin from '@/mixins/buttonSizeMixin';
 
 export default {
@@ -132,10 +134,6 @@ export default {
     disableCardLayout: { type: Boolean, required: true },
     disableTableLayout: { type: Boolean, required: true },
     showQueueRefreshIndicator: { type: Boolean, default: false },
-    sortOrder: { type: String, required: true },
-    showUnread: { type: Boolean, default: false },
-    showRead: { type: Boolean, default: false },
-    showReadLater: { type: Boolean, default: false },
   },
   emits: [
     "newQueue",
@@ -151,19 +149,12 @@ export default {
     "refreshQueues",
     "manageSubscriptions",
   ],
-  computed: {
-    isDark: function () {
-      return this.$vuetify.theme.name === "dark";
-    },
-    selectionMode: function () {
-      return this.isDark ? "color-dodge" : "multiply";
+  setup(props) {
+    const { queueStore } = useQueues(props);
+
+    return {
+      queueStore,
     }
-  }
+  },
 }
 </script>
-
-<style scoped>
-.plus-lighter {
-  mix-blend-mode: v-bind(selectionMode);
-}
-</style>

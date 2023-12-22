@@ -100,6 +100,7 @@
 
 <script>
 import { ref, computed } from "vue";
+import { useQueues } from "@/composable/useQueues";
 
 import buttonSizeMixin from "@/mixins/buttonSizeMixin";
 
@@ -113,10 +114,8 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     queue: { type: Object, required: true },
-    articleList: { type: Object, default: null },
     feedUrl: { type: String, required: true },
     variant: { type: String, default: null },
-    isSelected: { type: Boolean, default: false },
   },
   emits: [
     "updateFilter",
@@ -125,37 +124,37 @@ export default {
     "showSubscriptionMetrics",
   ],
   setup(props) {
+    const { queueStore } = useQueues(props);
+
     const showMoreInformation = ref(false);
 
     const unreadCount = computed(() => {
-      return props.articleList
-        ? props.articleList.values.filter((post) => !post.isRead).length
-        : 0;
+      let q = queueStore.articleListsByQueue[props.queue.id];
+      return q ? q.values.filter((post) => !post.isRead).length : 0;
     });
 
     const readCount = computed(() => {
-      return props.articleList
-        ? props.articleList.values.filter((post) => post.isRead).length
-        : 0;
+      let q = queueStore.articleListsByQueue[props.queue.id];
+      return q ? queueStore.articleListsByQueue[props.queue.id].values.filter((post) => post.isRead).length : 0;
     });
 
     const totalCount = computed(() => {
-      return props.articleList ? props.articleList.values.length : 0;
+      let q = queueStore.articleListsByQueue[props.queue.id];
+      return q ? queueStore.articleListsByQueue[props.queue.id].values.length : 0;
     });
 
     const mostRecentArticle = computed(() => {
-      if (props.articleList) {
-        return props.articleList.values[0];
-      }
-      return null;
+      let q = queueStore.articleListsByQueue[props.queue.id];
+      return q ? queueStore.articleListsByQueue[props.queue.id].values[0] : null;
     });
 
     const recentArticleList = computed(() => {
       let recentArticles = [];
+      let q = queueStore.articleListsByQueue[props.queue.id];
       // TODO: fix this, we need to copy/sort articleList by timestamp desc before we do this
-      if (props.articleList) {
-        for (let i = 0; i < props.articleList.values.length; i++) {
-          let a = props.articleList.values[i];
+      if (q) {
+        for (let i = 0; i < q.values.length; i++) {
+          let a = q.values[i];
           // t/f if the article has a non-empty title property
           let hasTitle =
             a.postTitle != null &&
@@ -188,14 +187,19 @@ export default {
       return recentArticles;
     });
 
+    const articleList = computed(() => {
+      return queueStore.articleListsByQueue[props.queue.id];
+    });
+
     return {
       showMoreInformation,
       // 
-      recentArticleList,
-      mostRecentArticle, 
-      totalCount,
-      readCount,
       unreadCount,
+      readCount,
+      totalCount,
+      mostRecentArticle, 
+      recentArticleList,
+      articleList,
     };
   },
 };

@@ -140,11 +140,11 @@
           v-show="!showQueueConfigPanel && !showOpmlUploadPanel" 
           :base-url="baseUrl"
           :feed-url="feedUrl"
-          @selectQueue="$event => { setSelectedQueueId($event.queueId); showQueueDashboard = false; }"
+          @selectQueue="$event => { queueStore.innerSetSelectedQueueId($event.queueId); showQueueDashboard = false; }"
           @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
           @updateFilter="$event => { 
-            updateFilter($event); 
-            setSelectedQueueId($event.queueId); 
+            queueStore.updateFilter($event); 
+            queueStore.innerSetSelectedQueueId($event.queueId); 
             showQueueDashboard = false;
           }"
           @openSubscriptionMetrics="openSubscriptionMetrics"
@@ -152,12 +152,12 @@
         <!-- <QueueSubscriptionSheet
           v-show="!showQueueCards && !showQueueConfigPanel && !showOpmlUploadPanel"
           :base-url="baseUrl"
-          @updateFilter="$event => { updateFilter($event); $nextTick(() => showQueueDashboard = false); }"
+          @updateFilter="$event => { queueStore.updateFilter($event); $nextTick(() => showQueueDashboard = false); }"
           @showUnread="($event) => {
             let subscription = $event.subscription;
-            setSelectedQueueId(subscription.queueId);
+            queueStore.innerSetSelectedQueueId(subscription.queueId);
             $nextTick(() =>
-              updateFilter({
+              queueStore.updateFilter({
                 name: 'subAndMode',
                 queueId: subscription.queueId,
                 subValue: subscription.title,
@@ -167,9 +167,9 @@
           }"
           @showRead="($event) => {
             let subscription = $event.subscription;
-            setSelectedQueueId(subscription.queueId);
+            queueStore.innerSetSelectedQueueId(subscription.queueId);
             $nextTick(() =>
-              updateFilter({
+              queueStore.updateFilter({
                 name: 'subAndMode',
                 queueId: subscription.queueId,
                 subValue: subscription.title,
@@ -179,9 +179,9 @@
           }"
           @showAll="($event) => {
             let subscription = $event.subscription;
-            setSelectedQueueId(subscription.queueId);
+            queueStore.innerSetSelectedQueueId(subscription.queueId);
             $nextTick(() =>
-              updateFilter({
+              queueStore.updateFilter({
                 name: 'subscription',
                 queueId: subscription.queueId,
                 value: subscription.title,
@@ -281,7 +281,6 @@
             :show-card-layout="showCardLayout"
             :show-table-layout="showTableLayout"
             :show-queue-refresh-indicator="showQueueRefreshIndicator"
-            :filtered-article-list="queueStore.filteredArticleList" 
             @newQueue="$event => { newQueue(); showOpmlUploadPanel = false; }"
             @uploadOpml="$event => { uploadOpml(); showQueueConfigPanel = false; }"
             @switchToListLayout="switchToListLayout" 
@@ -293,7 +292,7 @@
               showQueueMarkAsReadConfirmation = true;
             }"
             @toggleArticleListSortOrder="queueStore.toggleArticleListSortOrder"
-            @updateArticleListFilter="updateArticleListFilter"
+            @updateArticleListFilter="queueStore.setArticleListFilter"
             @toggleUnreadPosts="queueStore.toggleShowUnreadPosts" 
             @toggleReadPosts="queueStore.toggleShowReadPosts"
             @toggleReadLaterPosts="queueStore.toggleShowReadLaterPosts"
@@ -342,7 +341,7 @@
           :filtered-article-list="queueStore.filteredArticleList"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="updateFilter"
+          @updateFilter="queueStore.updateFilter"
           @share="$event = share($event.sharingOption, $event.post)"
           @playEnclosure="playEnclosure"
         />
@@ -365,7 +364,7 @@
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="updateFilter"
+          @updateFilter="queueStore.updateFilter"
         />
         <!-- help panel -->
         <GlobalShortcutKeys
@@ -383,13 +382,13 @@
         inset
       >
         <PostCard
-          :id="'post_' + roSelectedPost.id"
-          :post="roSelectedPost"
+          :id="'post_' + queueStore.selectedPost.id"
+          :post="queueStore.selectedPost"
           :sharing-options="sharingOptions"
           :collapsible="false"
-          @openPostUrl="openPostUrl(roSelectedPost.id);"
+          @openPostUrl="openPostUrl(queueStore.selectedPost.id);"
           @updatePostReadStatus="updatePostReadStatus"
-          @updateFilter="updateFilter"
+          @updateFilter="queueStore.updateFilter"
           @share="$event => share($event.sharingOption, $event.post)"
           @playEnclosure="playEnclosure"
         >
@@ -400,7 +399,7 @@
               icon="fa-arrow-down"
               class="ma-1"
               :title="t('goToNextPost')"
-              @click.stop="selectNextPost"
+              @click.stop="queueStore.selectNextPost"
             />
             <v-btn
               :size="buttonSize"
@@ -408,7 +407,7 @@
               icon="fa-arrow-up"
               class="ma-1"
               :title="t('goToPreviousPost')"
-              @click.stop="selectPreviousPost"
+              @click.stop="queueStore.selectPreviousPost"
             />
           </template>
         </PostCard>
@@ -547,7 +546,6 @@ export default {
       updateAccount } = useSettings(props);
     const {
       queueStore,
-      roSelectedPost,
       roRefreshQueuesIsLoading,
       roContinueIsLoading,
       roAtStep2,
@@ -568,8 +566,6 @@ export default {
       refreshQueues,
       updatePostReadStatus,
       getPostFromQueue, // no 
-      toggleFilterMode,
-      updateFilter,
       deleteSelectedQueue,
       performQueueDelete,
       cancelQueueDelete,
@@ -577,13 +573,8 @@ export default {
       markQueueAsRead,
       performQueueMarkAsRead,
       cancelQueueMarkAsRead,
-      updateArticleListFilter,
-      setSelectedQueueId,
-      getSelectedQueue,
       openPost,
       openPostUrl,
-      selectNextPost,
-      selectPreviousPost,
       uploadOpml,
       continueOpmlUpload,
       finalizeOpmlUpload,
@@ -714,14 +705,14 @@ export default {
           // SHIFT + L KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'L' && event.shiftKey) {
-          toggleFilterMode('READ_LATER');
+          queueStore.toggleFilterMode('READ_LATER');
           event.stopPropagation();
           event.preventDefault();
           // 
           // SHIFT + H KEY (TOGGLE QUEUE FILTER MODE)
           // 
         } else if (event.key === 'H' && event.shiftKey) {
-          toggleFilterMode('READ');
+          queueStore.toggleFilterMode('READ');
           event.stopPropagation();
           event.preventDefault();
           // 
@@ -859,7 +850,6 @@ export default {
       roSettingsIsLoading,
       showSettingsPanel,
       // queues module data 
-      roSelectedPost, // selected post to show on the post card modal (while in list or table view) 
       roRefreshQueuesIsLoading,
       // queue config module data 
       showQueueConfigPanel,
@@ -909,10 +899,6 @@ export default {
       disconnectBroker,
       refreshQueues,
       openPost,
-      selectNextPost,
-      selectPreviousPost,
-      toggleFilterMode,
-      updateFilter,
       updatePostReadStatus,
       createQueue,
       updateQueue,
@@ -922,9 +908,6 @@ export default {
       markQueueAsRead,
       performQueueMarkAsRead,
       cancelQueueMarkAsRead,
-      updateArticleListFilter,
-      setSelectedQueueId,
-      getSelectedQueue,
       getPostFromQueue,
       // queue config module functions 
       addSubscription,

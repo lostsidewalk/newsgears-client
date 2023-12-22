@@ -1,7 +1,7 @@
 import { Client } from "@stomp/stompjs";
 import * as SockJS from 'sockjs-client';
 
-import { ref, reactive, inject, computed, nextTick, readonly } from 'vue';
+import { ref, reactive, inject, computed, readonly } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composable/useNotifications';
 import { useQueueStore } from '@/composable/useQueueStore';
@@ -22,7 +22,6 @@ export function useQueues(props) {
   // 
   const queueIdToDelete = ref(null);
   const queueIdToMarkAsRead = ref(null);
-  const selectedPost = reactive({}); 
   const refreshQueuesIsLoading = ref(false);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
@@ -54,7 +53,7 @@ export function useQueues(props) {
       return false;
     }
     // ensure that we have subscriptions on hand for the selected queue 
-    let subscriptions = getSelectedQueue().subscriptions;
+    let subscriptions = queueStore.selectedQueue.subscriptions;
     if (!subscriptions) {
       // console.debug("showQueueRefreshIndicator: returning early due to selected queue has 0 subscriptions");
       return false;
@@ -323,9 +322,10 @@ export function useQueues(props) {
 
       queueStore.rebuildQueues(queueIdsToRetrieve, rawPosts);
 
+      // TODO: move to a queueStore action 
       if (queueStore.queues.length > 0) {
         if (!queueStore.selectedQueueId) {
-          restoreSelectedQueueId();
+          queueStore.restoreSelectedQueueId();
         }
       }
     } catch (error) {
@@ -414,7 +414,7 @@ export function useQueues(props) {
               p.isRead = false;
             }
           }
-          Object.assign(selectedPost, p);
+          queueStore.updateSelectedPost(p);
         }).catch((error) => {
           handleServerError(error);
         }).finally(() => {
@@ -433,70 +433,6 @@ export function useQueues(props) {
       if (f[j].id === id) {
         return f[j];
       }
-    }
-  }
-
-  function toggleFilterMode(filterMode) {
-    if (filterMode === 'UNREAD') {
-      queueStore.toggleShowUnreadPosts();
-    } else if (filterMode === 'READ') {
-      queueStore.toggleShowReadPosts();
-    } else if (filterMode === 'READ_LATER') {
-      queueStore.toggleShowReadLaterPosts();
-    }
-  }
-
-  function updateFilter(f) {
-    if (f.name === "subscription") {
-      if (f.queueId !== queueStore.selectedQueueId) {
-        setSelectedQueueId(f.queueId);
-        queueStore.clearArticleListFilter();
-      }
-      queueStore.addSubscriptionToFilter(f.value);
-    } else if (f.name === "category") {
-      addCategoryToFilter(f.value);
-    } else if (f.name === "mode") {
-      setFilterToMode(f.value);
-    } else if (f.name === "subAndMode") {
-      if (f.queueId !== queueStore.selectedQueueId) {
-        setSelectedQueueId(f.queueId);
-        nextTick(() => {
-          setFilterToSubAndMode(f.subValue, f.modeValue);
-        })
-      } else {
-        setFilterToSubAndMode(f.subValue, f.modeValue);
-      }
-    }
-  }
-
-  function addCategoryToFilter(category) {
-    if (queueStore.articleListFilter) {
-      queueStore.addCategoryToFilter(category);
-    } else {
-      queueStore.setArticleListFilter(' +category:' + category);
-    }
-  }
-
-  function setFilterToSubAndMode(subValue, modeValue) {
-    let newSubStatus = '';
-    let tokens = subValue.split(/(\s+)/).filter(e => e.trim().length > 0);
-    for (let i = 0; i < tokens.length; i++) {
-      newSubStatus += ' +feed:' + tokens[i];
-    }
-    queueStore.setArticleListFilter(newSubStatus);
-    setFilterToMode(modeValue);
-  }
-
-  function setFilterToMode(filterMode) {
-    queueStore.setShowUnreadPosts(false);
-    queueStore.setShowReadPosts(false);
-    queueStore.setShowReadLaterPosts(false);
-    if (filterMode === 'UNREAD') {
-      queueStore.setShowUnreadPosts(true);
-    } else if (filterMode === 'READ') {
-      queueStore.setShowReadPosts(true);
-    } else if (filterMode === 'READ_LATER') {
-      queueStore.setShowReadLaterPosts(true);
     }
   }
 
@@ -609,103 +545,15 @@ export function useQueues(props) {
     queueIdToMarkAsRead.value = null;
   }
 
-  function updateArticleListFilter(value) {
-    queueStore.setArticleListFilter(value);
-  }
-
-  function restoreSelectedQueueId() {
-    let queueId = null;
-    // 1: check local storage for queueId 
-    let storedSelectedQueueId = localStorage.getItem('selectedQueueId');
-    if (storedSelectedQueueId) {
-      let parsedSelectedQueueId = parseInt(storedSelectedQueueId);
-      // 2: is queueId still valid? 
-      for (let i = 0; i < queueStore.queues.length; i++) {
-        if (queueStore.queues[i].id === parsedSelectedQueueId) {
-          queueId = parsedSelectedQueueId;
-          break;
-        }
-      }
-      // 3: warn if the queue is no long valid (was probably removed between sessions) 
-      if (!queueId) {
-        consoleLog('queues: unable to located stored selected queueId=' + parsedSelectedQueueId); 
-      }
-    } else {
-      consoleLog('queues: no stored selected queueId; selecting first available queue');
-    }
-    // 4: set the selected queueId value to either the valid/restored value from LS, 
-    // or to the Id of the first available queue 
-    setSelectedQueueId(queueId ? queueId : queueStore.queues[0].id);
-  }
-
-  function setSelectedQueueId(queueId) {
-    consoleLog("queues: setting selected queueId=" + queueId);
-    localStorage.setItem('selectedQueueId', queueId);
-    queueStore.setSelectedQueueId(queueId);
-    if (queueId) {
-      // deletes index and values 
-      Object.keys(queueStore.articleList).forEach((key) => {
-        delete queueStore.articleList[key]; 
-      });
-      // restores index and values and from newly selected queue 
-      Object.assign(queueStore.articleList, queueStore.articleListsByQueue[queueId]);
-    }
-  }
-
-  function getSelectedQueue() {
-    try {
-      let s = parseInt(queueStore.selectedQueueId);
-      if (s) {
-        for (let i = 0; i < queueStore.queues.length; i++) {
-          if (queueStore.queues[i].id === s) {
-            return queueStore.queues[i];
-          }
-        }
-      }
-    } catch (error) {
-      console.debug("selectedQueueId is not a number, ignoring...");
-    }
-    return {};
-  }
-
   function openPost(postId) {
-    Object.keys(selectedPost).forEach((key) => {
-      delete selectedPost[key];
-    });
-    Object.assign(selectedPost, getPostFromQueue(postId));
+    let p = getPostFromQueue(postId);
+    queueStore.clearSelectedPost();
+    queueStore.updateSelectedPost(p);
   }
 
   function openPostUrl(postId) {
     const post = getPostFromQueue(postId);
     window.open(post.postUrl, '_blank');
-  }
-
-  function selectNextPost() {
-    if (selectedPost) {
-      const id = selectedPost.id;
-      const queue = queueStore.filteredArticleList;
-      const nextIdx = queue.findIndex((post) => post.id === id) + 1;
-      if (nextIdx < queue.length) {
-        Object.keys(selectedPost).forEach((key) => {
-          delete selectedPost[key];
-        });
-        Object.assign(selectedPost, queue[nextIdx]);
-      }
-    }
-  }
-
-  function selectPreviousPost() {
-    if (selectedPost) {
-      const id = selectedPost.id;
-      const queue = queueStore.filteredArticleList;
-      const prevIdx = queue.findIndex((post) => post.id === id) - 1;
-      if (prevIdx >= 0) {
-        Object.keys(selectedPost).forEach((key) => {
-          delete selectedPost[key];
-        });
-        Object.assign(selectedPost, queue[prevIdx]);
-      }
-    }
   }
 
   function uploadOpml() {
@@ -908,7 +756,7 @@ export function useQueues(props) {
           queueStore.addQueue(created);
           queueStore.initializeArticleList(created.id);
           setLastServerMessage(t('queueCreated') + ' (' + created.ident + ")'");
-          setSelectedQueueId(created.id);
+          queueStore.innerSetSelectedQueueId(created.id);
           queueStore.rebuildLunrIndexes([created.id]);
           showQueueConfigPanel.value = false;
         }).catch((error) => {
@@ -1128,7 +976,6 @@ export function useQueues(props) {
 
   const roQueueIdToDelete = readonly(queueIdToDelete);
   const roQueueIdToMarkAsRead = readonly(queueIdToMarkAsRead);
-  const roSelectedPost = readonly(selectedPost);
   const roRefreshQueuesIsLoading = readonly(refreshQueuesIsLoading);
   const roContinueIsLoading = readonly(continueIsLoading);
   const roAtStep2 = readonly(atStep2);
@@ -1143,7 +990,6 @@ export function useQueues(props) {
     queueStore,
     roQueueIdToDelete,
     roQueueIdToMarkAsRead,
-    roSelectedPost,
     roRefreshQueuesIsLoading,
     roContinueIsLoading,
     roAtStep2,
@@ -1173,10 +1019,6 @@ export function useQueues(props) {
     updatePostReadStatus,
     // returns a post from the current articleList, by Id 
     getPostFromQueue,
-    // adds a 'status:' field to the articleListFilter 
-    toggleFilterMode,
-    // adds the given subscription/category to t he articleListFilter 
-    updateFilter,
     // initiates the queue delete process (sets queueIdToDelete and asks for confirmation) 
     deleteSelectedQueue,
     // completes the queue delete process by making a server call to delete the queue (given by queueIdToDelete) 
@@ -1191,21 +1033,10 @@ export function useQueues(props) {
     performQueueMarkAsRead,
     // cancels the queue MAR prorcess (unsets queueIdToMarkAsRead and hides the confirmation dialog) 
     cancelQueueMarkAsRead,
-    // sets the value of articleListFilter 
-    updateArticleListFilter,
-    // sets the value of selectedQueueId; 
-    // sets up the articleList for the selected queue 
-    setSelectedQueueId,
-    // return the selected queue 
-    getSelectedQueue,
     // 
     openPost,
     // 
     openPostUrl,
-    // 
-    selectNextPost,
-    // 
-    selectPreviousPost,
     // 
     uploadOpml,
     // 

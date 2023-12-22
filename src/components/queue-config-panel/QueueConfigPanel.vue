@@ -393,9 +393,7 @@ export default {
       handleServerError, 
       setLastServerMessage 
     } = useNotifications();
-    const {
-      queueStore
-    } = useQueues(props);
+    const { queueStore } = useQueues(props);
 
     const { t } = useI18n();
 

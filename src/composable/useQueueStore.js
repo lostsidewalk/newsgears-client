@@ -1,6 +1,7 @@
 import lunr from 'lunr';
 
 import { defineStore } from 'pinia';
+import { nextTick } from 'vue';
 
 const buildLunrSubscriptionExpr = (subscription) => {
   let expr = '';
@@ -67,6 +68,7 @@ export const useQueueStore = defineStore('queueStore', {
     // all queue data 
     queues: [],
     selectedQueueId: null,
+    selectedPost: {},
     // filter settings 
     articleListsByQueue: {},
     articleListFilter: '',
@@ -95,6 +97,21 @@ export const useQueueStore = defineStore('queueStore', {
       return state.queues;
     },
     // currently selected queue data 
+    selectedQueue: (state) => {
+      try {
+        let s = parseInt(state.selectedQueueId);
+        if (s) {
+          for (let i = 0; i < state.queues.length; i++) {
+            if (state.queues[i].id === s) {
+              return state.queues[i];
+            }
+          }
+        }
+      } catch (error) {
+        console.debug("selectedQueueId is not a number, ignoring...");
+      }
+      return {};
+    },
     selectedQueueTitle: (state) => {
       for (let queue of state.queues) {
         if (queue.id === state.selectedQueueId) {
@@ -389,6 +406,69 @@ export const useQueueStore = defineStore('queueStore', {
       });
     },
     // 
+    updateFilter(f) {
+      if (f.name === "subscription") {
+        if (f.queueId !== this.selectedQueueId) {
+          this.innerSetSelectedQueueId(f.queueId);
+          this.clearArticleListFilter();
+        }
+        this.addSubscriptionToFilter(f.value);
+      } else if (f.name === "category") {
+        this.innerAddCategoryToFilter(f.value);
+      } else if (f.name === "mode") {
+        this.innerSetFilterToMode(f.value);
+      } else if (f.name === "subAndMode") {
+        if (f.queueId !== this.selectedQueueId) {
+          this.innerSetSelectedQueueId(f.queueId);
+          nextTick(() => {
+            this.innerSetFilterToSubAndMode(f.subValue, f.modeValue);
+          })
+        } else {
+          this.innerSetFilterToSubAndMode(f.subValue, f.modeValue);
+        }
+      }
+    },
+    innerSetSelectedQueueId(queueId) {
+      console.log("queues: setting selected queueId=" + queueId);
+      localStorage.setItem('selectedQueueId', queueId);
+      this.setSelectedQueueId(queueId);
+      if (queueId) {
+        // deletes index and values 
+        Object.keys(this.articleList).forEach((key) => {
+          delete this.articleList[key]; 
+        });
+        // restores index and values and from newly selected queue 
+        Object.assign(this.articleList, this.articleListsByQueue[queueId]);
+      }
+    },
+    innerAddCategoryToFilter(category) {
+      if (this.articleListFilter) {
+        this.addCategoryToFilter(category);
+      } else {
+        this.setArticleListFilter(' +category:' + category);
+      }
+    },
+    innerSetFilterToSubAndMode(subValue, modeValue) {
+      let newSubStatus = '';
+      let tokens = subValue.split(/(\s+)/).filter(e => e.trim().length > 0);
+      for (let i = 0; i < tokens.length; i++) {
+        newSubStatus += ' +feed:' + tokens[i];
+      }
+      this.setArticleListFilter(newSubStatus);
+      this.innerSetFilterToMode(modeValue);
+    },
+    innerSetFilterToMode(filterMode) {
+      this.setShowUnreadPosts(false);
+      this.setShowReadPosts(false);
+      this.setShowReadLaterPosts(false);
+      if (filterMode === 'UNREAD') {
+        this.setShowUnreadPosts(true);
+      } else if (filterMode === 'READ') {
+        this.setShowReadPosts(true);
+      } else if (filterMode === 'READ_LATER') {
+        this.setShowReadLaterPosts(true);
+      }
+    },
     clearArticleListFilter() {
       this.articleListFilter = '';
     },
@@ -410,6 +490,15 @@ export const useQueueStore = defineStore('queueStore', {
       this.articleListFilter = filter;
     },
     // 
+    toggleFilterMode(filterMode) {
+      if (filterMode === 'UNREAD') {
+        this.toggleShowUnreadPosts();
+      } else if (filterMode === 'READ') {
+        this.toggleShowReadPosts();
+      } else if (filterMode === 'READ_LATER') {
+        this.toggleShowReadLaterPosts();
+      }
+    },
     toggleShowUnreadPosts() {
       this.showUnreadPosts = !this.showUnreadPosts;
     },
@@ -470,6 +559,62 @@ export const useQueueStore = defineStore('queueStore', {
         current.categoryValue = updated.categoryValue;
         current.categoryDomain = updated.categoryDomain;
       }
-    }
+    },
+    // 
+    restoreSelectedQueueId() {
+      let queueId = null;
+      // 1: check local storage for queueId 
+      let storedSelectedQueueId = localStorage.getItem('selectedQueueId');
+      if (storedSelectedQueueId) {
+        let parsedSelectedQueueId = parseInt(storedSelectedQueueId);
+        // 2: is queueId still valid? 
+        for (let i = 0; i < this.queues.length; i++) {
+          if (this.queues[i].id === parsedSelectedQueueId) {
+            queueId = parsedSelectedQueueId;
+            break;
+          }
+        }
+        // 3: warn if the queue is no long valid (was probably removed between sessions) 
+        if (!queueId) {
+          console.log('queues: unable to located stored selected queueId=' + parsedSelectedQueueId); 
+        }
+      } else {
+        console.log('queues: no stored selected queueId; selecting first available queue');
+      }
+      // 4: set the selected queueId value to either the valid/restored value from LS, 
+      // or to the Id of the first available queue 
+      this.innerSetSelectedQueueId(queueId ? queueId : this.queues[0].id);
+    },
+    //
+    selectNextPost() {
+      if (this.selectedPost) {
+        const id = this.selectedPost.id;
+        const queue = this.filteredArticleList;
+        const nextIdx = queue.findIndex((post) => post.id === id) + 1;
+        if (nextIdx < queue.length) {
+          this.clearSelectedPost();
+          this.updateSelectedPost(queue[nextIdx]);
+        }
+      }
+    },
+    selectPreviousPost() {
+      if (this.selectedPost) {
+        const id = this.selectedPost.id;
+        const queue = this.filteredArticleList;
+        const prevIdx = queue.findIndex((post) => post.id === id) - 1;
+        if (prevIdx >= 0) {
+          this.clearSelectedPost();
+          this.updateSelectedPost(queue[prevIdx]);
+        }
+      }
+    },
+    clearSelectedPost() {
+      Object.keys(this.selectedPost).forEach((key) => {
+        delete this.selectedPost[key];
+      });
+    },
+    updateSelectedPost(p) {
+      Object.assign(this.selectedPost, p);
+    },
   }
 });

@@ -32,9 +32,6 @@
       <QueueFilter
         class="w-100"
         :base-url="baseUrl"
-        :queue-length="filteredArticleList.length"
-        :queue-name="queueStore.selectedQueueTitle"
-        :queues="queueStore.queues"
         @updateArticleListFilter="$emit('updateArticleListFilter', $event)"
       />
       <!-- queue operations -->
@@ -44,10 +41,6 @@
         :disable-card-layout="showCardLayout"
         :disable-table-layout="showTableLayout"
         :show-queue-refresh-indicator="showQueueRefreshIndicator"
-        :sort-order="queueStore.articleListSortOrder"
-        :show-unread="queueStore.showUnreadPosts"
-        :show-read="queueStore.showReadPosts"
-        :show-read-later="queueStore.showReadLaterPosts"
         @newQueue="$emit('newQueue', $event)"
         @uploadOpml="$emit('uploadOpml', $event)"
         @list="$emit('switchToListLayout')"
@@ -87,7 +80,6 @@ export default {
     showCardLayout: { type: Boolean, required: true },
     showTableLayout: { type: Boolean, required: true },
     showQueueRefreshIndicator: { type: Boolean, required: true },
-    filteredArticleList: { type: Array, required: true },
     collapsed: { type: Boolean, default: false },
   },
   emits: [
@@ -106,9 +98,7 @@ export default {
     "openQueueConfigPanel", 
   ],
   setup(props) {
-    const {
-      queueStore
-    } = useQueues(props);
+    const { queueStore } = useQueues(props);
 
     return {
       queueStore,

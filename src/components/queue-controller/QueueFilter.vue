@@ -49,7 +49,6 @@ export default {
   },
   mixins: [buttonSizeMixin],
   props: {
-    queueName: { type: String, default: '' },
     baseUrl: { type: String, required: true },
   },
   emits: [
