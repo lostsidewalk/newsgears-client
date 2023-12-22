@@ -281,7 +281,7 @@
             :show-card-layout="showCardLayout"
             :show-table-layout="showTableLayout"
             :show-queue-refresh-indicator="showQueueRefreshIndicator"
-            :filtered-article-list="filteredArticleList" 
+            :filtered-article-list="queueStore.filteredArticleList" 
             @newQueue="$event => { newQueue(); showOpmlUploadPanel = false; }"
             @uploadOpml="$event => { uploadOpml(); showQueueConfigPanel = false; }"
             @switchToListLayout="switchToListLayout" 
@@ -335,11 +335,11 @@
         </div>
         <!-- post material (card layout) -->
         <CardLayout
-          v-if="showCardLayout && filteredArticleList.length > 0"
+          v-if="showCardLayout && queueStore.filteredArticleList.length > 0"
           style="margin-top: 1rem;"
           :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
           :sharing-options="sharingOptions"
-          :filtered-article-list="filteredArticleList"
+          :filtered-article-list="queueStore.filteredArticleList"
           @openPostUrl="$event => openPostUrl($event.postId)"
           @updatePostReadStatus="updatePostReadStatus"
           @updateFilter="updateFilter"
@@ -348,19 +348,19 @@
         />
         <!-- post material (list layout) -->
         <ListLayout 
-          v-if="showListLayout && filteredArticleList.length > 0"
+          v-if="showListLayout && queueStore.filteredArticleList.length > 0"
           style="margin-top: 1rem;"
           :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
-          :filtered-article-list="filteredArticleList"
+          :filtered-article-list="queueStore.filteredArticleList"
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @updatePostReadStatus="updatePostReadStatus"
         />
         <!-- post material (table layout) -->
         <TableLayout 
-          v-if="showTableLayout && filteredArticleList.length > 0"
+          v-if="showTableLayout && queueStore.filteredArticleList.length > 0"
           style="margin-top: 1rem;"
           :layout-height="showCollapsedLayout ? '85vh' : '70vh'"
-          :filtered-article-list="filteredArticleList"
+          :filtered-article-list="queueStore.filteredArticleList"
           :sharing-options="sharingOptions"
           @openPost="$event => { openPost($event.postId); showSelectedPost = true; }"
           @openPostUrl="$event => openPostUrl($event.postId)"
@@ -369,7 +369,7 @@
         />
         <!-- help panel -->
         <GlobalShortcutKeys
-          v-if="!filteredArticleList || filteredArticleList.length === 0"
+          v-if="!queueStore.filteredArticleList || queueStore.filteredArticleList.length === 0"
           :class="my4r"
         />
         <!-- TODO: separate queue shortcut keys from global shortcut keys -->
@@ -561,7 +561,6 @@ export default {
       showSubscriptionMetrics, // rw 
       showQueueConfigPanel, // rw 
       // 
-      filteredArticleList, // computed 
       showQueueRefreshIndicator, // computed 
       // 
       connectBroker,
@@ -862,7 +861,6 @@ export default {
       // queues module data 
       roSelectedPost, // selected post to show on the post card modal (while in list or table view) 
       roRefreshQueuesIsLoading,
-      filteredArticleList,
       // queue config module data 
       showQueueConfigPanel,
       roQueueConfigIsLoading,

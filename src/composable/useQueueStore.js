@@ -34,6 +34,34 @@ const trim = (str) => {
   return str;
 }
 
+const sortQueue = (queue, sortOrder) => {
+  // 
+  // when sorted 'descending': 
+  // 
+  // articles w/published timestamp go to the top 
+  // article w/more recent published timestamp goes before article w/older timestamp 
+  //
+  queue.sort((l, r) => {
+    const l1 = sortOrder === 'DSC' ? r : l;
+    const r1 = sortOrder === 'DSC' ? l : r;
+
+    const leftDate = l1.publishTimestamp ?? l1.lastUpdatedTimestamp;
+    const rightDate = r1.publishTimestamp ?? r1.lastUpdatedTimestamp;
+
+    if (leftDate && !rightDate) {
+      return 1;
+    }
+    if (!leftDate && rightDate) {
+      return -1;
+    }
+    if (leftDate && rightDate) {
+      return leftDate > rightDate ? 1 : -1;
+    } else {
+      return l1.id > r1.id ? 1 : -1;
+    }
+  });
+}
+
 export const useQueueStore = defineStore('queueStore', {
   state: () => ({
     // all queue data 
@@ -45,7 +73,8 @@ export const useQueueStore = defineStore('queueStore', {
     showUnreadPosts: true,
     showReadPosts: false,
     showReadLaterPosts: false,
-    // article list sorting 
+    // article list 
+    articleList: {},
     articleListSortOrder: 'ASC',
     // queue configuration 
     queueUnderConfig: {},
@@ -82,6 +111,57 @@ export const useQueueStore = defineStore('queueStore', {
       }
       return null;
     },
+    // 
+    filteredArticleList: (state) => {
+      let results = [];
+      if (state.articleList) {
+        // if a lunr query expression is specified .. 
+        // then retrieve the preliminary results from lunrjs 
+        if (state.articleListFilter) {
+          let lunrLambda = () => state.articleList.index.search(state.articleListFilter);
+          try {
+            let lunrResults = lunrLambda.apply();
+            if (lunrResults) {
+              lunrResults = lunrResults.map((item) => parseInt(item.ref));
+              results = state.articleList.values.filter((item) => {
+                return lunrResults.includes(item.id);
+              });
+            }
+          } catch (error) {
+            if (error instanceof lunr.QueryParseError) {
+              // console.debug("lunrjs search query exception due to: " + JSON.stringify(error));
+            } else {
+              console.error(error);
+              throw error;
+            }
+          }
+        } else {
+          // (otherwise the preliminary results are the entire queue) 
+          results = state.articleList.values;
+        }
+        // 
+        // filter and sort the result 
+        // 
+        if (results) {
+          results = results.filter((r) => {
+            if (!state.showUnreadPosts && !r.isRead && !r.isReadLater) {
+              return false;
+            }
+            if (!state.showReadPosts && r.isRead) {
+              return false;
+            }
+            if (!state.showReadLaterPosts && r.isReadLater) {
+              return false;
+            }
+            return true;
+          });
+          sortQueue(results, state.articleListSortOrder);
+        } else {
+          results = [];
+        }
+      }
+      return results;
+    }
   },
   actions: {
     setSelectedQueueId(queueId) {
