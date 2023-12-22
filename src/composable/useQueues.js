@@ -1,3 +1,4 @@
+import lunr from 'lunr';
 import { Client } from "@stomp/stompjs";
 import * as SockJS from 'sockjs-client';
 
@@ -23,6 +24,7 @@ export function useQueues(props) {
   const queueIdToDelete = ref(null);
   const queueIdToMarkAsRead = ref(null);
   const selectedPost = reactive({}); 
+  const articleList = reactive({}); // article list for the currently selected queue  
   const refreshQueuesIsLoading = ref(false);
   const showOpmlUploadPanel = ref(false);
   const continueIsLoading = ref(false);
@@ -39,6 +41,57 @@ export function useQueues(props) {
   const { baseUrl } = props;
 
   const brokerUrl = process.env.VUE_APP_NEWSGEARS_BROKER_URL;
+
+  const filteredArticleList = computed(() => {
+    let results = [];
+    if (articleList) {
+      // if a lunr query expression is specified .. 
+      // then retrieve the preliminary results from lunrjs 
+      if (queueStore.articleListFilter) {
+        let lunrLambda = () => articleList.index.search(queueStore.articleListFilter);
+        try {
+          let lunrResults = lunrLambda.apply();
+          if (lunrResults) {
+            lunrResults = lunrResults.map((item) => parseInt(item.ref));
+            results = articleList.values.filter((item) => {
+              return lunrResults.includes(item.id);
+            });
+          }
+        } catch (error) {
+          if (error instanceof lunr.QueryParseError) {
+            // console.debug("lunrjs search query exception due to: " + JSON.stringify(error));
+          } else {
+            consoleError(error);
+            throw error;
+          }
+        }
+      } else {
+        // (otherwise the preliminary results are the entire queue) 
+        results = articleList.values;
+      }
+      // 
+      // filter and sort the result 
+      // 
+      if (results) {
+        results = results.filter((r) => {
+          if (!queueStore.showUnreadPosts && !r.isRead && !r.isReadLater) {
+            return false;
+          }
+          if (!queueStore.showReadPosts && r.isRead) {
+            return false;
+          }
+          if (!queueStore.showReadLaterPosts && r.isReadLater) {
+            return false;
+          }
+          return true;
+        });
+        sortQueue(results, queueStore.articleListSortOrder);
+      } else {
+        results = [];
+      }
+    }
+    return results;
+  });
 
   const showQueueRefreshIndicator = computed(() => {
     // ensure we have latestSubscriptionMetricsByQueue on hand; 
@@ -428,12 +481,40 @@ export function useQueues(props) {
   }
 
   function getPostFromQueue(id) {
-    let f = queueStore.articleList.values;
+    let f = articleList.values;
     for (let j = 0; j < f.length; j++) {
       if (f[j].id === id) {
         return f[j];
       }
     }
+  }
+
+  function sortQueue(queue, sortOrder) {
+    // 
+    // when sorted 'descending': 
+    // 
+    // articles w/published timestamp go to the top 
+    // article w/more recent published timestamp goes before article w/older timestamp 
+    //
+    queue.sort((l, r) => {
+      const l1 = sortOrder === 'DSC' ? r : l;
+      const r1 = sortOrder === 'DSC' ? l : r;
+
+      const leftDate = l1.publishTimestamp ?? l1.lastUpdatedTimestamp;
+      const rightDate = r1.publishTimestamp ?? r1.lastUpdatedTimestamp;
+
+      if (leftDate && !rightDate) {
+        return 1;
+      }
+      if (!leftDate && rightDate) {
+        return -1;
+      }
+      if (leftDate && rightDate) {
+        return leftDate > rightDate ? 1 : -1;
+      } else {
+        return l1.id > r1.id ? 1 : -1;
+      }
+    });
   }
 
   function toggleFilterMode(filterMode) {
@@ -643,12 +724,10 @@ export function useQueues(props) {
     localStorage.setItem('selectedQueueId', queueId);
     queueStore.setSelectedQueueId(queueId);
     if (queueId) {
-      // deletes index and values 
-      Object.keys(queueStore.articleList).forEach((key) => {
-        delete queueStore.articleList[key]; 
+      Object.keys(articleList).forEach((key) => {
+        delete articleList[key];
       });
-      // restores index and values and from newly selected queue 
-      Object.assign(queueStore.articleList, queueStore.articleListsByQueue[queueId]);
+      Object.assign(articleList, queueStore.articleListsByQueue[queueId]);
     }
   }
 
@@ -683,7 +762,7 @@ export function useQueues(props) {
   function selectNextPost() {
     if (selectedPost) {
       const id = selectedPost.id;
-      const queue = queueStore.filteredArticleList;
+      const queue = filteredArticleList;
       const nextIdx = queue.value.findIndex((post) => post.id === id) + 1;
       if (nextIdx < queue.value.length) {
         Object.keys(selectedPost).forEach((key) => {
@@ -697,7 +776,7 @@ export function useQueues(props) {
   function selectPreviousPost() {
     if (selectedPost) {
       const id = selectedPost.id;
-      const queue = queueStore.filteredArticleList;
+      const queue = filteredArticleList;
       const prevIdx = queue.value.findIndex((post) => post.id === id) - 1;
       if (prevIdx >= 0) {
         Object.keys(selectedPost).forEach((key) => {
@@ -1129,6 +1208,7 @@ export function useQueues(props) {
   const roQueueIdToDelete = readonly(queueIdToDelete);
   const roQueueIdToMarkAsRead = readonly(queueIdToMarkAsRead);
   const roSelectedPost = readonly(selectedPost);
+  const roArticleList = readonly(articleList);
   const roRefreshQueuesIsLoading = readonly(refreshQueuesIsLoading);
   const roContinueIsLoading = readonly(continueIsLoading);
   const roAtStep2 = readonly(atStep2);
@@ -1144,6 +1224,7 @@ export function useQueues(props) {
     roQueueIdToDelete,
     roQueueIdToMarkAsRead,
     roSelectedPost,
+    roArticleList,
     roRefreshQueuesIsLoading,
     roContinueIsLoading,
     roAtStep2,
@@ -1158,6 +1239,7 @@ export function useQueues(props) {
     showSubscriptionMetrics, // rw
     showQueueConfigPanel, // rw
     // 
+    filteredArticleList,
     showQueueRefreshIndicator,
     // 
     connectBroker,
