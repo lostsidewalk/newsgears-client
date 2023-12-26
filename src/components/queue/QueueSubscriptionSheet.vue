@@ -39,7 +39,9 @@
             class="ma-2"
           />
           <div class="d-flex flex-column">
-            <v-label>{{ subscription.subscription.title }}</v-label>
+            <v-label class="font-size-smaller font-weight-bold text-wrap">
+              {{ subscription.subscription.title }}
+            </v-label>
             <v-label class="font-size-smaller">
               {{ 'Id: ' + subscription.subscription.id }}
             </v-label>
@@ -239,5 +241,9 @@ export default {
 
 .font-size-smaller {
   font-size: smaller;
+}
+
+.text-wrap {
+  white-space: text-wrap;
 }
 </style>
