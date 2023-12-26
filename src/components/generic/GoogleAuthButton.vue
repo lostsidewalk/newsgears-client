@@ -27,12 +27,8 @@ export default {
   name: "GoogleAuthButton",
   setup() {
     function googleOauth2() {
-      // append '/api' to the base URL if the reverse proxy is enabled 
-      let baseUrl = (process.env.VUE_APP_NEWSGEARS_REVERSE_PROXY === "true")
-        ? process.env.process.env.VUE_APP_NEWSGEARS_API_URL + "/api"
-        : process.env.process.env.VUE_APP_NEWSGEARS_API_URL;
       window.location =
-        baseUrl +
+        process.env.process.env.VUE_APP_NEWSGEARS_API_URL +
         "/oauth2/authorize/google?redirect_uri=" +
         process.env.VUE_APP_NEWSGEARS_ORIGIN_URL +
         "/";

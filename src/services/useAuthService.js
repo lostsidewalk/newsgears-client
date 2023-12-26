@@ -21,9 +21,7 @@ function useAuthService() {
   const isAuthenticated = ref(false);
 
   // URLs; append '/api' to the base URL if the reverse proxy is enabled 
-  const baseUrl = (process.env.VUE_APP_NEWSGEARS_REVERSE_PROXY === "true")
-    ? process.env.VUE_APP_NEWSGEARS_API_URL + '/api'
-    : process.env.VUE_APP_NEWSGEARS_API_URL;
+  const baseUrl = process.env.VUE_APP_NEWSGEARS_API_URL;
   const currentUserUrl = baseUrl + "/currentuser";
   const authUrl = baseUrl + "/authenticate";
   const pwResetUrl = baseUrl + "/pw_reset";

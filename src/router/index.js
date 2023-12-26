@@ -8,9 +8,7 @@ import VerificationCallbackView from "@/views/VerificationCallbackView.vue";
 import DocsView from "@/views/DocsView.vue";
 
 // append '/api' to the base URL if the reverse proxy is enabled 
-const baseUrl = (process.env.VUE_APP_NEWSGEARS_REVERSE_PROXY === "true")
-  ? process.env.VUE_APP_NEWSGEARS_API_URL + '/api'
-  : process.env.VUE_APP_NEWSGEARS_API_URL;
+const baseUrl = process.env.VUE_APP_NEWSGEARS_API_URL;
 
 const routes = [
   // login route 
