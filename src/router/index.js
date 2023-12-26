@@ -7,6 +7,11 @@ import RegistrationRequestView from "@/views/RegistrationRequestView.vue";
 import VerificationCallbackView from "@/views/VerificationCallbackView.vue";
 import DocsView from "@/views/DocsView.vue";
 
+// append '/api' to the base URL if the reverse proxy is enabled 
+const baseUrl = (process.env.VUE_APP_NEWSGEARS_REVERSE_PROXY === "true")
+  ? process.env.VUE_APP_NEWSGEARS_API_URL + '/api'
+  : process.env.VUE_APP_NEWSGEARS_API_URL;
+
 const routes = [
   // login route 
   {
@@ -14,7 +19,7 @@ const routes = [
     name: "LoginView",
     component: LoginView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      baseUrl,
     },
   },
   // application route 
@@ -24,8 +29,7 @@ const routes = [
     title: "Newsgears RSS",
     component: HomeView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
-      feedUrl: process.env.VUE_APP_NEWSGEARS_FEED_URL,
+      baseUrl,
     },
   },
   // catch-all route (back to application) 
@@ -38,7 +42,7 @@ const routes = [
     name: "PasswordResetRequestView",
     component: PasswordResetRequestView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      baseUrl,
     },
   },
   // password reset continuation 
@@ -47,7 +51,7 @@ const routes = [
     name: "PasswordResetCallbackView",
     component: PasswordResetCallbackView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      baseUrl,
     },
   },
   // registration initialization 
@@ -56,7 +60,7 @@ const routes = [
     name: "RegistrationRequestView",
     component: RegistrationRequestView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      baseUrl,
     },
   },
   // verification continuation 
@@ -65,7 +69,7 @@ const routes = [
     name: "VerificationCallbackView",
     component: VerificationCallbackView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      baseUrl,
     },
   },
   // documentation 
@@ -74,7 +78,7 @@ const routes = [
     name: "DocsView",
     component: DocsView,
     props: {
-      baseUrl: process.env.VUE_APP_NEWSGEARS_API_URL,
+      baseUrl,
     },
   },
 ];

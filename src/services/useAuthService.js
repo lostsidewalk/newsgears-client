@@ -20,13 +20,16 @@ function useAuthService() {
   });
   const isAuthenticated = ref(false);
 
-  // URLs
-  const currentUserUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/currentuser";
-  const authUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/authenticate";
-  const pwResetUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/pw_reset";
-  const pwUpdateUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/pw_update";
-  const registrationUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/register";
-  const logoutUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/deauthenticate";
+  // URLs; append '/api' to the base URL if the reverse proxy is enabled 
+  const baseUrl = (process.env.VUE_APP_NEWSGEARS_REVERSE_PROXY === "true")
+    ? process.env.VUE_APP_NEWSGEARS_API_URL + '/api'
+    : process.env.VUE_APP_NEWSGEARS_API_URL;
+  const currentUserUrl = baseUrl + "/currentuser";
+  const authUrl = baseUrl + "/authenticate";
+  const pwResetUrl = baseUrl + "/pw_reset";
+  const pwUpdateUrl = baseUrl + "/pw_update";
+  const registrationUrl = baseUrl + "/register";
+  const logoutUrl = baseUrl + "/deauthenticate";
 
   function log(msg) {
     console.log("auth-service: " + msg);

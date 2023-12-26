@@ -1,5 +1,9 @@
 FROM node:lts-alpine
 
+ARG VUE_APP_NEWSGEARS_REVERSE_PROXY
+
+ENV VUE_APP_NEWSGEARS_REVERSE_PROXY ${VUE_APP_NEWSGEARS_REVERSE_PROXY}
+
 # make the 'app' folder the current working directory
 WORKDIR /app
 

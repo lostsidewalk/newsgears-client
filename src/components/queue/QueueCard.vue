@@ -114,7 +114,6 @@ export default {
   mixins: [buttonSizeMixin],
   props: {
     queue: { type: Object, required: true },
-    feedUrl: { type: String, required: true },
     variant: { type: String, default: null },
   },
   emits: [

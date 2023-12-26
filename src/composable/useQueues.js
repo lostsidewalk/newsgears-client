@@ -37,7 +37,10 @@ export function useQueues(props) {
 
   const { baseUrl } = props;
 
-  const brokerUrl = process.env.VUE_APP_NEWSGEARS_BROKER_URL;
+  // append '/broker' to the base URL if the reverse proxy is enabled 
+  const brokerUrl = (process.env.VUE_APP_NEWSGEARS_REVERSE_PROXY === "true")
+    ? process.env.VUE_APP_NEWSGEARS_BROKER_URL + '/broker/secured/room'
+    : process.env.VUE_APP_NEWSGEARS_BROKER_URL + '/secured/room';
 
   const showQueueRefreshIndicator = computed(() => {
     // ensure we have latestSubscriptionMetricsByQueue on hand; 

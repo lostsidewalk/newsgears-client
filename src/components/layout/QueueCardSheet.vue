@@ -25,7 +25,6 @@
         variant="flat"
         :elevation="isHovering ? 12 : 0"
         :queue="queue"
-        :feed-url="feedUrl"
         :class="ma4r + (queueStore.selectedQueueId === queue.id ? ' selected-queue' : '')"
         v-bind="props"
         @selectQueue="$emit('selectQueue', { queueId: queue.id })"
@@ -56,7 +55,6 @@ export default {
   mixins: [spacingMixin],
   props: {
     baseUrl: { type: String, required: true },
-    feedUrl: { type: String, required: true },
   },
   emits: [
     "selectQueue",

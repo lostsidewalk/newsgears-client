@@ -139,7 +139,6 @@
         <QueueCardSheet
           v-show="!showQueueConfigPanel && !showOpmlUploadPanel" 
           :base-url="baseUrl"
-          :feed-url="feedUrl"
           @selectQueue="$event => { queueStore.innerSetSelectedQueueId($event.queueId); showQueueDashboard = false; }"
           @openQueueConfigPanel="$event => openQueueConfigPanel($event.queueId)"
           @updateFilter="$event => { 
@@ -505,7 +504,6 @@ export default {
   mixins: [buttonSizeMixin, spacingMixin],
   props: {
     baseUrl: { type: String, required: true },
-    feedUrl: { type: String, required: true },
   },
   setup(props) {
     const auth = inject('auth');

@@ -11,12 +11,6 @@ describe("useAuthService", () => {
     let authService = useAuthService();
     auth = authService.auth;
     isAuthenticated = authService.isAuthenticated;
-    // currentUserUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/currentuser";
-    // authUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/authenticate";
-    // pwResetUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/pw_reset";
-    // pwUpdateUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/pw_update";
-    // registrationUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/register";
-    // logoutUrl = process.env.VUE_APP_NEWSGEARS_API_URL + "/deauthenticate";
   });
 
   afterEach(() => {
