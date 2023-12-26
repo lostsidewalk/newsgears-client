@@ -23,6 +23,13 @@
         v-if="queueId"
         v-model="selectedTab"
       >
+        <!-- tab 1: add a subscription -->
+        <v-tab
+          key="ADD_SUBSCRIPTION"
+          value="ADD_SUBSCRIPTION"
+        >
+          {{ $t('addSubscription') }}
+        </v-tab>
         <!-- tab 2: manage subscriptions -->
         <v-tab
           key="MANAGE_SUBSCRIPTIONS"
@@ -40,10 +47,10 @@
       </v-tabs>
       <!-- config window -->
       <v-window v-model="selectedTab">
-        <!-- TODO: extract manage subscriptions component -->
+        <!-- TODO: extract add subscription component -->
         <v-window-item
-          key="MANAGE_SUBSCRIPTIONS"
-          value="MANAGE_SUBSCRIPTIONS"
+          key="ADD_SUBSCRIPTION"
+          value="ADD_SUBSCRIPTION"
         >
           <v-sheet
             align="left"
@@ -54,20 +61,6 @@
               :class="ma4r"
               elevation="0"
             >
-              <v-card-title
-                class="clickable"
-                :class="pa4r"
-                @click.stop="showAddSubscription = !showAddSubscription"
-              >
-                <v-btn
-                  :size="buttonSize"
-                  :title="$t('addANewSubscription')"
-                  :aria-label="$t('addANewSubscription')"
-                  :icon="showAddSubscription ? 'fa-minus-square-o' : 'fa-plus-square-o'"
-                  variant="text"
-                />
-                {{ $t('addANewSubscription') }}
-              </v-card-title>
               <v-divider />
               <v-card-text
                 v-show="showSubscriptions"
@@ -162,26 +155,23 @@
                 </v-alert>
               </v-card-text>
             </v-card>
+          </v-sheet>
+        </v-window-item>
+        <!-- TODO: extract manage subscriptions component -->
+        <v-window-item
+          key="MANAGE_SUBSCRIPTIONS"
+          value="MANAGE_SUBSCRIPTIONS"
+        >
+          <v-sheet
+            align="left"
+            justify="center"
+          >
             <!-- manage existing RSS/ATOM feed subscriptions -->
             <v-card
               v-if="subscriptions && subscriptions.length > 0"
               :class="ma4r"
               elevation="0"
             >
-              <v-card-title
-                class="clickable"
-                :class="pa4r"
-                @click="showSubscriptions = !showSubscriptions"
-              >
-                <v-btn
-                  :size="buttonSize"
-                  :title="$t('addANewSubscription')"
-                  :aria-label="$t('addANewSubscription')"
-                  :icon="showAddSubscription ? 'fa-minus-square-o' : 'fa-plus-square-o'"
-                  variant="text"
-                />
-                {{ $t('yourSubscriptions') }}
-              </v-card-title>
               <v-divider />
               <v-card-text
                 v-show="showSubscriptions"

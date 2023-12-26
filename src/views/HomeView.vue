@@ -153,7 +153,11 @@
       <QueueSubscriptionSheet
         v-if="queueStore.allSubscriptions.length > 0"
         :base-url="baseUrl"
-        @updateFilter="$event => { queueStore.updateFilter($event); $nextTick(() => showQueueDashboard = false); }"
+        @updateFilter="$event => { 
+          queueStore.updateFilter($event); 
+          queueStore.innerSetSelectedQueueId($event.queueId);
+          showQueueDashboard = false;
+        }"
         @showUnread="($event) => {
           let subscription = $event.subscription;
           queueStore.innerSetSelectedQueueId(subscription.queueId);
