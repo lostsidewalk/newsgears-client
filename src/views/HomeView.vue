@@ -121,7 +121,7 @@
           @dismiss="dismissOpmlUpload"
         />
       </v-bottom-sheet>
-      <!-- navigation drawer / left side -->
+      <!-- queue dashboard -->
       <v-bottom-sheet
         v-model="showQueueDashboard"
         scrollable
@@ -148,47 +148,48 @@
           }"
           @openSubscriptionMetrics="openSubscriptionMetrics"
         />
-        <!-- <QueueSubscriptionSheet
-          v-show="!showQueueCards && !showQueueConfigPanel && !showOpmlUploadPanel"
-          :base-url="baseUrl"
-          @updateFilter="$event => { queueStore.updateFilter($event); $nextTick(() => showQueueDashboard = false); }"
-          @showUnread="($event) => {
-            let subscription = $event.subscription;
-            queueStore.innerSetSelectedQueueId(subscription.queueId);
-            $nextTick(() =>
-              queueStore.updateFilter({
-                name: 'subAndMode',
-                queueId: subscription.queueId,
-                subValue: subscription.title,
-                modeValue: 'UNREAD',
-              })
-            );
-          }"
-          @showRead="($event) => {
-            let subscription = $event.subscription;
-            queueStore.innerSetSelectedQueueId(subscription.queueId);
-            $nextTick(() =>
-              queueStore.updateFilter({
-                name: 'subAndMode',
-                queueId: subscription.queueId,
-                subValue: subscription.title,
-                modeValue: 'READ',
-              })
-            );
-          }"
-          @showAll="($event) => {
-            let subscription = $event.subscription;
-            queueStore.innerSetSelectedQueueId(subscription.queueId);
-            $nextTick(() =>
-              queueStore.updateFilter({
-                name: 'subscription',
-                queueId: subscription.queueId,
-                value: subscription.title,
-              })
-            );
-          }"
-        /> -->
       </v-bottom-sheet>
+      <!-- subscription sheet -->
+      <QueueSubscriptionSheet
+        v-if="queueStore.allSubscriptions.length > 0"
+        :base-url="baseUrl"
+        @updateFilter="$event => { queueStore.updateFilter($event); $nextTick(() => showQueueDashboard = false); }"
+        @showUnread="($event) => {
+          let subscription = $event.subscription;
+          queueStore.innerSetSelectedQueueId(subscription.queueId);
+          $nextTick(() =>
+            queueStore.updateFilter({
+              name: 'subAndMode',
+              queueId: subscription.queueId,
+              subValue: subscription.id,
+              modeValue: 'UNREAD',
+            })
+          );
+        }"
+        @showRead="($event) => {
+          let subscription = $event.subscription;
+          queueStore.innerSetSelectedQueueId(subscription.queueId);
+          $nextTick(() =>
+            queueStore.updateFilter({
+              name: 'subAndMode',
+              queueId: subscription.queueId,
+              subValue: subscription.id,
+              modeValue: 'READ',
+            })
+          );
+        }"
+        @showAll="($event) => {
+          let subscription = $event.subscription;
+          queueStore.innerSetSelectedQueueId(subscription.queueId);
+          $nextTick(() =>
+            queueStore.updateFilter({
+              name: 'subscription',
+              queueId: subscription.queueId,
+              value: subscription.id,
+            })
+          );
+        }"
+      />
       <!-- delete confirmation dialog -->
       <v-dialog
         v-model="showQueueDeleteConfirmation"
@@ -445,7 +446,7 @@ import GlobalShortcutKeys from '@/components/help-panel/GlobalShortcutKeys.vue';
 // queue card sheet 
 import QueueCardSheet from '@/components/layout/QueueCardSheet.vue';
 // queue subscription sheet 
-// import QueueSubscriptionSheet from '@/components/queue/QueueSubscriptionSheet.vue';
+import QueueSubscriptionSheet from '@/components/queue/QueueSubscriptionSheet.vue';
 // queue controller (filter and operations)
 import QueueController from '@/components/queue-controller/QueueController.vue';
 // card layout 
@@ -486,6 +487,8 @@ export default {
     GlobalShortcutKeys,
     // card sheet 
     QueueCardSheet, 
+    // subscription sheet 
+    QueueSubscriptionSheet,
     // queue controller 
     QueueController, 
     // card layout 

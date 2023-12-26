@@ -26,7 +26,7 @@
             href="#"
             @click.stop.prevent="queueStore.updateFilter({
               name: 'subscription',
-              value: item.importerDesc,
+              value: item.subscriptionId,
               queueId: item.queueId,
             })"
           >{{ item.importerDesc }}</a>
@@ -221,6 +221,7 @@ export default {
             (isHtmlTitle ? t('htmlNotShownHere') : a.postTitle.value) :
             t('noPostTitle'),
           importerDesc: a.importerDesc,
+          subscriptionId: a.subscriptionId,
           postTimestamp: a.lastUpdatedTimestamp ? formatTimestamp(a.lastUpdatedTimestamp) : formatTimestamp(a.publishTimestamp),
           postStatus: a.isRead ? 'READ' : (a.isReadLater ? 'READ-LATER' : 'UNREAD'),
           postDesc: {

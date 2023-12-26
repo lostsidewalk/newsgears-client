@@ -280,7 +280,7 @@ const en = {
     "Search for articles in a specific feed and category.",
   advancedQueries: "Advanced Queries",
   inAdditionTo:
-    "In addition to the basic field:value queries, Newsgears supports more advanced search options such as wildcard searches, fuzzy searches, and range searches. You can refer to the Newsgears documentation for more details on these advanced search options.",
+    "In addition to the basic field:value queries, Newsgears supports more advanced search options such as wildcard searches, fuzzy searches, and range searches.",
   // help panel
   newsgearsHelp: "Newsgears Help",
   globalShortcutKeys: "GLOBAL SHORTCUT KEYS",

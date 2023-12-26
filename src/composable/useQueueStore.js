@@ -4,14 +4,7 @@ import { defineStore } from 'pinia';
 import { nextTick } from 'vue';
 
 const buildLunrSubscriptionExpr = (subscription) => {
-  let expr = '';
-  let tokens = subscription.split(/[-[\]{}()*+?.,\\^$|#\s]/)
-    .map(e => e.trim())
-    .filter(e => e.length > 0);
-  for (let i = 0; i < tokens.length; i++) {
-    expr += ' feed:' + tokens[i];
-  }
-  return expr;
+  return 'subscriptionId:' + subscription;
 }
 
 const buildLunrCategoryExpr = (currentFilter, category) => {
@@ -277,6 +270,12 @@ export const useQueueStore = defineStore('queueStore', {
                 return trim(doc.importerDesc);
               },
             });
+            // feedUrl 
+            this.field('subscriptionId', {
+              extractor: function (doc = {}) {
+                return doc.subscriptionId ? doc.subscriptionId : null;
+              },
+            });
             // category 
             this.field('category', {
               extractor: function (doc = {}) {
@@ -452,7 +451,7 @@ export const useQueueStore = defineStore('queueStore', {
       let newSubStatus = '';
       let tokens = subValue.split(/(\s+)/).filter(e => e.trim().length > 0);
       for (let i = 0; i < tokens.length; i++) {
-        newSubStatus += ' +feed:' + tokens[i];
+        newSubStatus += ' +subscriptionId:' + tokens[i];
       }
       this.setArticleListFilter(newSubStatus);
       this.innerSetFilterToMode(modeValue);

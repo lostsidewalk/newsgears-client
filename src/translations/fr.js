@@ -280,7 +280,7 @@ const fr = {
     "Rechercher des articles dans un flux et une catégorie spécifiques.",
   advancedQueries: "Requêtes avancées",
   inAdditionTo: 
-    "En plus des requêtes champ:valeur de base, Newsgears prend en charge des options de recherche avancées telles que les recherches avec des caractères génériques, les recherches approximatives et les recherches par plage. Vous pouvez vous référer à la documentation de Newsgears pour plus de détails sur ces options de recherche avancées.",
+    "En plus des requêtes champ:valeur de base, Newsgears prend en charge des options de recherche avancées telles que les recherches avec des caractères génériques, les recherches approximatives et les recherches par plage.",
   // help panel
   newsgearsHelp: "Aide de Newsgears",
   globalShortcutKeys: "RACCOURCIS CLAVIER GLOBAUX",

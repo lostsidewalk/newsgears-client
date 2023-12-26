@@ -44,9 +44,12 @@
               @click.stop="$emit('updateFilter', {
                 name: 'subscription',
                 queueId: item.queueId,
-                value: item.title,
+                value: item.id,
               })"
             >
+              <td align="left">
+                {{ item.id }}
+              </td>
               <td class="d-flex flex-row">
                 <v-img
                   v-if="item.image"
@@ -132,6 +135,7 @@ export default {
 
     const subscriptionHeaders = computed(() => {
       return [
+        { title: t('id'), value: 'id' },
         { title: t('subscriptionName'), value: 'name' },
       ];
     });

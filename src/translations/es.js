@@ -280,7 +280,7 @@ const es = {
     "Busque artículos en un feed y una categoría específicos.",
   advancedQueries: "Consultas avanzadas",
   inAdditionTo:
-    "Además de las consultas básicas de campo:valor, Newsgears admite opciones de búsqueda más avanzadas, como búsquedas con comodines, búsquedas aproximadas y búsquedas de rango. Puede consultar la documentación de Newsgears para obtener más detalles sobre estas opciones de búsqueda avanzada.",
+    "Además de las consultas básicas de campo:valor, Newsgears admite opciones de búsqueda más avanzadas, como búsquedas con comodines, búsquedas aproximadas y búsquedas de rango.",
   // help panel
   newsgearsHelp: "Newsgears Help",
   globalShortcutKeys: "GLOBAL SHORTCUT KEYS",

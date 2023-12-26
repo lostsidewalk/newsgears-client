@@ -35,6 +35,10 @@
 
       <v-list>
         <v-list-item
+          title="subscriptionId" 
+          :subtitle="$t('subscriptionIdFieldDesc')"
+        />
+        <v-list-item
           title="feed"
           :subtitle="$t('feedFieldDesc')"
         />
