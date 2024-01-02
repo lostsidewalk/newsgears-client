@@ -28,8 +28,7 @@
       <v-sheet
         align="left"
         justify="center"
-        class="d-flex flex-column"
-        style="gap: 1rem;"
+        class="d-flex flex-column gap-1"
       >
         <v-card elevation="1">
           <v-card-title :class="pa4r">

@@ -6,9 +6,9 @@
     justify="left"
   >
     <v-card-title
-      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto"
+      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto gap-1"
       :class="pa4r"
-      style="gap: 1rem; white-space: normal"
+      style="white-space: normal"
     >
       <v-img
         v-for="thumbnail of metadata.thumbnails"

@@ -8,8 +8,8 @@
   >
     <!-- title + thumbnail -->
     <v-list-item-title 
-      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto mt-2"
-      style="gap: 1rem;white-space: normal;"
+      class="d-flex flex-row flex-auto flex-wrap align-start overflow-auto mt-2 gap-1"
+      style="white-space: normal;"
     >
       <v-img
         v-if="post.postImgSrc" 

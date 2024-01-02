@@ -1,6 +1,6 @@
 <template>
   <div
-    class="post-enclosure-content"
+    class="d-flex flex-row gap-1"
     :class="pa4r"
   >
     <!-- icon (image) -->
@@ -83,11 +83,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.post-enclosure-content {
-  display: flex;
-  flex-direction: flex-row;
-  gap: 1rem;
-}
-</style>

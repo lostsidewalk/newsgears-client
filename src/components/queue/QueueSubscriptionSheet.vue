@@ -32,13 +32,42 @@
         })"
       >
         <!-- <div> -->
-        <div class="d-flex flex-row">
-          <v-icon
-            :size="buttonSize"
-            icon="fa-rss"
-            class="ma-2"
+        <div
+          class="d-flex flex-row flex-wrap gap-1"
+          :class="my4r"
+        >
+          <v-img
+            v-if="subscription.subscription.image"
+            class="rounded h-auto" 
+            :src="subscription.subscription.image.url" 
+            :title="subscription.subscription.image.title" 
+            :alt="$t('feedLogoImage')" 
+            contain
+            max-height="64px"
+            max-width="64px"
           />
-          <div class="d-flex flex-column">
+          <v-img
+            v-else-if="subscription.subscription.icon"
+            class="rounded h-auto" 
+            :src="subscription.subscription.icon.url" 
+            :title="subscription.subscription.icon.title" 
+            :alt="$t('feedLogoImage')" 
+            contain
+            max-height="64px"
+            max-width="64px"
+          />
+          <v-img
+            v-else
+            class="rounded h-auto" 
+            src="rss_logo.svg"
+            :alt="$t('rssLogo')"
+            contain
+            max-height="64px"
+            max-width="64px"
+          />
+          <div
+            class="d-flex flex-column"
+          >
             <v-label class="font-size-smaller font-weight-bold text-wrap">
               {{ subscription.subscription.title }}
             </v-label>
