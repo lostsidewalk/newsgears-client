@@ -28,7 +28,7 @@
           key="ADD_SUBSCRIPTION"
           value="ADD_SUBSCRIPTION"
         >
-          {{ $t('addSubscription') }}
+          {{ $t('addSubscriptions') }}
         </v-tab>
         <!-- tab 2: manage subscriptions -->
         <v-tab

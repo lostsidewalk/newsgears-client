@@ -189,7 +189,9 @@ const es = {
   dismiss: "Dismiss",
   // queue config panel
   configuringQueue: "Configuring queue: {name}",
+  addSubscriptions: "Add subscriptions",
   manageSubscriptions: "Manage subscriptions ({ct})",
+  alreadySubscribd: "(Already subscribed)",
   queueProperties: "Queue Properties",
   // queue properties
   createANewQueue: "Crear una nueva cola",
@@ -362,7 +364,6 @@ const es = {
   showMoreInfo: "Mostrar suscripciones",
   hideMoreInfo: "Ocultar suscripciones",
   selectQueue: 'Select queue',
-  addSubscriptions: "Agregar suscripciones",
   // queue details 
   subscriptions: "SUSCRIPCIONES",
   recentArticles: "ARTÍCULOS RECIENTES",

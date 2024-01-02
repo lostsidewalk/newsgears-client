@@ -189,7 +189,9 @@ const fr = {
   dismiss: "Ignorer",
   // queue config panel 
   configuringQueue: "Configuration de la file d'attente : {name}",
+  addSubscriptions: "Add subscriptions",
   manageSubscriptions: "Manage subscriptions ({ct})",
+  alreadySubscribd: "(Already subscribed)",
   queueProperties: "Propriétés de la file d'attente",
   // queue properties 
   createANewQueue: "Créer une nouvelle file d'attente",
@@ -362,7 +364,6 @@ const fr = {
   showMoreInfo: "Afficher les détails",
   hideMoreInfo: "Masquer les détails",
   selectQueue: 'Select queue',
-  addSubscriptions: "Ajouter des abonnements",
   // queue details
   subscriptions: "ABONNEMENTS",
   recentArticles: "ARTICLES RÉCENTS",

@@ -189,7 +189,9 @@ const en = {
   dismiss: "Dismiss",
   // queue config panel
   configuringQueue: "Configuring queue: {name}",
+  addSubscriptions: "Add subscriptions",
   manageSubscriptions: "Manage subscriptions ({ct})",
+  alreadySubscribd: "(Already subscribed)",
   queueProperties: "Queue Properties",
   // queue properties
   createANewQueue: "Create a new queue",
@@ -362,7 +364,6 @@ const en = {
   showMoreInfo: "Show details",
   hideMoreInfo: "Hide details",
   selectQueue: "Select queue",
-  addSubscriptions: "Add subscriptions",
   // queue details 
   subscriptions: "SUBSCRIPTIONS",
   recentArticles: "RECENT ARTICLES",

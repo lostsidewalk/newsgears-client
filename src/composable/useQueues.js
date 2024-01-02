@@ -873,7 +873,7 @@ export function useQueues(props) {
               r.password = queryConfig.password;
             }
             // image 
-            let sourceImgUrl = source.imgUrl;
+            let sourceImgUrl = source.subscriptionDefinitionImageUrl;
             if (sourceImgUrl) {
               r.image = {
                 title: null,

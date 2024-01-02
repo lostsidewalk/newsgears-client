@@ -10,17 +10,7 @@
       <v-row>
         <v-col cols="2">
           <v-img
-            v-if="info.icon"
-            class="rounded h-auto" 
-            :class="my4r"
-            :src="info.icon.url" 
-            :title="info.icon.title" 
-            :alt="$t('feedLogoImage')" 
-            contain
-            max-height="128px"
-          />
-          <v-img
-            v-if="info.image && !info.icon"
+            v-if="info.image"
             class="rounded h-auto" 
             :class="my4r"
             :src="info.image.url" 
@@ -30,7 +20,17 @@
             max-height="128px"
           />
           <v-img
-            v-if="!info || (!info.image && !info.icon)"
+            v-else-if="info.icon"
+            class="rounded h-auto" 
+            :class="my4r"
+            :src="info.icon.url" 
+            :title="info.icon.title" 
+            :alt="$t('feedLogoImage')" 
+            contain
+            max-height="128px"
+          />
+          <v-img
+            v-else
             class="rounded h-auto" 
             :class="my4r"
             src="rss_logo.svg"
