@@ -147,7 +147,7 @@ export function useQueues(props) {
               queueStore.addQueue(qd);
               queueStore.initializeArticleList(qd.id);
               let sd = wrapper.subscriptionDefinitions;
-              decorateQueueWithSubscriptionDefinitions(qd, sd, []); // empty subscription metrics 
+              decorateQueueWithSubscriptionDefinitions(qd, sd, {}, {}); // empty subscription metrics and empty rule set 
             }
             let createdQueueIds = createdQueues.map(q => q.queueDefinition.id);
             queueStore.rebuildLunrIndexes(createdQueueIds);
@@ -301,13 +301,18 @@ export function useQueues(props) {
               queueStore.clearQueues();
               const queueDefinitionData = data.queueDefinitions;
               const subscriptionDefinitions = data.subscriptionDefinitions;
+              const queueImportRuleSets = data.queueImportRuleSets;
               if (queueDefinitionData) {
                 for (let i = 0; i < queueDefinitionData.length; i++) {
                   const qd = queueDefinitionData[i];
+                  // 
                   const sd = subscriptionDefinitions[qd.id];
-                  decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics);
-                  // TODO: see if this is still necessary 
+                  decorateQueueWithSubscriptionDefinitions(qd, sd, data.subscriptionMetrics, data.subscriptionImportRuleSets);
+                  // TODO: see if parsing is still necessary 
                   qd.exportConfig = qd.exportConfig ? JSON.parse(qd.exportConfig) : qd.exportConfig;
+                  // 
+                  qd.queueImportRuleSet = queueImportRuleSets[qd.id];
+                  // 
                   queueStore.addQueue(qd);
                 }
               }
@@ -336,18 +341,19 @@ export function useQueues(props) {
     }
   }
 
-  function decorateQueueWithSubscriptionDefinitions(fd, qd, qm) {
-    fd.subscriptions = [];
+  function decorateQueueWithSubscriptionDefinitions(qd, sd, sm, sr) {
+    qd.subscriptions = [];
 
-    if (qd) {
-      for (let i = 0; i < qd.length; i++) {
-        let wrapper = qd[i];
+    if (sd) {
+      for (let i = 0; i < sd.length; i++) {
+        let wrapper = sd[i];
         let subscriptionDefinition = wrapper.subscriptionDefinition;
         let r = {
           id: subscriptionDefinition.id,
-          subscriptionMetrics: qm ? qm[subscriptionDefinition.id] : null,
+          subscriptionMetrics: sm ? sm[subscriptionDefinition.id] : null,
+          subscriptionImportRuleSet: sr ? sr[subscriptionDefinition.id] : null,
           url: subscriptionDefinition.url,
-          queueId: fd.id,
+          queueId: qd.id,
           title: subscriptionDefinition.title
         };
 
@@ -367,8 +373,8 @@ export function useQueues(props) {
           };
         }
 
-        // add to FD
-        fd.subscriptions.push(r);
+        // add to QD
+        qd.subscriptions.push(r);
       }
     }
   }
